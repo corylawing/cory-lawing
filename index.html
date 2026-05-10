@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0A" />
+
+  <title>Cory Lawing — Operations Architect · Salesforce, n8n, AI Workflows</title>
+
+  <meta name="description" content="Operations Architect. I do the strategy, the architecture, and the build — one operator covering what most companies hire as three roles. Twelve years across Salesforce, n8n, AI workflows and custom code. Sales, marketing, finance, HR, legal." />
+  <meta name="author" content="Cory Lawing" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Cory Lawing — Operations Architect" />
+  <meta property="og:description" content="I do the strategy, the architecture, and the build. One operator covering what usually takes three." />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cory Lawing — Operations Architect" />
+  <meta name="twitter:description" content="I do the strategy, the architecture, and the build. One operator covering what usually takes three." />
+
+  <!-- Favicon (simple inline SVG so the site is self-contained until you add a real one) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230A0A0A'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-size='34' font-style='italic' fill='%23D9F77B'>cl</text></svg>" />
+
+  <!-- Fonts: Fraunces (display serif), Geist (body), Geist Mono (accents) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!--
+    BRAND NAME — single source of truth.
+    To switch from "Cory Lawing" to a studio brand later, change the data-brand
+    attribute below and the #brand-mark text in the nav, hero, and footer.
+  -->
+  <div class="page" data-brand="Cory Lawing">
+
+    <!-- ================== NAV ================== -->
+    <header class="nav" role="banner">
+      <a class="nav__brand" href="#top" aria-label="Home">
+        <span class="nav__brand-mark" id="brand-mark">CL</span>
+        <span class="nav__brand-name">Cory Lawing</span>
+      </a>
+
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#practice">Practice</a>
+        <a href="#builds">Built</a>
+        <a href="#approach">Approach</a>
+        <a href="#stack">Stack</a>
+        <a href="#voices">Voices</a>
+      </nav>
+
+      <a class="nav__cta" href="#contact">
+        <span>Start a conversation</span>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
+      <button class="nav__menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span>
+      </button>
+    </header>
+
+    <!-- Mobile menu drawer -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#practice">Practice</a>
+      <a href="#builds">Built</a>
+      <a href="#approach">Approach</a>
+      <a href="#stack">Stack</a>
+      <a href="#voices">Voices</a>
+      <a href="#contact" class="mobile-menu__cta">Start a conversation →</a>
+    </div>
+
+    <main id="top">
+
+      <!-- ================== HERO ================== -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__grid"></div>
+        <div class="hero__noise"></div>
+
+        <div class="hero__inner">
+          <div class="hero__copy">
+            <p class="eyebrow reveal" data-reveal-delay="0">
+              <span class="eyebrow__dot"></span>
+              <span>Currently booking new engagements</span>
+            </p>
+
+            <h1 class="hero__title reveal" data-reveal-delay="80" id="hero-title">
+              <span class="hero__line">I do the strategy.</span>
+              <span class="hero__line"><em>The architecture.</em></span>
+              <span class="hero__line">The build.</span>
+            </h1>
+
+            <p class="hero__sub reveal" data-reveal-delay="200">
+              Twelve years bridging strategy and code. Most consulting engagements end at the slide deck; most dev engagements start without understanding the business. I do the whole arc — sit with the CFO on Monday, design the architecture by Wednesday, ship the build by Friday. Sales, marketing, finance, HR, legal — wherever the operation needs solving end-to-end.
+            </p>
+
+            <div class="hero__ctas reveal" data-reveal-delay="320">
+              <a class="btn btn--primary" href="#contact">
+                <span>Start a conversation</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+              <a class="btn btn--ghost" href="#practice">
+                <span>See how I work</span>
+              </a>
+            </div>
+
+            <ul class="hero__meta reveal" data-reveal-delay="440">
+              <li><span class="hero__meta-num">12<span class="hero__meta-plus">+</span></span><span class="hero__meta-label">years of practice<br/>operations &amp; systems</span></li>
+              <li><span class="hero__meta-num">0</span><span class="hero__meta-label">handoffs<br/>strategy&nbsp;→&nbsp;execution</span></li>
+              <li><span class="hero__meta-num">5<span class="hero__meta-plus">+</span></span><span class="hero__meta-label">business functions<br/>served end-to-end</span></li>
+              <li><span class="hero__meta-num">EN<span class="hero__meta-plus">/</span>FR</span><span class="hero__meta-label">engagements<br/>globally</span></li>
+            </ul>
+          </div>
+
+          <!-- Signature element: animated revenue-architecture diagram -->
+          <div class="hero__visual reveal" data-reveal-delay="160" aria-hidden="true">
+            <div class="diagram">
+              <div class="diagram__label diagram__label--top">
+                <span class="mono">/* live operational architecture */</span>
+              </div>
+
+              <svg class="diagram__svg" viewBox="0 0 480 480" preserveAspectRatio="xMidYMid meet">
+                <!-- Connecting paths (drawn first so they sit behind nodes) -->
+                <g class="diagram__edges" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round">
+                  <path d="M 240 240 L 240 110" />
+                  <path d="M 240 240 L 370 240" />
+                  <path d="M 240 240 L 240 370" />
+                  <path d="M 240 240 L 110 240" />
+                  <path d="M 240 110 L 370 240" />
+                  <path d="M 370 240 L 240 370" />
+                  <path d="M 240 370 L 110 240" />
+                  <path d="M 110 240 L 240 110" />
+                </g>
+
+                <!-- Animated pulses traveling along the edges -->
+                <g class="diagram__pulses">
+                  <circle r="3"><animateMotion dur="3.2s" repeatCount="indefinite" path="M 240 240 L 240 110" /></circle>
+                  <circle r="3"><animateMotion dur="3.6s" begin="0.8s" repeatCount="indefinite" path="M 240 240 L 370 240" /></circle>
+                  <circle r="3"><animateMotion dur="3.4s" begin="1.6s" repeatCount="indefinite" path="M 240 240 L 240 370" /></circle>
+                  <circle r="3"><animateMotion dur="3.8s" begin="2.4s" repeatCount="indefinite" path="M 240 240 L 110 240" /></circle>
+                  <circle r="2.4" class="diagram__pulse--accent"><animateMotion dur="5s" repeatCount="indefinite" path="M 240 110 L 370 240 L 240 370 L 110 240 Z" /></circle>
+                </g>
+
+                <!-- Center hub: the architecture itself -->
+                <g class="diagram__hub" transform="translate(240,240)">
+                  <circle r="48" class="diagram__hub-bg" />
+                  <circle r="48" class="diagram__hub-ring" />
+                  <text y="-4" text-anchor="middle" class="diagram__hub-eyebrow">OPERATIONS</text>
+                  <text y="14" text-anchor="middle" class="diagram__hub-title">CORE</text>
+                </g>
+
+                <!-- Quadrant nodes -->
+                <g class="diagram__node" transform="translate(240,110)">
+                  <rect x="-66" y="-20" width="132" height="40" rx="20" />
+                  <text y="5" text-anchor="middle">Marketing</text>
+                </g>
+                <g class="diagram__node" transform="translate(370,240)">
+                  <rect x="-50" y="-20" width="100" height="40" rx="20" />
+                  <text y="5" text-anchor="middle">Sales</text>
+                </g>
+                <g class="diagram__node" transform="translate(240,370)">
+                  <rect x="-66" y="-20" width="132" height="40" rx="20" />
+                  <text y="5" text-anchor="middle">People&nbsp;&amp;&nbsp;HR</text>
+                </g>
+                <g class="diagram__node" transform="translate(110,240)">
+                  <rect x="-54" y="-20" width="108" height="40" rx="20" />
+                  <text y="5" text-anchor="middle">Finance</text>
+                </g>
+              </svg>
+
+              <div class="diagram__label diagram__label--bottom">
+                <span class="mono">salesforce · hubspot · n8n · ai · custom</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll cue -->
+        <div class="hero__scrollcue" aria-hidden="true">
+          <span class="mono">scroll</span>
+          <span class="hero__scrollcue-line"></span>
+        </div>
+      </section>
+
+
+      <!-- ================== POSITIONING ================== -->
+      <section class="positioning" aria-label="Positioning">
+        <div class="container">
+          <p class="positioning__lead reveal">
+            <span class="quote-mark" aria-hidden="true">“</span>
+            Most companies don't have a strategy problem. They have an <em>operational&nbsp;infrastructure</em> problem — initiatives that never make it into the systems people actually use, data that can't be trusted by the team that needs it, and tools that have quietly become the bottleneck nobody wants to own. Sales. Marketing. Finance. HR. Legal. Same pattern, different department.
+          </p>
+          <p class="positioning__lead positioning__lead--two reveal">
+            I'm the rare operator who covers the <em>whole arc</em> — understand the business, architect the workflow, ship the build. Most companies hire that as three roles: a strategist, an architect, a developer. They don't have to.
+          </p>
+          <p class="positioning__sig mono reveal">— Cory Lawing · American · based in Marseille · clients globally</p>
+        </div>
+      </section>
+
+
+      <!-- ================== PRACTICE / SERVICES ================== -->
+      <section class="section section--practice" id="practice">
+        <div class="container">
+          <header class="section__head reveal">
+            <p class="section__eyebrow mono">01 / Practice</p>
+            <h2 class="section__title">Three ways to engage.<br/><em>One operator behind every one.</em></h2>
+            <p class="section__intro">
+              Each engagement starts from the same principle: the strategy and the build are the same job. No handoff between the person who sets architecture and the person who ships it — because they're the same person.
+            </p>
+          </header>
+
+          <div class="practice__grid">
+            <article class="practice-card reveal" data-reveal-delay="0">
+              <header class="practice-card__head">
+                <span class="practice-card__index mono">01</span>
+                <span class="practice-card__tag">Ongoing partnership</span>
+              </header>
+              <h3 class="practice-card__title">Operations Architect</h3>
+              <p class="practice-card__copy">
+                Embedded as the operator who covers the whole arc — understand the business problem, architect the workflow that solves it, ship the build that runs it. No translation losses between strategy and execution because there's only one person in the chain. I work across functions: sales, marketing, finance, HR, legal — wherever the operation needs solving end-to-end.
+              </p>
+              <ul class="practice-card__list">
+                <li>Salesforce architecture &amp; hands-on development (Apex, LWC, Flow)</li>
+                <li>AI workflows &amp; integrations (n8n, OpenAI, custom code)</li>
+                <li>Cross-functional systems design (sales, marketing, finance, HR, legal)</li>
+                <li>Workflow &amp; operations optimisation — with or without code</li>
+              </ul>
+              <p class="practice-card__fit mono">
+                <span>Best fit ↗</span> When you need one person to do what usually takes three
+              </p>
+            </article>
+
+            <article class="practice-card reveal" data-reveal-delay="80">
+              <header class="practice-card__head">
+                <span class="practice-card__index mono">02</span>
+                <span class="practice-card__tag">Fixed scope · 4–8 weeks</span>
+              </header>
+              <h3 class="practice-card__title">Operations Audit<br/>&amp; Build Sprint</h3>
+              <p class="practice-card__copy">
+                A diagnostic deep-dive on whichever function is the current bottleneck — sales, marketing, finance, customer ops, HR, anywhere the workflow is leaking. I map the process, the systems, the data, and the people, then deliver a 90-day roadmap that's already pressure-tested against your stack's real constraints. Optional build phase to ship the first wave.
+              </p>
+              <ul class="practice-card__list">
+                <li>Workflow &amp; systems audit (any function)</li>
+                <li>Tool stack &amp; integration map</li>
+                <li>Data &amp; reporting diagnosis</li>
+                <li>Prioritised 90-day roadmap (with optional build)</li>
+              </ul>
+              <p class="practice-card__fit mono">
+                <span>Best fit ↗</span> Pre-replatform · functional bottleneck · new exec inheriting an opaque stack
+              </p>
+            </article>
+
+            <article class="practice-card reveal" data-reveal-delay="160">
+              <header class="practice-card__head">
+                <span class="practice-card__index mono">03</span>
+                <span class="practice-card__tag">Built to ship</span>
+              </header>
+              <h3 class="practice-card__title">Custom Build:<br/>AI · Automation · Integration</h3>
+              <p class="practice-card__copy">
+                When the off-the-shelf product doesn't fit and you need something built. <em>n8n + LLM workflows</em>, custom Salesforce, integrations between systems of record, internal web apps and utilities. I scope, design, and ship — usually faster than a procurement cycle on a vendor.
+              </p>
+              <ul class="practice-card__list">
+                <li>n8n + AI workflows (production-grade, observable)</li>
+                <li>Custom Salesforce: Apex, LWC, Flow, Platform Events</li>
+                <li>REST / SOAP integrations &amp; ETL pipelines</li>
+                <li>Internal web apps &amp; utilities (full-stack)</li>
+              </ul>
+              <p class="practice-card__fit mono">
+                <span>Best fit ↗</span> Specific tool problem · vendor sprawl · build-vs-buy already decided
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================== BUILT ================== -->
+      <section class="section section--tools" id="builds">
+        <div class="container">
+          <header class="section__head reveal">
+            <p class="section__eyebrow mono">02 / Built</p>
+            <h2 class="section__title">Selected builds,<br/><em>patterns I bring to&nbsp;engagements.</em></h2>
+            <p class="section__intro">
+              Custom platforms shipped over a decade-plus career — in roles where I owned the architecture end-to-end. Salesforce-native, AI-orchestrated, fully custom. Each one is a pattern, a stack, and a way of working I bring into engagements when the off-the-shelf product can't go where it needs to.
+            </p>
+          </header>
+
+          <div class="tools__grid">
+
+            <!-- Tool 1: DM Maps -->
+            <article class="tool reveal" data-reveal-delay="0">
+              <div class="tool__media">
+                <div class="tool__media-placeholder">
+                  <span class="mono">[ media · drop in dm-maps.mp4 or .png ]</span>
+                  <!-- Drop a video or image into assets/img/tools/dm-maps.* and replace this block:
+                       <video src="assets/img/tools/dm-maps.mp4" autoplay muted loop playsinline></video>
+                       <img src="assets/img/tools/dm-maps.png" alt="DM Maps screenshot" /> -->
+                </div>
+                <span class="tool__chip mono">salesforce · lwc · maps&nbsp;api</span>
+              </div>
+              <div class="tool__body">
+                <p class="tool__index mono">/ tool 01</p>
+                <h3 class="tool__title">DM&nbsp;Maps</h3>
+                <p class="tool__sub">Territory routing &amp; geographic sales intelligence</p>
+                <p class="tool__copy">
+                  Built inside Salesforce as a Lightning Web Component layer over the account graph. Reps see live territory boundaries, account density, and routing optimisation; managers see capacity gaps before the quarter starts. Replaced three spreadsheets and a static map.
+                </p>
+              </div>
+            </article>
+
+            <!-- Tool 2: Voice-to-CRM -->
+            <article class="tool reveal" data-reveal-delay="80">
+              <div class="tool__media">
+                <div class="tool__media-placeholder">
+                  <span class="mono">[ media · drop in voice-to-crm.mp4 or .png ]</span>
+                </div>
+                <span class="tool__chip mono">apex · salesforce · n8n · openai</span>
+              </div>
+              <div class="tool__body">
+                <p class="tool__index mono">/ tool 02</p>
+                <h3 class="tool__title">Voice-to-CRM</h3>
+                <p class="tool__sub">AI ingestion pipeline, written straight into the opportunity</p>
+                <p class="tool__copy">
+                  An end-to-end AI workflow that turns a sales call into structured Salesforce data — MEDDICC fields, next steps, risk flags, competitor mentions — without an AE typing a single note. Voice in, governed records out, no second tool to log into. Built outside Agentforce; works regardless of the org's AI roadmap.
+                </p>
+              </div>
+            </article>
+
+            <!-- Tool 3: Custom CPQ -->
+            <article class="tool reveal" data-reveal-delay="160">
+              <div class="tool__media">
+                <div class="tool__media-placeholder">
+                  <span class="mono">[ media · drop in cpq-engine.mp4 or .png ]</span>
+                </div>
+                <span class="tool__chip mono">apex · flow · multi-currency</span>
+              </div>
+              <div class="tool__body">
+                <p class="tool__index mono">/ tool 03</p>
+                <h3 class="tool__title">Custom&nbsp;CPQ&nbsp;Engine</h3>
+                <p class="tool__sub">Global deal workflow, built from primitives</p>
+                <p class="tool__copy">
+                  Salesforce CPQ wasn't the right fit. I built an internal pricing &amp; quoting engine on the platform — multi-currency, region-aware approvals, deal-desk routing — that handles the company's full global deal flow. Deployed in production, governs millions in pipeline.
+                </p>
+              </div>
+            </article>
+
+            <!-- Tool 4: Excellence Center -->
+            <article class="tool reveal" data-reveal-delay="240">
+              <div class="tool__media">
+                <div class="tool__media-placeholder">
+                  <span class="mono">[ media · drop in excellence-center.mp4 or .png ]</span>
+                </div>
+                <span class="tool__chip mono">governance · ci/cd · enablement</span>
+              </div>
+              <div class="tool__body">
+                <p class="tool__index mono">/ tool 04</p>
+                <h3 class="tool__title">Salesforce Excellence&nbsp;Center</h3>
+                <p class="tool__sub">A program, not a feature</p>
+                <p class="tool__copy">
+                  Stood up the platform's governance layer end-to-end: scratch-org-based CI/CD, code-review standards, developer-led enablement, structured training. Outcome: 400% growth in adoption and a Salesforce org the engineering team is proud to ship into.
+                </p>
+              </div>
+            </article>
+
+            <!-- Tool 5: PLACEHOLDER — n8n + AI workflow -->
+            <article class="tool tool--placeholder reveal" data-reveal-delay="320">
+              <div class="tool__media">
+                <div class="tool__media-placeholder tool__media-placeholder--build">
+                  <span class="mono">[ media · drop in build-05.mp4 or .png ]</span>
+                </div>
+                <span class="tool__chip mono">n8n · llm · webhooks</span>
+              </div>
+              <div class="tool__body">
+                <p class="tool__index mono">/ tool 05 · <span class="tool__placeholder-tag">placeholder</span></p>
+                <h3 class="tool__title">[ AI Workflow Build ]</h3>
+                <p class="tool__sub">Replace with a recent n8n + LLM project</p>
+                <p class="tool__copy">
+                  Slot for a specific AI + automation build — for example, an n8n flow that triggers on a CRM event, calls an LLM to extract or classify data, and writes the result back into a downstream system. Replace this card with the title, one-line subtitle, and 2–3 sentence story of a real recent build.
+                </p>
+              </div>
+            </article>
+
+            <!-- Tool 6: PLACEHOLDER — cross-system integration -->
+            <article class="tool tool--placeholder reveal" data-reveal-delay="400">
+              <div class="tool__media">
+                <div class="tool__media-placeholder tool__media-placeholder--build">
+                  <span class="mono">[ media · drop in build-06.mp4 or .png ]</span>
+                </div>
+                <span class="tool__chip mono">rest · n8n · custom · multi-system</span>
+              </div>
+              <div class="tool__body">
+                <p class="tool__index mono">/ tool 06 · <span class="tool__placeholder-tag">placeholder</span></p>
+                <h3 class="tool__title">[ Cross-System Build ]</h3>
+                <p class="tool__sub">Replace with a recent integration or internal tool</p>
+                <p class="tool__copy">
+                  Slot for a build that lives outside Salesforce — a finance reconciliation pipeline, an HR onboarding automation, a custom internal app for a non-revenue function. Replace with the function it served, the systems it connected, and what changed for the team that used it.
+                </p>
+              </div>
+            </article>
+
+          </div>
+
+          <p class="tools__note reveal mono">
+            <span aria-hidden="true">↳</span> Selected; full implementations under NDA · placeholder cards marked for replacement
+          </p>
+        </div>
+      </section>
+
+
+      <!-- ================== APPROACH ================== -->
+      <section class="section section--approach" id="approach">
+        <div class="container">
+          <header class="section__head reveal">
+            <p class="section__eyebrow mono">03 / Approach</p>
+            <h2 class="section__title">How the work<br/><em>actually&nbsp;runs.</em></h2>
+            <p class="section__intro">
+              Four principles that shape every engagement. Some come from architecture, some from leading commercial teams; together they're the reason the systems still work two years later.
+            </p>
+          </header>
+
+          <div class="approach__grid">
+            <article class="approach-card reveal" data-reveal-delay="0">
+              <p class="approach-card__step mono">i.</p>
+              <h3 class="approach-card__title">Diagnose before&nbsp;you&nbsp;design</h3>
+              <p class="approach-card__copy">
+                Most replatforms fail because the diagnosis was actually a wishlist. The first weeks are about understanding the revenue motion — not the screen-deep symptoms. Real constraints, real data, real cadence.
+              </p>
+            </article>
+
+            <article class="approach-card reveal" data-reveal-delay="80">
+              <p class="approach-card__step mono">ii.</p>
+              <h3 class="approach-card__title">Architecture is a&nbsp;business decision, not an IT&nbsp;one</h3>
+              <p class="approach-card__copy">
+                Object models, sharing, automation strategy, integration topology — these aren't decisions you punt to engineering. They quietly govern what each function can deliver, how fast it can adapt, and what the rest of the company gets to see on Monday morning. I architect like the business depends on it. Because it does.
+              </p>
+            </article>
+
+            <article class="approach-card reveal" data-reveal-delay="160">
+              <p class="approach-card__step mono">iii.</p>
+              <h3 class="approach-card__title">Bulkify by default,&nbsp;govern by design</h3>
+              <p class="approach-card__copy">
+                Governor limits, security review, technical debt, observability — the boring half of the work is the half that decides whether what you ship survives the next quarter of growth. I write code that scales and processes that explain themselves, on Salesforce and off it.
+              </p>
+            </article>
+
+            <article class="approach-card reveal" data-reveal-delay="240">
+              <p class="approach-card__step mono">iv.</p>
+              <h3 class="approach-card__title">Leave the team&nbsp;stronger</h3>
+              <p class="approach-card__copy">
+                Embedded doesn't mean external. The point of the engagement is that your admin, your AEs, your CRO are <em>more</em> capable when I leave the room than when I arrived. Documentation, enablement, and a real handover plan from day one.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================== STACK ================== -->
+      <section class="section section--stack" id="stack">
+        <div class="container">
+          <header class="section__head reveal">
+            <p class="section__eyebrow mono">04 / Stack</p>
+            <h2 class="section__title">A working&nbsp;toolkit,<br/><em>not a&nbsp;résumé.</em></h2>
+            <p class="section__intro">
+              The platforms, languages, and tools I use in production every week. Hands-on, bulkified, deployed.
+            </p>
+          </header>
+
+          <div class="stack__grid">
+            <div class="stack__group reveal">
+              <p class="stack__group-title mono">// Platform</p>
+              <ul class="stack__list">
+                <li>Salesforce <span class="mono">— sales · service · health · marketing cloud</span></li>
+                <li>Agentforce <span class="mono">— agents · skills</span></li>
+                <li>HubSpot <span class="mono">— full architecture</span></li>
+                <li>Podio · Airtable · Notion</li>
+              </ul>
+            </div>
+
+            <div class="stack__group reveal" data-reveal-delay="60">
+              <p class="stack__group-title mono">// AI &amp; Automation</p>
+              <ul class="stack__list">
+                <li>n8n <span class="mono">— self-hosted, production-grade</span></li>
+                <li>OpenAI <span class="mono">— gpt, whisper APIs</span></li>
+                <li>Make · Zapier</li>
+                <li>Structured extraction · prompt orchestration</li>
+              </ul>
+            </div>
+
+            <div class="stack__group reveal" data-reveal-delay="120">
+              <p class="stack__group-title mono">// Development</p>
+              <ul class="stack__list">
+                <li>Apex <span class="mono">— bulk-safe, test-covered</span></li>
+                <li>Lightning Web Components</li>
+                <li>JavaScript · PHP · HTML / CSS</li>
+                <li>SOQL · SOSL · SQL</li>
+              </ul>
+            </div>
+
+            <div class="stack__group reveal" data-reveal-delay="180">
+              <p class="stack__group-title mono">// Integration</p>
+              <ul class="stack__list">
+                <li>REST &amp; SOAP APIs · Webhooks</li>
+                <li>Platform Events · Change Data Capture</li>
+                <li>SFDX · scratch orgs · CI/CD</li>
+                <li>ETL · data-warehouse design</li>
+              </ul>
+            </div>
+
+            <div class="stack__group reveal" data-reveal-delay="240">
+              <p class="stack__group-title mono">// Data &amp; BI</p>
+              <ul class="stack__list">
+                <li>Salesforce Analytics (CRMA)</li>
+                <li>Tableau · Mixpanel</li>
+                <li>Google Analytics</li>
+                <li>Database design &amp; modelling</li>
+              </ul>
+            </div>
+
+            <div class="stack__group reveal" data-reveal-delay="300">
+              <p class="stack__group-title mono">// Strategic</p>
+              <ul class="stack__list">
+                <li>Cross-functional systems architecture</li>
+                <li>Workflow optimisation (any function)</li>
+                <li>Operating cadence &amp; KPI design</li>
+                <li>Multinational team leadership</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <!-- ================== VOICES (TESTIMONIALS) ================== -->
+      <section class="section section--voices" id="voices">
+        <div class="container">
+          <header class="section__head reveal">
+            <p class="section__eyebrow mono">05 / Voices</p>
+            <h2 class="section__title">Said by people<br/><em>who hired me.</em></h2>
+            <p class="section__intro">
+              Selected feedback from RevOps leaders, CROs, and CFOs at companies I've worked with — what changed and what they noticed.
+            </p>
+            <p class="placeholder-flag mono reveal" data-reveal-delay="80">
+              <span aria-hidden="true">⚠</span> Placeholder content · replace with real quotes before going live
+            </p>
+          </header>
+
+          <div class="voices__grid">
+
+            <figure class="voice-card reveal" data-reveal-delay="0">
+              <span class="voice-card__mark" aria-hidden="true">“</span>
+              <blockquote class="voice-card__quote">
+                When we hired Cory our forecast was a guess and our Salesforce org was a museum of half-built ideas. Six months in, the forecast was within three percent of actuals two quarters running, and the platform was something my team could actually ship into. I have rarely seen a single operator move both numbers at once.
+              </blockquote>
+              <figcaption class="voice-card__attr">
+                <span class="voice-card__name">[ Placeholder Name ]</span>
+                <span class="voice-card__role mono">Chief Revenue Officer · [ Placeholder SaaS Co. ]</span>
+              </figcaption>
+            </figure>
+
+            <figure class="voice-card reveal" data-reveal-delay="100">
+              <span class="voice-card__mark" aria-hidden="true">“</span>
+              <blockquote class="voice-card__quote">
+                Most consultants either tell you what to do or do it. Cory does both, and the doing is at the level of a senior architect. The roadmap he handed our board was already pressure-tested against our platform's actual constraints — no surprises in implementation, no hand-waving on numbers.
+              </blockquote>
+              <figcaption class="voice-card__attr">
+                <span class="voice-card__name">[ Placeholder Name ]</span>
+                <span class="voice-card__role mono">Chief Financial Officer · [ Placeholder Series&nbsp;B ]</span>
+              </figcaption>
+            </figure>
+
+            <figure class="voice-card reveal" data-reveal-delay="200">
+              <span class="voice-card__mark" aria-hidden="true">“</span>
+              <blockquote class="voice-card__quote">
+                Our Salesforce instance had quietly become the bottleneck nobody wanted to own. Cory came in, redesigned the data model the way it should have been done from day one, and trained my admin to maintain it. He left the team genuinely stronger than he found it. That's rare.
+              </blockquote>
+              <figcaption class="voice-card__attr">
+                <span class="voice-card__name">[ Placeholder Name ]</span>
+                <span class="voice-card__role mono">VP Revenue Operations · [ Placeholder PE-backed&nbsp;SaaS ]</span>
+              </figcaption>
+            </figure>
+
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================== CONTACT ================== -->
+      <section class="section section--contact" id="contact">
+        <div class="container container--narrow">
+          <header class="section__head section__head--center reveal">
+            <p class="section__eyebrow mono">06 / Contact</p>
+            <h2 class="section__title">Tell me what you're<br/><em>actually&nbsp;trying&nbsp;to&nbsp;solve.</em></h2>
+            <p class="section__intro">
+              The best engagements start with a real problem, not a checklist. Send a short note — what you're working on, where it's stuck — and I'll come back within two business days with a candid view on whether I'm the right fit. If I'm not, I'll usually know someone who is.
+            </p>
+          </header>
+
+          <!--
+            Contact form — Web3Forms.
+            1. Sign up (free) at https://web3forms.com → get an access key.
+            2. Replace YOUR_WEB3FORMS_ACCESS_KEY below with that key.
+            3. The form posts directly to Web3Forms; submissions arrive at the email
+               registered with the access key. No backend, no server, no database needed.
+          -->
+          <form class="contact-form reveal" id="contact-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+            <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY" />
+            <input type="hidden" name="subject" value="New enquiry from corylawing.com" />
+            <input type="hidden" name="from_name" value="corylawing.com contact form" />
+            <!-- Web3Forms honeypot anti-spam -->
+            <input type="checkbox" name="botcheck" class="contact-form__honeypot" style="display:none" tabindex="-1" autocomplete="off" />
+
+            <div class="contact-form__row">
+              <div class="contact-form__field">
+                <label for="cf-name">Name</label>
+                <input id="cf-name" name="name" type="text" required autocomplete="name" placeholder="Jane Doe" />
+              </div>
+              <div class="contact-form__field">
+                <label for="cf-email">Work email</label>
+                <input id="cf-email" name="email" type="email" required autocomplete="email" placeholder="jane@company.com" />
+              </div>
+            </div>
+
+            <div class="contact-form__row">
+              <div class="contact-form__field">
+                <label for="cf-company">Company</label>
+                <input id="cf-company" name="company" type="text" autocomplete="organization" placeholder="Company, Inc." />
+              </div>
+              <div class="contact-form__field">
+                <label for="cf-role">Your role</label>
+                <input id="cf-role" name="role" type="text" autocomplete="organization-title" placeholder="VP RevOps · CRO · CFO …" />
+              </div>
+            </div>
+
+            <div class="contact-form__field">
+              <label for="cf-engagement">What kind of engagement?</label>
+              <select id="cf-engagement" name="engagement">
+                <option value="">— Select one —</option>
+                <option value="embedded">Operations Architect</option>
+                <option value="audit">Operations Audit &amp; Build Sprint</option>
+                <option value="custom-build">Custom Build · AI · Automation · Integration</option>
+                <option value="other">Something else / not sure yet</option>
+              </select>
+            </div>
+
+            <div class="contact-form__field">
+              <label for="cf-message">What are you working on?</label>
+              <textarea id="cf-message" name="message" required rows="6" placeholder="A few lines on the situation, the platform, the team — and what 'good' looks like in 90 days."></textarea>
+            </div>
+
+            <div class="contact-form__actions">
+              <button type="submit" class="btn btn--primary btn--lg">
+                <span>Send the note</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <p class="contact-form__hint mono">/ replies within two business days · marseille time</p>
+            </div>
+
+            <div class="contact-form__status" id="contact-form-status" aria-live="polite"></div>
+          </form>
+
+          <div class="contact__alt reveal">
+            <p class="mono">Or reach out directly</p>
+            <ul>
+              <li><a href="mailto:corylawing@gmail.com">corylawing@gmail.com</a></li>
+              <li><a href="https://www.linkedin.com/in/corylawing" rel="noopener" target="_blank">linkedin.com/in/corylawing</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+
+    <!-- ================== FOOTER ================== -->
+    <footer class="footer" role="contentinfo">
+      <div class="container footer__inner">
+        <div class="footer__brand">
+          <span class="footer__mark">CL</span>
+          <span class="footer__name">Cory Lawing</span>
+          <span class="footer__sub mono">Business Systems · Salesforce · AI Workflows</span>
+        </div>
+
+        <nav class="footer__links" aria-label="Footer">
+          <a href="#practice">Practice</a>
+          <a href="#builds">Built</a>
+          <a href="#approach">Approach</a>
+          <a href="#stack">Stack</a>
+          <a href="#voices">Voices</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <p class="footer__meta mono">
+          <span>American · based in Marseille</span>
+          <span class="footer__dot">·</span>
+          <span>Clients globally</span>
+          <span class="footer__dot">·</span>
+          <span>© <span id="footer-year">2026</span></span>
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
