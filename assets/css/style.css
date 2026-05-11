@@ -61,6 +61,8 @@ html {
   -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
   scroll-padding-top: 88px;
+  overflow-x: clip;
+  width: 100%;
 }
 
 body {
@@ -74,7 +76,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow-x: clip;
+  width: 100%;
+  max-width: 100vw;
+  overscroll-behavior-x: none;
 }
 
 img, svg, video { display: block; max-width: 100%; }
@@ -458,11 +463,14 @@ body::before {
 .hero__noise {
   position: absolute;
   z-index: -1;
-  width: 1100px; height: 1100px;
-  top: -200px; right: -300px;
+  width: min(1100px, 110vw);
+  height: min(1100px, 110vw);
+  top: -200px;
+  right: -200px;
   background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
   filter: blur(40px);
   pointer-events: none;
+  max-width: 100vw;
 }
 
 .hero__inner {
@@ -642,6 +650,49 @@ body::before {
 .diagram__edges {
   opacity: .85;
   stroke-dasharray: 4 6;
+  transition:
+    stroke .55s var(--ease-out),
+    stroke-width .55s var(--ease-out),
+    opacity .55s var(--ease-out),
+    filter .55s var(--ease-out);
+}
+
+/* When the user hovers the hub at the center, all six edges light up.
+   Reinforces the "operations as central hub" metaphor every time
+   someone interacts with the diagram. */
+.diagram__hub { cursor: pointer; }
+
+.diagram__hub-bg {
+  fill: var(--surface);
+  stroke: var(--border-3);
+  stroke-width: 1;
+  transition: fill .35s var(--ease-out), stroke .35s var(--ease-out);
+}
+
+/* When the user hovers the hub at the center, all six edges light up.
+   Reinforces the "operations as central hub" metaphor every time
+   someone interacts with the diagram.
+
+   Uses :has() — supported in all modern browsers (Chrome 105+, Safari 15.4+,
+   Firefox 121+, Edge 105+). Older browsers gracefully degrade to a
+   slightly less coordinated effect (hub-only highlight). */
+.diagram:has(.diagram__hub:hover) .diagram__edges {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  opacity: 1;
+  filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+
+.diagram__hub:hover .diagram__hub-bg,
+.diagram:has(.diagram__hub:hover) .diagram__hub-bg {
+  fill: var(--surface-2);
+  stroke: var(--accent-line);
+}
+
+.diagram__hub:hover .diagram__hub-title,
+.diagram:has(.diagram__hub:hover) .diagram__hub-title {
+  fill: var(--accent);
+  transition: fill .35s var(--ease-out);
 }
 
 .diagram__pulses circle {
@@ -650,7 +701,6 @@ body::before {
 }
 .diagram__pulse--accent { fill: var(--text-1) !important; opacity: .6; }
 
-.diagram__hub-bg { fill: var(--surface); stroke: var(--border-3); stroke-width: 1; }
 .diagram__hub-ring {
   fill: none;
   stroke: var(--accent);
@@ -951,6 +1001,140 @@ body::before {
   text-transform: uppercase;
   letter-spacing: .1em;
   margin-right: .3em;
+}
+
+
+/* ============================================================
+   PROCESS
+   ============================================================ */
+
+.section--process {
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
+}
+
+.process__steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  counter-reset: step;
+}
+
+.process-step {
+  background: var(--bg-2);
+  padding: 2.5rem 2.25rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: background-color .35s var(--ease-out);
+}
+.process-step:hover { background: var(--card); }
+
+.process-step__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+}
+
+.process-step__number {
+  font-family: var(--serif);
+  font-weight: 350;
+  font-size: 2.5rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  margin: 0;
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+}
+
+.process-step__time {
+  font-size: .65rem;
+  color: var(--text-4);
+  letter-spacing: .04em;
+  text-transform: none;
+  margin: 0;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.process-step__title {
+  font-family: var(--serif);
+  font-weight: 350;
+  font-size: 1.55rem;
+  line-height: 1.18;
+  letter-spacing: -0.018em;
+  color: var(--text-1);
+  margin: 0 0 1rem;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
+}
+
+.process-step__copy {
+  font-size: .98rem;
+  line-height: 1.6;
+  color: var(--text-3);
+  margin: 0;
+  max-width: 44ch;
+}
+
+.process-step__copy--tail {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border);
+  color: var(--text-4);
+  font-size: .92rem;
+}
+
+.process-step__paths {
+  list-style: none;
+  padding: 0;
+  margin: 1.1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  max-width: 44ch;
+}
+
+.process-step__paths li {
+  position: relative;
+  padding-left: 4.4rem;
+  font-size: .94rem;
+  line-height: 1.55;
+  color: var(--text-2);
+  min-height: 1.8rem;
+}
+
+.process-step__path-tag {
+  position: absolute;
+  left: 0;
+  top: .15rem;
+  display: inline-block;
+  padding: .15rem .5rem;
+  font-size: .6rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent-line);
+  border-radius: 4px;
+  background: var(--accent-dim);
+  font-weight: 500;
+}
+
+.process-step__title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+  font-variation-settings: "opsz" 144, "SOFT" 80, "WONK" 1;
 }
 
 
@@ -1726,6 +1910,8 @@ body::before {
 
   .approach__grid { grid-template-columns: 1fr; }
 
+  .process__steps { grid-template-columns: 1fr; }
+
   .footer__inner {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -1756,7 +1942,8 @@ body::before {
   .practice-card,
   .tool__body,
   .approach-card,
-  .voice-card {
+  .voice-card,
+  .process-step {
     padding-inline: 1.5rem;
   }
 
