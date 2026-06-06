@@ -2065,6 +2065,39 @@ body::before {
   margin: 0 0 2.25rem;
 }
 
+/* End-to-end capability strip — ends on "Build" in the accent colour,
+   so a glance says: this person takes it all the way to a shipped system. */
+.hero__arc {
+  list-style: none;
+  margin: 2.25rem 0 0;
+  padding: 1.4rem 0 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem 1.1rem;
+}
+.hero__arc li {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  font-family: var(--mono);
+  font-size: .76rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.hero__arc li:not(:last-child)::after {
+  content: "";
+  width: 16px;
+  height: 1px;
+  background: var(--accent);
+}
+.hero__arc li:last-child {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* --- The problem ------------------------------------------- */
 .section--problem { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%); }
 .problem__grid {
