@@ -1948,13 +1948,23 @@ body::before {
 
   .footer__inner {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1.75rem;
     text-align: center;
   }
   .footer__brand, .footer__links, .footer__meta {
     justify-content: center;
     text-align: center;
+    min-width: 0;
   }
+  /* Links must wrap on narrow screens — otherwise the no-wrap row
+     forces the footer wider than the viewport and the page (which
+     clips horizontal overflow) cuts off the right edge of every row. */
+  .footer__links {
+    flex-wrap: wrap;
+    gap: .75rem 1.25rem;
+  }
+  .footer__brand { flex-direction: column; gap: .5rem; }
+  .footer__meta { justify-content: center; }
 }
 
 /* < 640px: tighter spacing, smaller details */
@@ -1970,6 +1980,17 @@ body::before {
   .contact-form__row { grid-template-columns: 1fr; }
 
   .stack__grid { grid-template-columns: 1fr; }
+
+  /* Diagram labels: keep them on a single line and smaller so the
+     bottom stack label can't wrap and collide with the Finance node. */
+  .diagram { padding: 1rem; }
+  .diagram__label {
+    font-size: .54rem;
+    letter-spacing: .02em;
+    white-space: nowrap;
+  }
+  .diagram__label--top    { left: 1rem; top: .8rem; }
+  .diagram__label--bottom { right: 1rem; bottom: .8rem; }
 
   .timeline__item { padding-left: 2.25rem; padding-bottom: 2.25rem; }
 
