@@ -295,6 +295,14 @@ body::before {
   font-variation-settings: "opsz" 144, "SOFT" 50;
 }
 
+/* CL-in-hexagon logo mark (nav + footer chips) */
+.brand-logo {
+  width: 82%;
+  height: 82%;
+  display: block;
+  overflow: visible;
+}
+
 .nav__brand-name {
   font-family: var(--sans);
   font-weight: 500;
