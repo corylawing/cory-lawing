@@ -1991,13 +1991,19 @@ body::before {
 
   .stack__grid { grid-template-columns: 1fr; }
 
-  /* Diagram labels: keep them on a single line and smaller so the
-     bottom stack label can't wrap and collide with the Finance node. */
+  /* Diagram labels: shrink to a single line so the bottom stack label
+     can't wrap into the Finance node or overflow the diagram edges.
+     The visible text is an inner .mono span that sets its own .78rem,
+     so it must inherit the smaller size — sizing the wrapper alone
+     does nothing. */
   .diagram { padding: 1rem; }
   .diagram__label {
-    font-size: .54rem;
-    letter-spacing: .02em;
+    font-size: .5rem;
     white-space: nowrap;
+  }
+  .diagram__label .mono {
+    font-size: inherit;
+    letter-spacing: .015em;
   }
   .diagram__label--top    { left: 1rem; top: .8rem; }
   .diagram__label--bottom { right: 1rem; bottom: .8rem; }
