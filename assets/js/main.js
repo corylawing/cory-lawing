@@ -259,7 +259,7 @@
     : false;
 
   if (canHover && !reduceMotion) {
-    var spotlightCards = document.querySelectorAll(".practice-card, .tool, .voice-card");
+    var spotlightCards = document.querySelectorAll(".practice-card, .tool, .voice-card, .service-card");
     spotlightCards.forEach(function (card) {
       var frame = null;
       card.addEventListener("pointermove", function (e) {
