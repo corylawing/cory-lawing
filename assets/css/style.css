@@ -726,7 +726,8 @@ body::before {
 
 .diagram__pulses circle {
   fill: var(--accent);
-  filter: drop-shadow(0 0 6px var(--accent));
+  /* layered glow: tight bright core + soft wider bloom — richer than one big blur */
+  filter: drop-shadow(0 0 3px var(--accent)) drop-shadow(0 0 10px var(--accent-line));
 }
 .diagram__pulse--accent { fill: var(--text-1) !important; opacity: .6; }
 
