@@ -1969,10 +1969,20 @@ body::before {
 
 /* < 640px: tighter spacing, smaller details */
 @media (max-width: 640px) {
-  .hero { padding-top: 7rem; }
+  .hero { padding-top: 6.5rem; }
+  .hero__inner { gap: 2.5rem; }
+  .hero__title {
+    /* scale with viewport so the no-wrap lines never run off-screen */
+    font-size: clamp(1.95rem, 8.4vw, 2.85rem);
+    margin-bottom: 1.25rem;
+  }
+  .hero__sub { font-size: 1.05rem; margin-bottom: 1.85rem; }
+  .hero__ctas { gap: .65rem; margin-bottom: 2.5rem; }
+  .hero__ctas .btn { flex: 1 1 auto; justify-content: center; }
   .hero__meta {
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem 1rem;
+    padding-top: 1.35rem;
   }
   .hero__scrollcue { display: none; }
 
@@ -2003,4 +2013,18 @@ body::before {
   }
 
   .nav__brand-name { display: none; }
+
+  /* Tighter vertical rhythm — a flat 80px of section padding feels
+     cavernous on a phone; scale it down so the cadence reads as intentional. */
+  .section,
+  .positioning {
+    padding-block: clamp(3.5rem, 11vw, 5rem);
+  }
+  .section__head { margin-bottom: 2.5rem; }
+  .section__title { margin-bottom: 1rem; }
+
+  /* Positioning lead reads tighter at a slightly smaller display size */
+  .positioning__lead { font-size: clamp(1.45rem, 6.2vw, 1.95rem); }
+  .positioning__lead--two { margin-top: 1.5rem; }
+  .positioning__sig { margin-top: 1.75rem; }
 }
