@@ -26,8 +26,8 @@
   --text-1:      #FAFAFA;
   --text-2:      #C4C4C6;
   --text-3:      #A1A1AA;
-  --text-4:      #71717A;
-  --text-5:      #52525B;
+  --text-4:      #8A8A93;  /* lifted from #71717A for WCAG AA on the small mono labels */
+  --text-5:      #5E5E66;  /* nudged up slightly for placeholder/contrast legibility */
 
   /* Accent */
   --accent:      #D9F77B;
@@ -1679,6 +1679,20 @@ body::before {
   background:
     radial-gradient(ellipse 80% 60% at 50% 0%, rgba(217,247,123,.05), transparent 70%),
     var(--bg-2);
+}
+
+.contact__book {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .85rem;
+  margin-bottom: 2.25rem;
+}
+.contact__book-or {
+  margin: 0;
+  color: var(--text-4);
+  text-transform: lowercase;
+  letter-spacing: .05em;
 }
 
 .contact-form {
