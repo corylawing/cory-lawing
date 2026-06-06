@@ -15,11 +15,17 @@
   <meta property="og:title" content="Cory Lawing — Operations Architect" />
   <meta property="og:description" content="I do the strategy, the architecture, and the build. One operator covering what usually takes three." />
   <meta property="og:locale" content="en_US" />
+  <!-- Share image. Absolute URL required by most scrapers — update the domain here if you move to corylawing.com -->
+  <meta property="og:image" content="https://corylawing.github.io/cory-lawing/assets/img/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Cory Lawing — Operations Architect. I do the strategy, the architecture, the build." />
 
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Cory Lawing — Operations Architect" />
   <meta name="twitter:description" content="I do the strategy, the architecture, and the build. One operator covering what usually takes three." />
+  <meta name="twitter:image" content="https://corylawing.github.io/cory-lawing/assets/img/og.png" />
 
   <!-- Favicon — the CL-in-hexagon mark (Georgia fallback; web fonts don't load in favicons) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230A0A0A'/><polygon points='32,13 46.72,21.5 46.72,38.5 32,47 17.28,38.5 17.28,21.5' fill='none' stroke='%23D9F77B' stroke-width='2.2' stroke-linejoin='round'/><g fill='%23D9F77B'><circle cx='32' cy='13' r='2'/><circle cx='46.72' cy='21.5' r='2'/><circle cx='46.72' cy='38.5' r='2'/><circle cx='32' cy='47' r='2'/><circle cx='17.28' cy='38.5' r='2'/><circle cx='17.28' cy='21.5' r='2'/></g><text x='32' y='35' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='16' fill='%23D9F77B'>CL</text></svg>" />
@@ -96,6 +102,8 @@
 
         <div class="hero__inner">
           <div class="hero__copy">
+            <!-- AVAILABILITY STATUS — update or remove this line when your booking
+                 status changes (the pulsing dot draws the eye, so keep it current). -->
             <p class="eyebrow reveal" data-reveal-delay="0">
               <span class="eyebrow__dot"></span>
               <span>Currently booking new engagements</span>
@@ -240,7 +248,7 @@
               </header>
               <h3 class="practice-card__title">Operations Architect</h3>
               <p class="practice-card__copy">
-                Embedded as the operator who covers the whole arc — understand the business problem, architect the workflow that solves it, ship the build that runs it. No translation losses between strategy and execution because there's only one person in the chain. I work across functions: sales, marketing, customer success, finance, HR, data &amp; analytics — wherever the operation needs solving end-to-end.
+                Embedded as the operator who covers the whole arc — understand the business problem, architect the workflow that solves it, ship the build that runs it. No translation losses between strategy and execution because there's only one person in the chain. I work across every function that touches the operation — go-to-market through the back office — wherever it needs solving end-to-end.
               </p>
               <ul class="practice-card__list">
                 <li>Salesforce architecture &amp; hands-on development (Apex, LWC, Flow)</li>
@@ -360,7 +368,7 @@
             <p class="section__eyebrow mono">03 / Built</p>
             <h2 class="section__title">Selected builds,<br/><em>patterns I bring to&nbsp;engagements.</em></h2>
             <p class="section__intro">
-              Custom platforms shipped over a decade-plus career — in roles where I owned the architecture end-to-end. Salesforce-native, AI-orchestrated, marketing &amp; lifecycle, data-driven, fully custom. Each one is a pattern, a stack, and a way of working I bring into engagements when the off-the-shelf product can't go where it needs to — across sales, marketing, customer success, finance, HR and data.
+              Custom platforms shipped over a decade-plus career — in roles where I owned the architecture end-to-end. Salesforce-native, AI-orchestrated, marketing &amp; lifecycle, data-driven, fully custom. Each one is a pattern, a stack, and a way of working I bring into engagements when the off-the-shelf product can't go where it needs to — wherever the work spans go-to-market and the back office.
             </p>
           </header>
 
@@ -752,6 +760,20 @@
               The best engagements start with a real problem, not a checklist. Send a short note — what you're working on, where it's stuck — and I'll come back within two business days with a candid view on whether I'm the right fit. If I'm not, I'll usually know someone who is.
             </p>
           </header>
+
+          <!--
+            Book-a-call CTA. Replace href="#contact-form" with your scheduler link
+            (Calendly / Cal.com / SavvyCal) and add target="_blank" rel="noopener" —
+            e.g. href="https://cal.com/corylawing/intro" target="_blank" rel="noopener".
+            Until then it simply scrolls to the form below.
+          -->
+          <div class="contact__book reveal">
+            <a class="btn btn--primary btn--lg" href="#contact-form">
+              <span>Book a 30-minute intro call</span>
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <p class="contact__book-or mono">or send a note below</p>
+          </div>
 
           <!--
             Contact form — Web3Forms.
