@@ -779,7 +779,6 @@ body::before {
   letter-spacing: .05em;
 }
 .diagram__label--top    { top: 1.1rem; }
-.diagram__label--bottom { bottom: 1.1rem; right: 1.6rem; left: auto; }
 
 
 /* ============================================================
@@ -1999,22 +1998,11 @@ body::before {
 
   .stack__grid { grid-template-columns: 1fr; }
 
-  /* Diagram labels: shrink to a single line so the bottom stack label
-     can't wrap into the Finance node or overflow the diagram edges.
-     The visible text is an inner .mono span that sets its own .78rem,
-     so it must inherit the smaller size — sizing the wrapper alone
-     does nothing. */
+  /* Keep the remaining top caption on one line, comfortably inside the box. */
   .diagram { padding: 1rem; }
-  .diagram__label {
-    font-size: .5rem;
-    white-space: nowrap;
-  }
-  .diagram__label .mono {
-    font-size: inherit;
-    letter-spacing: .015em;
-  }
-  .diagram__label--top    { left: 1rem; top: .8rem; }
-  .diagram__label--bottom { right: 1rem; bottom: .8rem; }
+  .diagram__label { white-space: nowrap; }
+  .diagram__label .mono { font-size: .58rem; letter-spacing: .02em; }
+  .diagram__label--top { left: 1rem; top: .8rem; }
 
   .timeline__item { padding-left: 2.25rem; padding-bottom: 2.25rem; }
 
