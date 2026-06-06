@@ -156,4 +156,122 @@
     });
   }
 
+
+  /* --- Motion preference ----------------------------------- */
+  var reduceMotion = window.matchMedia
+    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    : false;
+
+
+  /* --- Scroll progress bar --------------------------------- */
+  var progress = document.querySelector(".scroll-progress");
+  if (progress) {
+    var docEl = document.documentElement;
+    var progressTick = false;
+    var updateProgress = function () {
+      var max = docEl.scrollHeight - docEl.clientHeight;
+      var ratio = max > 0 ? Math.min(docEl.scrollTop / max, 1) : 0;
+      progress.style.transform = "scaleX(" + ratio + ")";
+      progressTick = false;
+    };
+    updateProgress();
+    window.addEventListener("scroll", function () {
+      if (!progressTick) {
+        progressTick = true;
+        window.requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+  }
+
+
+  /* --- Scroll-spy: light the nav link for the section in view */
+  var navLinks = document.querySelectorAll(".nav__links a");
+  if ("IntersectionObserver" in window && navLinks.length) {
+    var linkById = {};
+    navLinks.forEach(function (a) {
+      var id = (a.getAttribute("href") || "").replace(/^#/, "");
+      if (id) linkById[id] = a;
+    });
+
+    var spyTargets = Object.keys(linkById)
+      .map(function (id) { return document.getElementById(id); })
+      .filter(Boolean);
+
+    if (spyTargets.length) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            navLinks.forEach(function (l) { l.classList.remove("is-active"); });
+            linkById[entry.target.id].classList.add("is-active");
+          }
+        });
+      }, { rootMargin: "-45% 0px -50% 0px" });
+
+      spyTargets.forEach(function (s) { spy.observe(s); });
+    }
+  }
+
+
+  /* --- Count-up on the hero stats -------------------------- */
+  var counters = document.querySelectorAll("[data-count]");
+  if (counters.length) {
+    var runCount = function (el) {
+      var target = parseInt(el.getAttribute("data-count"), 10);
+      var valEl = el.querySelector(".hero__meta-val");
+      if (isNaN(target) || !valEl) return;
+
+      if (reduceMotion) { valEl.textContent = String(target); return; }
+
+      valEl.textContent = "0";
+      var duration = 1100;
+      var start = null;
+      var step = function (ts) {
+        if (start === null) start = ts;
+        var p = Math.min((ts - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        valEl.textContent = String(Math.round(eased * target));
+        if (p < 1) window.requestAnimationFrame(step);
+        else valEl.textContent = String(target);
+      };
+      window.requestAnimationFrame(step);
+    };
+
+    if ("IntersectionObserver" in window) {
+      var countObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            runCount(entry.target);
+            countObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      counters.forEach(function (el) { countObserver.observe(el); });
+    } else {
+      counters.forEach(runCount);
+    }
+  }
+
+
+  /* --- Pointer-tracking spotlight on cards ----------------- */
+  // Only on devices with a fine pointer that can hover, and when motion is allowed.
+  var canHover = window.matchMedia
+    ? window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    : false;
+
+  if (canHover && !reduceMotion) {
+    var spotlightCards = document.querySelectorAll(".practice-card, .tool, .voice-card");
+    spotlightCards.forEach(function (card) {
+      var frame = null;
+      card.addEventListener("pointermove", function (e) {
+        if (frame) return;
+        frame = window.requestAnimationFrame(function () {
+          var r = card.getBoundingClientRect();
+          card.style.setProperty("--mx", ((e.clientX - r.left) / r.width) * 100 + "%");
+          card.style.setProperty("--my", ((e.clientY - r.top) / r.height) * 100 + "%");
+          frame = null;
+        });
+      });
+    });
+  }
+
 })();
