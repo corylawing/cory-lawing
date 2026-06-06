@@ -1993,13 +1993,17 @@ body::before {
   }
   .hero__scrollcue { display: none; }
 
+  /* Diagram is the hero centrepiece on mobile — let it use the full width
+     and reclaim the side padding so it reads bigger and bolder. */
+  .hero__visual { max-width: none; margin-inline: -0.75rem; }
+
   .contact-form { padding: 1.5rem; }
   .contact-form__row { grid-template-columns: 1fr; }
 
   .stack__grid { grid-template-columns: 1fr; }
 
   /* Keep the remaining top caption on one line, comfortably inside the box. */
-  .diagram { padding: 1rem; }
+  .diagram { padding: .85rem; }
   .diagram__label { white-space: nowrap; }
   .diagram__label .mono { font-size: .58rem; letter-spacing: .02em; }
   .diagram__label--top { left: 1rem; top: .8rem; }
