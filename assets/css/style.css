@@ -2694,3 +2694,9 @@ body::before {
 .tool__shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.78) saturate(1.05); transition: filter .4s var(--ease-out), transform .5s var(--ease-out); z-index: 1; }
 .tool:hover .tool__shot { filter: brightness(.95) saturate(1.1); transform: scale(1.04); }
 .tool__media--shot .tool__launch, .tool__media--shot .tool__chip { z-index: 2; }
+
+/* Iframe demo modal (Revenue Cockpit and any future embedded demo) */
+.td-modal--frame { width: min(1320px, 96vw); height: 92vh; max-height: 92vh; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.td-frame__bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .55rem .65rem .55rem 1.1rem; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.td-frame__title { color: var(--text-3); }
+.td-frame { flex: 1; width: 100%; border: 0; display: block; background: #0f1117; }

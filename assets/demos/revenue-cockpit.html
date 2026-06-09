@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sales Command Center — Mockup</title>
+<style>
+  .scc{
+    --scc-bg:#f0f2f5;--scc-card-bg:#fff;--scc-card-border:#e8eaed;--scc-header:#1e1b4b;
+    --scc-text-primary:#0f1117;--scc-text-secondary:#6b7280;--scc-text-muted:#9ca3af;
+    --scc-input-bg:#f8f9fb;--scc-accent:#4f46e5;--scc-accent-2:#6366f1;--scc-accent-3:#8b5cf6;
+    --scc-green-solid:#16a34a;--scc-green-bg:#dcfce7;--scc-green-text:#166534;
+    --scc-amber-bg:#fef3c7;--scc-amber-text:#92400e;--scc-red-bg:#fee2e2;--scc-red-text:#991b1b;
+    --scc-indigo-bg:#eef2ff;--scc-indigo-text:#4f46e5;--scc-purple-bg:#f5f3ff;--scc-purple-text:#7c3aed;
+    --scc-shine:rgba(0,0,0,.04);--scc-shadow-rest:0 1px 3px rgba(0,0,0,.05);
+    --scc-shadow-hover:0 4px 12px rgba(0,0,0,.08);--scc-shadow-drop:0 8px 24px rgba(0,0,0,.10),0 2px 6px rgba(0,0,0,.05);
+  }
+  .scc.scc--dark{
+    --scc-bg:#111827;--scc-card-bg:#1f2937;--scc-card-border:#374151;--scc-header:#1e1b4b;
+    --scc-text-primary:#f9fafb;--scc-text-secondary:#d1d5db;--scc-text-muted:#6b7280;--scc-input-bg:#374151;
+    --scc-green-bg:#14532d;--scc-green-text:#86efac;--scc-amber-bg:#78350f;--scc-amber-text:#fcd34d;
+    --scc-red-bg:#7f1d1d;--scc-red-text:#fca5a5;--scc-indigo-bg:#312e81;--scc-indigo-text:#a5b4fc;
+    --scc-purple-bg:#4c1d95;--scc-purple-text:#c4b5fd;--scc-shine:rgba(255,255,255,.05);
+    --scc-shadow-rest:0 1px 3px rgba(0,0,0,.3);--scc-shadow-hover:0 4px 12px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;}html,body{margin:0;padding:0;}
+  .scc{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--scc-bg);color:var(--scc-text-primary);min-height:100vh;font-size:13px;font-weight:500;-webkit-font-smoothing:antialiased;position:relative;transition:background .2s,color .2s;}
+  .scc::before{content:"";position:fixed;inset:0;background:radial-gradient(1200px 500px at 12% -8%,rgba(99,102,241,.07),transparent 60%);pointer-events:none;z-index:0;}
+  .scc.scc--dark::before{background:radial-gradient(1200px 500px at 12% -8%,rgba(99,102,241,.12),transparent 60%);}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;}
+  :focus-visible{outline:2px solid var(--scc-accent);outline-offset:2px;border-radius:6px;}
+  .scc-micro{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--scc-text-muted);}
+
+  .scc-header{background:var(--scc-header);padding:14px 24px;display:flex;align-items:center;gap:16px;position:relative;z-index:2;flex-wrap:wrap;}
+  .scc-header__icon{width:44px;height:44px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,rgba(99,102,241,.6),rgba(139,92,246,.5));box-shadow:0 2px 12px rgba(99,102,241,.3);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
+  .scc-header__titles{display:flex;flex-direction:column;gap:2px;}
+  .scc-header__title{font-size:18px;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1;}
+  .scc-header__subtitle{font-size:12px;color:rgba(255,255,255,.5);}
+  .scc-header__spacer{flex:1;}
+  .scc-header__right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .scc-demo{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.25);border-radius:20px;padding:3px 4px 3px 10px;}
+  .scc-demo__lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.45);}
+  .scc-seg{display:flex;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:2px;height:30px;}
+  .scc-seg button{border-radius:18px;padding:0 12px;font-size:11px;font-weight:700;color:rgba(255,255,255,.6);transition:.2s;}
+  .scc-seg button[aria-pressed="true"]{background:linear-gradient(135deg,var(--scc-accent-2),var(--scc-accent-3));color:#fff;box-shadow:0 2px 8px rgba(99,102,241,.4);}
+  .scc-iconbtn{height:32px;min-width:32px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;transition:.2s;}
+  .scc-iconbtn:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);}
+  .scc-help{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.4);box-shadow:0 0 12px rgba(99,102,241,.2);}
+  .scc-help__q{width:16px;height:16px;border-radius:50%;border:1px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
+  .scc-refresh.is-spinning svg{animation:scc-spin .7s linear;}
+  @keyframes scc-spin{to{transform:rotate(360deg);}}
+
+  .scc-page{max-width:1600px;margin:0 auto;padding:20px 24px;position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;}
+  .scc-card{background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:12px;box-shadow:var(--scc-shadow-rest);transition:background .2s,border-color .2s,box-shadow .2s,transform .2s;}
+  .scc-card--pad{padding:20px;}
+  .scc-card__head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .scc-card__title{font-size:18px;font-weight:800;letter-spacing:-.02em;}
+  .scc-card__sub{font-size:12px;color:var(--scc-text-secondary);}
+  .scc-grow{flex:1;}
+  .scc-reveal{opacity:0;transform:translateY(8px);animation:scc-in .5s ease forwards;}
+  @keyframes scc-in{to{opacity:1;transform:translateY(0);}}
+
+  .scc-briefing{padding:18px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .scc-briefing__hi{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1;}
+  .scc-briefing__hi b{background:linear-gradient(135deg,var(--scc-accent),var(--scc-accent-3));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .scc-briefing__sub{font-size:12px;color:var(--scc-text-secondary);margin-top:4px;}
+  .scc-chips{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
+  .scc-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:20px;font-size:11px;font-weight:600;background:var(--scc-indigo-bg);color:var(--scc-indigo-text);}
+  .scc-chip b{font-weight:800;font-size:12px;}
+  .scc-chip--red{background:var(--scc-red-bg);color:var(--scc-red-text);}
+  .scc-chip--amber{background:var(--scc-amber-bg);color:var(--scc-amber-text);}
+  .scc-chip--purple{background:var(--scc-purple-bg);color:var(--scc-purple-text);}
+  .scc-chip--green{background:var(--scc-green-bg);color:var(--scc-green-text);}
+
+  .scc-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(166px,1fr));gap:12px;}
+  .scc-kpi{background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:12px;box-shadow:var(--scc-shadow-rest);padding:14px 14px 14px 18px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s;}
+  .scc-kpi:hover{box-shadow:var(--scc-shadow-hover);transform:translateY(-1px);}
+  .scc-kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;}
+  .scc-kpi--indigo::before{background:var(--scc-accent);}.scc-kpi--purple::before{background:var(--scc-accent-3);}
+  .scc-kpi--green::before{background:var(--scc-green-solid);}.scc-kpi--amber::before{background:#f59e0b;}.scc-kpi--red::before{background:#ef4444;}
+  .scc-kpi__val{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1;margin:8px 0 6px;}
+  .scc-kpi__cap{font-size:12px;color:var(--scc-text-secondary);}
+  .scc-pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;margin-top:8px;}
+  .scc-pill--green{background:var(--scc-green-bg);color:var(--scc-green-text);}.scc-pill--amber{background:var(--scc-amber-bg);color:var(--scc-amber-text);}
+  .scc-pill--red{background:var(--scc-red-bg);color:var(--scc-red-text);}.scc-pill--indigo{background:var(--scc-indigo-bg);color:var(--scc-indigo-text);}
+
+  .scc-main{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;align-items:start;}
+  .scc-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+
+  .scc-filterbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .scc-filtergroup{display:flex;gap:6px;flex-wrap:wrap;}
+  .scc-filterbar__div{width:1px;align-self:stretch;background:var(--scc-card-border);}
+  .scc-fchip{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;background:var(--scc-input-bg);color:var(--scc-text-secondary);border:1px solid transparent;transition:.2s;}
+  .scc-fchip:hover{color:var(--scc-text-primary);}
+  .scc-fchip[aria-pressed="true"]{background:var(--scc-indigo-bg);color:var(--scc-indigo-text);border-color:rgba(79,70,229,.25);}
+
+  .scc-queue{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+  .scc-action{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-radius:10px;border:1px solid var(--scc-card-border);background:var(--scc-card-bg);border-left-width:4px;transition:.2s;}
+  .scc-action:hover{box-shadow:var(--scc-shadow-hover);transform:translateY(-1px);}
+  .scc-action--critical{border-left-color:#ef4444;}.scc-action--medium{border-left-color:#f59e0b;}.scc-action--low{border-left-color:var(--scc-accent-2);}
+  .scc-action__icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--scc-input-bg);color:var(--scc-text-secondary);}
+  .scc-action__icon svg{width:18px;height:18px;}
+  .scc-action__body{min-width:0;}
+  .scc-action__top{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;}
+  .scc-action__name{font-size:13px;font-weight:700;letter-spacing:-.01em;}
+  .scc-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--scc-input-bg);color:var(--scc-text-muted);}
+  .scc-tier{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+  .scc-tier--critical{background:var(--scc-red-bg);color:var(--scc-red-text);}.scc-tier--medium{background:var(--scc-amber-bg);color:var(--scc-amber-text);}.scc-tier--low{background:var(--scc-indigo-bg);color:var(--scc-indigo-text);}
+  .scc-action__reason{font-size:12px;color:var(--scc-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .scc-action__right{display:flex;align-items:center;gap:12px;}
+  .scc-score{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+  .scc-score--critical{background:var(--scc-red-bg);color:var(--scc-red-text);}.scc-score--medium{background:var(--scc-amber-bg);color:var(--scc-amber-text);}.scc-score--low{background:var(--scc-indigo-bg);color:var(--scc-indigo-text);}
+  .scc-cta{padding:7px 13px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;background:var(--scc-indigo-bg);color:var(--scc-indigo-text);border:1px solid rgba(79,70,229,.25);transition:.2s;}
+  .scc-cta:hover{background:var(--scc-accent);color:#fff;box-shadow:0 0 14px rgba(99,102,241,.4);}
+  .scc-more{margin-top:10px;text-align:center;}
+  .scc-more button{font-size:12px;font-weight:700;color:var(--scc-accent);padding:8px 16px;border-radius:8px;background:var(--scc-input-bg);}
+
+  .scc-btn-primary{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--scc-accent),var(--scc-accent-3));box-shadow:0 2px 12px rgba(99,102,241,.35);transition:.2s;}
+  .scc-btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(99,102,241,.5);}
+
+  .scc-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px;}
+  .scc-tile{border:1px solid var(--scc-card-border);border-radius:10px;padding:13px;background:var(--scc-card-bg);transition:.2s;text-align:left;}
+  .scc-tile:hover{box-shadow:var(--scc-shadow-hover);transform:translateY(-1px);}
+  .scc-tile__n{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1;}
+  .scc-tile__l{font-size:11px;color:var(--scc-text-secondary);margin-top:6px;line-height:1.3;}
+  .scc-tile--red .scc-tile__n{color:#ef4444;}.scc-tile--amber .scc-tile__n{color:#f59e0b;}.scc-tile--green .scc-tile__n{color:var(--scc-green-solid);}
+
+  /* segmentation tier tiles */
+  .scc-segtile{border:1px solid var(--scc-card-border);border-radius:10px;padding:12px;background:var(--scc-card-bg);text-align:left;transition:.2s;cursor:pointer;}
+  .scc-segtile:hover{box-shadow:var(--scc-shadow-hover);transform:translateY(-1px);}
+  .scc-segtile[aria-pressed="true"]{border-color:var(--scc-accent);box-shadow:0 0 0 1px var(--scc-accent);}
+  .scc-segtile__name{font-size:12px;font-weight:800;}
+  .scc-segtile__n{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:5px 0 2px;}
+  .scc-segtile__sub{font-size:10px;color:var(--scc-text-muted);}
+
+  .scc-tierbadge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px;}
+  .scc-tier-e1,.scc-tier-e2{background:var(--scc-purple-bg);color:var(--scc-purple-text);}
+  .scc-tier-e3,.scc-tier-e4{background:var(--scc-amber-bg);color:var(--scc-amber-text);}
+  .scc-tier-e5{background:var(--scc-indigo-bg);color:var(--scc-indigo-text);}
+
+  .scc-musp-toggle{display:flex;gap:4px;background:var(--scc-input-bg);border-radius:8px;padding:3px;}
+  .scc-musp-toggle button{font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;color:var(--scc-text-secondary);}
+  .scc-musp-toggle button[aria-pressed="true"]{background:var(--scc-card-bg);color:var(--scc-accent);box-shadow:var(--scc-shadow-rest);}
+
+  .scc-crow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--scc-card-border);}
+  .scc-crow:last-child{border-bottom:none;}
+  .scc-crow__name{font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .scc-crow__meta{font-size:11px;color:var(--scc-text-muted);margin-top:5px;}
+  .scc-statuspill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+  .scc-status-below{background:var(--scc-red-bg);color:var(--scc-red-text);}
+  .scc-status-on{background:var(--scc-amber-bg);color:var(--scc-amber-text);}
+  .scc-status-above{background:var(--scc-green-bg);color:var(--scc-green-text);}
+  .scc-status-limited{background:var(--scc-input-bg);color:var(--scc-text-muted);}
+  .scc-visit{font-size:11px;font-weight:700;text-align:right;}
+  .scc-visit--ok{color:var(--scc-green-solid);}.scc-visit--warn{color:#f59e0b;}.scc-visit--over{color:#ef4444;}
+  .scc-crow__musp{font-size:14px;font-weight:800;}
+
+  .scc-tabs{display:flex;gap:4px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px;}
+  .scc-tab{padding:6px 10px;border-radius:8px;font-size:11px;font-weight:600;color:var(--scc-text-secondary);white-space:nowrap;transition:.2s;}
+  .scc-tab[aria-pressed="true"]{background:var(--scc-input-bg);color:var(--scc-text-primary);}
+  .scc-scope{display:flex;gap:4px;margin-bottom:12px;}
+  .scc-scope button{font-size:10px;font-weight:700;padding:4px 11px;border-radius:20px;background:var(--scc-input-bg);color:var(--scc-text-secondary);}
+  .scc-scope button[aria-pressed="true"]{background:var(--scc-indigo-bg);color:var(--scc-indigo-text);}
+  .scc-lrow{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:8px;}
+  .scc-lrow--me{background:var(--scc-indigo-bg);}
+  .scc-lrow--beat{box-shadow:inset 0 0 0 1px var(--scc-amber-text);border-radius:8px;}
+  .scc-rank{width:22px;font-size:12px;font-weight:800;color:var(--scc-text-muted);text-align:center;}
+  .scc-rank--top{color:var(--scc-accent-3);}
+  .scc-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
+  .scc-lrow__name{font-size:12px;font-weight:600;flex:1;}.scc-lrow__name b{color:var(--scc-indigo-text);}
+  .scc-lrow__val{font-size:12px;font-weight:800;}
+  .scc-beat-note{font-size:10px;font-weight:700;color:var(--scc-amber-text);padding:4px 6px;}
+
+  .scc-target{margin-bottom:14px;}.scc-target:last-child{margin-bottom:0;}
+  .scc-target__top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .scc-target__lbl{font-size:12px;font-weight:600;}.scc-target__frac{font-size:11px;color:var(--scc-text-muted);}
+  .scc-bar{height:7px;border-radius:20px;background:var(--scc-input-bg);overflow:hidden;}
+  .scc-bar__fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--scc-accent),var(--scc-accent-3));transition:width .8s ease;}
+  .scc-bar__fill--over{background:linear-gradient(90deg,var(--scc-green-solid),#4ade80);}
+
+  .scc-up{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--scc-card-border);}
+  .scc-up:last-child{border-bottom:none;}
+  .scc-up__time{font-size:11px;font-weight:700;color:var(--scc-text-secondary);width:58px;flex-shrink:0;}
+  .scc-up__t{font-size:12px;font-weight:600;}.scc-up__m{font-size:11px;color:var(--scc-text-muted);}
+  .scc-up__label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--scc-text-muted);margin:14px 0 6px;}
+  .scc-up__label:first-child{margin-top:0;}
+
+  .scc-status{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--scc-text-muted);}
+  .scc-dot{width:6px;height:6px;border-radius:50%;}.scc-dot--green{background:var(--scc-green-solid);}
+  .scc-skel{border-radius:8px;background:linear-gradient(90deg,var(--scc-input-bg) 25%,var(--scc-shine) 50%,var(--scc-input-bg) 75%);background-size:1000px 100%;animation:scc-shimmer 1.6s linear infinite;}
+  @keyframes scc-shimmer{0%{background-position:-400px 0;}100%{background-position:600px 0;}}
+
+  /* kanban */
+  .scc-modal{position:fixed;inset:0;z-index:50;background:rgba(15,17,23,.55);backdrop-filter:blur(3px);display:none;}
+  .scc-modal.is-open{display:flex;flex-direction:column;}
+  .scc-modal__bar{background:var(--scc-header);padding:14px 20px;display:flex;align-items:center;gap:12px;}
+  .scc-modal__title{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.02em;}
+  .scc-modal__sub{font-size:11px;color:rgba(255,255,255,.5);}
+  .scc-modal__body{flex:1;overflow:auto;padding:16px;background:var(--scc-bg);}
+  .scc-kan{display:flex;gap:12px;min-height:100%;}
+  .scc-kancol{flex:0 0 230px;display:flex;flex-direction:column;background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:12px;}
+  .scc-kancol.is-over{border-color:var(--scc-accent);box-shadow:0 0 0 2px rgba(79,70,229,.3);}
+  .scc-kancol.is-late .scc-kancol__head{background:linear-gradient(90deg,rgba(139,92,246,.10),transparent);}
+  .scc-kancol__head{padding:12px 14px;border-bottom:1px solid var(--scc-card-border);display:flex;align-items:center;gap:8px;border-radius:12px 12px 0 0;}
+  .scc-kancol__name{font-size:12px;font-weight:800;}
+  .scc-kancol__count{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--scc-input-bg);color:var(--scc-text-muted);margin-left:auto;}
+  .scc-kancol__body{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .scc-kancard{background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-left:4px solid var(--scc-accent-2);border-radius:9px;padding:10px 12px;cursor:grab;box-shadow:var(--scc-shadow-rest);}
+  .scc-kancard:hover{box-shadow:var(--scc-shadow-hover);}
+  .scc-kancard.is-drag{opacity:.4;}
+  .scc-kancard__name{font-size:12px;font-weight:700;margin-bottom:5px;}
+  .scc-kancard__meta{font-size:11px;color:var(--scc-text-muted);}
+  .scc-kancard--new{border-left-color:var(--scc-accent);}
+  .scc-kancard--up{border-left-color:var(--scc-accent-3);}
+  .scc-kancard--re{border-left-color:#f59e0b;}
+  .scc-typchip{font-size:9px;font-weight:700;padding:1px 6px;border-radius:5px;background:var(--scc-input-bg);color:var(--scc-text-secondary);margin-top:6px;display:inline-block;}
+
+  /* trend modal */
+  .scc-trend{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;}
+  .scc-trend.is-open{display:flex;}
+  .scc-trend__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.75);opacity:0;animation:scc-bd .2s ease forwards;}
+  @keyframes scc-bd{to{opacity:1;}}
+  .scc-trend__panel{position:relative;width:min(640px,92vw);background:#0f172a;border:1px solid #334155;border-radius:16px;padding:20px;box-shadow:0 24px 64px rgba(0,0,0,.5);color:#e2e8f0;transform:translateY(24px) scale(.97);opacity:0;animation:scc-tin .25s cubic-bezier(.16,1,.3,1) forwards;}
+  @keyframes scc-tin{to{transform:translateY(0) scale(1);opacity:1;}}
+  .scc-trend__head{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;}
+  .scc-trend__title{font-size:16px;font-weight:800;letter-spacing:-.02em;color:#f8fafc;}
+  .scc-trend__sub{font-size:11px;color:#64748b;margin-top:2px;}
+  .scc-trend__close{margin-left:auto;width:30px;height:30px;border-radius:8px;background:#1e293b;border:1px solid #334155;color:#94a3b8;}
+  .scc-trend__tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+  .scc-ttab{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;background:#1e293b;color:#94a3b8;border:1px solid transparent;}
+  .scc-ttab[aria-pressed="true"]{background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;box-shadow:0 0 16px rgba(99,102,241,.5);}
+  .scc-tsplit{display:flex;gap:4px;margin-bottom:14px;}
+  .scc-tsplit button{font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;background:#1e293b;color:#94a3b8;}
+  .scc-tsplit button[aria-pressed="true"]{background:#334155;color:#e2e8f0;}
+  .scc-chartwrap{position:relative;height:230px;}
+  .scc-chart-svg{width:100%;height:100%;display:block;}
+  .scc-line{filter:drop-shadow(0 0 6px rgba(129,140,248,.7));}
+  .scc-tooltip{position:absolute;pointer-events:none;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:6px 10px;font-size:11px;color:#f8fafc;transform:translate(-50%,-150%);white-space:nowrap;opacity:0;transition:opacity .12s;}
+  .scc-tooltip b{color:#a5b4fc;}
+  .scc-stats{display:flex;background:#1e293b;border:1px solid #334155;border-radius:12px;margin-top:14px;overflow:hidden;}
+  .scc-stat{flex:1;padding:12px 14px;text-align:center;border-right:1px solid #334155;}
+  .scc-stat:last-child{border-right:none;}
+  .scc-stat__l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#64748b;}
+  .scc-stat__v{font-size:18px;font-weight:800;color:#f8fafc;margin-top:4px;}
+  .scc-stat__v.up{color:#4ade80;}.scc-stat__v.down{color:#f87171;}
+  .scc-spinner{width:28px;height:28px;border-radius:50%;border:3px solid #334155;border-top-color:#818cf8;animation:scc-spin2 .8s linear infinite;margin:74px auto 12px;}
+  @keyframes scc-spin2{to{transform:rotate(360deg);}}
+  .scc-loadtext{text-align:center;color:#64748b;font-size:12px;margin-bottom:74px;}
+
+
+
+
+
+  /* ===== voice recorder ===== */
+  .scc-voice-search{width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--scc-card-border);background:var(--scc-card-bg);color:var(--scc-text-primary);font-size:13px;font-family:inherit;margin-bottom:12px;}
+  .scc-voice-list{display:flex;flex-direction:column;gap:6px;}
+  .scc-voice-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:10px;border:1px solid var(--scc-card-border);background:var(--scc-card-bg);cursor:pointer;text-align:left;transition:.15s;width:100%;}
+  .scc-voice-item:hover{border-color:var(--scc-accent);box-shadow:var(--scc-shadow-hover);}
+  .scc-voice-item.sel{border-color:var(--scc-accent);box-shadow:0 0 0 1px var(--scc-accent);}
+  .scc-voice-item__n{font-size:13px;font-weight:700;}
+  .scc-voice-item__a{font-size:11px;color:var(--scc-text-muted);}
+  .scc-voice-url{margin-top:14px;background:var(--scc-input-bg);border-radius:10px;padding:12px;font-size:11px;word-break:break-all;color:var(--scc-text-secondary);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .scc-voice-go{margin-top:10px;}
+
+  /* ===== explanations: info tooltips + explain-mode ===== */
+  .scc-info{position:relative;display:inline-flex;vertical-align:middle;}
+  .scc-i{width:14px;height:14px;border-radius:50%;border:1px solid var(--scc-text-muted);color:var(--scc-text-muted);font-size:9px;font-weight:700;font-style:italic;font-family:Georgia,'Times New Roman',serif;text-transform:none;letter-spacing:0;display:inline-flex;align-items:center;justify-content:center;line-height:1;cursor:help;}
+  .scc-i:hover{border-color:var(--scc-accent);color:var(--scc-accent);}
+  .scc-tip{position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%) translateY(4px);width:236px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:10px;padding:11px 12px;box-shadow:0 12px 32px rgba(0,0,0,.45);opacity:0;visibility:hidden;transition:opacity .15s,transform .15s;z-index:95;display:flex;flex-direction:column;gap:5px;pointer-events:none;text-transform:none;letter-spacing:normal;text-align:left;}
+  .scc-tip>b:first-child{color:#f8fafc;font-size:12px;font-weight:800;}
+  .scc-tip__r{font-size:11px;font-weight:500;line-height:1.45;color:#cbd5e1;}
+  .scc-tip__r b{color:#818cf8;font-weight:700;}
+  .scc-info:hover .scc-tip,.scc-info:focus-within .scc-tip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+  .scc-tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#0f172a;}
+  .scc-explain{font-size:11px;line-height:1.45;color:var(--scc-text-secondary);background:var(--scc-indigo-bg);border-radius:7px;padding:7px 9px;margin-top:9px;text-transform:none;letter-spacing:normal;font-weight:500;}
+  .scc-explain b{color:var(--scc-indigo-text);font-weight:700;}
+  .scc-iconbtn.scc-help.is-active{background:var(--scc-accent);border-color:var(--scc-accent);box-shadow:0 0 14px rgba(99,102,241,.5);}
+  .scc-i{width:14px;height:14px;border-radius:50%;border:1px solid var(--scc-text-muted);color:var(--scc-text-muted);font-size:9px;font-weight:700;font-style:italic;font-family:Georgia,'Times New Roman',serif;text-transform:none;letter-spacing:0;display:inline-flex;align-items:center;justify-content:center;line-height:1;cursor:help;vertical-align:middle;padding:0;}
+  .scc-i:hover,.scc-i:focus-visible{border-color:var(--scc-accent);color:var(--scc-accent);}
+  .scc-tipfixed{position:fixed;display:none;flex-direction:column;gap:5px;width:240px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:10px;padding:11px 12px;box-shadow:0 12px 32px rgba(0,0,0,.45);z-index:200;pointer-events:none;text-transform:none;letter-spacing:normal;text-align:left;}
+  .scc-tipfixed>b:first-child{color:#f8fafc;font-size:12px;font-weight:800;}
+
+  .scc-queue-hero{box-shadow:var(--scc-shadow-drop),0 0 0 1px rgba(79,70,229,.14);position:relative;}
+  .scc-queue-hero::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;background:linear-gradient(90deg,var(--scc-accent),var(--scc-accent-3));}
+  .scc-queue-hero .scc-card__title{font-size:22px;}
+  .scc-queue__badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 8px;border-radius:20px;background:linear-gradient(135deg,var(--scc-accent),var(--scc-accent-3));color:#fff;font-size:13px;font-weight:800;box-shadow:0 2px 8px rgba(99,102,241,.35);}
+  .scc-context-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--scc-text-muted);margin:12px 2px 0;}
+  /* ===== two-tier scorecard ===== */
+  .scc-heroes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;}
+  .scc-hero{background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:12px;box-shadow:var(--scc-shadow-rest);padding:14px 14px 14px 18px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s;}
+  .scc-hero:hover{box-shadow:var(--scc-shadow-hover);transform:translateY(-1px);}
+  .scc-hero::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;}
+  .scc-hero--indigo::before{background:var(--scc-accent);}.scc-hero--purple::before{background:var(--scc-accent-3);}
+  .scc-hero--green::before{background:var(--scc-green-solid);}.scc-hero--amber::before{background:#f59e0b;}.scc-hero--red::before{background:#ef4444;}
+  .scc-hero--hit{box-shadow:0 0 0 1px var(--scc-green-solid),0 6px 20px rgba(22,163,74,.18);}
+  .scc-hero--hit::before{background:var(--scc-green-solid)!important;}
+  .scc-hero--hit:hover{transform:translateY(-1px);box-shadow:0 0 0 1px var(--scc-green-solid),0 8px 24px rgba(22,163,74,.28);}
+  .scc-hero__met{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--scc-green-text);background:var(--scc-green-bg);padding:2px 7px;border-radius:20px;margin-left:4px;}
+  .scc-hero__val{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1;margin:8px 0 6px;}
+  .scc-hero__cap{font-size:12px;color:var(--scc-text-secondary);}
+  .scc-band{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:12px;box-shadow:var(--scc-shadow-rest);overflow:hidden;}
+  .scc-statcell{padding:12px 16px;border-right:1px solid var(--scc-card-border);border-bottom:1px solid var(--scc-card-border);}
+  .scc-statcell__l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--scc-text-muted);display:flex;align-items:center;gap:6px;}
+  .scc-statcell__v{font-size:17px;font-weight:800;letter-spacing:-.02em;margin-top:5px;}
+  .scc-statcell__s{font-size:10px;color:var(--scc-text-muted);margin-top:2px;}
+  .scc-statcell .scc-edit{font-size:9px;padding:1px 5px;}
+  .scc-dotbadge{width:7px;height:7px;border-radius:50%;display:inline-block;}
+  .scc-db-red{background:#ef4444;}.scc-db-amber{background:#f59e0b;}.scc-db-green{background:var(--scc-green-solid);}
+
+  /* collapsible secondary workspace */
+  .scc-section__toggle{display:flex;align-items:center;gap:8px;width:100%;text-align:left;}
+  .scc-caret{transition:transform .2s;display:inline-flex;}
+  .scc-caret.open{transform:rotate(90deg);}
+  .scc-section__count{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--scc-input-bg);color:var(--scc-text-secondary);}
+  .scc-secbody{margin-top:14px;}
+  .scc-secbody.hidden{display:none;}
+
+  /* ===== additions: Expansion gamification, focus, campaigns, activations, maps ===== */
+  .scc-vps{display:flex;align-items:center;gap:16px;padding:14px 18px;border-left:4px solid var(--scc-accent-3);position:relative;overflow:hidden;}
+  .scc-vps.is-won{border-left-color:var(--scc-green-solid);background:linear-gradient(90deg,rgba(22,163,74,.08),transparent);}
+  .scc-vps__l{flex:1;min-width:0;}
+  .scc-vps__title{font-size:13px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;}
+  .scc-vps__sub{font-size:11px;color:var(--scc-text-secondary);margin-top:2px;}
+  .scc-vps__meter{display:flex;gap:5px;margin-top:9px;}
+  .scc-vps__pip{width:34px;height:8px;border-radius:20px;background:var(--scc-input-bg);}
+  .scc-vps__pip.on{background:linear-gradient(90deg,var(--scc-accent),var(--scc-accent-3));}
+  .scc-vps.is-won .scc-vps__pip.on{background:linear-gradient(90deg,var(--scc-green-solid),#4ade80);}
+  .scc-vps__big{font-size:26px;font-weight:800;letter-spacing:-.02em;}
+  .scc-vps__demo{font-size:11px;font-weight:700;padding:7px 12px;border-radius:8px;background:var(--scc-indigo-bg);color:var(--scc-indigo-text);border:1px solid rgba(79,70,229,.25);}
+  .scc-confetti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden;}
+  .scc-conf{position:absolute;width:9px;height:14px;top:-20px;border-radius:2px;animation:scc-fall linear forwards;}
+  @keyframes scc-fall{to{transform:translateY(110vh) rotate(720deg);}}
+
+  .scc-focus__top{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+  .scc-ring{width:54px;height:54px;flex-shrink:0;}
+  .scc-focus__score{font-size:11px;color:var(--scc-text-secondary);}
+  .scc-focus__actions{font-size:12px;line-height:1.5;color:var(--scc-text-primary);background:var(--scc-input-bg);border-radius:8px;padding:11px 12px;}
+  .scc-focus__by{font-size:10px;color:var(--scc-text-muted);margin-top:8px;}
+
+  .scc-camp{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--scc-card-border);}
+  .scc-camp:last-child{border-bottom:none;}
+  .scc-camp__date{font-size:11px;font-weight:700;color:var(--scc-text-secondary);width:52px;flex-shrink:0;}
+  .scc-camp__n{font-size:12px;font-weight:600;}
+  .scc-camp__resp{font-size:11px;color:var(--scc-text-muted);}
+  .scc-camp__badge{margin-left:auto;font-size:11px;font-weight:800;color:var(--scc-accent);}
+
+  .scc-firstactivation{display:flex;align-items:center;gap:12px;background:var(--scc-input-bg);border-radius:10px;padding:11px 13px;margin-bottom:14px;}
+  .scc-firstactivation__icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+  .scc-fs--down{background:var(--scc-red-bg);color:var(--scc-red-text);}
+  .scc-fs--flat{background:var(--scc-amber-bg);color:var(--scc-amber-text);}
+  .scc-fs--up{background:var(--scc-green-bg);color:var(--scc-green-text);}
+  .scc-firstactivation__t{font-size:12px;font-weight:700;}
+  .scc-firstactivation__m{font-size:11px;color:var(--scc-text-secondary);}
+  .scc-onboard{margin-left:auto;text-align:right;}
+  .scc-onboard__v{font-size:16px;font-weight:800;}
+  .scc-edit{font-size:11px;font-weight:700;color:var(--scc-accent);background:none;padding:2px 6px;border-radius:6px;}
+  .scc-edit:hover{background:var(--scc-indigo-bg);}
+
+  .scc-maps__body{flex:1;display:flex;align-items:center;justify-content:center;background:var(--scc-bg);padding:24px;}
+  .scc-maps__stub{text-align:center;max-width:460px;}
+  .scc-maps__stub svg{opacity:.5;margin-bottom:14px;}
+  .scc-maps__h{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;}
+  .scc-maps__p{font-size:13px;color:var(--scc-text-secondary);line-height:1.5;}
+
+  @media(max-width:1100px){.scc-main{grid-template-columns:1fr;}.scc-tiles{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:768px){
+    .scc-page{padding:14px 16px;gap:10px;}.scc-header{padding:12px 16px;}.scc-header__icon{width:36px;height:36px;}
+    .scc-header__subtitle{display:none;}.scc-kpis{grid-template-columns:repeat(2,1fr);}.scc-tiles{grid-template-columns:repeat(2,1fr);}
+    .scc-card--pad{padding:14px;}.scc-action{grid-template-columns:1fr auto;}.scc-action__icon{display:none;}.scc-chips{margin-left:0;}.scc-kancol{flex:0 0 78%;}
+  }
+  .scc-qbr__metric{display:flex;align-items:center;gap:16px;margin:8px 0 12px;}
+  .scc-qbr__pct{font-size:42px;font-weight:800;line-height:1;letter-spacing:-.02em;}
+  .scc-qbr__frac{font-size:13px;color:var(--scc-text-secondary);}
+  .scc-qbr__days{font-size:11px;font-weight:700;color:var(--scc-text-muted);white-space:nowrap;}
+  .scc-qbr--green{color:var(--scc-green-solid);}
+  .scc-qbr--amber{color:var(--scc-amber-text);}
+  .scc-qbr--red{color:var(--scc-red-text);}
+  .scc-qbr__row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--scc-card-border);}
+  .scc-qbr__acct{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;color:var(--scc-text-primary);}
+  .scc-qbr__last{font-size:11px;color:var(--scc-text-muted);white-space:nowrap;}
+  .scc-flags{margin-top:12px;padding:9px 11px;border:1px dashed var(--scc-amber-text);background:var(--scc-amber-bg);border-radius:8px;font-size:11px;line-height:1.55;color:var(--scc-text-secondary);}
+  .scc-flags b{color:var(--scc-amber-text);}
+  /* ===== AI Assistant ===== */
+  .scc-ai .scc-card__head{align-items:center;}
+  .scc-ai__badge{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;letter-spacing:.04em;background:linear-gradient(135deg,var(--scc-accent),var(--scc-accent-3));box-shadow:0 2px 10px rgba(99,102,241,.4);}
+  .scc-ai__bar{display:flex;gap:8px;margin-bottom:12px;}
+  .scc-ai__input{flex:1;min-width:0;padding:10px 13px;border-radius:9px;border:1px solid var(--scc-card-border);background:var(--scc-input-bg);color:var(--scc-text-primary);font-family:inherit;font-size:13px;}
+  .scc-ai__input:focus{outline:none;border-color:var(--scc-accent);box-shadow:0 0 0 3px rgba(99,102,241,.18);}
+  .scc-ai__cmds{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;}
+  .scc-ai__cmd{text-align:left;border:1px solid var(--scc-card-border);border-radius:10px;padding:10px 12px;background:var(--scc-card-bg);transition:.2s;display:flex;flex-direction:column;gap:3px;}
+  .scc-ai__cmd:hover{border-color:var(--scc-accent);box-shadow:var(--scc-shadow-hover);transform:translateY(-1px);}
+  .scc-ai__cmd-l{font-size:12px;font-weight:800;color:var(--scc-text-primary);display:flex;align-items:center;gap:6px;}
+  .scc-ai__cmd-l::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--scc-accent-3);}
+  .scc-ai__cmd-p{font-size:11px;color:var(--scc-text-secondary);line-height:1.35;}
+  .scc-ai__out{margin-top:12px;border:1px solid var(--scc-card-border);border-radius:10px;padding:12px 14px;background:var(--scc-input-bg);font-size:12px;line-height:1.55;color:var(--scc-text-primary);}
+  .scc-ai__think{display:flex;align-items:center;gap:9px;color:var(--scc-text-secondary);}
+  .scc-spinner2{width:14px;height:14px;border-radius:50%;border:2px solid var(--scc-card-border);border-top-color:var(--scc-accent);animation:scc-spin2 .8s linear infinite;display:inline-block;}
+  .scc-ai__list{margin:8px 0 0;padding-left:18px;}.scc-ai__list li{margin-bottom:5px;}
+  .scc-ai__note{margin-top:9px;color:var(--scc-text-muted);font-size:11px;}
+  .scc-ai__ans b{color:var(--scc-text-primary);}
+  .scc-ai__foot{margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="scc" id="sccApp" data-role="ae">
+  <header class="scc-header">
+    <div class="scc-header__icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></svg>
+    </div>
+    <div class="scc-header__titles">
+      <div class="scc-header__title">Sales Command Center</div>
+      <div class="scc-header__subtitle" id="sccSub"></div>
+    </div>
+    <div class="scc-header__spacer"></div>
+    <div class="scc-header__right">
+      <div class="scc-demo" title="Mockup only — in production this is auto-detected from UserRole + the SCC_Dual_Role permission">
+        <span class="scc-demo__lbl">Demo&nbsp;as</span>
+        <div class="scc-seg" role="group" aria-label="Simulate user role">
+          <button id="sccDemoAE" aria-pressed="true" onclick="setDemo('ae')">AE</button>
+          <button id="sccDemoIC" aria-pressed="false" onclick="setDemo('ic')">CSM</button>
+          <button id="sccDemoDual" aria-pressed="false" onclick="setDemo('dual')">Dual</button>
+        </div>
+      </div>
+      <div class="scc-seg" id="sccRoleToggle" role="group" aria-label="Switch role" style="display:none;">
+        <button id="sccRoleAE" aria-pressed="true" onclick="setRole('ae')">AE view</button>
+        <button id="sccRoleIC" aria-pressed="false" onclick="setRole('ic')">CSM view</button>
+      </div>
+      <button class="scc-iconbtn" aria-label="Open Territory Map" onclick="openMaps()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg> Territory Map</button>
+      <button class="scc-iconbtn" aria-label="Voice recorder" onclick="openVoice()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg> Voice</button>
+      <button class="scc-iconbtn" aria-label="View trends" onclick="openTrend()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> Trends</button>
+      <button class="scc-iconbtn" id="sccWin" aria-label="Demo: celebrate a goal hit" title="Mockup demo — preview the goal-hit celebration" onclick="demoWin()">🎉 Win</button>
+      <button class="scc-iconbtn scc-help" id="sccHelp" aria-label="Toggle metric explanations" aria-pressed="false" onclick="toggleExplain()"><span class="scc-help__q">?</span></button>
+      <button class="scc-iconbtn" id="sccTheme" aria-label="Toggle dark mode" onclick="toggleTheme()"><svg id="sccThemeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      <button class="scc-iconbtn scc-refresh" id="sccRefresh" aria-label="Refresh" onclick="refresh()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+    </div>
+  </header>
+  <main class="scc-page" id="sccPage"></main>
+
+  <!-- KANBAN -->
+  <div class="scc-modal" id="sccKanban" role="dialog" aria-modal="true" aria-label="Pipeline board">
+    <div class="scc-modal__bar">
+      <div><div class="scc-modal__title">Pipeline Board · Mid-Market</div><div class="scc-modal__sub">Discover → Consult → Close → Order Form Sent → Order Form Viewed → Closed Won · drag to advance</div></div>
+      <div style="flex:1"></div>
+      <button class="scc-iconbtn" onclick="closeKanban()">✕ Close</button>
+    </div>
+    <div class="scc-modal__body"><div class="scc-kan" id="sccKan"></div></div>
+  </div>
+
+  <!-- TREND -->
+  <div class="scc-trend" id="sccTrend" role="dialog" aria-modal="true" aria-label="Trend">
+    <div class="scc-trend__backdrop" onclick="closeTrend()"></div>
+    <div class="scc-trend__panel">
+      <div class="scc-trend__head">
+        <div><div class="scc-trend__title" id="sccTrendTitle">Trend</div><div class="scc-trend__sub">Last 6 months · month over month</div></div>
+        <button class="scc-trend__close" onclick="closeTrend()" aria-label="Close">✕</button>
+      </div>
+      <div class="scc-trend__tabs" id="sccTrendTabs"></div>
+      <div id="sccTrendSplit"></div>
+      <div id="sccTrendBody"></div>
+    </div>
+  </div>
+
+  <!-- DM MAPS (opens existing Territory Map LWC in production) -->
+  <div class="scc-modal" id="sccMaps" role="dialog" aria-modal="true" aria-label="Territory Map">
+    <div class="scc-modal__bar"><div><div class="scc-modal__title">Territory Map</div><div class="scc-modal__sub">Planning · visualization · routing</div></div><div style="flex:1"></div><button class="scc-iconbtn" onclick="closeMaps()">✕ Close</button></div>
+    <div class="scc-maps__body"><div class="scc-maps__stub">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--scc-accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/><circle cx="15" cy="11" r="2"/></svg>
+      <div class="scc-maps__h">Territory Map opens here</div>
+      <div class="scc-maps__p">In production this opens the <b>Territory Map</b> — the planning, visualization &amp; routing tool. Stubbed in this mockup so the entry point is visible.</div>
+    </div></div>
+  </div>
+  <!-- VOICE RECORDER: contact lookup -> Voice Recorder VF with contactId/userId/contactName -->
+  <div class="scc-modal" id="sccVoice" role="dialog" aria-modal="true" aria-label="Voice recorder">
+    <div class="scc-modal__bar"><div><div class="scc-modal__title">Voice Recorder</div><div class="scc-modal__sub">Pick a contact \u2014 it is passed into the voice-notes recorder</div></div><div style="flex:1"></div><button class="scc-iconbtn" onclick="closeVoice()">\u2715 Close</button></div>
+    <div class="scc-modal__body"><div style="max-width:580px;margin:0 auto;">
+      <input id="sccVoiceSearch" class="scc-voice-search" placeholder="Search contacts by name or account\u2026" oninput="renderVoiceList()" />
+      <div id="sccVoiceList" class="scc-voice-list"></div>
+      <div id="sccVoiceSel"></div>
+    </div></div>
+  </div>
+  <div id="sccTipEl" class="scc-tipfixed"></div>
+</div>
+
+<script>
+
+const NOW_TS="Updated 8:02 AM";
+const TMONTHS=["Jan","Feb","Mar","Apr","May","Jun"];
+
+const DATA={
+  ae:{
+    persona:"Sarah Chen · Account Executive · FRABEL (EMEA)", cur:"€", area:"FRABEL", region:"EMEA", greeting:"Sarah", briefingCount:9,
+    chips:[{t:"3 leads",cls:"rc-chip--red"},{t:"4 no next activity",cls:"scc-chip--red"},{t:"3 stale opps",cls:"scc-chip--amber"},{t:"2 overdue tasks",cls:"scc-chip--amber"},{t:"2 meetings",cls:"scc-chip--green"}],
+    kpis:[
+      {lbl:"Open Pipeline Value",val:"€2.94M",cap:"21 open · Mid-Market",accent:"indigo"},
+      {lbl:"Eng. Interaction Goal",val:"86%",cap:"56 / 65 · 5/day · this month",pill:"On pace",pillCls:"scc-pill--amber",accent:"amber"},
+      {lbl:"Next-Activity Coverage",val:"71%",cap:"15 / 21 open opps",pill:"6 missing",pillCls:"scc-pill--red",accent:"red"},
+      {lbl:"Healthy Pipeline %",val:"62%",cap:"13 / 21 · no risk flags",pill:"8 at risk",pillCls:"scc-pill--amber",accent:"amber"},
+      {lbl:"Closed Won (Month)",val:"€612K",cap:"7 deals",pill:"+12% MoM",pillCls:"scc-pill--green",accent:"green"}
+    ],
+    actions:[
+      {tier:"critical",type:"Opp · New Account",name:"Atlas Lyon — New Account",reason:"Close date passed 4 days ago, still in Negotiation",cta:"Update close date",score:95,icon:"opp"},
+      {tier:"critical",type:"Opp · Up-Selling",name:"Lefèvre — Core expansion",reason:"34 days in Consult · no next activity (stale)",cta:"Set next activity",score:88,icon:"opp"},
+      {tier:"critical",type:"Lead",name:"Dr. Moreau — Bordeaux Systems",reason:"Assigned 3 days ago, never contacted (status: New)",cta:"Call now",score:84,icon:"lead"},
+      {tier:"medium",type:"Opp · New Account",name:"Smile Studio Brussels — New Account",reason:"No next activity scheduled",cta:"Set next activity",score:66,icon:"opp"},
+      {tier:"medium",type:"Opp · Reactivate",name:"Systems Antwerpen — Reactivate",reason:"Close date pushed 3 times",cta:"Review deal",score:61,icon:"opp"},
+      {tier:"medium",type:"Lead",name:"Dr. Janssens — Gent Digital",reason:"Engagement rising — score up sharply",cta:"Reach out",score:57,icon:"lead"},
+      {tier:"medium",type:"Opp · New Account",name:"Logistics Namur — New Account",reason:"Closing in 5 days · in Order Form Sent",cta:"Push to close",score:53,icon:"opp"},
+      {tier:"low",type:"Task",name:"Send quote — Apex Liège",reason:"Task due today",cta:"Complete",score:34,icon:"task"},
+      {tier:"low",type:"Opp · Up-Selling",name:"Dubois — Expansion add-on",reason:"Whitespace — explore upsell",score:29,icon:"opp"}
+    ],
+    pipeline:[{n:6,l:"No next activity",cls:"scc-tile--red"},{n:3,l:"Stale (30d+ · no next)",cls:"scc-tile--amber"},{n:2,l:"Past close date",cls:"scc-tile--red"},{n:4,l:"Pushed 2+ times",cls:"scc-tile--amber"},{n:3,l:"Closing ≤7 days",cls:"scc-tile--green"}],
+    heroes:[
+      {lbl:"Open Pipeline Value",val:"€2.94M",cap:"21 open · Mid-Market",accent:"indigo"},
+      {lbl:"Eng. Interaction Goal",val:"86%",cap:"56 / 65 · 5/day pace · this month",accent:"amber"},
+      {lbl:"Closed Won (Month)",val:"€612K",cap:"7 deals · +12% MoM",accent:"green"}
+    ],
+    stats:[
+      {l:"Pipeline Coverage",calc:"cov",dot:"green"},
+      {l:"Next-Activity Coverage",v:"71%",s:"15/21 · 6 missing",dot:"amber"},
+      {l:"Healthy Pipeline %",v:"62%",s:"13/21 · 8 at risk",dot:"amber"},
+      {l:"Lead Treatment %",v:"68%",s:"of assigned, last 48h",dot:"red"},
+      {l:"Hot Leads",v:"3",s:"pi_score ≥ 100",dot:"red"},
+      {l:"Past Close",v:"2",s:"open, overdue",dot:"red"},
+      {l:"Pushed 2+×",v:"4",s:"slipping deals",dot:"amber"}
+    ],
+    secondary:{title:"Leads",icon:"lead",rows:[
+      {tier:"critical",name:"Dr. Moreau — Bordeaux Systems",meta:"Assigned 3d ago · never contacted (New)",badge:"48h breach",bcls:"scc-tier--critical"},
+      {tier:"medium",name:"Dr. Janssens — Gent Digital",meta:"pi_score 100 — hot",badge:"Heating up",bcls:"scc-tier--medium"},
+      {tier:"medium",name:"Apex Hasselt",meta:"Assigned 5d · 1 touch, no reply",badge:"Stale",bcls:"scc-tier--medium"},
+      {tier:"low",name:"Dr. Claes — Mechelen",meta:"pi_score 64 · nurturing",badge:"Watch",bcls:"scc-tier--low"}
+    ]},
+    salesAssessment:{score:82,date:"28 May",by:"R. Marchand (Regional Lead)",actions:"Advance the two deals sitting in Order Form Sent — both past 7 days. Re-engage Lefèvre (34d stale). Book Q3 QBRs for your two E1 accounts."},
+    vps:{monthSold:1,targetMonth:1,quarterSold:3,targetQuarter:3},
+    revenueTarget:{val:8400000,actual:5100000},
+    qbr:{covered:3,done:1,planned:2,total:7,daysLeft:38,uncovered:[{name:"Hôpital Privé Lyon",tier:"E1",last:"none done or planned"},{name:"Meridian Group Paris",tier:"E1",last:"none done or planned"},{name:"Atlas Marseille",tier:"E2",last:"last done Q3 · none planned"},{name:"Réseau Systems Nice",tier:"E2",last:"none done or planned"}]},
+    qtdClosed:1280000,
+    openPipeline:2940000,
+    campaigns:[{date:"Jul 12",n:"EMEA Systems Summit — Paris",resp:84},{date:"Aug 03",n:"Core Masterclass (FRABEL)",resp:37},{date:"Sep 19",n:"GTM Live Brussels",resp:12}],
+    leaderboard:{defaultTab:"Pipeline Movement"},
+    targets:[{lbl:"Engagement Interaction Goal",frac:"56 / 65",pct:86},{lbl:"Next-Activity Coverage",frac:"15 / 21",pct:71},{lbl:"Closed Won vs Goal",frac:"€612K / €700K",pct:87}],
+    upcoming:[{sec:"TODAY",items:[{time:"10:30",t:"Atlas Lyon — contract review",m:"Visit · with Dr. Petit"},{time:"14:00",t:"Smile Studio Brussels — demo",m:"Virtual"}]},{sec:"TOMORROW",items:[{time:"09:00",t:"Bordeaux Systems — discovery",m:"Call"},{time:"11:30",t:"Namur — order form walkthrough",m:"Virtual"}]},{sec:"UPCOMING",items:[{time:"Thu",t:"Liège quote follow-up",m:"Due in 2 days"}]}],
+    kanban:[
+      {name:"Discover",items:[{name:"Bordeaux Systems",type:"new",meta:"€40K · 3 days"},{name:"Apex Liège",type:"new",meta:"€55K · 8 days"}]},
+      {name:"Consult",items:[{name:"Lefèvre",type:"up",meta:"€90K · 34 days (stale)"}]},
+      {name:"Close",items:[{name:"Smile Studio Brussels",type:"new",meta:"€120K · 12 days"},{name:"Systems Antwerpen",type:"re",meta:"€70K · pushed 3×"}]},
+      {name:"Order Form Sent",items:[{name:"Logistics Namur",type:"new",meta:"€85K · closing 5d"}],late:true},
+      {name:"Order Form Viewed",items:[{name:"Atlas Lyon",type:"new",meta:"€140K · past close"}],late:true},
+      {name:"Closed Won",items:[{name:"Dubois",type:"up",meta:"€60K · live"}]}
+    ]
+  },
+
+  ic:{
+    persona:"Marcus Webb · CSM · UKI (EMEA)", cur:"£", area:"UKI", region:"EMEA", greeting:"Marcus", briefingCount:10,
+    chips:[{t:"5 unvisited (overdue)",cls:"scc-chip--red"},{t:"4 below pace",cls:"scc-chip--amber"},{t:"6 upsell opps",cls:"scc-chip--purple"},{t:"3 visits today",cls:"scc-chip--green"}],
+    kpis:[
+      {lbl:"Eng. Interaction Goal",val:"79%",cap:"31 / 39 · 3/day · this month",pill:"Slightly behind",pillCls:"scc-pill--amber",accent:"amber"},
+      {lbl:"MAU Growth",val:"+5.8%",cap:"next 6 months, day-prorated",pill:"Above target",pillCls:"scc-pill--green",accent:"green",edit:"musp"},
+      {lbl:"New Activations",val:"▼ 7%",cap:"new activations trend · MAU risk ahead",pill:"Declining",pillCls:"scc-pill--red",accent:"red"},
+      {lbl:"Time to Start",val:"71d",cap:"avg onboard · goal 60d · 5 pending",pill:"11d over",pillCls:"scc-pill--amber",accent:"amber"},
+      {lbl:"Declining Customers",val:"4",cap:"Below Pace (≥6 mo data)",pill:"Needs action",pillCls:"scc-pill--red",accent:"red"}
+    ],
+    muspTarget:"+5.0%",
+    e1e2coverage:{pct:82,have:18,total:22,missing:4},
+    actions:[
+      {tier:"critical",type:"Customer · E1",name:"Bright Systems",reason:"E1 · 96 days since last engagement (window 90)",cta:"Book visit",score:93,icon:"acct"},
+      {tier:"critical",type:"Customer · E2",name:"Pearl Logistics",reason:"MAU Below Pace — 72% of 6-mo avg",cta:"Review adoption",score:87,icon:"acct"},
+      {tier:"medium",type:"Opp · Up-Selling",name:"Camden Digital — Core expansion",reason:"Upsell · 28 days in stage · no next activity",cta:"Set next activity",score:64,icon:"opp"},
+      {tier:"medium",type:"Customer · E3",name:"Riverside Systems",reason:"E3 · 191 days since engagement (window 180)",cta:"Book visit",score:58,icon:"acct"},
+      {tier:"medium",type:"Customer · E2",name:"Kensington Systems",reason:"Activations declining −8% vs 3mo",cta:"Check in",score:52,icon:"acct"},
+      {tier:"low",type:"Customer · E4",name:"Thames Digital",reason:"Healthy MAU — upsell whitespace",cta:"Explore upsell",score:31,icon:"acct"},
+      {tier:"low",type:"Task",name:"Send MAU report — Whitfield Systems",reason:"Due tomorrow",cta:"Review",score:26,icon:"task"}
+    ],
+    segments:[
+      {tier:"E1",n:8,needVisit:1,note:"≥30% SoW"},
+      {tier:"E2",n:14,needVisit:2,note:"<30% SoW"},
+      {tier:"E3",n:22,needVisit:3,note:"≥30% SoW"},
+      {tier:"E4",n:31,needVisit:4,note:"<30% SoW"},
+      {tier:"E5",n:9,needVisit:0,note:"onboarding"}
+    ],
+    customers:[
+      {name:"Bright Systems",tier:"E1",musp:{total:412,core:280,expansion:160},status:"below",pct:81,days:96,window:90},
+      {name:"Pearl Logistics",tier:"E2",musp:{total:288,core:150,expansion:160},status:"below",pct:72,days:54,window:90},
+      {name:"Camden Industries",tier:"E2",musp:{total:521,core:360,expansion:190},status:"above",pct:112,days:22,window:90},
+      {name:"Riverside Systems",tier:"E3",musp:{total:198,core:90,expansion:120},status:"on",pct:95,days:191,window:180},
+      {name:"Kensington Systems",tier:"E2",musp:{total:340,core:240,expansion:110},status:"on",pct:97,days:40,window:90},
+      {name:"Whitfield Systems",tier:"E3",musp:{total:265,core:170,expansion:110},status:"above",pct:108,days:62,window:180},
+      {name:"Thames Digital",tier:"E4",musp:{total:144,core:60,expansion:90},status:"on",pct:93,days:120,window:365},
+      {name:"H+B Systems",tier:"E5",musp:{total:58,core:40,expansion:22},status:"limited",pct:0,days:18,window:365}
+    ],
+    heroes:[
+      {lbl:"MAU Growth",val:"+5.8%",cap:"next 6 months · vs target",accent:"green",edit:"musp",hit:true},
+      {lbl:"Eng. Interaction Goal",val:"79%",cap:"31 / 39 · 3/day pace · this month",accent:"amber"},
+      {lbl:"New Activations",val:"▼ 7%",cap:"new activations trend · MAU risk ahead",accent:"red"}
+    ],
+    stats:[
+      {l:"Declining Customers",v:"4",s:"Below Pace · act now",dot:"red"},
+      {l:"Time to Start",v:"71d",s:"avg · goal 60 · 5 pending",dot:"amber"},
+      {l:"E1/E2 Next-Activity",v:"82%",s:"18/22 · 4 missing",dot:"amber"},
+      {l:"Upsell Pipeline",calc:"upsell",dot:"green"},
+      {l:"Unvisited (overdue)",v:"5",s:"past tier window",dot:"red"}
+    ],
+    secondary:{title:"Upsell Pipeline",icon:"opp",rows:[
+      {tier:"critical",name:"Camden Digital — Core expansion",meta:"28d in stage · no next activity",badge:"Stale",bcls:"scc-tier--critical"},
+      {tier:"medium",name:"Whitfield Systems — Expansion add-on",meta:"£90K · Order Form Sent",badge:"Closing",bcls:"scc-tier--medium"},
+      {tier:"medium",name:"Thames Digital — Platform upgrade",meta:"£45K · no next activity",badge:"No next",bcls:"scc-tier--medium"},
+      {tier:"low",name:"H+B Systems — Core trial",meta:"£20K · Discover",badge:"New",bcls:"scc-tier--low"}
+    ]},
+    salesAssessment:{score:74,date:"30 May",by:"P. Osei (IC Manager)",actions:"Bright Systems is 6 days over its E1 visit window — book it this week. Pearl Digital is Below Pace; run an adoption review. Activations declining across UKI — prioritise onboarding the 5 invoiced-but-unactive subs."},
+    vps:{monthSold:0,targetMonth:1,quarterSold:2,targetQuarter:3},
+    revenueTarget:{val:900000,actual:412000},
+    qbr:{covered:17,done:11,planned:6,total:21,daysLeft:38,uncovered:[{name:"Bright Systems",tier:"E1",last:"none done or planned"},{name:"Pearl Digital Group",tier:"E1",last:"none done or planned"},{name:"Smile Centre Leeds",tier:"E2",last:"last done Q3 · none planned"},{name:"Mersey Digital",tier:"E2",last:"none done or planned"}]},
+    upsellTarget:{val:600000,open:480000,closed:90000},
+    firstActivations:{status:"down",pct:-7,label:"Declining"},
+    onboarding:{avgDays:71,goalDays:60,pending:5},
+    campaigns:[{date:"Jul 08",n:"UKI Account Growth Webinar",resp:61},{date:"Jul 25",n:"Partner Roadshow — London",resp:29},{date:"Sep 02",n:"Systems Recruitment Drive UKI",resp:8}],
+    leaderboard:{defaultTab:"Visits"},
+    targets:[{lbl:"Engagement Interaction Goal",frac:"31 / 39",pct:79},{lbl:"MAU Pace (vs 6-mo avg)",frac:"104%",pct:104},{lbl:"Upsell Pipeline vs Goal",edit:"upsell"}],
+    upcoming:[{sec:"TODAY",items:[{time:"10:00",t:"Bright Systems — visit",m:"In-Account · E1 overdue"},{time:"13:30",t:"Pearl Digital — adoption review",m:"Below pace"}]},{sec:"TOMORROW",items:[{time:"09:30",t:"Camden — core upsell",m:"Virtual"},{time:"11:00",t:"Riverside — visit",m:"In-Account"},{time:"15:00",t:"Kensington check-in",m:"Call"}]},{sec:"UPCOMING",items:[{time:"Thu",t:"MAU reports — 4 below-pace accts",m:"Due in 2 days"}]}]
+  }
+};
+
+/* leaderboard — 5 metrics × 2 scopes (Area / Region). Top 5 + you. */
+const LB={
+  ae:{
+    "Revenue":{area:[{n:"M. Roux",v:"€0.81M"},{n:"Sarah Chen",v:"€0.61M",me:true},{n:"L. Petit",v:"€0.58M"},{n:"A. Blanc",v:"€0.49M"}],region:[{n:"Top EMEA",v:"€1.4M"},{n:"#2",v:"€1.1M"},{n:"Sarah Chen",v:"€0.61M",me:true,rank:7,beat:"€0.72M"}]},
+    "Engagement Interactions":{area:[{n:"L. Petit",v:"71"},{n:"A. Blanc",v:"64"},{n:"Sarah Chen",v:"56",me:true},{n:"M. Roux",v:"52"},{n:"T. Noel",v:"47"}],region:[{n:"Top EMEA",v:"118"},{n:"#2",v:"104"},{n:"#3",v:"96"},{n:"Sarah Chen",v:"56",me:true,rank:12,beat:"63"}]},
+    "Pipeline Movement":{area:[{n:"L. Petit",v:"18"},{n:"M. Roux",v:"16"},{n:"A. Blanc",v:"15"},{n:"Sarah Chen",v:"14",me:true},{n:"T. Noel",v:"12"}],region:[{n:"Top EMEA AE",v:"31"},{n:"#2",v:"28"},{n:"#3",v:"24"},{n:"Sarah Chen",v:"14",me:true,rank:9,beat:"17"}]},
+    "Visits":{area:[{n:"A. Blanc",v:"9"},{n:"Sarah Chen",v:"7",me:true},{n:"L. Petit",v:"6"}],region:[{n:"Top EMEA",v:"15"},{n:"#2",v:"11"},{n:"Sarah Chen",v:"7",me:true,rank:14,beat:"9"}]},
+    "MAU Growth":{area:[{n:"L. Petit",v:"+7.1%"},{n:"Sarah Chen",v:"+4.2%",me:true},{n:"M. Roux",v:"+3.0%"}],region:[{n:"Top EMEA",v:"+11%"},{n:"#2",v:"+8%"},{n:"Sarah Chen",v:"+4.2%",me:true,rank:18,beat:"+5.0%"}]}
+  },
+  ic:{
+    "Revenue":{area:[{n:"T. Coleman",v:"£0.34M"},{n:"Marcus Webb",v:"£0.31M",me:true},{n:"J. Pak",v:"£0.27M"}],region:[{n:"Top EMEA",v:"£0.6M"},{n:"#2",v:"£0.5M"},{n:"Marcus Webb",v:"£0.31M",me:true,rank:8,beat:"£0.34M"}]},
+    "Engagement Interactions":{area:[{n:"T. Coleman",v:"38"},{n:"Marcus Webb",v:"31",me:true},{n:"J. Pak",v:"29"},{n:"R. Singh",v:"24"}],region:[{n:"Top EMEA",v:"58"},{n:"#2",v:"49"},{n:"#3",v:"44"},{n:"Marcus Webb",v:"31",me:true,rank:9,beat:"35"}]},
+    "Pipeline Movement":{area:[{n:"T. Coleman",v:"9"},{n:"Marcus Webb",v:"7",me:true},{n:"J. Pak",v:"6"}],region:[{n:"Top EMEA",v:"16"},{n:"#2",v:"12"},{n:"Marcus Webb",v:"7",me:true,rank:11,beat:"9"}]},
+    "Visits":{area:[{n:"T. Coleman",v:"21"},{n:"Marcus Webb",v:"19",me:true},{n:"J. Pak",v:"18"},{n:"R. Singh",v:"15"}],region:[{n:"Top EMEA IC",v:"34"},{n:"#2",v:"29"},{n:"#3",v:"23"},{n:"Marcus Webb",v:"19",me:true,rank:5,beat:"22"}]},
+    "MAU Growth":{area:[{n:"T. Coleman",v:"+6.4%"},{n:"Marcus Webb",v:"+5.8%",me:true},{n:"J. Pak",v:"+4.1%"}],region:[{n:"Top EMEA",v:"+12%"},{n:"#2",v:"+9%"},{n:"Marcus Webb",v:"+5.8%",me:true,rank:6,beat:"+6.6%"}]}
+  }
+};
+const LB_TABS=["Revenue","Engagement Interactions","Pipeline Movement","Visits","MAU Growth"];
+
+const TRENDS={
+  ae:[
+    {key:"Engagement Interactions",fmt:"int",data:[88,95,79,102,91,110]},
+    {key:"Revenue",fmt:"eur",data:[0.41,0.55,0.39,0.58,0.49,0.61]},
+    {key:"Expansion Sold",fmt:"int",data:[2,3,2,4,3,3]}
+  ],
+  ic:[
+    {key:"MAU",fmt:"int",split:true,data:[2210,2280,2300,2390,2420,2480],core:[1480,1530,1560,1620,1640,1690],expansion:[860,880,870,910,930,950]},
+    {key:"Revenue",fmt:"gbp",data:[0.05,0.07,0.06,0.08,0.06,0.09]},
+    {key:"Engagement Interactions",fmt:"int",data:[360,388,372,405,391,418]},
+    {key:"Visits",fmt:"int",data:[14,16,13,18,15,19]},
+    {key:"Upsell (Won)",fmt:"gbp",data:[0.02,0.05,0.03,0.06,0.04,0.07]},
+    {key:"Activation Trend",fmt:"int",data:[148,151,150,146,142,138]},
+    {key:"Time to Start (avg d)",fmt:"int",goal:60,data:[78,75,74,72,71,71]}
+  ]
+};
+
+const ICONS={
+  lead:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  acct:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M15 9h.01M15 13h.01"/></svg>',
+  opp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+  task:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'
+};
+const AV=["#4f46e5","#7c3aed","#0ea5e9","#16a34a","#f59e0b","#ef4444"];
+
+const DEFS={
+ "Open Pipeline Value":{what:"Total value of your open Mid-Market opportunities.",rule:"Sum of Amount where the opp is not closed and you are the owner.",target:"Grow it through the quarter."},
+ "Pipeline Coverage":{what:"How many times your open pipeline covers the revenue you still need this quarter.",rule:"Open pipeline ÷ this quarter’s remaining gap (annual target ÷ 4, minus closed this quarter). Recalculates when you change your target.",target:"≥ 3× healthy · 2–3× watch · below 2× at risk — calibrate to DM win rate."},
+ "Eng. Interaction Goal":{what:"How you are pacing against your monthly Engagement Interaction target.",rule:"Engagement Interactions logged this month ÷ your month pace-to-date target (rate × business days elapsed this month − days off; 5/day AE, 3/day CSM).",target:"100% = on pace for the month."},
+ "Closed Won (Month)":{what:"Revenue you have closed this month.",rule:"Sum of Amount on opps set to Closed Won with a close date in the current month.",target:"Your monthly revenue goal."},
+ "MAU Growth":{what:"Growth in Monthly Active Users across your book over the next 6 months.",rule:"Projected MAU 6 months out vs today, against your set 6-month growth target.",target:"Your set 6-month MAU growth target."},
+ "New Activations":{what:"Trend in how many new users your accounts are starting to activation.",rule:"New activation starts over the last 3 months vs the prior 3 (Activations trend status).",target:"Growing — a decline here predicts MAU falling in 2–3 months."},
+ "Next-Activity Coverage":{what:"Share of your open opps that have a next step scheduled.",rule:"Open opps with next_activity_date populated ÷ all your open opps.",target:"100% — every deal should have a next activity."},
+ "Healthy Pipeline %":{what:"Share of your open opps with no risk flags firing.",rule:"Open opps that are not stale, past close, pushed, or missing a next activity ÷ all open.",target:"Higher is better."},
+ "Lead Treatment %":{what:"Share of your assigned active leads you have actioned recently.",rule:"Active leads (not Junk/Not Now, not converted) with a touch in the last 48h ÷ all active leads.",target:"100% — work every lead."},
+ "Hot Leads":{what:"Active leads scored hot by Account Engagement.",rule:"Leads with pi_score ≥ 100.",target:"Reach out fast while they are warm."},
+ "Past Close":{what:"Open opps whose close date has already passed.",rule:"Not closed and close date is before today.",target:"0 — update the date or close them out."},
+ "Pushed 2+×":{what:"Open opps whose close date keeps slipping.",rule:"Close date moved later 2 or more times (from Opportunity history).",target:"Watch — these are stalling."},
+ "Declining Customers":{what:"Customers whose MAU is running below their own pace.",rule:"MAU tracking status = Below Pace, with at least 6 months of data.",target:"0 — intervene before they churn."},
+ "Time to Start":{what:"Average days from sale to first activation — onboarding speed.",rule:"VPS_Invoicing_Date to First_Activation_Date on subscriptions; not-yet-active counts to today.",target:"≤ 60 days (2 months)."},
+ "E1/E2 Next-Activity":{what:"Next-activity coverage on your highest-value customers.",rule:"E1/E2 customers with next_activity_date populated ÷ all your E1/E2 customers.",target:"100% — top tier should always have a next step."},
+ "Upsell Pipeline":{what:"Progress toward your expansion goal — open plus won upsell.",rule:"(Open Up-Selling pipeline + closed-won upsell) ÷ your Upsell Pipeline target. Set the target in Personal Targets.",target:"100% of your set goal · ≥ 70% on track."},
+ "Unvisited (overdue)":{what:"Customers overdue for a visit based on their segment tier.",rule:"No Engagement Interaction within the tier window — E1/E2 90 days, E3/E4 180 days, others the calendar year.",target:"0 — book a visit."},
+ "QBR Coverage":{what:"Share of your cluster E1/E2 accounts with a Quarterly Business Review done or planned this quarter.",rule:"Cluster-based — your E1/E2 accounts are those where AE__c (AE) or ISP__c (CSM) is you, NOT record owner. Covered = the account has a QBR this quarter that is either DONE (Engagement Interaction Task, Purpose_LogACall__c = QBR value) or PLANNED (an Event carrying the same purpose). A completed QBR is an EI, so it also counts toward EI pace and resets the visit window.",target:"100% — every E1/E2 account gets at least one QBR per quarter."}
+};
+
+let demo="ae", role="ae", queueExpanded=false, activeTier="all", activeSeg="all", muspView="total";
+let lbTab="Pipeline Movement", lbScope="area", trendIdx=0, trendSplit="total";
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function render(){
+  const d=DATA[role];
+  document.getElementById('sccSub').textContent=d.persona;
+  if(!LB[role][lbTab]) lbTab=d.leaderboard.defaultTab;
+  document.getElementById('sccPage').innerHTML=`
+    ${briefing(d)}
+    ${queue(d)}
+    ${aiHTML(d)}
+    <div class="scc-context-label">Scorecard — how you're tracking</div>
+    ${heroes(d)} ${statBand(d)} ${role==='ae'?vpsHTML(d):''}
+    <div class="scc-main">
+      <div class="scc-col">
+        ${role==='ae'?pipelineHealth(d):''}
+        ${role==='ic'?customerHealth(d):''}
+        ${qbrHTML(d)}
+        ${secondaryHTML(d)}
+      </div>
+      <div class="scc-col">${leaderboard(d)} ${targets(d)} ${focusHTML(d)} ${campaignsHTML(d)} ${upcoming(d)}</div>
+    </div>
+    <div class="scc-status" style="padding:4px 2px 12px;"><span class="scc-dot scc-dot--green"></span> Data healthy · ${NOW_TS} · scores refresh hourly · trends nightly</div>`;
+  stagger();
+  requestAnimationFrame(()=>document.querySelectorAll('.scc-bar__fill').forEach(el=>el.style.width=el.dataset.w+'%'));
+}
+function briefing(d){
+  return `<section class="scc-card scc-briefing scc-reveal">
+    <div><div class="scc-briefing__hi">${getGreeting()}, ${esc(d.greeting)}. <b>${d.briefingCount} items</b> need attention today.</div>
+    <div class="scc-briefing__sub">Prioritised queue below — start at the top.</div></div>
+    <div class="scc-chips">${d.chips.map(c=>`<span class="scc-chip ${c.cls}"><b>${esc(c.t.split(' ')[0])}</b> ${esc(c.t.split(' ').slice(1).join(' '))}</span>`).join('')}</div></section>`;
+}
+function queue(d){
+  let items=d.actions.filter(a=>activeTier==="all"||a.tier===activeTier);
+  const crit=items.filter(a=>a.tier==='critical');
+  let shown=items;
+  if(!queueExpanded && items.length>5){shown=items.slice(0,5);crit.forEach(c=>{if(!shown.includes(c))shown.push(c);});}
+  const tb=(id,l)=>`<button class="scc-fchip" aria-pressed="${activeTier===id}" onclick="setTier('${id}')">${l}</button>`;
+  const board=role==='ae'?`<button class="scc-btn-primary" onclick="openKanban()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="6" height="18"/><rect x="9.5" y="3" width="6" height="12"/><rect x="16" y="3" width="6" height="9"/></svg> Pipeline Board</button>`:'';
+  return `<section class="scc-card scc-card--pad scc-queue-hero scc-reveal">
+    <div class="scc-card__head"><div class="scc-card__title">My Next Actions</div><span class="scc-queue__badge">${items.length}</span><div class="scc-card__sub">ranked by priority — start at the top</div><div class="scc-grow"></div>${board}</div>
+    <div class="scc-filterbar"><div class="scc-filtergroup">${tb('all','All')}${tb('critical','Critical')}${tb('medium','Medium')}${tb('low','Low')}</div></div>
+    <div class="scc-queue">${shown.map(action).join('')}</div>
+    ${(!queueExpanded&&items.length>shown.length)?`<div class="scc-more"><button onclick="expandQueue()">Show ${items.length-shown.length} more</button></div>`:''}</section>`;
+}
+function action(a){
+  return `<div class="scc-action scc-action--${a.tier}"><div class="scc-action__icon">${ICONS[a.icon]}</div>
+    <div class="scc-action__body"><div class="scc-action__top"><span class="scc-action__name">${esc(a.name)}</span><span class="scc-tag">${esc(a.type)}</span><span class="scc-tier scc-tier--${a.tier}">${a.tier[0].toUpperCase()+a.tier.slice(1)}</span></div>
+    <div class="scc-action__reason">${esc(a.reason)}</div></div>
+    <div class="scc-action__right"><div class="scc-score scc-score--${a.tier}" title="Priority score">${a.score}</div><button class="scc-cta">${esc(a.cta)}</button></div></div>`;
+}
+function pipelineHealth(d){
+  return `<section class="scc-card scc-card--pad scc-reveal"><div class="scc-card__head"><div class="scc-card__title">Pipeline Health</div><div class="scc-grow"></div><button class="scc-cta" onclick="openKanban()">Open board →</button></div>
+    <div class="scc-tiles">${d.pipeline.map(t=>`<button class="scc-tile ${t.cls}"><div class="scc-tile__n">${t.n}</div><div class="scc-tile__l">${esc(t.l)}</div></button>`).join('')}</div></section>`;
+}
+function customerHealth(d){
+  const tierClass=t=>'scc-tier-'+t.toLowerCase();
+  const custs=d.customers.filter(c=>activeSeg==='all'||c.tier===activeSeg);
+  const mv=(c)=>muspView==='total'?c.musp.total:(muspView==='core'?c.musp.core:c.musp.expansion);
+  const statusPill=c=>{const m={below:['scc-status-below','Below Pace'],on:['scc-status-on','On Pace'],above:['scc-status-above','Above Pace'],limited:['scc-status-limited','Limited data']}[c.status];return `<span class="scc-statuspill ${m[0]}">${m[1]}</span>`;};
+  const visit=c=>{const over=c.days>c.window;const warn=!over&&c.days>c.window*0.8;const cls=over?'scc-visit--over':(warn?'scc-visit--warn':'scc-visit--ok');return `<div class="scc-visit ${cls}">${c.days}d / ${c.window}d</div><div class="scc-micro" style="margin-top:3px">since visit</div>`;};
+  return `<section class="scc-card scc-card--pad scc-reveal">
+    <div class="scc-card__head"><div><div class="scc-card__title">Customer Health & Visit Cadence</div><div class="scc-card__sub">MAU vs pace · unvisited by tier window (E1/E2 90d · E3/E4 180d · else year)</div></div><div class="scc-grow"></div>
+      <div class="scc-musp-toggle" role="group" aria-label="MAU split">
+        <button aria-pressed="${muspView==='total'}" onclick="setMusp('total')">Total</button>
+        <button aria-pressed="${muspView==='core'}" onclick="setMusp('core')">Core</button>
+        <button aria-pressed="${muspView==='expansion'}" onclick="setMusp('expansion')">Expansion</button>
+      </div></div>
+    <div class="scc-firstactivation">
+      <div class="scc-firstactivation__icon ${d.e1e2coverage.missing>0?'scc-fs--flat':'scc-fs--up'}" style="font-size:11px;font-weight:800;">${d.e1e2coverage.pct}%</div>
+      <div><div class="scc-firstactivation__t">E1/E2 Next-Activity Coverage: ${d.e1e2coverage.have}/${d.e1e2coverage.total} (${d.e1e2coverage.pct}%)</div><div class="scc-firstactivation__m">Top-tier customers must always have a next activity booked — ${d.e1e2coverage.missing} missing; each gap is a Critical action.</div></div>
+    </div>
+    <div class="scc-tiles" style="margin-top:0;margin-bottom:14px;">
+      <button class="scc-segtile" aria-pressed="${activeSeg==='all'}" onclick="setSeg('all')"><div class="scc-segtile__name">All</div><div class="scc-segtile__n">${d.customers.length}</div><div class="scc-segtile__sub">shown</div></button>
+      ${d.segments.map(s=>`<button class="scc-segtile" aria-pressed="${activeSeg===s.tier}" onclick="setSeg('${s.tier}')"><div class="scc-segtile__name"><span class="scc-tierbadge ${tierClass(s.tier)}">${s.tier}</span></div><div class="scc-segtile__n">${s.n}</div><div class="scc-segtile__sub">${s.needVisit} need visit · ${esc(s.note)}</div></button>`).join('')}
+    </div>
+    ${custs.map(c=>`<div class="scc-crow">
+      <div><div class="scc-crow__name"><span class="scc-tierbadge ${tierClass(c.tier)}">${c.tier}</span> ${esc(c.name)} ${statusPill(c)}</div>
+        <div class="scc-crow__meta">MAU ${muspView}: <b class="scc-crow__musp">${mv(c).toLocaleString()}</b>${c.status!=='limited'?` · ${c.pct}% of 6-mo avg`:` · <span style="color:var(--scc-text-muted)">new customer, &lt;6 mo data</span>`}</div></div>
+      <div>${visit(c)}</div></div>`).join('')}
+    <div class="scc-card__sub" style="margin-top:12px;">Core + expansion may not sum to total — a subscription can be flagged as both. Split feed: <code>Subscription_Snapshot__c.MAU_Core__c / MAU_Expansion__c</code>.</div>
+  </section>`;
+}
+function qbrHTML(d){
+  const q=d.qbr; if(!q) return "";
+  const pct=Math.round(q.covered/q.total*100);
+  const tone=pct>=80?"green":(pct>=50?"amber":"red");
+  const rows=q.uncovered.map(a=>`<div class="scc-qbr__row"><span class="scc-qbr__acct"><span class="scc-tierbadge scc-tier-${a.tier.toLowerCase()}">${esc(a.tier)}</span> ${esc(a.name)}</span><span class="scc-qbr__last">${esc(a.last)}</span></div>`).join("");
+  return `<section class="scc-card scc-card--pad scc-qbr scc-reveal">
+    <div class="scc-card__head"><div><div class="scc-card__title">QBR Coverage <span class="scc-card__sub" style="font-weight:600">· Quarter</span> ${infoTip("QBR Coverage")}</div><div class="scc-card__sub">Cluster E1/E2 accounts (AE__c / ISP__c) with a QBR done or planned this quarter</div></div><div class="scc-grow"></div><div class="scc-qbr__days">${q.daysLeft} days left</div></div>
+    <div class="scc-qbr__metric"><div class="scc-qbr__pct scc-qbr--${tone}">${pct}%</div><div class="scc-qbr__frac"><b>${q.covered} of ${q.total}</b> E1/E2 accounts covered<div class="scc-card__sub">${q.done} done · ${q.planned} planned · ${q.total-q.covered} still need one — each uncovered account is a queue action</div></div></div>
+    <div class="scc-bar" role="progressbar" aria-valuenow="${pct}"><div class="scc-bar__fill" data-w="${pct}" style="width:0"></div></div>
+    ${rows?`<div class="scc-qbr__list"><div class="scc-card__sub" style="margin:10px 0 6px">Uncovered — book these:</div>${rows}</div>`:`<div class="scc-card__sub" style="margin-top:10px">All E1/E2 accounts covered this quarter 🎉</div>`}
+    ${explainLine("QBR Coverage")}
+    <div class="scc-flags"><b>🟡 To confirm before build:</b> (1) the Event purpose field API name — Tasks use Purpose_LogACall__c; what holds the purpose on Events? (2) what counts as "planned" — a QBR-purpose Event dated in this quarter (incl. future), and on which date (StartDateTime / ActivityDate)? (3) fiscal or calendar quarter? (4) exact purpose value ("Quarterly Business Review" vs "QBR"), and is the Task linked to the account via WhatId or WhoId → Account?</div>
+  </section>`;
+}
+function leaderboard(d){
+  const data=LB[role][lbTab][lbScope]||[];
+  const rows=data.filter(r=>!r.rank).slice(0,5);
+  const meOutside=data.find(r=>r.me&&r.rank);
+  return `<section class="scc-card scc-card--pad scc-reveal"><div class="scc-card__head"><div class="scc-card__title">Leaderboard</div></div>
+    <div class="scc-scope"><button aria-pressed="${lbScope==='area'}" onclick="setScope('area')">${esc(d.area)} (Area)</button><button aria-pressed="${lbScope==='region'}" onclick="setScope('region')">${esc(d.region)} (Region)</button></div>
+    <div class="scc-tabs" role="tablist">${LB_TABS.map(t=>`<button class="scc-tab" aria-pressed="${lbTab===t}" onclick="setTab('${esc(t)}')">${esc(t)}</button>`).join('')}</div>
+    ${rows.map((r,i)=>lrow(r,i+1)).join('')}
+    ${meOutside?`<div class="scc-beat-note">↑ Reach <b>${esc(meOutside.beat||'')}</b> to take #${meOutside.rank-1} — you're at ${esc(meOutside.v)}</div>${lrow(meOutside,meOutside.rank,true)}`:''}
+    <div class="scc-card__sub" style="margin-top:10px;">${esc(d.region)} only — other regions not visible. Cohort: ${role==='ae'?'AEs':'ISPs'}.</div></section>`;
+}
+function lrow(r,rank,beat){
+  return `<div class="scc-lrow ${r.me?'scc-lrow--me':''} ${beat?'scc-lrow--beat':''}"><span class="scc-rank ${rank===1?'scc-rank--top':''}">${rank}</span><span class="scc-avatar" style="background:${AV[(rank-1)%AV.length]}">${r.n.split(' ').map(x=>x[0]).slice(0,2).join('')}</span><span class="scc-lrow__name">${r.me?`<b>${esc(r.n)} (You)</b>`:esc(r.n)}</span><span class="scc-lrow__val">${esc(r.v)}</span></div>`;
+}
+function targets(d){
+  const rt=d.revenueTarget; const rpct=Math.round(rt.actual/rt.val*100);
+  const cur=d.cur; const m=v=>cur+(v>=1000000?(v/1000000).toFixed(2)+'M':(v/1000).toFixed(0)+'K');
+  return `<section class="scc-card scc-card--pad scc-reveal"><div class="scc-card__head"><div class="scc-card__title">Personal Targets</div></div>
+    ${d.targets.map(t=>{
+      if(t.edit==='upsell'){const u=d.upsellTarget;const built=u.open+u.closed;const p=Math.round(built/u.val*100);return `<div class="scc-target"><div class="scc-target__top"><span class="scc-target__lbl">Upsell Pipeline vs Goal <button class="scc-edit" onclick="setUpsell()">set my target</button></span><span class="scc-target__frac">${m(built)} / ${m(u.val)} · ${p}%${p>=100?" ✓":""}</span></div><div class="scc-bar" role="progressbar" aria-valuenow="${p}"><div class="scc-bar__fill ${p>=100?'scc-bar__fill--over':''}" data-w="${Math.min(p,100)}" style="width:0"></div></div></div>`;}
+      return `<div class="scc-target"><div class="scc-target__top"><span class="scc-target__lbl">${esc(t.lbl)}</span><span class="scc-target__frac">${esc(t.frac)} · ${t.pct}%${t.pct>=100?" ✓":""}</span></div><div class="scc-bar" role="progressbar" aria-valuenow="${t.pct}"><div class="scc-bar__fill ${t.pct>=100?'scc-bar__fill--over':''}" data-w="${Math.min(t.pct,100)}" style="width:0"></div></div></div>`;
+    }).join('')}
+    <div class="scc-target"><div class="scc-target__top"><span class="scc-target__lbl">Revenue Target (Year) <button class="scc-edit" onclick="setRevenue()">set my target</button></span><span class="scc-target__frac">${m(rt.actual)} / ${m(rt.val)} · ${rpct}%${rpct>=100?" ✓":""}</span></div><div class="scc-bar" role="progressbar" aria-valuenow="${rpct}"><div class="scc-bar__fill ${rpct>=100?'scc-bar__fill--over':''}" data-w="${Math.min(rpct,100)}" style="width:0"></div></div></div>
+    </section>`;
+}
+function upcoming(d){
+  return `<section class="scc-card scc-card--pad scc-reveal"><div class="scc-card__head"><div class="scc-card__title">Upcoming</div></div>
+    ${d.upcoming.map(g=>`<div class="scc-up__label">${esc(g.sec)}</div>${g.items.map(it=>`<div class="scc-up"><span class="scc-up__time">${esc(it.time)}</span><div><div class="scc-up__t">${esc(it.t)}</div><div class="scc-up__m">${esc(it.m)}</div></div></div>`).join('')}`).join('')}</section>`;
+}
+function infoTip(key){if(!DEFS[key])return'';return `<button class="scc-i" data-key="${esc(key)}" aria-label="What is ${esc(key)}?">i</button>`;}
+function showTip(btn){const d=DEFS[btn.dataset.key];if(!d)return;const el=document.getElementById('sccTipEl');el.innerHTML=`<b>${esc(btn.dataset.key)}</b><span class="scc-tip__r"><b>What:</b> ${esc(d.what)}</span><span class="scc-tip__r"><b>Rule:</b> ${esc(d.rule)}</span><span class="scc-tip__r"><b>Target:</b> ${esc(d.target)}</span>`;el.style.display='flex';el.style.visibility='hidden';const r=btn.getBoundingClientRect();const tw=el.offsetWidth,th=el.offsetHeight;let left=Math.max(8,Math.min(r.left+r.width/2-tw/2,window.innerWidth-tw-8));let top=r.top-th-10;if(top<8)top=r.bottom+10;el.style.left=left+'px';el.style.top=top+'px';el.style.visibility='visible';}
+function hideTip(){const el=document.getElementById('sccTipEl');if(el)el.style.display='none';}
+function explainLine(key){if(!explainMode)return'';const d=DEFS[key];if(!d)return'';return `<div class="scc-explain">${esc(d.what)} <b>Rule:</b> ${esc(d.rule)} <b>Target:</b> ${esc(d.target)}</div>`;}
+function toggleExplain(){explainMode=!explainMode;const b=document.getElementById('sccHelp');b.classList.toggle('is-active',explainMode);b.setAttribute('aria-pressed',explainMode);render();}
+let explainMode=false;
+function heroes(d){
+  return `<section class="scc-heroes">${d.heroes.map(h=>{
+    const hit=h.hit||(demoWinRole===role&&h.lbl==='Eng. Interaction Goal');
+    const cap=h.edit==='musp'?`next 6 months \u00b7 vs ${d.muspTarget} target`:h.cap;
+    const ed=h.edit==='musp'?` <button class="scc-edit" onclick="setMuspTarget()">set my target</button>`:'';
+    const met=hit?` <span class="scc-hero__met">\u2713 Goal met</span>`:'';
+    const clk=hit?` onclick="celebrate()" role="button" tabindex="0" title="Goal met \u2014 tap to celebrate"`:'';
+    return `<div class="scc-hero scc-hero--${h.accent} ${hit?'scc-hero--hit':''} scc-reveal"${clk}><div class="scc-micro">${esc(h.lbl)} ${infoTip(h.lbl)}${met}</div><div class="scc-hero__val">${esc(h.val)}</div><div class="scc-hero__cap">${esc(cap)}${ed}</div>${explainLine(h.lbl)}</div>`;
+  }).join('')}</section>`;
+}
+function statBand(d){
+  return `<section class="scc-band scc-reveal">${d.stats.map(st=>{
+    let v=st.v,sub=st.s,dot=st.dot;
+    if(st.calc==='cov'){const qq=d.revenueTarget.val/4;const gap=Math.max(qq-d.qtdClosed,1);const cov=d.openPipeline/gap;const m=x=>d.cur+(x>=1e6?(x/1e6).toFixed(2)+'M':(x/1e3).toFixed(0)+'K');v=cov.toFixed(1)+'\u00d7';sub='gap '+m(gap)+' \u00b7 pipe '+m(d.openPipeline);dot=cov>=3?'green':cov>=2?'amber':'red';}
+    if(st.calc==='upsell'){const t=d.upsellTarget;const built=t.open+t.closed;const p=Math.round(built/t.val*100);const m=x=>d.cur+(x>=1e6?(x/1e6).toFixed(2)+'M':(x/1e3).toFixed(0)+'K');v=m(built);sub=p+'% of '+m(t.val)+' \u00b7 '+m(t.closed)+' won';dot=p>=100?'green':p>=70?'amber':'red';}
+    const ed=st.edit==='rev'?` <button class="scc-edit" onclick="setRevenue()">set</button>`:'';
+    return `<div class="scc-statcell"><div class="scc-statcell__l">${dot?`<span class="scc-dotbadge scc-db-${dot}"></span>`:''}${esc(st.l)} ${infoTip(st.l)}</div><div class="scc-statcell__v">${esc(v)}</div><div class="scc-statcell__s">${esc(sub)}${ed}</div>${explainLine(st.l)}</div>`;
+  }).join('')}</section>`;
+}
+let secOpen=true;
+function toggleSec(){secOpen=!secOpen;const b=document.getElementById('sccSecBody'),c=document.getElementById('sccSecCaret');if(b)b.classList.toggle('hidden',!secOpen);if(c)c.classList.toggle('open',secOpen);}
+function secondaryHTML(d){
+  const sec=d.secondary;
+  return `<section class="scc-card scc-card--pad scc-reveal">
+    <button class="scc-section__toggle" onclick="toggleSec()" aria-expanded="${secOpen}">
+      <span class="scc-caret ${secOpen?'open':''}" id="sccSecCaret"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      <span class="scc-card__title">${esc(sec.title)}</span>
+      <span class="scc-section__count">${sec.rows.length}</span>
+      <span class="scc-grow"></span><span class="scc-card__sub">${d===DATA.ae?'your secondary workspace':'expansion deals'}</span>
+    </button>
+    <div class="scc-secbody ${secOpen?'':'hidden'}" id="sccSecBody"><div class="scc-queue" style="margin-top:0">
+      ${sec.rows.map(r=>`<div class="scc-action scc-action--${r.tier}"><div class="scc-action__icon">${ICONS[sec.icon]}</div><div class="scc-action__body"><div class="scc-action__top"><span class="scc-action__name">${esc(r.name)}</span><span class="scc-tier ${r.bcls}">${esc(r.badge)}</span></div><div class="scc-action__reason">${esc(r.meta)}</div></div><div class="scc-action__right"><button class="scc-cta">Open</button></div></div>`).join('')}
+    </div></div>
+  </section>`;
+}
+function getGreeting(){const h=new Date().getHours();if(h<12)return"Good morning";if(h<18)return"Good afternoon";return"Working late";}
+function vpsHTML(d){
+  const v=d.vps; const won=v.monthSold>=v.targetMonth;
+  const pips=Array.from({length:v.targetQuarter},(_,i)=>`<div class="scc-vps__pip ${i<v.quarterSold?'on':''}"></div>`).join('');
+  return `<section class="scc-card scc-vps ${won?'is-won':''} scc-reveal" id="sccVps">
+    <div class="scc-vps__l">
+      <div class="scc-vps__title">Expansion Incentive ${won?'· <span style="color:var(--scc-green-text)">Unlocked 🎉</span>':''}</div>
+      <div class="scc-vps__sub">${won?`Month target hit (${v.monthSold}/${v.targetMonth}) — MAU incentive unlocked. Quarter: ${v.quarterSold}/${v.targetQuarter}.`:`${v.monthSold}/${v.targetMonth} this month · ${v.quarterSold}/${v.targetQuarter} this quarter — sell 1 Expansion/mo (or 3/qtr) to unlock your MAU incentive.`}</div>
+      <div class="scc-vps__meter" title="Expansion this quarter">${pips}</div>
+    </div>
+    <div class="scc-vps__big">${v.quarterSold}/${v.targetQuarter}</div>
+    <button class="scc-vps__demo" onclick="vpsAdd()">+1 Expansion (demo)</button>
+  </section>`;
+}
+function vpsAdd(){
+  const v=DATA[role].vps; const wasWon=v.monthSold>=v.targetMonth;
+  v.monthSold++; v.quarterSold=Math.min(v.quarterSold+1,v.targetQuarter+2);
+  render();
+  if(!wasWon && v.monthSold>=v.targetMonth) celebrate();
+}
+function celebrate(){
+  const c=document.createElement('div'); c.className='scc-confetti';
+  const cols=['#4f46e5','#8b5cf6','#16a34a','#f59e0b','#ef4444','#6366f1'];
+  for(let i=0;i<90;i++){const p=document.createElement('div');p.className='scc-conf';p.style.left=Math.random()*100+'vw';p.style.background=cols[i%cols.length];p.style.animationDuration=(2+Math.random()*1.6)+'s';p.style.animationDelay=(Math.random()*0.4)+'s';c.appendChild(p);}
+  document.getElementById('sccApp').appendChild(c);
+  setTimeout(()=>c.remove(),3600);
+}
+let demoWinRole=null;
+function demoWin(){demoWinRole=role;render();celebrate();}
+function focusHTML(d){
+  const a=d.salesAssessment; const pct=a.score; const r=22, circ=2*Math.PI*r, off=circ*(1-pct/100);
+  return `<section class="scc-card scc-card--pad scc-reveal">
+    <div class="scc-card__head"><div class="scc-card__title">Your Focus</div><div class="scc-grow"></div><div class="scc-card__sub">Latest assessment · ${esc(a.date)}</div></div>
+    <div class="scc-focus__top">
+      <svg class="scc-ring" viewBox="0 0 56 56"><circle cx="28" cy="28" r="${r}" fill="none" stroke="var(--scc-input-bg)" stroke-width="6"/><circle cx="28" cy="28" r="${r}" fill="none" stroke="var(--scc-accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 28 28)"/><text x="28" y="32" text-anchor="middle" font-size="15" font-weight="800" fill="var(--scc-text-primary)">${pct}</text></svg>
+      <div><div style="font-size:13px;font-weight:800;">Overall score ${pct}/100</div><div class="scc-focus__score">Key actions to work on now</div></div>
+    </div>
+    <div class="scc-focus__actions">${esc(a.actions)}</div>
+    <div class="scc-focus__by">From ${esc(a.by)}</div>
+  </section>`;
+}
+function campaignsHTML(d){
+  return `<section class="scc-card scc-card--pad scc-reveal">
+    <div class="scc-card__head"><div class="scc-card__title">Campaigns · ${esc(d.region)}</div><div class="scc-grow"></div><div class="scc-card__sub">next 3 months · recruitment</div></div>
+    ${d.campaigns.map(c=>`<div class="scc-camp"><span class="scc-camp__date">${esc(c.date)}</span><div class="scc-grow"><div class="scc-camp__n">${esc(c.n)}</div><div class="scc-camp__resp">Event Campaign</div></div><span class="scc-camp__badge">${c.resp} responded</span></div>`).join('')}
+  </section>`;
+}
+const VOICE_USERID="id_demo";
+const VOICE_BASE="https://voice.example.com/recorder";
+const VOICE_CONTACTS=[
+ {id:"id_demo",name:"Dr. Sophie Laurent",acct:"Atlas Lyon"},
+ {id:"id_demo",name:"Dr. Lucas Lef\u00e8vre",acct:"Lef\u00e8vre"},
+ {id:"id_demo",name:"Dr. Emma Janssens",acct:"Gent Digital"},
+ {id:"id_demo",name:"Dr. Sarah Bright",acct:"Bright Systems"},
+ {id:"id_demo",name:"Dr. James Pearl",acct:"Pearl Logistics"},
+ {id:"id_demo",name:"Dr. Olivia Camden",acct:"Camden Industries"}
+];
+let voiceSel=null;
+function openVoice(){voiceSel=null;document.getElementById('sccVoice').classList.add('is-open');document.getElementById('sccVoiceSearch').value='';renderVoiceList();document.getElementById('sccVoiceSel').innerHTML='';}
+function closeVoice(){document.getElementById('sccVoice').classList.remove('is-open');}
+function voiceUrl(c){return VOICE_BASE+'?contactId='+c.id+'&userId='+VOICE_USERID+'&contactName='+encodeURIComponent(c.name).replace(/%20/g,'+');}
+function renderVoiceList(){const q=(document.getElementById('sccVoiceSearch').value||'').toLowerCase();const list=VOICE_CONTACTS.filter(c=>c.name.toLowerCase().includes(q)||c.acct.toLowerCase().includes(q));document.getElementById('sccVoiceList').innerHTML=list.map(c=>`<button class="scc-voice-item ${voiceSel&&voiceSel.id===c.id?'sel':''}" onclick="selectVoice('${c.id}')"><div><div class="scc-voice-item__n">${esc(c.name)}</div><div class="scc-voice-item__a">${esc(c.acct)}</div></div></button>`).join('')||'<div class="scc-card__sub">No contacts match.</div>';}
+function selectVoice(id){voiceSel=VOICE_CONTACTS.find(c=>c.id===id);renderVoiceList();const u=voiceUrl(voiceSel);document.getElementById('sccVoiceSel').innerHTML=`<div class="scc-micro" style="margin-top:16px">URL passed to Visualforce</div><div class="scc-voice-url">${esc(u)}</div><button class="scc-btn-primary scc-voice-go" onclick="window.open('${u}','_blank')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg> Open recorder for ${esc(voiceSel.name)}</button>`;}
+function openMaps(){document.getElementById('sccMaps').classList.add('is-open');}
+function closeMaps(){document.getElementById('sccMaps').classList.remove('is-open');}
+function setRevenue(){
+  const t=DATA[role].revenueTarget; const v=prompt('Set my Revenue Target ('+DATA[role].cur+'):', t.val);
+  if(v!==null && !isNaN(+v)){t.val=+v; render();}
+}
+function setMuspTarget(){const cur=DATA.ic.muspTarget.replace(/[+%]/g,'');const v=prompt('Set my 6-month MAU Growth Target (%):',cur);if(v!==null&&v.trim()!==''){const n=parseFloat(v);if(!isNaN(n)){DATA.ic.muspTarget=(n>=0?'+':'')+n+'%';render();}}}
+function setUpsell(){const t=DATA.ic.upsellTarget;const v=prompt('Set my Upsell Pipeline Target ('+DATA.ic.cur+'):',t.val);if(v!==null&&v.trim()!==''&&!isNaN(+v)){t.val=+v;render();}}
+function stagger(){document.querySelectorAll('.scc-reveal').forEach((el,i)=>{el.style.animation='none';void el.offsetWidth;el.style.animation='scc-in .5s ease forwards';el.style.animationDelay=(i*0.045)+'s';});}
+
+/* controls */
+function setDemo(x){
+  demo=x;
+  document.getElementById('sccDemoAE').setAttribute('aria-pressed',x==='ae');
+  document.getElementById('sccDemoIC').setAttribute('aria-pressed',x==='ic');
+  document.getElementById('sccDemoDual').setAttribute('aria-pressed',x==='dual');
+  const tg=document.getElementById('sccRoleToggle');
+  if(x==='dual'){tg.style.display='flex';role='ae';}
+  else{tg.style.display='none';role=x;}
+  document.getElementById('sccApp').dataset.role=role;
+  resetState(); syncRoleToggle(); render();
+}
+function setRole(r){role=r;document.getElementById('sccApp').dataset.role=r;resetState();syncRoleToggle();render();}
+function syncRoleToggle(){document.getElementById('sccRoleAE').setAttribute('aria-pressed',role==='ae');document.getElementById('sccRoleIC').setAttribute('aria-pressed',role==='ic');}
+function resetState(){activeTier="all";activeSeg="all";muspView="total";queueExpanded=false;lbScope="area";lbTab=DATA[role].leaderboard.defaultTab;}
+function setTier(t){activeTier=t;render();}
+function setSeg(s){activeSeg=s;render();}
+function setMusp(m){muspView=m;render();}
+function expandQueue(){queueExpanded=true;render();}
+function setTab(t){lbTab=t;render();}
+function setScope(s){lbScope=s;render();}
+function toggleTheme(){const a=document.getElementById('sccApp');const dk=a.classList.toggle('scc--dark');document.getElementById('sccThemeIcon').innerHTML=dk?'<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>':'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';}
+function refresh(){const b=document.getElementById('sccRefresh');b.classList.add('is-spinning');showSkel();setTimeout(()=>{render();b.classList.remove('is-spinning');},900);}
+function showSkel(){const sk=h=>`<div class="scc-skel" style="height:${h}px"></div>`;document.getElementById('sccPage').innerHTML=`<section class="scc-card scc-briefing">${sk(46)}</section><section class="scc-kpis">${[1,2,3,4].map(()=>`<div class="scc-card" style="padding:14px">${sk(60)}</div>`).join('')}</section><div class="scc-main"><div class="scc-col"><div class="scc-card scc-card--pad">${[0,1,2,3,4].map(()=>`<div style="margin-bottom:8px">${sk(54)}</div>`).join('')}</div></div><div class="scc-col"><div class="scc-card scc-card--pad">${sk(180)}</div></div></div>`;}
+
+/* kanban */
+function openKanban(){
+  document.getElementById('sccKan').innerHTML=DATA.ae.kanban.map((col,ci)=>`<div class="scc-kancol ${col.late?'is-late':''}" data-col="${ci}" ondragover="kanOver(event)" ondragleave="kanLeave(event)" ondrop="kanDrop(event)"><div class="scc-kancol__head"><span class="scc-kancol__name">${esc(col.name)}</span><span class="scc-kancol__count">${col.items.length}</span></div><div class="scc-kancol__body">${col.items.map((it,ii)=>`<div class="scc-kancard scc-kancard--${it.type}" draggable="true" id="kc-${ci}-${ii}" ondragstart="kanStart(event)" ondragend="kanEnd(event)"><div class="scc-kancard__name">${esc(it.name)}</div><div class="scc-kancard__meta">${esc(it.meta)}</div><span class="scc-typchip">${it.type==='new'?'New Account':it.type==='up'?'Up-Selling':'Reactivate'}</span></div>`).join('')}</div></div>`).join('');
+  document.getElementById('sccKanban').classList.add('is-open');
+}
+function closeKanban(){document.getElementById('sccKanban').classList.remove('is-open');}
+let dragId=null;
+function kanStart(e){dragId=e.target.id;e.target.classList.add('is-drag');}
+function kanEnd(e){e.target.classList.remove('is-drag');}
+function kanOver(e){e.preventDefault();e.currentTarget.classList.add('is-over');}
+function kanLeave(e){e.currentTarget.classList.remove('is-over');}
+function kanDrop(e){e.preventDefault();e.currentTarget.classList.remove('is-over');const c=document.getElementById(dragId);if(c)e.currentTarget.querySelector('.scc-kancol__body').appendChild(c);document.querySelectorAll('.scc-kancol').forEach(col=>col.querySelector('.scc-kancol__count').textContent=col.querySelectorAll('.scc-kancard').length);}
+
+/* trend */
+function fmtT(v,t){if(t==="eur")return"€"+v.toFixed(2)+"M";if(t==="gbp")return"£"+v.toFixed(2)+"M";if(t==="pct")return v.toFixed(0)+"%";return Math.round(v).toLocaleString();}
+function openTrend(){trendIdx=0;trendSplit="total";document.getElementById('sccTrend').classList.add('is-open');renderTrend(true);}
+function closeTrend(){document.getElementById('sccTrend').classList.remove('is-open');}
+function setTrendTab(i){trendIdx=i;trendSplit="total";renderTrend(false);}
+function setTrendSplit(s){trendSplit=s;renderTrend(false);}
+function renderTrend(load){
+  const list=TRENDS[role],m=list[trendIdx];
+  document.getElementById('sccTrendTitle').textContent=m.key+" — 6-month trend";
+  document.getElementById('sccTrendTabs').innerHTML=list.map((x,i)=>`<button class="scc-ttab" aria-pressed="${i===trendIdx}" onclick="setTrendTab(${i})">${esc(x.key)}</button>`).join('');
+  document.getElementById('sccTrendSplit').innerHTML=m.split?`<div class="scc-tsplit"><button aria-pressed="${trendSplit==='total'}" onclick="setTrendSplit('total')">Total</button><button aria-pressed="${trendSplit==='core'}" onclick="setTrendSplit('core')">Core</button><button aria-pressed="${trendSplit==='expansion'}" onclick="setTrendSplit('expansion')">Expansion</button></div>`:'';
+  const body=document.getElementById('sccTrendBody');
+  if(load){body.innerHTML=`<div class="scc-spinner"></div><div class="scc-loadtext">Loading trend data…</div>`;setTimeout(()=>drawTrend(m),420);}else drawTrend(m);
+}
+function drawTrend(m){
+  const vals=(m.split&&trendSplit!=='total')?m[trendSplit]:m.data;
+  const vw=560,vh=230,padL=52,padR=16,padT=16,padB=28,plotW=vw-padL-padR,plotH=vh-padT-padB,base=padT+plotH;
+  const n=vals.length,max=Math.max(...vals),top=(max*1.12)||1;
+  const X=i=>padL+(n<=1?0:i*plotW/(n-1)),Y=v=>padT+plotH*(1-v/top);
+  const pts=vals.map((v,i)=>[X(i),Y(v)]);
+  const line="M"+pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" L");
+  const area="M"+X(0).toFixed(1)+","+base+" L"+pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" L")+" L"+X(n-1).toFixed(1)+","+base+" Z";
+  const gy=[padT,padT+plotH/2,base],gv=[top,top/2,0];
+  let svg=`<svg class="scc-chart-svg" viewBox="0 0 ${vw} ${vh}" preserveAspectRatio="xMidYMid meet">`;
+  gy.forEach((yy,i)=>{svg+=`<line x1="${padL}" y1="${yy}" x2="${vw-padR}" y2="${yy}" stroke="#1e293b"/><text x="${padL-8}" y="${yy+3}" text-anchor="end" font-size="9" fill="#64748b">${fmtT(gv[i],m.fmt)}</text>`;});
+  svg+=`<path d="${area}" fill="rgba(129,140,248,0.15)"/><path class="scc-line" d="${line}" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  pts.forEach((p,i)=>svg+=`<text x="${p[0]}" y="${vh-8}" text-anchor="middle" font-size="9" fill="#64748b">${TMONTHS[i]}</text>`);
+  pts.forEach((p,i)=>svg+=`<circle id="td-${i}" cx="${p[0]}" cy="${p[1]}" r="${i===n-1?4:4}" fill="#0f172a" stroke="${i===n-1?'#475569':'#818cf8'}" stroke-width="2" ${i===n-1?'stroke-dasharray="2 2"':''}/>`);
+  pts.forEach((p,i)=>svg+=`<circle class="scc-hit" data-i="${i}" cx="${p[0]}" cy="${p[1]}" r="18" fill="transparent" style="cursor:pointer"/>`);
+  svg+=`</svg><div class="scc-tooltip" id="sccTip"></div>`;
+  const last=vals[n-1],prev=vals[n-2],avg=vals.reduce((a,b)=>a+b,0)/n;
+  // MoM on completed months only (exclude in-progress current month)
+  const compLast=vals[n-2],compPrev=vals[n-3],mom=compPrev?((compLast-compPrev)/compPrev*100):0,mc=mom>=0?'up':'down';
+  document.getElementById('sccTrendBody').innerHTML=`<div class="scc-chartwrap">${svg}</div>
+    <div class="scc-stats"><div class="scc-stat"><div class="scc-stat__l">Latest (in progress)</div><div class="scc-stat__v">${fmtT(last,m.fmt)}</div></div><div class="scc-stat"><div class="scc-stat__l">6-Mo Avg</div><div class="scc-stat__v">${fmtT(avg,m.fmt)}</div></div><div class="scc-stat"><div class="scc-stat__l">MoM (completed)</div><div class="scc-stat__v ${mc}">${mom>=0?'▲':'▼'} ${Math.abs(mom).toFixed(1)}%</div></div></div>
+    <div style="font-size:10px;color:#64748b;margin-top:8px;text-align:center;">Dashed point = current month (still accumulating); MoM uses completed months only.</div>`;
+  const wrap=document.querySelector('#sccTrendBody .scc-chartwrap'),tip=document.getElementById('sccTip');
+  const reset=()=>wrap.querySelectorAll('circle[id^="td-"]').forEach((d,i)=>{d.setAttribute('r','4');d.setAttribute('fill','#0f172a');d.setAttribute('stroke',i===n-1?'#475569':'#818cf8');});
+  wrap.querySelectorAll('.scc-hit').forEach(h=>{const i=+h.dataset.i;const show=()=>{reset();const dot=document.getElementById('td-'+i);dot.setAttribute('r','6');dot.setAttribute('fill','#6366f1');dot.setAttribute('stroke','#fff');const dr=dot.getBoundingClientRect(),wr=wrap.getBoundingClientRect();tip.style.left=(dr.left+dr.width/2-wr.left)+'px';tip.style.top=(dr.top+dr.height/2-wr.top)+'px';tip.innerHTML=`${TMONTHS[i]}${i===n-1?' (in progress)':''} · <b>${fmtT(vals[i],m.fmt)}</b>`;tip.style.opacity='1';};h.addEventListener('mouseenter',show);h.addEventListener('click',show);h.addEventListener('mouseleave',()=>{tip.style.opacity='0';reset();});});
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeKanban();closeTrend();closeMaps();closeVoice();}});
+document.addEventListener('mouseover',e=>{const b=e.target.closest&&e.target.closest('.scc-i');if(b)showTip(b);});
+document.addEventListener('mouseout',e=>{const b=e.target.closest&&e.target.closest('.scc-i');if(b)hideTip();});
+document.addEventListener('focusin',e=>{const b=e.target.closest&&e.target.closest('.scc-i');if(b)showTip(b);});
+document.addEventListener('focusout',e=>{const b=e.target.closest&&e.target.closest('.scc-i');if(b)hideTip();});
+window.addEventListener('scroll',hideTip,true);
+
+/* ===== AI Assistant — commands for the day (mock) ===== */
+const AE_CMDS=[
+  {label:"Plan my day",prompt:"What are my top priorities today, ranked, and why?",resp:()=>{const t=DATA.ae.actions.slice(0,3);return `<div class="scc-ai__ans"><b>Your top 3 for today:</b><ol class="scc-ai__list">${t.map(a=>`<li><b>${esc(a.name)}</b> — ${esc(a.reason)} <em>(${esc(a.cta)})</em></li>`).join('')}</ol><div class="scc-ai__note">After that, clear the 6 open opps with no next activity. Want me to draft those next steps?</div></div>`;}},
+  {label:"Draft follow-ups",prompt:"Draft follow-up emails for my stale opportunities.",resp:`<div class="scc-ai__ans"><b>3 follow-ups drafted</b> for your stale deals:<ul class="scc-ai__list"><li>Lefèvre — Core expansion (34d stale): propose a concrete next step + date.</li><li>Systems Antwerpen: re-confirm timeline after 3 pushes.</li><li>Smile Studio Brussels: recap the demo + send the order form.</li></ul><div class="scc-ai__note">Review &amp; send, or tell me to personalise each.</div></div>`},
+  {label:"Prep a meeting",prompt:"Brief me on Smile Studio Brussels before my demo.",resp:`<div class="scc-ai__ans"><b>Brief — Smile Studio Brussels</b><ul class="scc-ai__list"><li>Stage: Close · €120K · 12 days open</li><li>Last touch: demo last week — positive signal</li><li>Risk: no next activity booked</li><li>Recommended: send order form + book a signature call</li></ul></div>`},
+  {label:"Spot risk",prompt:"Which open deals are slipping or past close date?",resp:`<div class="scc-ai__ans"><b>6 deals need attention:</b><ul class="scc-ai__list"><li>2 past close date — update or close out</li><li>4 pushed 2+ times — slipping</li><li>6 missing a next activity</li></ul><div class="scc-ai__note">Want me to set next activities on all 6?</div></div>`},
+  {label:"Build today's route",prompt:"Plan the most efficient route for today's visits.",resp:`<div class="scc-ai__ans"><b>Optimised route — 4 stops, ~38 km.</b><br/>Atlas Lyon → Smile Studio Brussels → Logistics Namur → Liège.<div class="scc-ai__note">Open the Territory Map to navigate it turn-by-turn.</div></div>`},
+  {label:"Coach me",prompt:"Where am I behind pace this month and what should I do?",resp:`<div class="scc-ai__ans"><b>You're at 86% of pace</b> — a gap of ~9 interactions. Fastest path: clear the 6 next-activity gaps, advance the 2 deals in Order Form Sent, and book your two E1 QBRs.</div>`}
+];
+const IC_CMDS=[
+  {label:"Summarize my book",prompt:"Which accounts are below pace or overdue a visit this week?",resp:`<div class="scc-ai__ans"><b>This week:</b><ul class="scc-ai__list"><li>5 accounts overdue a visit (past tier window)</li><li>4 below pace — MAU under their 6-mo average</li><li>1 E1 (Bright Systems) is 6 days over its 90-day window</li></ul></div>`},
+  {label:"QBR prep",prompt:"Draft a QBR outline for Bright Systems from the last 6 months.",resp:`<div class="scc-ai__ans"><b>QBR outline — Bright Systems (E1)</b><ul class="scc-ai__list"><li>Usage: MAU trend + Core / Expansion split</li><li>Wins &amp; adoption gaps, last 2 quarters</li><li>Expansion opportunities + renewal runway</li><li>Agreed goals for next quarter</li></ul></div>`},
+  {label:"Adoption play",prompt:"Suggest an adoption plan for accounts trending down.",resp:`<div class="scc-ai__ans"><b>Adoption plan — 4 declining accounts:</b><ul class="scc-ai__list"><li>Root cause: activations down −7% vs prior 3 months</li><li>Play: re-onboard champions, enable 2 underused features, weekly check-in for 30 days</li></ul></div>`},
+  {label:"Draft check-ins",prompt:"Write check-in emails for my below-pace accounts.",resp:`<div class="scc-ai__ans"><b>4 check-in emails drafted</b> — each references the account's recent usage dip and proposes a 20-minute review.<div class="scc-ai__note">Want them more formal, or ready to send?</div></div>`},
+  {label:"Find expansion",prompt:"Where's the whitespace for expansion in my book?",resp:`<div class="scc-ai__ans"><b>Expansion whitespace:</b><ul class="scc-ai__list"><li>Thames Digital — healthy usage, no add-on (Platform upgrade fit)</li><li>3 E3/E4 accounts above pace — tier-upsell candidates</li></ul></div>`},
+  {label:"Plan my week",prompt:"Build a visit plan that covers my overdue accounts.",resp:`<div class="scc-ai__ans"><b>Visit plan</b> — covers all 5 overdue accounts + both E1/E2 gaps across 3 days, batched by area.<div class="scc-ai__note">Open the Territory Map to route each day.</div></div>`}
+];
+function aiHTML(d){
+  const cmds=role==='ae'?AE_CMDS:IC_CMDS;
+  return `<section class="scc-card scc-card--pad scc-ai scc-reveal">
+    <div class="scc-card__head"><div class="scc-ai__badge">AI</div><div><div class="scc-card__title">AI Assistant</div><div class="scc-card__sub">Ask in plain language — or run a command to get moving</div></div></div>
+    <div class="scc-ai__bar"><input id="sccAiInput" class="scc-ai__input" placeholder="Ask about your book, pipeline, or day…" onkeydown="if(event.key==='Enter')runAi()" /><button class="scc-btn-primary" onclick="runAi()">Ask</button></div>
+    <div class="scc-ai__cmds">${cmds.map((c,i)=>`<button class="scc-ai__cmd" onclick="runAiCmd(${i})"><span class="scc-ai__cmd-l">${esc(c.label)}</span><span class="scc-ai__cmd-p">${esc(c.prompt)}</span></button>`).join('')}</div>
+    <div id="sccAiOut" class="scc-ai__out" hidden></div>
+    <div class="scc-ai__foot scc-micro">Demo · responses are illustrative. In production this runs on your CRM data with guardrails.</div>
+  </section>`;
+}
+function showAi(html){const o=document.getElementById('sccAiOut');if(!o)return;o.hidden=false;o.innerHTML=`<div class="scc-ai__think"><span class="scc-spinner2"></span> Thinking…</div>`;setTimeout(()=>{o.innerHTML=html;},480);}
+function runAiCmd(i){const cmds=role==='ae'?AE_CMDS:IC_CMDS;const c=cmds[i];if(!c)return;const inp=document.getElementById('sccAiInput');if(inp)inp.value=c.prompt;showAi(typeof c.resp==='function'?c.resp():c.resp);}
+function runAi(){const inp=document.getElementById('sccAiInput');const q=(inp&&inp.value||'').trim();if(!q){showAi('<div class="scc-ai__ans">Try a command below — or ask things like “which deals are at risk?” or “draft my follow-ups.”</div>');return;}showAi(`<div class="scc-ai__ans"><b>On it.</b> Drafting from your current book…<div class="scc-ai__note">“${esc(q)}” — demo response; wired to your CRM with guardrails in production.</div></div>`);}
+
+(function init(){if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)toggleTheme();render();})();
+</script>
+</body>
+</html>

@@ -291,4 +291,64 @@
     });
   });
 
+
+  /* --- Iframe demo popup (e.g., Revenue Cockpit) ----------- */
+  // Any [data-frame-demo] with data-src opens that page in a modal iframe.
+  var frameTriggers = document.querySelectorAll("[data-frame-demo]");
+  if (frameTriggers.length) {
+    var fOverlay, fFrame, fTitle, fReturn = null;
+    var buildFrame = function () {
+      fOverlay = document.createElement("div");
+      fOverlay.className = "td-overlay";
+      fOverlay.setAttribute("aria-hidden", "true");
+      var modal = document.createElement("div");
+      modal.className = "td-modal td-modal--frame";
+      modal.setAttribute("role", "dialog");
+      modal.setAttribute("aria-modal", "true");
+      var bar = document.createElement("div");
+      bar.className = "td-frame__bar";
+      fTitle = document.createElement("span");
+      fTitle.className = "td-frame__title mono";
+      var close = document.createElement("button");
+      close.className = "td-close";
+      close.setAttribute("aria-label", "Close demo");
+      close.innerHTML = "&times;";
+      close.addEventListener("click", closeFrame);
+      bar.appendChild(fTitle); bar.appendChild(close);
+      fFrame = document.createElement("iframe");
+      fFrame.className = "td-frame";
+      fFrame.setAttribute("title", "Interactive demo");
+      fFrame.setAttribute("loading", "lazy");
+      modal.appendChild(bar); modal.appendChild(fFrame);
+      fOverlay.appendChild(modal);
+      document.body.appendChild(fOverlay);
+      fOverlay.addEventListener("click", function (e) { if (e.target === fOverlay) closeFrame(); });
+    };
+    var onFrameKey = function (e) { if (e.key === "Escape") closeFrame(); };
+    var openFrame = function (src, title) {
+      if (!fOverlay) buildFrame();
+      fTitle.textContent = title || "Interactive demo";
+      if (fFrame.getAttribute("src") !== src) fFrame.setAttribute("src", src);
+      fReturn = document.activeElement;
+      fOverlay.classList.add("is-open");
+      fOverlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      document.addEventListener("keydown", onFrameKey);
+    };
+    window.closeFrame = function () {
+      if (!fOverlay) return;
+      fOverlay.classList.remove("is-open");
+      fOverlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onFrameKey);
+      if (fReturn && fReturn.focus) fReturn.focus();
+    };
+    frameTriggers.forEach(function (t) {
+      t.addEventListener("click", function (e) {
+        e.preventDefault();
+        openFrame(t.getAttribute("data-src"), t.getAttribute("data-title"));
+      });
+    });
+  }
+
 })();
