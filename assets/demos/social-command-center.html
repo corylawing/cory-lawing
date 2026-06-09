@@ -36,7 +36,7 @@ html.dark{
   --shadow-card:0 1px 3px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.45);
 }
 *{box-sizing:border-box;}
-html,body{margin:0;height:100%;}
+html,body{margin:0;height:100%;overflow-x:clip;max-width:100%;}
 body{background:var(--bg);color:var(--fg);font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-size:14px;line-height:1.5;}
 .num{font-variant-numeric:tabular-nums;}
@@ -74,7 +74,7 @@ h1,h2,h3,h4{margin:0;letter-spacing:-.01em;}
   background:color-mix(in srgb,var(--surface) 78%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border);}
 .hamb{display:none;width:38px;height:38px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);place-items:center;color:var(--fg);}
-.search{flex:1;max-width:420px;position:relative;}
+.search{flex:1;min-width:0;max-width:420px;position:relative;}
 .search input{width:100%;padding:9px 12px 9px 36px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--muted);color:var(--fg);font-size:13px;outline:none;}
 .search input:focus{border-color:var(--primary);background:var(--surface);}
 .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mfg);}
@@ -192,7 +192,8 @@ h1,h2,h3,h4{margin:0;letter-spacing:-.01em;}
 /* calendar */
 .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
 .calhd{font-size:11px;font-weight:700;color:var(--mfg);text-transform:uppercase;letter-spacing:.04em;text-align:center;padding-bottom:4px;}
-.calcell{min-height:104px;border:1px solid var(--border);border-radius:var(--radius-md);padding:7px;background:var(--surface);display:flex;flex-direction:column;gap:4px;}
+.calcell{min-height:104px;min-width:0;border:1px solid var(--border);border-radius:var(--radius-md);padding:7px;background:var(--surface);display:flex;flex-direction:column;gap:4px;}
+.calchip{min-width:0;max-width:100%;}
 .calcell.dim{opacity:.45;}
 .calcell.today{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary);}
 .caldate{font-size:11.5px;font-weight:700;color:var(--mfg);}
@@ -611,7 +612,7 @@ function scrAnalytics(){
   heat+='</div>';
   const topPosts=POSTS.filter(p=>p.perf>0).sort((a,b)=>b.perf-a.perf);
   return `${ph('Analytics','Plain-language performance across every channel.',`<div class="seg">${['7d','30d','90d','12mo'].map((d,i)=>`<button class="${i===1?'on':''}" onclick="toast('Range: '+'${d}')">${d}</button>`).join('')}</div>`)}
-  <div class="grid" style="grid-template-columns:repeat(7,1fr)">${k.map(x=>`<div class="card kpi" style="padding:13px"><div class="kpi__label" style="font-size:11px">${x[0]}</div><div class="kpi__val num" style="font-size:19px">${x[1]}</div><div style="margin:4px 0">${spark(PERF[0].sp.map(v=>v*(0.8+Math.random()*0.4)))}</div>${deltaEl(x[2])}</div>`).join('')}</div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(118px,1fr))">${k.map(x=>`<div class="card kpi" style="padding:13px"><div class="kpi__label" style="font-size:11px">${x[0]}</div><div class="kpi__val num" style="font-size:19px">${x[1]}</div><div style="margin:4px 0">${spark(PERF[0].sp.map(v=>v*(0.8+Math.random()*0.4)))}</div>${deltaEl(x[2])}</div>`).join('')}</div>
   <div class="grid split" style="grid-template-columns:1.5fr 1fr;margin-top:20px">
     <div class="card"><div class="card__h"><div class="card__t">Multi-channel trend</div></div><div class="card__b">${areaChart([{c:'var(--primary)',data:[120,128,134,140,148,156,162,168,174,179,183,186]},{c:'var(--accent)',data:[60,64,70,74,80,86,90,96,100,104,108,112]},{c:'var(--warning)',data:[40,42,44,46,48,50,52,54,56,58,60,62]}],220)}<div style="display:flex;gap:16px;margin-top:8px;font-size:12px" class="muted"><span><span class="dot" style="background:var(--primary)"></span> Engagement</span><span><span class="dot" style="background:var(--accent)"></span> Reach</span><span><span class="dot" style="background:var(--warning)"></span> Clicks</span></div></div></div>
     <div class="card"><div class="card__h"><div class="card__t">Platform comparison</div></div><div class="card__b">${hbars(ACCOUNTS.filter(a=>a.connected).map(a=>({l:PLAT[a.p].n,v:a.reach,c:PLAT[a.p].c})))}</div></div>
@@ -725,7 +726,7 @@ function scrSalesforce(){
     return `${i>0&&conv?`<div class="fconv">↓ ${conv} conversion</div>`:''}<div class="fstage" style="background:${s.c};width:${w}%;margin:0 auto"><span style="font-weight:600">${s.l}</span><span class="num" style="font-weight:800">${typeof s.v==='number'?fmt(s.v):s.v}</span></div>`;
   }).join('');
   return `${ph('Salesforce integration','Social activity tied to revenue.',`<span class="badge badge--success" style="align-self:center">● Connected</span><button class="btn btn--outline" onclick="toast('Sync started — last sync 2 min ago')">${icSync()} Sync now</button>`)}
-  <div class="grid" style="grid-template-columns:repeat(5,1fr)">${k.map(x=>`<div class="card kpi"><div class="kpi__label">${x[0]}</div><div class="kpi__val num" style="font-size:21px">${x[1]}</div><div class="kpi__foot">${deltaEl(x[2])}</div></div>`).join('')}</div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${k.map(x=>`<div class="card kpi"><div class="kpi__label">${x[0]}</div><div class="kpi__val num" style="font-size:21px">${x[1]}</div><div class="kpi__foot">${deltaEl(x[2])}</div></div>`).join('')}</div>
   <div class="grid split" style="grid-template-columns:1.1fr 1fr;margin-top:20px">
     <div class="card"><div class="card__h"><div class="card__t">Attribution funnel</div><div class="card__d">Social activity → lead → opportunity → revenue</div></div><div class="card__b"><div class="funnel">${funnel}</div></div></div>
     <div class="card"><div class="card__h"><div class="card__t">Revenue by campaign</div></div><div class="card__b">${hbars([{l:'Northwind 2.0',v:302000,c:'#00A3AD'},{l:'Customer Stories',v:198000,c:'#F59E0B'},{l:'Growth Webinar',v:112000,c:'#6366F1'}])}
