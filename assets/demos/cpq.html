@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Custom CPQ — interactive demo</title>
+<style>
+  /* ============ CPQ DEMO — self-contained, genericized ============ */
+  :root{
+    --ink:#11131a; --ink2:#3b4150; --muted:#6b7280; --line:#e6e8ee;
+    --bg:#f4f6fa; --card:#ffffff;
+    --brand:#1b1e27; --brand2:#2b303d;
+    --lime:#cde86b; --lime-ink:#3f4a12;
+    --blue:#2563eb; --blue-soft:#e7efff;
+    --green:#1e7e34; --green-soft:#e9f6ee; --green-line:#9cd6ad;
+    --orange:#c2620a; --orange-soft:#fdf1e3; --orange-line:#f0bd7f;
+    --red:#c0271e; --red-soft:#fdeceb; --red-line:#f0a39c;
+    --teal:#0f8f97;
+    --radius:14px;
+    font-synthesis:none;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); background:var(--bg);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    font-size:14px; line-height:1.45;
+  }
+  .mono{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+  .app{max-width:1180px;margin:0 auto;padding:18px 20px 120px;}
+
+  /* ---------- Top context bar ---------- */
+  .cpq-top{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    background:var(--brand); color:#fff; border-radius:var(--radius);
+    padding:16px 20px; margin-bottom:16px;
+    box-shadow:0 10px 30px rgba(17,19,26,.12);
+  }
+  .cpq-top__eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#aeb6c6;}
+  .cpq-top__name{font-size:18px;font-weight:700;line-height:1.15;}
+  .cpq-top__meta{font-size:12px;color:#c4cad6;margin-top:2px;}
+  .cpq-top__spacer{flex:1;}
+  .cpq-top__cur{
+    font-size:12px;color:#cdd3df;border:1px solid rgba(255,255,255,.18);
+    padding:5px 10px;border-radius:999px;
+  }
+
+  /* ---------- Stepper ---------- */
+  .stepper{display:flex;align-items:center;gap:0;margin:0 0 18px;}
+  .step{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+  .step__dot{
+    width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+    background:#fff;border:2px solid var(--line);color:var(--muted);
+    font-weight:700;font-size:13px;transition:.2s;
+  }
+  .step__label{font-weight:600;color:var(--muted);font-size:13.5px;transition:.2s;}
+  .step.active .step__dot{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .step.active .step__label{color:var(--ink);}
+  .step.done .step__dot{background:var(--green-soft);border-color:var(--green-line);color:var(--green);}
+  .step.done .step__label{color:var(--ink);}
+  .step__bar{flex:1;height:3px;background:var(--line);margin:0 14px;border-radius:2px;min-width:40px;}
+  .step__bar.done{background:var(--green-line);}
+
+  /* ---------- Cards ---------- */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 1px 2px rgba(17,19,26,.04);}
+  .panel__head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line);background:#fafbfd;}
+  .panel__title{font-weight:700;font-size:15px;}
+  .panel__sub{font-size:12.5px;color:var(--muted);}
+  .panel__spacer{flex:1;}
+
+  /* ---------- Search ---------- */
+  .search{position:relative;flex:1;min-width:200px;max-width:360px;}
+  .search input{
+    width:100%;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:10px;
+    font-size:13.5px;background:#fff;color:var(--ink);outline:none;transition:.15s;
+  }
+  .search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(27,30,39,.08);}
+  .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.5;}
+
+  /* ---------- Product list (step 1) ---------- */
+  .plist{max-height:430px;overflow:auto;}
+  .prow{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid #f1f3f7;transition:background .12s;cursor:pointer;}
+  .prow:hover{background:#f9fafc;}
+  .prow:last-child{border-bottom:none;}
+  .prow.sel{background:#f3f7ff;}
+  .prow.added{background:#f4f6fb;}
+  .cbx{width:18px;height:18px;border-radius:5px;border:2px solid #c3c9d4;display:grid;place-items:center;flex-shrink:0;background:#fff;transition:.12s;}
+  .prow.sel .cbx{background:var(--brand);border-color:var(--brand);}
+  .prow.sel .cbx svg{opacity:1;}
+  .cbx svg{opacity:0;}
+  .prow__main{flex:1;min-width:0;}
+  .prow__name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .prow__code{font-size:11.5px;color:var(--muted);}
+  .ptag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;font-weight:700;}
+  .ptag--sw{background:#eef2ff;color:#3949ab;}
+  .ptag--hw{background:#ecfdf5;color:#0f766e;}
+  .ptag--svc{background:#fdf2ff;color:#9333ea;}
+  .ptag--added{background:var(--green-soft);color:var(--green);}
+  .prow__price{font-weight:700;font-size:14px;text-align:right;white-space:nowrap;}
+  .prow__price small{display:block;font-weight:500;color:var(--muted);font-size:11px;}
+  .selall{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted);background:#fff;cursor:pointer;}
+
+  /* ---------- Config table (step 2) ---------- */
+  .ltbl{width:100%;}
+  .lhead{display:grid;grid-template-columns:minmax(180px,2fr) 78px 130px 150px 1fr 96px 44px;gap:8px;
+    padding:10px 18px;border-bottom:1px solid var(--line);background:#fafbfd;
+    font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;align-items:center;}
+  .lhead .r{text-align:right;}
+  .lhead .c{text-align:center;}
+  .lrow{display:grid;grid-template-columns:minmax(180px,2fr) 78px 130px 150px 1fr 96px 44px;gap:8px;
+    padding:12px 18px;border-bottom:1px solid #f1f3f7;align-items:center;animation:fade .25s ease;}
+  .lrow.del{background:var(--red-soft);opacity:.75;}
+  .lrow.del .lname,.lrow.del .lbase{text-decoration:line-through;}
+  .lrow.free{background:#f1faff;}
+  .lrow.ship{background:#f8fafc;}
+  .lname{font-weight:600;font-size:13.5px;}
+  .lcode{font-size:11px;color:var(--muted);}
+  .lbase{font-size:12px;color:var(--muted);}
+  .lbase.strike{text-decoration:line-through;text-decoration-color:var(--orange);color:#aaa;}
+  .num{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:8px;text-align:center;font-weight:600;font-size:13.5px;color:var(--ink);outline:none;background:#fff;}
+  .num:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(27,30,39,.07);}
+  .num:disabled{background:#f3f4f7;color:#9aa0ab;}
+  .disc-wrap{display:flex;flex-direction:column;gap:3px;padding-left:8px;}
+  .disc-wrap.low{border-left:3px solid var(--green);}
+  .disc-wrap.med{border-left:3px solid var(--orange);}
+  .disc-wrap.high{border-left:3px solid var(--red);background:#fff7f6;}
+  .disc-warn{font-size:10.5px;font-weight:700;color:var(--orange);line-height:1.2;}
+  .disc-warn.high{color:var(--red);}
+  .lprice{text-align:right;}
+  .lprice__excl{font-weight:700;font-size:14px;}
+  .lprice__incl{font-size:11.5px;color:var(--muted);}
+  .lstatus{text-align:center;}
+  .badge{display:inline-block;font-size:10px;letter-spacing:.03em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:999px;}
+  .badge--new{background:var(--green-soft);color:var(--green);}
+  .badge--upd{background:#fff4e0;color:#b9760a;}
+  .badge--unch{background:#eef0f4;color:#7a8090;}
+  .badge--del{background:var(--red-soft);color:var(--red);}
+  .badge--free{background:#e6f7ff;color:#0c7;}
+  .iconbtn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center;color:#8a90a0;transition:.12s;}
+  .iconbtn:hover{border-color:var(--red-line);color:var(--red);background:var(--red-soft);}
+  .iconbtn:disabled{opacity:.4;cursor:not-allowed;}
+  .promo-btn{font-size:12px;font-weight:600;padding:6px 10px;border-radius:8px;border:1px dashed #c3c9d4;background:#fff;cursor:pointer;color:var(--ink2);width:100%;transition:.12s;}
+  .promo-btn:hover:not(:disabled){border-color:var(--blue);color:var(--blue);}
+  .promo-btn:disabled{opacity:.45;cursor:not-allowed;}
+  .promo-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#0c5ed6;background:var(--blue-soft);border-radius:999px;padding:3px 9px;margin-top:4px;}
+
+  /* ---------- Toggles ---------- */
+  .toggle{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;user-select:none;}
+  .toggle input{display:none;}
+  .tg{width:36px;height:20px;border-radius:999px;background:#cfd4dd;position:relative;transition:.16s;flex-shrink:0;}
+  .tg::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.16s;box-shadow:0 1px 2px rgba(0,0,0,.25);}
+  .toggle input:checked + .tg{background:var(--brand);}
+  .toggle input:checked + .tg::after{transform:translateX(16px);}
+  .toggle.disabled{opacity:.45;pointer-events:none;}
+  .tax-badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:#7a5c00;background:#fdf4d0;border:1px solid #f0cd56;border-radius:999px;padding:3px 10px;}
+
+  /* ---------- Approval banner ---------- */
+  .approval{margin-bottom:16px;border-radius:var(--radius);border:1px solid var(--orange-line);background:#fffaf2;border-left:4px solid #e89a2b;padding:14px 18px;animation:slidedown .3s ease;}
+  .approval.warn{}
+  .approval__label{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#a06a12;font-weight:700;margin-bottom:12px;}
+  .achain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;}
+  .astep{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px;max-width:160px;}
+  .acirc{width:34px;height:34px;border-radius:50%;border:2px solid #d7c08a;background:#fff;display:grid;place-items:center;color:#a06a12;font-weight:700;font-size:13px;}
+  .acirc.ready{border-style:dashed;border-color:var(--blue);color:var(--blue);background:var(--blue-soft);}
+  .aname{font-size:12px;font-weight:600;text-align:center;}
+  .arole{font-size:11px;color:var(--muted);text-align:center;}
+  .acon{width:48px;height:3px;background:#e2d3ad;border-radius:2px;margin:0 8px 32px;}
+
+  /* ---------- Totals footer ---------- */
+  .totals{position:sticky;bottom:0;margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:0 -8px 24px rgba(17,19,26,.07);padding:16px 18px;display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;}
+  .tline{display:flex;flex-direction:column;gap:2px;}
+  .tline small{font-size:11px;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;}
+  .tline b{font-size:16px;font-weight:700;}
+  .tline.save b,.tline.save small{color:var(--green);}
+  .tline.grand b{font-size:22px;}
+  .totals__spacer{flex:1;}
+
+  /* ---------- Buttons ---------- */
+  .btn{font-family:inherit;font-size:13.5px;font-weight:600;border-radius:10px;padding:10px 18px;cursor:pointer;border:1px solid transparent;transition:.14s;display:inline-flex;align-items:center;gap:8px;}
+  .btn--ghost{background:#fff;border-color:var(--line);color:var(--ink2);}
+  .btn--ghost:hover{border-color:#c3c9d4;background:#f8f9fb;}
+  .btn--dark{background:var(--brand);color:#fff;}
+  .btn--dark:hover{background:var(--brand2);}
+  .btn--dark:disabled{opacity:.4;cursor:not-allowed;}
+  .btn--lime{background:var(--lime);color:var(--lime-ink);border-color:#bcd84f;}
+  .btn--lime:hover{background:#c3e25c;}
+  .btn--sign{background:linear-gradient(120deg,#11131a,#2b303d);color:#fff;box-shadow:0 8px 20px rgba(17,19,26,.22);}
+  .btn--sign:hover{filter:brightness(1.08);}
+  .btn:disabled{cursor:not-allowed;}
+
+  .empty{padding:48px 20px;text-align:center;color:var(--muted);}
+
+  /* ---------- Modals ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(17,19,26,.5);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;animation:fade .2s ease;}
+  .scrim.open{display:flex;}
+  .modal{background:#fff;border-radius:16px;width:min(560px,100%);max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:pop .22s ease;}
+  .modal--wide{width:min(720px,100%);}
+  .modal__head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;}
+  .modal__head h3{margin:0;font-size:16px;}
+  .modal__head.danger{background:#ba0517;color:#fff;}
+  .modal__x{margin-left:auto;border:none;background:transparent;font-size:20px;line-height:1;cursor:pointer;color:inherit;opacity:.8;}
+  .modal__x:hover{opacity:1;}
+  .modal__body{padding:20px;}
+  .modal__foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+
+  .promo-opt{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:.14s;}
+  .promo-opt:hover{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue);}
+  .promo-opt.sel{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 0 0 2px var(--blue);}
+  .promo-opt b{font-size:14px;}
+  .promo-opt p{margin:4px 0 0;font-size:12.5px;color:var(--muted);}
+  .promo-opt .free{color:var(--teal);font-weight:600;}
+
+  /* tax exempt modal list */
+  .warnbox{background:var(--red-soft);border:2px solid var(--red-line);border-radius:10px;padding:14px;display:flex;gap:12px;}
+  .telist{list-style:none;margin:14px 0 0;padding:0;}
+  .telist li{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f1f3f7;font-size:13px;}
+  .telist li:last-child{border-bottom:none;}
+
+  /* ---------- Signature / order form ---------- */
+  .sign-pick{display:flex;gap:12px;margin:16px 0;}
+  .sign-opt{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;text-align:center;transition:.14s;}
+  .sign-opt:hover{border-color:var(--brand);}
+  .sign-opt.sel{border-color:var(--brand);background:#f6f7fa;box-shadow:0 0 0 2px rgba(27,30,39,.12);}
+  .sign-opt .ic{font-size:22px;}
+  .sign-opt b{display:block;margin-top:6px;font-size:14px;}
+  .sign-opt small{color:var(--muted);font-size:11.5px;}
+  .field{margin-top:6px;}
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:5px;}
+  .field input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none;}
+  .field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(27,30,39,.07);}
+
+  /* mini PDF preview */
+  .pdf{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:4px;background:#fff;}
+  .pdf__top{background:var(--brand);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-start;}
+  .pdf__top .t{font-weight:700;font-size:14px;}
+  .pdf__top .s{font-size:11px;color:#c4cad6;}
+  .pdf__rows{padding:10px 16px;}
+  .pdf__r{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px dashed #eee;}
+  .pdf__r:last-child{border-bottom:none;}
+  .pdf__tot{display:flex;justify-content:space-between;padding:10px 16px;background:#fafbfd;border-top:1px solid var(--line);font-weight:700;}
+  .pdf__sign{padding:14px 16px;border-top:1px dashed var(--line);display:flex;align-items:center;gap:12px;}
+  .pdf__sigline{flex:1;border-bottom:2px solid #cfd4dd;height:26px;position:relative;}
+  .pdf__sigline span{position:absolute;bottom:4px;left:0;font-size:10px;color:#aaa;}
+
+  .sent{text-align:center;padding:14px 6px;}
+  .sent__ring{width:64px;height:64px;border-radius:50%;background:var(--green-soft);display:grid;place-items:center;margin:0 auto 14px;animation:pop .3s ease;}
+  .sent h3{margin:0 0 6px;}
+  .sent p{margin:0;color:var(--muted);font-size:13px;}
+  .track{margin-top:18px;text-align:left;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .track__r{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #f1f3f7;font-size:13px;}
+  .track__r:last-child{border-bottom:none;}
+  .track__r .d{width:9px;height:9px;border-radius:50%;background:var(--green);flex-shrink:0;}
+  .track__r.pending .d{background:#cfd4dd;}
+  .track__r.pending{color:var(--muted);}
+
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--brand);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:80;box-shadow:0 12px 30px rgba(0,0,0,.3);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+  @keyframes slidedown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+  @media(max-width:760px){
+    .lhead{display:none;}
+    .lrow{grid-template-columns:1fr 1fr;gap:10px;padding:14px;border:1px solid var(--line);border-radius:12px;margin:10px 14px;}
+    .lrow > *{min-width:0;}
+    .lname-cell{grid-column:1 / -1;}
+    .lprice{text-align:left;}
+    .totals{flex-direction:column;align-items:stretch;}
+    .totals__spacer{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="cpq-top">
+    <div>
+      <div class="cpq-top__eyebrow mono">Configure · Price · Quote</div>
+      <div class="cpq-top__name" id="oppName">Northwind Cloud — Platform Rollout</div>
+      <div class="cpq-top__meta" id="oppMeta">Account: Northwind Industries · Owner: you · Stage: Proposal</div>
+    </div>
+    <div class="cpq-top__spacer"></div>
+    <div class="cpq-top__cur mono" id="curBadge">USD ($)</div>
+  </div>
+
+  <div class="stepper">
+    <div class="step" id="stp1" onclick="goStep(1)">
+      <div class="step__dot">1</div><div class="step__label">Add products</div>
+    </div>
+    <div class="step__bar" id="stpbar"></div>
+    <div class="step" id="stp2" onclick="goStep(2)">
+      <div class="step__dot">2</div><div class="step__label">Configure pricing</div>
+    </div>
+  </div>
+
+  <div id="approvalSlot"></div>
+  <div id="stageSlot"></div>
+
+</div>
+
+<!-- ====== MODALS ====== -->
+<div class="scrim" id="promoScrim">
+  <div class="modal">
+    <div class="modal__head"><h3>Choose a promotion</h3><button class="modal__x" onclick="closePromo()">×</button></div>
+    <div class="modal__body" id="promoBody"></div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" onclick="removePromo()">Remove promo</button>
+      <button class="btn btn--dark" onclick="applyPromo()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="taxScrim">
+  <div class="modal">
+    <div class="modal__head danger"><h3>Mark customer as tax exempt?</h3><button class="modal__x" onclick="closeTax()">×</button></div>
+    <div class="modal__body">
+      <div class="warnbox">
+        <span style="font-size:20px">⚠️</span>
+        <div><b>This removes all tax from the quote.</b><br/><span style="font-size:13px;color:var(--ink2)">Only do this when you have a valid tax-exemption certificate on file for this account.</span></div>
+      </div>
+      <ul class="telist">
+        <li><span>🚫</span><span>All line taxes are forced to <b>0.00%</b> on the order form.</span></li>
+        <li><span>📄</span><span>The generated PDF will be stamped <b>“Tax exempt”</b>.</span></li>
+        <li><span>↩️</span><span>You can switch this back off at any time before sending.</span></li>
+      </ul>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" onclick="closeTax()">Cancel</button>
+      <button class="btn btn--dark" onclick="confirmTax()">Yes, mark exempt</button>
+    </div>
+  </div>
+</div>
+
+<!-- Signature / order form -->
+<div class="scrim" id="signScrim">
+  <div class="modal modal--wide">
+    <div class="modal__head"><h3 id="signTitle">Send order form for signature</h3><button class="modal__x" onclick="closeSign()">×</button></div>
+    <div class="modal__body" id="signBody"></div>
+    <div class="modal__foot" id="signFoot"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   Custom CPQ — standalone interactive demo (mock data only)
+   Mirrors a real Configure-Price-Quote engine: product
+   selection, color-coded discount governance, approval
+   routing, promos, tax handling, and a generated order form
+   sent for e-signature by email or text.
+   ========================================================= */
+
+const CUR = '$';
+
+/* genericized B2B SaaS catalog */
+const CATALOG = [
+  { id:'p1', name:'Platform License — Growth',   code:'PLT-GRW', type:'Software', list:4800, auto:0,  limit:15, promo:true  },
+  { id:'p2', name:'Implementation & Onboarding', code:'SVC-IMP', type:'Service',  list:6500, auto:0,  limit:10, promo:false },
+  { id:'p3', name:'Premium Support (annual)',    code:'SUP-PRM', type:'Software', list:2400, auto:0,  limit:20, promo:true  },
+  { id:'p4', name:'API & Integrations Add-on',   code:'API-ADD', type:'Software', list:1800, auto:5,  limit:15, promo:true  },
+  { id:'p5', name:'Advanced Analytics Module',   code:'ANL-ADV', type:'Software', list:3200, auto:0,  limit:12, promo:true  },
+  { id:'p6', name:'Edge Gateway Kit',            code:'HW-GTW',  type:'Hardware', list:1200, auto:0,  limit:8,  promo:false },
+  { id:'pp', name:'Payment Plan (12 mo.)',       code:'FIN-PP',  type:'Service',  list:0,    auto:0,  limit:0,  promo:false, paymentPlan:true },
+  { id:'sh', name:'Shipping & Handling',         code:'SHIP',    type:'Hardware', list:140,  auto:0,  limit:0,  promo:false, shipping:true }
+];
+
+const PROMOS = [
+  { id:'pr1', name:'Annual Prepay', disc:10, desc:'10% off when the customer commits to annual prepayment.' },
+  { id:'pr2', name:'New Logo Bundle', disc:5, free:'API & Integrations Add-on', desc:'5% off the platform and a free API & Integrations Add-on for net-new customers.' },
+  { id:'pr3', name:'Multi-Year Commitment', disc:15, desc:'15% off in exchange for a 3-year commitment.' }
+];
+
+const TAX = { Hardware:8.5, Software:0, Service:0 }; // sample tax rates by type
+
+let state = {
+  step: 1,
+  search: '',
+  selected: new Set(),          // product ids selected in step 1
+  lines: [],                    // configured lines
+  showTax: true,
+  taxExempt: false,
+  promoTargetKey: null,
+  promoChoice: null,
+  signMethod: 'email'
+};
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const money = n => CUR + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+function tagClass(t){ return t==='Hardware'?'ptag--hw':t==='Service'?'ptag--svc':'ptag--sw'; }
+
+/* ---------- step navigation ---------- */
+function goStep(n){
+  if(n===2 && state.selected.size===0){ toast('Select at least one product first.'); return; }
+  if(n===2 && state.step===1) buildLines();
+  if(n===1) syncSelectionFromLines();
+  state.step=n;
+  render();
+}
+
+function syncSelectionFromLines(){
+  state.selected = new Set(state.lines.filter(l=>l.qty>0).map(l=>l.id));
+}
+
+function buildLines(){
+  const existing = new Map(state.lines.map(l=>[l.id,l]));
+  const out=[];
+  // keep existing selected, add new
+  CATALOG.forEach(p=>{
+    if(!state.selected.has(p.id)) return;
+    if(existing.has(p.id)){ out.push(existing.get(p.id)); return; }
+    out.push({
+      id:p.id, name:p.name, code:p.code, type:p.type, list:p.list,
+      qty: p.paymentPlan?12:1, disc:p.auto||0, auto:p.auto||0, limit:p.limit,
+      promoId:null, promoDisc:0, freeProduct:false,
+      shipping:!!p.shipping, paymentPlan:!!p.paymentPlan,
+      isNew:true
+    });
+  });
+  // auto-attach shipping if any hardware present and not already there
+  const hasHW = out.some(l=>l.type==='Hardware' && !l.shipping);
+  if(hasHW && !out.some(l=>l.shipping)){
+    const sh=CATALOG.find(p=>p.shipping);
+    out.push({ id:sh.id,name:sh.name,code:sh.code,type:sh.type,list:sh.list,qty:1,disc:0,auto:0,limit:0,promoId:null,promoDisc:0,freeProduct:false,shipping:true,paymentPlan:false,isNew:true });
+  }
+  state.lines=out;
+}
+
+/* ---------- line math ---------- */
+function lineCalc(l){
+  const base = l.list * l.qty;
+  const discPct = Math.max(0, l.disc||0);
+  const afterDisc = Math.max(0, base - base*discPct/100);
+  const promoAmt = afterDisc * (l.promoDisc||0)/100;
+  const excl = Math.max(0, afterDisc - promoAmt);
+  const taxPct = (state.taxExempt || !state.showTax) ? 0 : (TAX[l.type]||0);
+  const incl = excl + excl*taxPct/100;
+  const savings = (base - afterDisc) + promoAmt;
+  return { base, excl, incl, taxPct, savings };
+}
+function totals(){
+  let save=0,excl=0,tax=0,incl=0;
+  state.lines.filter(l=>l.qty>0).forEach(l=>{ const c=lineCalc(l); save+=c.savings; excl+=c.excl; tax+=(c.incl-c.excl); incl+=c.incl; });
+  return { save,excl,tax,incl };
+}
+
+/* discount governance level */
+function discLevel(l){
+  if(l.shipping||l.paymentPlan||l.limit==null) return {cls:'',warn:'',level:0};
+  const over = (l.disc||0) - l.limit;
+  if(over<=0) return {cls:(l.disc>0?'low':''),warn:'',level:0};
+  if(over<=10) return {cls:'med',warn:'Needs RSM + RSD approval',level:1};
+  return {cls:'high',warn:'Needs RSM + RSD + CFO approval',level:2};
+}
+function approvalLevel(){
+  return state.lines.filter(l=>l.qty>0).reduce((m,l)=>Math.max(m,discLevel(l).level),0);
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function render(){
+  // stepper state
+  $('stp1').className = 'step ' + (state.step===1?'active':'done');
+  $('stp2').className = 'step ' + (state.step===2?'active':'');
+  $('stpbar').className = 'step__bar' + (state.step===2?' done':'');
+  $('curBadge').textContent = 'USD ($)';
+
+  if(state.step===1){ renderStep1(); $('approvalSlot').innerHTML=''; }
+  else { renderStep2(); renderApproval(); }
+}
+
+/* ---------- STEP 1 ---------- */
+function renderStep1(){
+  const term = state.search.trim().toLowerCase();
+  const list = CATALOG.filter(p=>!p.shipping && !p.paymentPlan)
+    .filter(p=> !term || p.name.toLowerCase().includes(term) || p.code.toLowerCase().includes(term));
+  const allSel = list.length>0 && list.every(p=>state.selected.has(p.id));
+
+  const rows = list.map(p=>{
+    const sel = state.selected.has(p.id);
+    const added = state.lines.some(l=>l.id===p.id && l.qty>0);
+    return `<div class="prow ${sel?'sel':''} ${added?'added':''}" onclick="toggleProduct('${p.id}')">
+      <div class="cbx">${check()}</div>
+      <div class="prow__main">
+        <div class="prow__name">${p.name}
+          <span class="ptag ${tagClass(p.type)}">${p.type}</span>
+          ${added?'<span class="ptag ptag--added">On quote</span>':''}
+        </div>
+        <div class="prow__code mono">${p.code}${p.auto?` · auto ${p.auto}%`:''} · limit ${p.limit}%</div>
+      </div>
+      <div class="prow__price">${money(p.list)}<small>list price</small></div>
+    </div>`;
+  }).join('');
+
+  $('stageSlot').innerHTML = `
+    <div class="panel">
+      <div class="panel__head">
+        <div><div class="panel__title">Add products</div><div class="panel__sub">${state.selected.size} selected · ${CATALOG.filter(p=>!p.shipping&&!p.paymentPlan).length} in price book</div></div>
+        <div class="panel__spacer"></div>
+        <div class="search">
+          ${searchIcon()}
+          <input type="text" placeholder="Search products or codes…" value="${state.search}" oninput="onSearch(this.value)">
+        </div>
+      </div>
+      <div class="selall" onclick="toggleAll(${!allSel})">
+        <div class="cbx" style="${allSel?'background:var(--brand);border-color:var(--brand)':''}">${allSel?check(true):''}</div>
+        Select all visible
+      </div>
+      <div class="plist">${rows || '<div class="empty">No products match your search.</div>'}</div>
+    </div>
+    <div class="totals">
+      <div class="tline"><small>Selected</small><b>${state.selected.size} product${state.selected.size===1?'':'s'}</b></div>
+      <div class="totals__spacer"></div>
+      <button class="btn btn--dark" ${state.selected.size?'':'disabled'} onclick="goStep(2)">Configure pricing →</button>
+    </div>`;
+}
+function check(forceOn){ return `<svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="${forceOn?'opacity:1':''}"><path d="M2 6.2L4.6 9 10 2.6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
+function searchIcon(){ return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#888" stroke-width="1.6"/><path d="M11 11l3 3" stroke="#888" stroke-width="1.6" stroke-linecap="round"/></svg>`; }
+
+function onSearch(v){ state.search=v; renderStep1(); }
+function toggleProduct(id){ state.selected.has(id)?state.selected.delete(id):state.selected.add(id); renderStep1(); }
+function toggleAll(on){
+  const term=state.search.trim().toLowerCase();
+  CATALOG.filter(p=>!p.shipping&&!p.paymentPlan)
+    .filter(p=>!term||p.name.toLowerCase().includes(term)||p.code.toLowerCase().includes(term))
+    .forEach(p=> on?state.selected.add(p.id):state.selected.delete(p.id));
+  renderStep1();
+}
+
+/* ---------- STEP 2 ---------- */
+function renderStep2(){
+  if(state.lines.filter(l=>l.qty>0).length===0){
+    $('stageSlot').innerHTML = `<div class="panel"><div class="empty">No products on the quote yet.<br/><br/><button class="btn btn--dark" onclick="goStep(1)">← Add products</button></div></div>`;
+    return;
+  }
+  const t = totals();
+  const rows = state.lines.map((l,i)=>lineRow(l,i)).join('');
+
+  $('stageSlot').innerHTML = `
+    <div class="panel">
+      <div class="panel__head">
+        <div><div class="panel__title">Configure pricing</div><div class="panel__sub">Discounts above limit route for approval automatically</div></div>
+        <div class="panel__spacer"></div>
+        <label class="toggle ${state.taxExempt?'':''}" onclick="event.preventDefault();onTaxExempt()">
+          <input type="checkbox" ${state.taxExempt?'checked':''}><span class="tg"></span>Tax exempt
+        </label>
+        <label class="toggle ${state.taxExempt?'disabled':''}" onclick="event.preventDefault();toggleShowTax()">
+          <input type="checkbox" ${state.showTax&&!state.taxExempt?'checked':''}><span class="tg"></span>Show taxes
+        </label>
+      </div>
+      <div class="lhead">
+        <div>Product</div><div class="c">Qty</div><div class="c">Discount %</div><div class="c">Promo</div>
+        <div class="r">Price</div><div class="c">Status</div><div></div>
+      </div>
+      ${rows}
+      ${state.taxExempt?`<div style="padding:10px 18px"><span class="tax-badge">🛡️ Tax exempt — all taxes set to 0.00%</span></div>`:''}
+    </div>
+
+    <div class="totals">
+      <div class="tline save"><small>Total savings</small><b>${money(t.save)}</b></div>
+      <div class="tline"><small>Subtotal (excl. tax)</small><b>${money(t.excl)}</b></div>
+      ${state.showTax&&!state.taxExempt?`<div class="tline"><small>Taxes</small><b>${money(t.tax)}</b></div>`:''}
+      <div class="tline grand"><small>Total${state.showTax&&!state.taxExempt?' (incl. tax)':''}</small><b>${money(t.incl)}</b></div>
+      <div class="totals__spacer"></div>
+      <button class="btn btn--ghost" onclick="goStep(1)">← Products</button>
+      <button class="btn btn--sign" onclick="openSign()">📄 Generate order form</button>
+    </div>`;
+}
+
+function lineRow(l,i){
+  const c = lineCalc(l);
+  const dl = discLevel(l);
+  const promo = PROMOS.find(p=>p.id===l.promoId);
+  const cls = l.qty===0?'del':l.freeProduct?'free':l.shipping?'ship':'';
+  const status = l.qty===0?'<span class="badge badge--del">Will delete</span>'
+    : l.freeProduct?'<span class="badge badge--free">Free</span>'
+    : l.shipping?'<span class="badge badge--unch">Shipping</span>'
+    : l.isNew?'<span class="badge badge--new">New</span>'
+    : '<span class="badge badge--unch">On quote</span>';
+  const discDisabled = l.shipping||l.paymentPlan||l.freeProduct||l.qty===0;
+  const ctrlDisabled = l.shipping||l.paymentPlan||l.freeProduct||l.qty===0;
+  const strike = (l.disc>0||l.promoDisc>0)?'strike':'';
+
+  return `<div class="lrow ${cls}">
+    <div class="lname-cell">
+      <div class="lname">${l.name}</div>
+      <div class="lcode mono">${l.code} · <span class="lbase ${strike}">${money(l.base)}</span></div>
+      ${l.shipping?`<div class="lcode" style="color:var(--teal)">${c.excl===0?'Free shipping — order qualifies':'Auto-calculated for hardware'}</div>`:''}
+      ${l.paymentPlan?`<div class="lcode" style="color:var(--ink2)">12 equal monthly installments</div>`:''}
+    </div>
+    <div><input class="num" type="number" min="0" value="${l.qty}" ${ctrlDisabled&&!l.paymentPlan?'disabled':''} onchange="setQty(${i},this.value)"></div>
+    <div>
+      <div class="disc-wrap ${dl.cls}">
+        <input class="num" type="number" min="0" max="100" value="${l.disc}" ${discDisabled?'disabled':''} onchange="setDisc(${i},this.value)">
+        ${dl.warn?`<div class="disc-warn ${dl.level===2?'high':''}">⚠ ${dl.warn}</div>`:''}
+        ${(!dl.warn && l.limit)?`<div class="lcode" style="text-align:center">limit ${l.limit}%</div>`:''}
+      </div>
+    </div>
+    <div>
+      <button class="promo-btn" ${(!CATALOG.find(p=>p.id===l.id)?.promo||ctrlDisabled)?'disabled':''} onclick="openPromo(${i})">${promo?'Change promo':'Add promo'}</button>
+      ${promo?`<div class="promo-chip">🎁 ${promo.name} −${promo.disc}%</div>`:''}
+    </div>
+    <div class="lprice">
+      <div class="lprice__excl">${money(c.excl)}</div>
+      ${state.showTax&&!state.taxExempt?`<div class="lprice__incl">${money(c.incl)} incl. ${c.taxPct}%</div>`:''}
+    </div>
+    <div class="lstatus">${status}</div>
+    <div><button class="iconbtn" ${l.shipping?'disabled title="Auto-managed"':''} onclick="toggleDelete(${i})">${l.qty===0?undo():trash()}</button></div>
+  </div>`;
+}
+function trash(){ return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
+function undo(){ return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 7H10a3 3 0 110 6H6M4 7l2.5-2.5M4 7l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
+
+function setQty(i,v){ const l=state.lines[i]; l.qty=Math.max(0,parseInt(v)||0); if(l.qty>0)l.del=false; l.isNew=l.isNew; renderStep2(); renderApproval(); }
+function setDisc(i,v){ state.lines[i].disc=Math.max(0,Math.min(100,parseFloat(v)||0)); renderStep2(); renderApproval(); }
+function toggleDelete(i){ const l=state.lines[i]; if(l.shipping)return; l.qty = l.qty===0?1:0; renderStep2(); renderApproval(); }
+
+/* tax */
+function toggleShowTax(){ if(state.taxExempt)return; state.showTax=!state.showTax; renderStep2(); }
+function onTaxExempt(){ if(state.taxExempt){ state.taxExempt=false; renderStep2(); } else { $('taxScrim').classList.add('open'); } }
+function closeTax(){ $('taxScrim').classList.remove('open'); renderStep2(); }
+function confirmTax(){ state.taxExempt=true; $('taxScrim').classList.remove('open'); renderStep2(); toast('Customer marked tax exempt.'); }
+
+/* ---------- PROMO MODAL ---------- */
+function openPromo(i){
+  state.promoTargetKey=i;
+  state.promoChoice=state.lines[i].promoId;
+  $('promoBody').innerHTML = PROMOS.map(p=>`
+    <div class="promo-opt ${state.promoChoice===p.id?'sel':''}" onclick="pickPromo('${p.id}')">
+      <b>${p.name} <span style="color:var(--blue)">−${p.disc}%</span></b>
+      <p>${p.desc}${p.free?` <span class="free">+ free ${p.free}</span>`:''}</p>
+    </div>`).join('');
+  $('promoScrim').classList.add('open');
+}
+function pickPromo(id){ state.promoChoice = state.promoChoice===id?null:id; openPromoRefresh(); }
+function openPromoRefresh(){
+  [...$('promoBody').children].forEach((el,idx)=>{ el.classList.toggle('sel', PROMOS[idx].id===state.promoChoice); });
+}
+function applyPromo(){
+  const l=state.lines[state.promoTargetKey];
+  const p=PROMOS.find(x=>x.id===state.promoChoice);
+  if(p){ l.promoId=p.id; l.promoDisc=p.disc;
+    if(p.free){ addFreeProduct(p.free); }
+    toast(`${p.name} applied.`);
+  }
+  closePromo(); renderStep2(); renderApproval();
+}
+function removePromo(){ const l=state.lines[state.promoTargetKey]; l.promoId=null; l.promoDisc=0; closePromo(); renderStep2(); renderApproval(); }
+function closePromo(){ $('promoScrim').classList.remove('open'); }
+function addFreeProduct(name){
+  const cat=CATALOG.find(p=>p.name===name); if(!cat)return;
+  if(state.lines.some(l=>l.id===cat.id && l.freeProduct))return;
+  const existing=state.lines.find(l=>l.id===cat.id);
+  if(existing){ existing.freeProduct=true; existing.disc=100; existing.promoId=null; existing.promoDisc=0; }
+  else state.lines.push({ id:cat.id,name:cat.name,code:cat.code,type:cat.type,list:cat.list,qty:1,disc:100,auto:0,limit:cat.limit,promoId:null,promoDisc:0,freeProduct:true,shipping:false,paymentPlan:false,isNew:true });
+}
+
+/* ---------- APPROVAL CHAIN ---------- */
+function renderApproval(){
+  const lvl=approvalLevel();
+  if(lvl===0){ $('approvalSlot').innerHTML=''; return; }
+  const steps = lvl===1
+    ? [['RSM','Regional Sales Mgr'],['RSD','Regional Sales Dir'],['✓','Ready to send']]
+    : [['RSM','Regional Sales Mgr'],['RSD','Regional Sales Dir'],['CFO','Chief Financial Officer'],['✓','Ready to send']];
+  const chain = steps.map((s,idx)=>{
+    const ready = s[0]==='✓';
+    const con = idx>0?`<div class="acon"></div>`:'';
+    return `${con}<div class="astep"><div class="acirc ${ready?'ready':''}">${s[0]}</div><div class="aname">${ready?'Ready to send':s[1]}</div><div class="arole">${ready?'order form unlocks':'approval required'}</div></div>`;
+  }).join('');
+  $('approvalSlot').innerHTML = `<div class="approval">
+    <div class="approval__label">⚠ Discount above limit — approval routing</div>
+    <div class="achain">${chain}</div>
+  </div>`;
+}
+
+/* =========================================================
+   SIGNATURE / ORDER FORM  (the headline differentiator)
+   ========================================================= */
+function openSign(){ state.signMethod='email'; renderSign(); $('signScrim').classList.add('open'); }
+function closeSign(){ $('signScrim').classList.remove('open'); }
+
+function renderSign(){
+  const t=totals();
+  const live = state.lines.filter(l=>l.qty>0);
+  const pdfRows = live.map(l=>{ const c=lineCalc(l); return `<div class="pdf__r"><span>${l.name}${l.freeProduct?' (free)':''} <span style="color:#999">×${l.qty}</span></span><span>${money(c.excl)}</span></div>`; }).join('');
+  const approvalNote = approvalLevel()>0
+    ? `<div style="margin-top:12px;padding:10px 12px;border-radius:8px;background:var(--orange-soft);border:1px solid var(--orange-line);font-size:12.5px;color:#8a5a12">This quote contains discounts above limit. The order form will unlock for sending once approvals are cleared — the signature request is queued automatically on approval.</div>`
+    : '';
+
+  $('signTitle').textContent = 'Generate order form & send for signature';
+  $('signBody').innerHTML = `
+    <div class="pdf">
+      <div class="pdf__top">
+        <div><div class="t">Order Form — Northwind Cloud</div><div class="s mono">Quote #Q-2048 · ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})} · USD</div></div>
+        <div style="text-align:right"><div class="s">Prepared for</div><div class="t" style="font-size:13px">Northwind Industries</div></div>
+      </div>
+      <div class="pdf__rows">${pdfRows}</div>
+      ${state.showTax&&!state.taxExempt?`<div class="pdf__r" style="padding:6px 16px"><span>Taxes</span><span>${money(t.tax)}</span></div>`:''}
+      ${state.taxExempt?`<div class="pdf__r" style="padding:6px 16px;color:var(--teal)"><span>Tax status</span><span>Exempt — certificate on file</span></div>`:''}
+      <div class="pdf__tot"><span>Total${state.showTax&&!state.taxExempt?' (incl. tax)':''}</span><span>${money(t.incl)}</span></div>
+      <div class="pdf__sign">
+        <div class="pdf__sigline"><span>Authorized signature</span></div>
+        <div class="pdf__sigline" style="max-width:120px"><span>Date</span></div>
+      </div>
+    </div>
+
+    <p style="margin:16px 0 6px;font-weight:600">How should we send it for signature?</p>
+    <div class="sign-pick">
+      <div class="sign-opt ${state.signMethod==='email'?'sel':''}" onclick="setSign('email')">
+        <div class="ic">✉️</div><b>Email</b><small>secure signing link</small>
+      </div>
+      <div class="sign-opt ${state.signMethod==='sms'?'sel':''}" onclick="setSign('sms')">
+        <div class="ic">💬</div><b>Text / SMS</b><small>sign from any phone</small>
+      </div>
+    </div>
+    <div class="field" id="signField"></div>
+    ${approvalNote}`;
+  renderSignField();
+  $('signFoot').innerHTML = `
+    <button class="btn btn--ghost" onclick="closeSign()">Cancel</button>
+    <button class="btn btn--sign" onclick="sendSign()">Send for signature →</button>`;
+}
+function setSign(m){ state.signMethod=m; renderSign(); }
+function renderSignField(){
+  $('signField').innerHTML = state.signMethod==='email'
+    ? `<label>Customer email</label><input type="email" id="signTo" value="procurement@northwind.com" placeholder="name@company.com">`
+    : `<label>Customer mobile</label><input type="tel" id="signTo" value="+1 (415) 555-0192" placeholder="+1 (___) ___-____">`;
+}
+function sendSign(){
+  const to = ($('signTo')&&$('signTo').value)||'';
+  const via = state.signMethod==='email'?'email':'text message';
+  $('signTitle').textContent='Order form sent';
+  $('signBody').innerHTML = `
+    <div class="sent">
+      <div class="sent__ring"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3>Signature request sent by ${via}</h3>
+      <p>A signable PDF order form is on its way to <b>${to}</b>. The customer can review and sign it from any device — no login required.</p>
+      <div class="track">
+        <div class="track__r"><span class="d"></span><div><b>Order form generated</b> — PDF built from the live quote</div></div>
+        <div class="track__r"><span class="d"></span><div><b>Sent for signature</b> — delivered via ${via}</div></div>
+        <div class="track__r pending"><span class="d"></span><div><b>Awaiting customer signature</b> — you'll be notified the moment it's signed</div></div>
+        <div class="track__r pending"><span class="d"></span><div><b>Signed & closed</b> — countersigned PDF stored on the record</div></div>
+      </div>
+    </div>`;
+  $('signFoot').innerHTML = `<button class="btn btn--dark" onclick="closeSign()">Done</button>`;
+}
+
+/* close modals on scrim click / escape */
+document.querySelectorAll('.scrim').forEach(s=>s.addEventListener('click',e=>{ if(e.target===s) s.classList.remove('open'); }));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.scrim.open').forEach(s=>s.classList.remove('open')); });
+
+/* boot */
+render();
+</script>
+</body>
+</html>
