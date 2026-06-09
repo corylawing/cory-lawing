@@ -152,6 +152,15 @@
     while (rem.length) { var bi = 0, bd = 1e9; rem.forEach(function (a, i) { var d = d2(cur, a); if (d < bd) { bd = d; bi = i; } }); cur = rem.splice(bi, 1)[0]; ord.push(cur); }
     state.route = ord;
   }
+  function gmapsUrl() {
+    var pts = state.route.map(function (a) { return a.lat.toFixed(5) + "," + a.lng.toFixed(5); });
+    if (!pts.length) return "#";
+    if (pts.length === 1) return "https://www.google.com/maps/dir/?api=1&destination=" + pts[0] + "&travelmode=driving";
+    var u = "https://www.google.com/maps/dir/?api=1&origin=" + pts[0] + "&destination=" + pts[pts.length - 1] + "&travelmode=driving";
+    var way = pts.slice(1, -1).join("|");
+    if (way) u += "&waypoints=" + encodeURIComponent(way);
+    return u;
+  }
 
   /* ---- leaflet loader ------------------------------------ */
   function ensureLeaflet(cb) {
@@ -262,7 +271,7 @@
     var L = window.L;
     markerLayer.clearLayers();
     state.accounts.forEach(function (a) {
-      var m = L.circleMarker([a.lat, a.lng], { pane: "markers", radius: 6, weight: 0, fillOpacity: 0.9, color: "#fff", fillColor: STATUS_COLOR[a.status] });
+      var m = L.circleMarker([a.lat, a.lng], { pane: "markers", radius: 6, weight: 1, color: "#0b0d10", fillOpacity: 0.92, fillColor: STATUS_COLOR[a.status] });
       m.bindTooltip("", { direction: "top", offset: [0, -2], className: "td-ltip", opacity: 1 });
       m.on("mouseover", function () { m.setTooltipContent(tipHtml(a)); });
       m.on("click", function (e) {
@@ -304,7 +313,7 @@
       var inRoute = state.route.indexOf(a) !== -1, sel = a === state.selected;
       var color = terr ? REP_COLORS[a.rep] : STATUS_COLOR[a.status];
       var fo = 0.9; if (terr && state.isolateRep !== -1 && state.isolateRep !== a.rep) fo = 0.14;
-      m.setStyle({ fillColor: color, fillOpacity: fo, radius: (sel || inRoute) ? 9 : 6, weight: (sel || inRoute) ? 2 : 0, color: "#FFFFFF", opacity: 1 });
+      m.setStyle({ fillColor: color, fillOpacity: fo, radius: (sel || inRoute) ? 9 : 6, weight: (sel || inRoute) ? 2.5 : 1, color: (sel || inRoute) ? "#FFFFFF" : "#0b0d10", opacity: 1 });
       if (sel || inRoute) m.bringToFront();
     });
 
@@ -398,7 +407,9 @@
     });
     panelBody.appendChild(list);
     var foot = el("div", "td-route__foot");
-    foot.innerHTML = '<span class="mono">' + state.route.length + ' stops · ~' + Math.round(routeKm()) + ' km</span>';
+    foot.innerHTML = '<span class="mono">' + state.route.length + ' stops · ~' + Math.round(routeKm()) + ' km driving</span>';
+    var nav = el("a", "td-mini td-mini--go"); nav.textContent = "Open in Google Maps ↗"; nav.href = gmapsUrl(); nav.target = "_blank"; nav.rel = "noopener";
+    foot.appendChild(nav);
     var btns = el("div", "td-route__btns");
     var opt = el("button", "td-mini"); opt.textContent = "Optimize order"; opt.addEventListener("click", function () { optimizeRoute(); render(); renderRoute(); });
     var clr = el("button", "td-mini td-mini--ghost"); clr.textContent = "Clear"; clr.addEventListener("click", function () { state.route = []; syncButtons(); render(); renderRoute(); });
