@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Social Command Center — interactive demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =======================================================================
+   Social Command Center — standalone, genericized recreation of an
+   AI-native social media command center (orig. Next.js/React/Tailwind v4).
+   Faithful to the source design tokens; light + dark; all mock data.
+   ======================================================================= */
+:root{
+  --bg:#F7F8FA; --surface:#FFFFFF; --card:#FFFFFF; --muted:#F1F5F9; --border:#E6E9EF;
+  --fg:#0F172A; --mfg:#64748B;
+  --primary:#00A3AD; --primary-soft:#E6F7F8; --on-primary:#FFFFFF;
+  --accent:#6366F1; --accent-soft:#EEF0FF;
+  --success:#10B981; --warning:#F59E0B; --danger:#EF4444; --info:#3B82F6;
+  --success-soft:#E7F8F1; --warning-soft:#FEF4E6; --danger-soft:#FDECEC; --info-soft:#EAF2FE;
+  --radius:1rem; --radius-md:.65rem; --radius-sm:.4rem;
+  --shadow-soft:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06);
+  --shadow-card:0 1px 3px rgba(15,23,42,.05),0 12px 32px rgba(15,23,42,.07);
+  --sidebar-w:264px;
+}
+html.dark{
+  --bg:#0A0E14; --surface:#11161F; --card:#11161F; --muted:#1A2230; --border:#1F2937;
+  --fg:#E6EDF3; --mfg:#8B97A8;
+  --primary:#22C1CC; --primary-soft:#0D2B2E; --on-primary:#062023;
+  --accent:#818CF8; --accent-soft:#1B2140;
+  --success:#34D399; --warning:#FBBF24; --danger:#F87171; --info:#60A5FA;
+  --success-soft:#0E2A22; --warning-soft:#2C2310; --danger-soft:#2C1414; --info-soft:#0E2036;
+  --shadow-soft:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  --shadow-card:0 1px 3px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;}
+body{background:var(--bg);color:var(--fg);font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-size:14px;line-height:1.5;}
+.num{font-variant-numeric:tabular-nums;}
+button{font-family:inherit;cursor:pointer;}
+a{color:inherit;text-decoration:none;}
+h1,h2,h3,h4{margin:0;letter-spacing:-.01em;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;border:2px solid var(--bg);}
+
+/* ---------- layout ---------- */
+.layout{display:flex;min-height:100vh;}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;height:100vh;z-index:40;transition:transform .25s ease;}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 18px 14px;}
+.brand__mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff;flex-shrink:0;box-shadow:0 6px 16px -4px var(--primary);}
+.brand__name{font-weight:800;font-size:16px;letter-spacing:-.02em;}
+.brand__name span{color:var(--primary);}
+.nav{flex:1;overflow:auto;padding:6px 12px 12px;}
+.nav__group{margin-top:14px;}
+.nav__label{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mfg);padding:0 10px 6px;}
+.nav__item{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:var(--radius-md);color:var(--mfg);font-weight:500;font-size:13.5px;margin-bottom:2px;transition:.13s;position:relative;}
+.nav__item:hover{background:var(--muted);color:var(--fg);}
+.nav__item.on{background:var(--primary-soft);color:var(--primary);font-weight:600;}
+.nav__item.on svg{color:var(--primary);}
+.nav__item svg{width:18px;height:18px;flex-shrink:0;color:var(--mfg);}
+.nav__item.on svg{color:var(--primary);}
+.nav__badge{margin-left:auto;font-size:11px;font-weight:700;background:var(--primary);color:var(--on-primary);border-radius:999px;padding:1px 8px;}
+.usercard{display:flex;align-items:center;gap:10px;margin:10px;padding:10px;border:1px solid var(--border);border-radius:var(--radius-md);}
+.usercard .meta{flex:1;min-width:0;}
+.usercard .nm{font-weight:600;font-size:13px;}
+.usercard .rl{font-size:11.5px;color:var(--mfg);}
+
+.content{flex:1;min-width:0;margin-left:var(--sidebar-w);display:flex;flex-direction:column;}
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:12px 22px;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);}
+.hamb{display:none;width:38px;height:38px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);place-items:center;color:var(--fg);}
+.search{flex:1;max-width:420px;position:relative;}
+.search input{width:100%;padding:9px 12px 9px 36px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--muted);color:var(--fg);font-size:13px;outline:none;}
+.search input:focus{border-color:var(--primary);background:var(--surface);}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mfg);}
+.topbar__spacer{flex:1;}
+.iconbtn{width:38px;height:38px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;color:var(--mfg);position:relative;transition:.13s;}
+.iconbtn:hover{color:var(--fg);border-color:var(--mfg);}
+.iconbtn .reddot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--danger);border:1.5px solid var(--surface);}
+.main{padding:26px 26px 70px;max-width:1400px;width:100%;margin:0 auto;}
+.view{animation:fadeup .4s ease;}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---------- primitives ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:600;font-size:13px;border-radius:var(--radius-md);padding:9px 15px;border:1px solid transparent;transition:.14s;white-space:nowrap;}
+.btn svg{width:16px;height:16px;}
+.btn--primary{background:var(--primary);color:var(--on-primary);box-shadow:0 6px 16px -8px var(--primary);}
+.btn--primary:hover{filter:brightness(1.06);transform:translateY(-1px);}
+.btn--secondary{background:var(--muted);color:var(--fg);}
+.btn--secondary:hover{background:var(--border);}
+.btn--outline{background:transparent;border-color:var(--border);color:var(--fg);}
+.btn--outline:hover{border-color:var(--mfg);}
+.btn--ghost{background:transparent;color:var(--mfg);}
+.btn--ghost:hover{background:var(--muted);color:var(--fg);}
+.btn--danger{background:var(--danger);color:#fff;}
+.btn--sm{padding:6px 11px;font-size:12px;}
+.btn--lg{padding:12px 20px;font-size:14px;}
+.btn--icon{padding:0;width:36px;height:36px;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-soft);transition:box-shadow .2s,transform .2s;}
+.card--hover:hover{box-shadow:var(--shadow-card);transform:translateY(-2px);}
+.card__h{padding:16px 18px 0;}
+.card__b{padding:18px;}
+.card__t{font-size:15px;font-weight:700;}
+.card__d{font-size:12.5px;color:var(--mfg);margin-top:2px;}
+
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:999px;padding:2px 9px;line-height:1.4;}
+.badge--default{background:var(--muted);color:var(--mfg);}
+.badge--primary{background:var(--primary-soft);color:var(--primary);}
+.badge--success{background:var(--success-soft);color:var(--success);}
+.badge--warning{background:var(--warning-soft);color:var(--warning);}
+.badge--danger{background:var(--danger-soft);color:var(--danger);}
+.badge--info{background:var(--info-soft);color:var(--info);}
+.badge--accent{background:var(--accent-soft);color:var(--accent);}
+
+.input,.textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--fg);font-family:inherit;font-size:13.5px;outline:none;}
+.input:focus,.textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft);}
+.textarea{resize:vertical;min-height:80px;line-height:1.6;}
+
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:12.5px;flex-shrink:0;}
+.progress{height:7px;border-radius:999px;background:var(--muted);overflow:hidden;}
+.progress > i{display:block;height:100%;border-radius:999px;background:var(--primary);}
+
+.pchip{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:800;flex-shrink:0;}
+.pchip--sm{width:20px;height:20px;border-radius:6px;font-size:9px;}
+
+/* page header */
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+.ph__title{font-size:24px;font-weight:800;}
+.ph__sub{font-size:13.5px;color:var(--mfg);margin-top:3px;}
+.ph__actions{display:flex;gap:9px;flex-wrap:wrap;}
+
+/* grids */
+.grid{display:grid;gap:16px;}
+.g2{grid-template-columns:repeat(2,1fr);}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g4{grid-template-columns:repeat(4,1fr);}
+.g6{grid-template-columns:repeat(6,1fr);}
+.row{display:flex;gap:16px;}
+.section-title{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mfg);margin:26px 0 12px;}
+
+/* KPI */
+.kpi{padding:16px 17px;}
+.kpi__top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.kpi__label{font-size:12px;color:var(--mfg);font-weight:500;}
+.kpi__ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);}
+.kpi__val{font-size:25px;font-weight:800;margin-top:9px;letter-spacing:-.02em;}
+.kpi__foot{display:flex;align-items:center;gap:7px;margin-top:7px;font-size:12px;}
+.delta{display:inline-flex;align-items:center;gap:3px;font-weight:700;font-size:11.5px;}
+.delta--up{color:var(--success);} .delta--down{color:var(--danger);}
+
+/* AI banner */
+.aibanner{background:linear-gradient(120deg,var(--primary-soft),color-mix(in srgb,var(--primary-soft) 40%,var(--card)));
+  border:1px solid color-mix(in srgb,var(--primary) 25%,var(--border));border-radius:var(--radius);padding:18px 20px;display:flex;gap:14px;}
+.aibanner__ic{width:38px;height:38px;border-radius:11px;background:var(--primary);color:#fff;display:grid;place-items:center;flex-shrink:0;box-shadow:0 8px 20px -6px var(--primary);}
+.aibanner__tag{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--primary);border:1px solid color-mix(in srgb,var(--primary) 40%,transparent);border-radius:999px;padding:2px 8px;}
+
+/* insights */
+.insight{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--border);}
+.insight:last-child{border-bottom:none;}
+.insight__ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;}
+.insight__t{font-weight:600;font-size:13px;}
+.insight__p{font-size:12.5px;color:var(--mfg);margin-top:1px;}
+
+/* lists */
+.lrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.lrow:last-child{border-bottom:none;}
+.muted{color:var(--mfg);} .small{font-size:12px;}
+
+/* table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{text-align:left;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--mfg);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.tbl tr:hover td{background:var(--muted);}
+.tbl .r{text-align:right;}
+.tbl tfoot td{font-weight:700;border-top:2px solid var(--border);border-bottom:none;background:var(--muted);}
+
+/* segmented control */
+.seg{display:inline-flex;background:var(--muted);border-radius:var(--radius-md);padding:3px;gap:2px;}
+.seg button{border:none;background:transparent;color:var(--mfg);font-weight:600;font-size:12.5px;padding:6px 13px;border-radius:calc(var(--radius-md) - 3px);}
+.seg button.on{background:var(--surface);color:var(--fg);box-shadow:var(--shadow-soft);}
+
+/* chart bits */
+.chart{width:100%;display:block;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
+
+/* calendar */
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.calhd{font-size:11px;font-weight:700;color:var(--mfg);text-transform:uppercase;letter-spacing:.04em;text-align:center;padding-bottom:4px;}
+.calcell{min-height:104px;border:1px solid var(--border);border-radius:var(--radius-md);padding:7px;background:var(--surface);display:flex;flex-direction:column;gap:4px;}
+.calcell.dim{opacity:.45;}
+.calcell.today{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary);}
+.caldate{font-size:11.5px;font-weight:700;color:var(--mfg);}
+.calchip{font-size:10.5px;font-weight:600;color:#fff;border-radius:6px;padding:3px 6px;display:flex;align-items:center;gap:5px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+
+/* composer preview */
+.preview{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--surface);}
+.preview__h{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid var(--border);}
+.preview__body{padding:13px;font-size:13px;line-height:1.55;}
+.charbar{height:5px;border-radius:999px;background:var(--muted);overflow:hidden;margin-top:9px;}
+.charbar > i{display:block;height:100%;background:var(--primary);}
+
+/* chips/toggles */
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--border);border-radius:999px;font-size:12.5px;font-weight:600;color:var(--mfg);background:var(--surface);transition:.13s;}
+.chip.on{border-color:var(--primary);background:var(--primary-soft);color:var(--primary);}
+.tgl{width:38px;height:22px;border-radius:999px;background:var(--border);position:relative;transition:.16s;flex-shrink:0;}
+.tgl::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.16s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+.tgl.on{background:var(--primary);}
+.tgl.on::after{transform:translateX(16px);}
+
+/* assistant */
+.chat{display:flex;flex-direction:column;gap:14px;padding:6px 2px;}
+.bubble{max-width:78%;padding:12px 15px;border-radius:16px;font-size:13.5px;line-height:1.55;}
+.bubble--user{align-self:flex-end;background:var(--primary);color:var(--on-primary);border-bottom-right-radius:5px;}
+.bubble--ai{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:5px;display:flex;gap:11px;box-shadow:var(--shadow-soft);}
+.bubble--ai .ai-ic{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;display:grid;place-items:center;flex-shrink:0;}
+
+/* heatmap */
+.heat{display:grid;grid-template-columns:auto repeat(6,1fr);gap:4px;}
+.heatcell{height:26px;border-radius:6px;display:grid;place-items:center;font-size:10px;color:var(--fg);}
+.heatlbl{font-size:11px;color:var(--mfg);display:flex;align-items:center;}
+
+/* funnel */
+.funnel{display:flex;flex-direction:column;gap:6px;}
+.fstage{position:relative;border-radius:var(--radius-md);padding:12px 16px;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+.fconv{text-align:center;font-size:11px;color:var(--mfg);font-weight:600;}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--fg);color:var(--bg);padding:11px 18px;border-radius:var(--radius-md);font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:90;box-shadow:var(--shadow-card);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.scrim{position:fixed;inset:0;background:rgba(8,12,20,.5);z-index:38;opacity:0;pointer-events:none;transition:.2s;}
+.scrim.on{opacity:1;pointer-events:auto;}
+
+/* responsive */
+@media(max-width:1180px){ .g6{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:1024px){
+  .sidebar{transform:translateX(-100%);box-shadow:var(--shadow-card);}
+  .sidebar.open{transform:none;}
+  .content{margin-left:0;}
+  .hamb{display:grid;}
+}
+@media(max-width:760px){
+  .main{padding:18px 15px 60px;}
+  .g2,.g3,.g4,.g6{grid-template-columns:1fr;}
+  .row{flex-direction:column;}
+  .split{grid-template-columns:1fr !important;}
+  .search{max-width:none;}
+  .hide-sm{display:none !important;}
+  .calgrid{gap:4px;} .calcell{min-height:76px;}
+  .bubble{max-width:90%;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand__mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9l4.4-1.4L12 3z" fill="currentColor"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14z" fill="currentColor" opacity=".8"/></svg></div>
+      <div class="brand__name">Social <span>Command</span></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="usercard">
+      <div class="avatar">CL</div>
+      <div class="meta"><div class="nm">Cory Lawing</div><div class="rl">Marketing Operations</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="muted"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" onclick="closeNav()"></div>
+
+  <div class="content">
+    <header class="topbar">
+      <button class="hamb" onclick="openNav()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <input placeholder="Search posts, campaigns, mentions…" onkeydown="if(event.key==='Enter')toast('Search is illustrative in this demo')">
+      </div>
+      <div class="topbar__spacer"></div>
+      <button class="btn btn--primary" onclick="go('assistant')"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg><span class="hide-sm">Ask AI</span></button>
+      <button class="iconbtn" onclick="toast('3 new notifications')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 8a6 6 0 1112 0c0 7 3 9 3 9H3s3-2 3-9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10.5 21a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.8"/></svg><span class="reddot"></span></button>
+      <button class="iconbtn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme"></button>
+    </header>
+    <main class="main"><div class="view" id="view"></div></main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================ DATA (mock) ============================ */
+const PLAT={
+  linkedin:{n:'LinkedIn',c:'#0A66C2',m:'in'}, instagram:{n:'Instagram',c:'#E4405F',m:'ig'},
+  facebook:{n:'Facebook',c:'#1877F2',m:'f'}, tiktok:{n:'TikTok',c:'#111827',m:'tk'},
+  youtube:{n:'YouTube',c:'#FF0000',m:'yt'}, x:{n:'X',c:'#15202B',m:'X'}
+};
+const ACCOUNTS=[
+  {p:'linkedin', followers:48200, reach:312000, eng:4.8, growth:6.2, connected:true,  spark:[28,30,31,33,34,36,38,40,42,44,46,48]},
+  {p:'instagram',followers:62800, reach:540000, eng:5.6, growth:4.1, connected:true,  spark:[51,52,54,55,56,57,58,59,60,61,62,63]},
+  {p:'facebook', followers:38400, reach:210000, eng:2.9, growth:1.4, connected:true,  spark:[36,36,37,37,37,38,38,38,38,39,38,38]},
+  {p:'tiktok',   followers:71500, reach:880000, eng:8.7, growth:12.5,connected:true,  spark:[40,44,48,52,55,58,61,64,67,69,70,72]},
+  {p:'youtube',  followers:21300, reach:145000, eng:3.4, growth:3.0, connected:true,  spark:[18,18,19,19,20,20,20,21,21,21,21,21]},
+  {p:'x',        followers:15600, reach:0,      eng:0,   growth:0,   connected:false, spark:[16,16,15,15,15,15,15,15,15,15,16,16]}
+];
+const CAMP={launch:{n:'Northwind 2.0 Launch',c:'#00A3AD'}, webinar:{n:'Growth Webinar Series',c:'#6366F1'}, stories:{n:'Customer Stories',c:'#F59E0B'}};
+const OWNERS={ml:'Mara Lin', jd:'Jordan Diaz', sk:'Sam Okafor', pv:'Priya V.'};
+const POSTS=[
+  {id:1, txt:'Northwind 2.0 is live — automation that runs your whole pipeline. See what shipped →', pl:['linkedin','x'], camp:'launch', own:'ml', date:'Jun 9, 09:00', status:'scheduled', appr:'approved', perf:0},
+  {id:2, txt:'How a 40-person team cut reporting time by 70% with Northwind. Full story on the blog.', pl:['linkedin','facebook'], camp:'stories', own:'jd', date:'Jun 9, 13:30', status:'scheduled', appr:'approved', perf:0},
+  {id:3, txt:'3 dashboards every RevOps team should steal 👀 (templates in comments)', pl:['instagram','tiktok'], camp:'launch', own:'sk', date:'Jun 8, 17:00', status:'published', appr:'approved', perf:88},
+  {id:4, txt:'Live next week: Scaling pipeline without scaling headcount. Save your seat.', pl:['linkedin'], camp:'webinar', own:'pv', date:'Jun 10, 10:00', status:'needs_approval', appr:'pending', perf:0},
+  {id:5, txt:'Behind the build: how we designed the new automation canvas. 🎥', pl:['youtube'], camp:'launch', own:'sk', date:'Jun 7, 15:00', status:'published', appr:'approved', perf:74},
+  {id:6, txt:'Quick tip: route every inbound lead in under 5 minutes. Here\'s the recipe.', pl:['x','linkedin'], camp:'stories', own:'jd', date:'Jun 11, 08:30', status:'draft', appr:'draft', perf:0},
+  {id:7, txt:'Customer spotlight: Atlas Lyon scaled to 6 markets on Northwind. 🚀', pl:['instagram','facebook'], camp:'stories', own:'ml', date:'Jun 6, 12:00', status:'published', appr:'approved', perf:91},
+  {id:8, txt:'The webinar recording is live — 9 plays to grow pipeline this quarter.', pl:['linkedin','youtube'], camp:'webinar', own:'pv', date:'Jun 12, 11:00', status:'scheduled', appr:'approved', perf:0},
+  {id:9, txt:'POV: your CRM finally tells you what to do next 😅', pl:['tiktok'], camp:'launch', own:'sk', date:'Jun 5, 18:00', status:'published', appr:'approved', perf:96},
+  {id:10,txt:'We tried to publish to X but the account is disconnected.', pl:['x'], camp:'launch', own:'jd', date:'Jun 8, 09:00', status:'failed', appr:'approved', perf:0},
+  {id:11,txt:'Draft: end-of-quarter wrap — numbers + what we learned.', pl:['linkedin'], camp:'stories', own:'ml', date:'—', status:'draft', appr:'draft', perf:0},
+  {id:12,txt:'Hiring: Senior Lifecycle Marketer. Remote-first, come build with us.', pl:['linkedin','x'], camp:'launch', own:'pv', date:'Jun 13, 14:00', status:'needs_approval', appr:'pending', perf:0}
+];
+const COMPETITORS=[
+  {n:'Apex Suite', followers:128000, ppw:9,  eng:3.1, reach:'1.2M', growth:2.4, themes:['Product','Webinars','Hiring'], spark:[120,121,122,123,124,125,126,127,127,128,128,128], ai:'Heavy product-update cadence; low storytelling. Beatable on customer proof.'},
+  {n:'Flowly',     followers:86000,  ppw:14, eng:5.8, reach:'940K', growth:7.9, themes:['Memes','Tips','Community'], spark:[60,64,68,71,74,77,79,81,83,84,85,86], ai:'Fastest-growing rival — strong short-form. Watch their TikTok playbook.'},
+  {n:'Vantage',    followers:201000, ppw:6,  eng:1.9, reach:'1.6M', growth:0.8, themes:['Thought leadership','Reports'], spark:[198,198,199,199,200,200,200,201,201,201,201,201], ai:'Large but stagnant. Enterprise tone; little engagement per post.'},
+  {n:'Hubport',    followers:54000,  ppw:11, eng:4.4, reach:'610K', growth:5.1, themes:['How-to','Integrations'], spark:[44,45,46,47,48,49,50,51,52,53,53,54], ai:'Strong integrations content. Mirrors our SEO topics closely.'},
+  {n:'Northstar',  followers:39000,  ppw:8,  eng:6.2, reach:'480K', growth:9.3, themes:['Founder-led','Behind the scenes'], spark:[29,30,31,32,33,34,35,36,37,38,38,39], ai:'Founder-led brand with very high engagement. Authenticity is their edge.'}
+];
+const MENTIONS=[
+  {a:'Dana Reyes', h:'@danabuilds', p:'linkedin', t:'2h', s:'pos', tags:['Praise','Feature'], reach:'12.4K', risk:false, txt:'Northwind 2.0 just saved my team a full day of manual reporting. The automation canvas is genuinely the best I\'ve used.'},
+  {a:'Marcus Bright', h:'@mbright', p:'x', t:'4h', s:'neg', tags:['Bug','Urgent'], reach:'8.1K', risk:true, txt:'Anyone else hitting a sync delay on Northwind this morning? Dashboards are 20 min behind. @northwind help?'},
+  {a:'Lena Fox', h:'@lenafox', p:'instagram', t:'6h', s:'neu', tags:['Question'], reach:'3.3K', risk:false, txt:'Does Northwind integrate with HubSpot or just Salesforce? Considering switching from Flowly.'},
+  {a:'Tomás A.', h:'@tomasaceves', p:'tiktok', t:'9h', s:'pos', tags:['UGC','Praise'], reach:'45K', risk:false, txt:'made a whole video on my Northwind setup because people kept asking 😅 link in bio'},
+  {a:'Priya Nair', h:'@priyatalks', p:'linkedin', t:'1d', s:'neg', tags:['Pricing','Churn risk'], reach:'19K', risk:true, txt:'Love the product but the new pricing tier is steep for smaller teams. Evaluating alternatives this quarter.'},
+  {a:'Omar Said', h:'@omarsaid', p:'x', t:'1d', s:'pos', tags:['Praise'], reach:'2.2K', risk:false, txt:'The Growth Webinar was actually useful — rare. Took 3 plays straight into our Q3 plan.'}
+];
+const KEYWORDS=[
+  {k:'Northwind', vol:1840, s:72, tr:14}, {k:'automation canvas', vol:920, s:68, tr:31},
+  {k:'pipeline reporting', vol:610, s:55, tr:-6}, {k:'#RevOps', vol:2300, s:61, tr:9}, {k:'Flowly vs Northwind', vol:280, s:48, tr:22}
+];
+const INSIGHTS=[
+  {k:'win', t:'TikTok is your breakout channel', p:'Engagement up 38% MoM — short-form "POV" posts drive it.', m:'+38%'},
+  {k:'loss',t:'Facebook reach is sliding', p:'Down 12% over 30 days; cadence dropped to 2×/week.', m:'-12%'},
+  {k:'opp', t:'Best time to post is 9–11am Tue/Thu', p:'Posts in this window see 1.7× engagement.', m:'1.7×'},
+  {k:'risk',t:'1 failed post + a churn-risk mention', p:'X account disconnected; a pricing complaint is gaining reach.', m:'Act'},
+  {k:'rec', t:'Double down on customer stories', p:'Story posts convert 2.3× better to pipeline than product posts.', m:'2.3×'}
+];
+const PERF=[
+  {l:'Reach', v:'2.09M', d:9.4, sp:[160,168,172,178,181,186,190,194,198,201,205,209]},
+  {l:'Impressions', v:'3.74M', d:7.1, sp:[300,305,312,320,330,338,345,352,360,366,370,374]},
+  {l:'Engagement', v:'186K', d:12.8, sp:[120,128,134,140,148,156,162,168,174,179,183,186]},
+  {l:'Clicks', v:'42.3K', d:5.6, sp:[34,35,36,37,38,39,39,40,41,41,42,42]},
+  {l:'Eng. rate', v:'5.4%', d:1.2, sp:[4.6,4.7,4.8,4.9,5.0,5.0,5.1,5.2,5.2,5.3,5.3,5.4]},
+  {l:'Follower growth', v:'+6.1K', d:6.2, sp:[2,2.4,2.8,3.2,3.7,4.1,4.6,5.0,5.4,5.7,5.9,6.1]}
+];
+const FUNNEL=[
+  {l:'Clicks', v:48200, c:'#00A3AD'}, {l:'Leads', v:3120, c:'#13AEB5'},
+  {l:'MQLs', v:1180, c:'#26B9BE'}, {l:'SQLs', v:540, c:'#6366F1'},
+  {l:'Opportunities', v:210, c:'#7C7CF0'}, {l:'Pipeline', v:'$1.84M', c:'#22C55E'}, {l:'Closed Won', v:'$612K', c:'#16A34A'}
+];
+const ATTR=[
+  {post:'Northwind 2.0 is live →', p:'linkedin', camp:'launch', clicks:9200, leads:640, mql:248, sql:120, opp:46, pipe:520000, won:182000},
+  {post:'Atlas Lyon customer story', p:'instagram', camp:'stories', clicks:7400, leads:520, mql:210, sql:98, opp:38, pipe:410000, won:150000},
+  {post:'Scaling pipeline webinar', p:'linkedin', camp:'webinar', clicks:6100, leads:430, mql:180, sql:84, opp:33, pipe:360000, won:120000},
+  {post:'POV: your CRM tells you what to do', p:'tiktok', camp:'launch', clicks:11200, leads:380, mql:120, sql:52, opp:21, pipe:210000, won:60000},
+  {post:'Behind the build (video)', p:'youtube', camp:'launch', clicks:3300, leads:190, mql:78, sql:34, opp:14, pipe:140000, won:48000}
+];
+
+/* ============================ HELPERS ============================ */
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200);}
+const fmt=n=>n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(n);
+const money=n=>typeof n==='string'?n:(n>=1e6?'$'+(n/1e6).toFixed(2)+'M':n>=1e3?'$'+(n/1e3).toFixed(0)+'K':'$'+n);
+function pchip(p,sm){const x=PLAT[p];return `<span class="pchip ${sm?'pchip--sm':''}" style="background:${x.c}">${x.m}</span>`;}
+function deltaEl(d){const up=d>=0;return `<span class="delta delta--${up?'up':'down'}">${up?'▲':'▼'} ${Math.abs(d)}%</span>`;}
+function spark(data,color){
+  color=color||'var(--primary)';const w=120,h=34,mn=Math.min(...data),mx=Math.max(...data),rg=(mx-mn)||1;
+  const pts=data.map((v,i)=>[i/(data.length-1)*w, h-4-((v-mn)/rg)*(h-8)]);
+  const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const area=line+` L${w} ${h} L0 ${h} Z`;const id='sg'+Math.random().toString(36).slice(2,7);
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="height:34px"><defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".28"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#${id})"/><path d="${line}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function areaChart(series,h){
+  h=h||220;const w=560,pad=8;const all=series.flatMap(s=>s.data);const mx=Math.max(...all)*1.1,mn=0,rg=(mx-mn)||1;
+  const xs=series[0].data.length;
+  const grid=[0,.25,.5,.75,1].map(g=>`<line x1="0" x2="${w}" y1="${pad+g*(h-2*pad)}" y2="${pad+g*(h-2*pad)}" stroke="var(--border)" stroke-width="1"/>`).join('');
+  const paths=series.map((s,si)=>{
+    const pts=s.data.map((v,i)=>[i/(xs-1)*w,(h-pad)-((v-mn)/rg)*(h-2*pad)]);
+    const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    const id='ar'+si+Math.random().toString(36).slice(2,6);
+    const area=line+` L${w} ${h-pad} L0 ${h-pad} Z`;
+    return `<defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${s.c}" stop-opacity=".22"/><stop offset="1" stop-color="${s.c}" stop-opacity="0"/></linearGradient></defs>${si===0?`<path d="${area}" fill="url(#${id})"/>`:''}<path d="${line}" fill="none" stroke="${s.c}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }).join('');
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="height:${h}px">${grid}${paths}</svg>`;
+}
+function hbars(rows){ // [{l,v,c}]
+  const mx=Math.max(...rows.map(r=>r.v));
+  return `<div style="display:flex;flex-direction:column;gap:11px">`+rows.map(r=>`
+    <div style="display:flex;align-items:center;gap:11px">
+      <div style="width:88px;font-size:12.5px;color:var(--mfg);text-align:right;flex-shrink:0">${r.l}</div>
+      <div style="flex:1;background:var(--muted);border-radius:7px;height:22px;overflow:hidden"><div style="width:${(r.v/mx*100).toFixed(1)}%;height:100%;background:${r.c};border-radius:7px"></div></div>
+      <div style="width:62px;font-weight:700;font-size:12.5px" class="num">${typeof r.v==='number'?fmt(r.v):r.v}</div>
+    </div>`).join('')+`</div>`;
+}
+
+/* ============================ NAV ============================ */
+const NAV=[
+  {g:'Workspace', items:[
+    ['dashboard','Dashboard',icHome()], ['calendar','Calendar',icCal()], ['create','Create Post',icPlus()],
+    ['scheduled','Scheduled Posts',icClock(),'9'], ['library','Content Library',icLib()]
+  ]},
+  {g:'Intelligence', items:[
+    ['analytics','Analytics',icChart()], ['competitors','Competitors',icTarget()], ['listening','Social Listening',icEar()], ['assistant','AI Assistant',icSpark()]
+  ]},
+  {g:'Connect', items:[ ['salesforce','Salesforce',icCloud()], ['settings','Settings',icGear()] ]}
+];
+function renderNav(){
+  $('nav').innerHTML=NAV.map(grp=>`<div class="nav__group"><div class="nav__label">${grp.g}</div>`+
+    grp.items.map(it=>`<a class="nav__item" data-r="${it[0]}" onclick="go('${it[0]}')">${it[2]}<span>${it[1]}</span>${it[3]?`<span class="nav__badge">${it[3]}</span>`:''}</a>`).join('')+`</div>`).join('');
+}
+function setActive(r){ document.querySelectorAll('.nav__item').forEach(n=>n.classList.toggle('on',n.dataset.r===r)); }
+
+/* ============================ ROUTER ============================ */
+let route='dashboard';
+const SCREENS={dashboard:scrDashboard,calendar:scrCalendar,create:scrCreate,scheduled:scrScheduled,library:scrLibrary,analytics:scrAnalytics,competitors:scrCompetitors,listening:scrListening,assistant:scrAssistant,salesforce:scrSalesforce,settings:scrSettings};
+function go(r){ route=r; setActive(r); const v=$('view'); v.style.animation='none'; void v.offsetWidth; v.style.animation=''; v.innerHTML=(SCREENS[r]||scrDashboard)(); window.scrollTo&&window.scrollTo(0,0); closeNav(); afterRender(r); }
+function afterRender(r){ if(r==='assistant') bindAssistant(); }
+
+/* ============================ SCREENS ============================ */
+function ph(title,sub,actions){return `<div class="ph"><div><h1 class="ph__title">${title}</h1><div class="ph__sub">${sub}</div></div><div class="ph__actions">${actions||''}</div></div>`;}
+
+/* 1. DASHBOARD */
+function scrDashboard(){
+  const pubKpis=[
+    ['Scheduled today','3',icClock(),'primary',''],['This week','12',icCal(),'primary',''],
+    ['This month','38',icCal(),'primary',''],['Drafts awaiting approval','5',icEdit(),'warning',''],
+    ['Failed posts','1',icAlert(),'danger','<span class="badge badge--danger">Fix</span>'],['Upcoming campaigns','3',icRocket(),'accent','']
+  ];
+  const platCards=ACCOUNTS.map(a=>{const x=PLAT[a.p];return `
+    <div class="card card--hover"><div class="card__b">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">${pchip(a.p)}<div style="font-weight:700">${x.n}</div>
+      ${a.connected?`<span class="badge badge--success" style="margin-left:auto">Connected</span>`:`<button class="btn btn--outline btn--sm" style="margin-left:auto" onclick="toast('Reconnect flow (demo)')">Reconnect</button>`}</div>
+      ${a.connected?`<div style="display:flex;justify-content:space-between;align-items:flex-end"><div><div class="kpi__val" style="font-size:20px">${fmt(a.followers)}</div><div class="small muted">followers · ${deltaEl(a.growth)}</div></div><div style="width:110px">${spark(a.spark,x.c)}</div></div>`:`<div class="small muted" style="padding:8px 0">Account disconnected — reconnect to resume publishing & analytics.</div>`}
+    </div></div>`;}).join('');
+  const pubd=POSTS.filter(p=>p.status==='published');
+  const top=pubd.slice().sort((a,b)=>b.perf-a.perf)[0];
+  return `
+  ${ph('Good morning, Cory','Here\'s what needs your attention across 6 channels today.',`<button class="btn btn--outline" onclick="go('analytics')">${icChart()} View analytics</button><button class="btn btn--primary" onclick="go('create')">${icPlus()} Create post</button>`)}
+  <div class="aibanner">
+    <div class="aibanner__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg></div>
+    <div><div style="display:flex;align-items:center;gap:9px;margin-bottom:4px"><b>AI executive summary</b><span class="aibanner__tag">AI generated</span></div>
+    <div style="font-size:13.5px;line-height:1.6">You're <b>up 9.4% in reach</b> this month, led by <b>TikTok (+38% engagement)</b>. Customer-story posts are converting <b>2.3× better to pipeline</b> than product posts. Two things need you today: the <b>X account is disconnected</b> (1 failed post) and a <b>pricing complaint</b> is gaining reach in Social Listening.</div></div>
+  </div>
+  <div class="section-title">Publishing</div>
+  <div class="grid g6">${pubKpis.map(k=>`<div class="card kpi"><div class="kpi__top"><span class="kpi__label">${k[0]}</span><span class="kpi__ic" style="${k[3]==='warning'?'background:var(--warning-soft);color:var(--warning)':k[3]==='danger'?'background:var(--danger-soft);color:var(--danger)':k[3]==='accent'?'background:var(--accent-soft);color:var(--accent)':''}">${k[2]}</span></div><div class="kpi__val num">${k[1]}</div><div class="kpi__foot">${k[4]||'<span class="small muted">on track</span>'}</div></div>`).join('')}</div>
+  <div class="section-title">Performance (30 days)</div>
+  <div class="grid g6">${PERF.map(m=>`<div class="card kpi"><div class="kpi__label">${m.l}</div><div class="kpi__val num" style="font-size:22px">${m.v}</div><div style="margin:6px 0 2px">${spark(m.sp)}</div><div class="kpi__foot">${deltaEl(m.d)}<span class="small muted">vs last</span></div></div>`).join('')}</div>
+  <div class="grid split" style="grid-template-columns:1.55fr 1fr;margin-top:22px">
+    <div class="card"><div class="card__h"><div class="card__t">Engagement trend</div><div class="card__d">Daily engagement across all connected channels</div></div>
+      <div class="card__b">${areaChart([{c:'var(--primary)',data:[120,128,134,140,148,156,162,168,174,179,183,186,182,190]},{c:'var(--accent)',data:[80,82,86,88,90,96,100,104,108,110,112,116,118,120]}],230)}
+      <div style="display:flex;gap:18px;margin-top:10px;font-size:12px" class="muted"><span><span class="dot" style="background:var(--primary)"></span> Engagement</span><span><span class="dot" style="background:var(--accent)"></span> Reach (scaled)</span></div></div></div>
+    <div class="card"><div class="card__h"><div class="card__t">AI insights</div><div class="card__d">What's working, what's not, what to do</div></div>
+      <div class="card__b" style="padding-top:6px">${INSIGHTS.map(i=>{const cm=insightColor(i.k);return `<div class="insight"><div class="insight__ic" style="background:${cm.bg};color:${cm.fg}">${cm.ic}</div><div style="flex:1"><div class="insight__t">${i.t}</div><div class="insight__p">${i.p}</div></div><span class="badge badge--${cm.tone}">${i.m}</span></div>`;}).join('')}</div></div>
+  </div>
+  <div class="section-title">Channels</div>
+  <div class="grid g3">${platCards}</div>
+  <div class="grid split" style="grid-template-columns:1.4fr 1fr;margin-top:22px">
+    <div class="card"><div class="card__h"><div class="card__t">Recently published</div></div><div class="card__b" style="padding-top:6px">
+      ${pubd.map(p=>`<div class="lrow"><div style="display:flex;gap:4px">${p.pl.map(x=>pchip(x,1)).join('')}</div><div style="flex:1;min-width:0"><div style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.txt}</div><div class="small muted">${p.date} · ${CAMP[p.camp].n}</div></div><span class="badge badge--success">${p.perf} score</span></div>`).join('')}
+    </div></div>
+    <div class="card"><div class="card__h"><div class="card__t">Top performing post</div></div><div class="card__b">
+      <div style="display:flex;gap:6px;margin-bottom:9px">${top.pl.map(x=>pchip(x)).join('')}<span class="badge badge--primary" style="margin-left:auto">★ ${top.perf}/100</span></div>
+      <div style="font-size:14px;font-weight:500;line-height:1.5">${top.txt}</div>
+      <div class="grid g3" style="margin-top:14px;gap:10px">
+        <div><div class="small muted">Reach</div><div style="font-weight:700" class="num">312K</div></div>
+        <div><div class="small muted">Engagement</div><div style="font-weight:700" class="num">9.8%</div></div>
+        <div><div class="small muted">Clicks</div><div style="font-weight:700" class="num">4.1K</div></div>
+      </div></div></div>
+  </div>`;
+}
+function insightColor(k){return {
+  win:{bg:'var(--success-soft)',fg:'var(--success)',tone:'success',ic:icTrend()},
+  loss:{bg:'var(--danger-soft)',fg:'var(--danger)',tone:'danger',ic:icDown()},
+  opp:{bg:'var(--info-soft)',fg:'var(--info)',tone:'info',ic:icBulb()},
+  risk:{bg:'var(--warning-soft)',fg:'var(--warning)',tone:'warning',ic:icAlert()},
+  rec:{bg:'var(--accent-soft)',fg:'var(--accent)',tone:'accent',ic:icSpark()}
+}[k];}
+
+/* 2. CALENDAR */
+let calView='Month';
+function scrCalendar(){
+  const head=`<div class="seg">${['Month','Week','Day','Agenda'].map(v=>`<button class="${v===calView?'on':''}" onclick="calView='${v}';go('calendar')">${v}</button>`).join('')}</div>`;
+  const filters=`<div style="display:flex;gap:7px;flex-wrap:wrap">${Object.keys(PLAT).map(p=>`<span class="chip on" onclick="this.classList.toggle('on')">${pchip(p,1)} ${PLAT[p].n}</span>`).join('')}</div>`;
+  let body;
+  if(calView==='Agenda'){
+    body=`<div class="card"><div class="card__b">${POSTS.filter(p=>p.date!=='—').sort((a,b)=>a.date<b.date?-1:1).map(p=>`<div class="lrow"><span class="dot" style="background:${CAMP[p.camp].c}"></span><div style="width:96px;font-weight:600;font-size:12.5px" class="muted">${p.date}</div><div style="display:flex;gap:3px">${p.pl.map(x=>pchip(x,1)).join('')}</div><div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.txt}</div>${statusBadge(p.status)}</div>`).join('')}</div></div>`;
+  } else {
+    const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const start=2; // month starts on Tue offset (demo)
+    const total=calView==='Week'?7:35;
+    const byDay={3:[POSTS[2]],4:[POSTS[6]],8:[POSTS[8]],9:[POSTS[0],POSTS[1]],10:[POSTS[3]],12:[POSTS[7]],13:[POSTS[11]]};
+    let cells='';
+    for(let i=0;i<total;i++){const dn=i-start+1;const inM=dn>=1&&dn<=30;const evs=byDay[dn]||[];
+      cells+=`<div class="calcell ${inM?'':'dim'} ${dn===9?'today':''}"><div class="caldate">${inM?dn:''}</div>${evs.map(e=>`<div class="calchip" style="background:${CAMP[e.camp].c}" onclick="openPost(${e.id})">${PLAT[e.pl[0]].m} · ${e.txt.slice(0,16)}…</div>`).join('')}</div>`;
+    }
+    body=`<div class="card"><div class="card__b"><div class="calgrid">${days.map(d=>`<div class="calhd">${d}</div>`).join('')}${cells}</div></div></div>`;
+  }
+  return `${ph('Calendar','Plan and schedule across every channel.',head)}<div style="margin-bottom:16px">${filters}</div>${body}`;
+}
+function statusBadge(s){return {
+  scheduled:'<span class="badge badge--info">Scheduled</span>', published:'<span class="badge badge--success">Published</span>',
+  draft:'<span class="badge badge--default">Draft</span>', needs_approval:'<span class="badge badge--warning">Needs approval</span>',
+  failed:'<span class="badge badge--danger">Failed</span>'}[s]||'';}
+function openPost(id){const p=POSTS.find(x=>x.id===id);toast(p.txt.slice(0,40)+'… — Edit · Reschedule · Duplicate · Approve');}
+
+/* 3. CREATE POST */
+const CHAR_LIM={linkedin:3000,instagram:2200,facebook:63206,tiktok:2200,youtube:5000,x:280};
+function scrCreate(){
+  const draft='Northwind 2.0 is here. Automation that runs your entire pipeline — lead routing, follow-ups, and reporting on autopilot. See what shipped 👇';
+  const sel=['linkedin','instagram','x'];
+  const previews=sel.map(p=>{const lim=CHAR_LIM[p];const len=draft.length;const over=len>lim;const pct=Math.min(100,len/lim*100);
+    return `<div class="preview"><div class="preview__h">${pchip(p)}<b>${PLAT[p].n}</b><span class="badge badge--primary" style="margin-left:auto">${'AI'} optimized</span></div>
+      <div class="preview__body">${draft}<div class="charbar"><i style="width:${pct}%;background:${over?'var(--danger)':'var(--primary)'}"></i></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px" class="small ${over?'':'muted'}" ${over?'style="color:var(--danger);font-weight:600"':''}>${len} / ${lim} chars${over?' · over limit':''}<span class="muted">#RevOps #automation #SaaS</span></div>
+      <div class="small" style="margin-top:9px;color:var(--primary)">✨ Add a clear CTA link — predicted +14% clicks on ${PLAT[p].n}.</div>
+      <div style="margin-top:10px"><div class="small muted">Predicted engagement</div><div class="progress" style="margin-top:4px"><i style="width:${72-sel.indexOf(p)*8}%"></i></div></div>
+      </div></div>`;}).join('');
+  return `${ph('Create post','Write once, tailor everywhere.','')}
+  <div class="grid split" style="grid-template-columns:1fr 1fr">
+    <div class="card"><div class="card__b">
+      <div class="small muted" style="font-weight:600;margin-bottom:7px">CHANNELS</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">${Object.keys(PLAT).map(p=>`<span class="chip ${sel.includes(p)?'on':''}" onclick="this.classList.toggle('on')">${pchip(p,1)} ${PLAT[p].n}</span>`).join('')}</div>
+      <div class="small muted" style="font-weight:600;margin-bottom:7px">MASTER POST</div>
+      <textarea class="textarea" style="min-height:150px">${draft}</textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn btn--primary" onclick="toast('AI drafted 3 variations (demo)')">${icSpark()} Generate with AI</button><button class="btn btn--outline" onclick="toast('Optimized every channel (demo)')">Optimize all</button></div>
+      <div style="border:1.5px dashed var(--border);border-radius:var(--radius-md);padding:22px;text-align:center;margin-top:14px;color:var(--mfg)">${icImg()}<div style="margin-top:6px" class="small">Drag & drop media, or click to upload</div></div>
+      <div class="small muted" style="font-weight:600;margin:16px 0 7px">PUBLISH</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap"><span class="chip on">Schedule</span><span class="chip">Publish now</span><span class="chip">Recurring</span></div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn btn--secondary" onclick="toast('Draft saved')">Save draft</button><button class="btn btn--outline" onclick="toast('Submitted for approval')">Submit for approval</button><button class="btn btn--primary" onclick="toast('Scheduled across 3 channels')">Schedule</button></div>
+    </div></div>
+    <div><div class="small muted" style="font-weight:600;margin-bottom:9px">LIVE PREVIEW</div><div style="display:flex;flex-direction:column;gap:14px">${previews}</div></div>
+  </div>`;
+}
+
+/* 4. SCHEDULED POSTS */
+function scrScheduled(){
+  return `${ph('Scheduled posts','Everything in the publishing queue.',`<button class="btn btn--primary" onclick="go('create')">${icPlus()} New post</button>`)}
+  <div class="card" style="padding:12px 14px;margin-bottom:14px;display:flex;gap:9px;flex-wrap:wrap;align-items:center">
+    <div class="search" style="max-width:260px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input placeholder="Search posts…"></div>
+    <span class="chip on">All status</span><span class="chip">Scheduled</span><span class="chip">Needs approval</span><span class="chip">Draft</span>
+    <div style="flex:1"></div><span class="small muted">${POSTS.length} posts</span>
+  </div>
+  <div class="card" style="overflow:hidden"><div style="overflow:auto"><table class="tbl">
+    <thead><tr><th style="width:34px"></th><th>Status</th><th>Post</th><th>Campaign</th><th>Owner</th><th>Publish date</th><th>Approval</th><th>Perf.</th></tr></thead>
+    <tbody>${POSTS.map(p=>`<tr>
+      <td><input type="checkbox" onchange="toast('Bulk actions: Approve · Schedule · Delete · Edit')"></td>
+      <td>${statusBadge(p.status)}</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="display:flex;gap:3px">${p.pl.map(x=>pchip(x,1)).join('')}</div><span style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block">${p.txt}</span></div></td>
+      <td><span class="small"><span class="dot" style="background:${CAMP[p.camp].c}"></span> ${CAMP[p.camp].n}</span></td>
+      <td><div style="display:flex;align-items:center;gap:7px"><div class="avatar" style="width:26px;height:26px;font-size:10px">${p.own.toUpperCase()}</div><span class="small hide-sm">${OWNERS[p.own]}</span></div></td>
+      <td class="small num">${p.date}</td>
+      <td>${p.appr==='approved'?'<span class="badge badge--success">Approved</span>':p.appr==='pending'?'<span class="badge badge--warning">Pending</span>':'<span class="badge badge--default">—</span>'}</td>
+      <td style="width:90px">${p.perf?`<div class="progress"><i style="width:${p.perf}%"></i></div>`:'<span class="muted small">—</span>'}</td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`;
+}
+
+/* 5. CONTENT LIBRARY */
+function scrLibrary(){
+  const assets=[
+    {n:'Northwind 2.0 hero', ty:'Image', c:'#00A3AD', tags:['launch','hero'], size:'2.4 MB', used:8, date:'Jun 4'},
+    {n:'Automation canvas demo', ty:'Video', c:'#6366F1', tags:['product','demo'], size:'48 MB', used:3, date:'Jun 2'},
+    {n:'Atlas Lyon story', ty:'Image', c:'#F59E0B', tags:['customer','story'], size:'1.8 MB', used:5, date:'Jun 1'},
+    {n:'Webinar one-pager', ty:'PDF', c:'#EF4444', tags:['webinar','gated'], size:'640 KB', used:2, date:'May 28'},
+    {n:'POV short #3', ty:'Video', c:'#111827', tags:['tiktok','short'], size:'22 MB', used:6, date:'May 26'},
+    {n:'Q2 results infographic', ty:'Image', c:'#10B981', tags:['report'], size:'1.1 MB', used:4, date:'May 24'},
+    {n:'Founder interview', ty:'Video', c:'#FF0000', tags:['brand'], size:'120 MB', used:1, date:'May 20'},
+    {n:'Integration logos', ty:'Image', c:'#3B82F6', tags:['product','partners'], size:'820 KB', used:9, date:'May 18'}
+  ];
+  const tyIc={Image:icImg(),Video:icVideo(),PDF:icDoc()};
+  return `${ph('Content library','Reusable assets, tagged and versioned.',`<button class="btn btn--primary" onclick="toast('Upload asset (demo)')">${icPlus()} Upload</button>`)}
+  <div class="grid split" style="grid-template-columns:220px 1fr">
+    <div class="card"><div class="card__b">
+      <div class="small muted" style="font-weight:700;margin-bottom:8px">FOLDERS</div>
+      ${['All assets','Launch','Customer stories','Webinars','Brand'].map((f,i)=>`<div class="nav__item ${i===0?'on':''}" onclick="toast('Folder: '+'${f}'+' (demo)')" style="margin:0 0 2px">${icFolder()} <span>${f}</span></div>`).join('')}
+      <div class="small muted" style="font-weight:700;margin:14px 0 8px">AI TAGS</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${['product','customer','webinar','short','report','brand'].map(t=>`<span class="chip" style="padding:5px 10px;font-size:11.5px">#${t}</span>`).join('')}</div>
+      <div class="small muted" style="font-weight:700;margin:14px 0 8px">TYPE</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip on" style="padding:5px 10px">Image</span><span class="chip" style="padding:5px 10px">Video</span><span class="chip" style="padding:5px 10px">PDF</span></div>
+    </div></div>
+    <div class="grid g3" style="align-content:start">${assets.map(a=>`
+      <div class="card card--hover" onclick="toast('${a.n} — preview · metadata · versions · AI tags')" style="cursor:pointer;overflow:hidden">
+        <div style="height:120px;background:${a.c};display:grid;place-items:center;color:#fff;position:relative">${tyIc[a.ty]}<span class="badge" style="position:absolute;top:8px;left:8px;background:rgba(255,255,255,.22);color:#fff">${a.ty}</span>${a.used>5?'<span class="badge" style="position:absolute;top:8px;right:8px;background:rgba(255,255,255,.22);color:#fff">v2</span>':''}</div>
+        <div class="card__b" style="padding:13px">
+          <div style="font-weight:600;font-size:13.5px">${a.n}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin:7px 0">${a.tags.map(t=>`<span class="badge badge--default">#${t}</span>`).join('')}</div>
+          <div class="small muted" style="display:flex;justify-content:space-between"><span>${a.size} · used ${a.used}×</span><span>${a.date}</span></div>
+        </div></div>`).join('')}</div>
+  </div>`;
+}
+
+/* 6. ANALYTICS */
+function scrAnalytics(){
+  const k=[['Reach','2.09M',9.4],['Impressions','3.74M',7.1],['Engagement','186K',12.8],['Eng. rate','5.4%',1.2],['Clicks','42.3K',5.6],['New followers','+6.1K',6.2],['Conversions','1.18K',8.0]];
+  const heatVals=[ // 7 days x 6 buckets
+    [10,35,80,60,40,20],[15,55,95,70,45,18],[12,60,90,75,50,22],[14,62,98,72,48,20],[16,58,88,68,42,19],[8,30,55,40,28,12],[6,22,38,30,20,10]
+  ];
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];const buckets=['6a','9a','12p','3p','6p','9p'];
+  let heat=`<div class="heat"><div></div>${buckets.map(b=>`<div class="heatlbl" style="justify-content:center">${b}</div>`).join('')}`;
+  heatVals.forEach((row,di)=>{heat+=`<div class="heatlbl">${days[di]}</div>`+row.map(v=>{const a=(v/100);return `<div class="heatcell" style="background:color-mix(in srgb,var(--primary) ${Math.round(a*100)}%,var(--muted));color:${a>.55?'#fff':'var(--mfg)'}">${v>85?'★':''}</div>`;}).join('');});
+  heat+='</div>';
+  const topPosts=POSTS.filter(p=>p.perf>0).sort((a,b)=>b.perf-a.perf);
+  return `${ph('Analytics','Plain-language performance across every channel.',`<div class="seg">${['7d','30d','90d','12mo'].map((d,i)=>`<button class="${i===1?'on':''}" onclick="toast('Range: '+'${d}')">${d}</button>`).join('')}</div>`)}
+  <div class="grid" style="grid-template-columns:repeat(7,1fr)">${k.map(x=>`<div class="card kpi" style="padding:13px"><div class="kpi__label" style="font-size:11px">${x[0]}</div><div class="kpi__val num" style="font-size:19px">${x[1]}</div><div style="margin:4px 0">${spark(PERF[0].sp.map(v=>v*(0.8+Math.random()*0.4)))}</div>${deltaEl(x[2])}</div>`).join('')}</div>
+  <div class="grid split" style="grid-template-columns:1.5fr 1fr;margin-top:20px">
+    <div class="card"><div class="card__h"><div class="card__t">Multi-channel trend</div></div><div class="card__b">${areaChart([{c:'var(--primary)',data:[120,128,134,140,148,156,162,168,174,179,183,186]},{c:'var(--accent)',data:[60,64,70,74,80,86,90,96,100,104,108,112]},{c:'var(--warning)',data:[40,42,44,46,48,50,52,54,56,58,60,62]}],220)}<div style="display:flex;gap:16px;margin-top:8px;font-size:12px" class="muted"><span><span class="dot" style="background:var(--primary)"></span> Engagement</span><span><span class="dot" style="background:var(--accent)"></span> Reach</span><span><span class="dot" style="background:var(--warning)"></span> Clicks</span></div></div></div>
+    <div class="card"><div class="card__h"><div class="card__t">Platform comparison</div></div><div class="card__b">${hbars(ACCOUNTS.filter(a=>a.connected).map(a=>({l:PLAT[a.p].n,v:a.reach,c:PLAT[a.p].c})))}</div></div>
+  </div>
+  <div class="grid split" style="grid-template-columns:1fr 1fr;margin-top:20px">
+    <div class="card"><div class="card__h"><div class="card__t">Best time to post</div><div class="card__d">Engagement by day & time — darker = stronger</div></div><div class="card__b">${heat}<div class="small" style="margin-top:10px;color:var(--primary)">★ Best window: Tue–Thu, 12pm — 1.7× average engagement.</div></div></div>
+    <div class="card"><div class="card__h"><div class="card__t">Campaign comparison</div></div><div class="card__b">${hbars([{l:'Northwind 2.0',v:186000,c:'#00A3AD'},{l:'Customer Stories',v:142000,c:'#F59E0B'},{l:'Growth Webinar',v:98000,c:'#6366F1'}])}<div class="section-title" style="margin:18px 0 10px">By content type</div>${hbars([{l:'Video',v:92,c:'#6366F1'},{l:'Image',v:68,c:'#00A3AD'},{l:'Link',v:41,c:'#F59E0B'},{l:'Text',v:28,c:'#94A3B8'}])}</div></div>
+  </div>
+  <div class="grid split" style="grid-template-columns:1fr 1fr;margin-top:20px">
+    <div class="card"><div class="card__h"><div class="card__t">Top posts</div></div><div class="card__b" style="padding-top:4px">${topPosts.slice(0,4).map(p=>`<div class="lrow"><span class="badge badge--success">${p.perf}</span><div style="display:flex;gap:3px">${p.pl.map(x=>pchip(x,1)).join('')}</div><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.txt}</span></div>`).join('')}</div></div>
+    <div class="card"><div class="card__h"><div class="card__t">Needs attention</div></div><div class="card__b" style="padding-top:4px">${topPosts.slice(-3).reverse().map(p=>`<div class="lrow"><span class="badge badge--warning">${p.perf}</span><div style="display:flex;gap:3px">${p.pl.map(x=>pchip(x,1)).join('')}</div><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.txt}</span></div>`).join('')}<div class="small muted" style="margin-top:8px">Tip: lowest performers skew to link-only Facebook posts. Add native video.</div></div></div>
+  </div>`;
+}
+
+/* 7. COMPETITORS */
+function scrCompetitors(){
+  const sov=COMPETITORS.map(c=>({l:c.n,v:c.followers,c:'#6366F1'}));sov.unshift({l:'You (Northwind)',v:257800,c:'#00A3AD'});
+  return `${ph('Competitor monitoring','Track the landscape and find your edge.',`<button class="btn btn--outline" onclick="toast('Added competitor (demo)')">${icPlus()} Track competitor</button>`)}
+  <div class="aibanner"><div class="aibanner__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg></div>
+    <div><div style="display:flex;align-items:center;gap:9px;margin-bottom:4px"><b>Landscape summary</b><span class="aibanner__tag">AI generated</span></div>
+    <div style="font-size:13.5px;line-height:1.6">You lead on <b>engagement rate</b> but trail <b>Vantage</b> and <b>Apex Suite</b> on raw audience. <b>Flowly</b> and <b>Northstar</b> are the fastest growing — both lean on short-form and founder-led content. Biggest opening: <b>customer-proof storytelling</b>, which no competitor is doing well.</div></div></div>
+  <div class="card" style="margin-top:18px"><div class="card__h"><div class="card__t">Share of voice — followers</div></div><div class="card__b">${hbars(sov)}</div></div>
+  <div class="grid g2" style="margin-top:18px">${COMPETITORS.map(c=>`
+    <div class="card card--hover"><div class="card__b">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div class="avatar" style="width:40px;height:40px;background:var(--accent-soft);color:var(--accent)">${c.n.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:15px">${c.n}</div><div class="small muted">${fmt(c.followers)} followers · ${deltaEl(c.growth)}</div></div>
+        <span class="chip on" onclick="this.classList.toggle('on');toast('Tracking toggled')">Track</span>
+      </div>
+      <div class="grid g3" style="margin:14px 0;gap:10px">
+        <div><div class="small muted">Posts/wk</div><div style="font-weight:700" class="num">${c.ppw}</div></div>
+        <div><div class="small muted">Engagement</div><div style="font-weight:700" class="num">${c.eng}%</div></div>
+        <div><div class="small muted">Reach</div><div style="font-weight:700" class="num">${c.reach}</div></div>
+      </div>
+      <div style="height:36px">${spark(c.spark,'var(--accent)')}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0">${c.themes.map(t=>`<span class="badge badge--default">${t}</span>`).join('')}</div>
+      <div class="small" style="color:var(--mfg);line-height:1.5"><b style="color:var(--primary)">AI:</b> ${c.ai}</div>
+    </div></div>`).join('')}</div>`;
+}
+
+/* 8. SOCIAL LISTENING */
+function scrListening(){
+  const sent=[['Positive',58,'success'],['Neutral',29,'default'],['Negative',13,'danger']];
+  return `${ph('Social listening','Every mention, classified and triaged by AI.','')}
+  <div class="grid g3">
+    ${sent.map(s=>`<div class="card kpi"><div class="kpi__top"><span class="kpi__label">${s[0]} sentiment</span><span class="badge badge--${s[2]}">${s[1]}%</span></div><div class="progress" style="margin-top:12px"><i style="width:${s[1]}%;background:${s[2]==='success'?'var(--success)':s[2]==='danger'?'var(--danger)':'var(--mfg)'}"></i></div><div class="kpi__foot small muted">${s[0]==='Positive'?'42 opportunities flagged':s[0]==='Negative'?'2 risks need a reply':'awaiting classification'}</div></div>`).join('')}
+  </div>
+  <div class="grid split" style="grid-template-columns:300px 1fr;margin-top:18px">
+    <div class="card"><div class="card__h"><div class="card__t">Tracked keywords</div></div><div class="card__b" style="padding-top:6px">${KEYWORDS.map(k=>`<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">${k.k}</b>${deltaEl(k.tr)}</div><div class="small muted" style="margin:5px 0 6px">${fmt(k.vol)} mentions / wk</div><div class="progress"><i style="width:${k.s}%;background:${k.s>60?'var(--success)':k.s>50?'var(--warning)':'var(--danger)'}"></i></div></div>`).join('')}</div></div>
+    <div class="card"><div class="card__h" style="display:flex;justify-content:space-between"><div class="card__t">Mentions feed</div><div style="display:flex;gap:6px"><span class="chip on" style="padding:5px 11px">All</span><span class="chip" style="padding:5px 11px">Risks</span><span class="chip" style="padding:5px 11px">Opportunities</span></div></div>
+      <div class="card__b" style="padding-top:6px">${MENTIONS.map(m=>`
+        <div style="padding:13px;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:10px;${m.risk?'border-left:3px solid var(--danger)':''}">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div class="avatar" style="width:32px;height:32px;font-size:11px">${m.a.split(' ').map(w=>w[0]).join('')}</div>
+            <div style="flex:1"><div style="font-weight:600;font-size:13px">${m.a} <span class="muted" style="font-weight:400">${m.h}</span></div><div class="small muted" style="display:flex;align-items:center;gap:6px">${pchip(m.p,1)} ${PLAT[m.p].n} · ${m.t} · ${m.reach} reach</div></div>
+            <span class="badge badge--${m.s==='pos'?'success':m.s==='neg'?'danger':'default'}">${m.s==='pos'?'Positive':m.s==='neg'?'Negative':'Neutral'}</span>
+          </div>
+          <div style="font-size:13.5px;line-height:1.55;margin:9px 0">${m.txt}</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${m.tags.map(t=>`<span class="badge badge--${m.risk?'warning':'accent'}">${t}</span>`).join('')}<div style="flex:1"></div>
+          <button class="btn btn--ghost btn--sm" onclick="toast('Reply drafted by AI')">Reply</button><button class="btn btn--ghost btn--sm" onclick="toast('Assigned')">Assign</button><button class="btn btn--ghost btn--sm" onclick="toast('Resolved')">Resolve</button></div>
+        </div>`).join('')}</div></div>
+  </div>`;
+}
+
+/* 9. AI ASSISTANT */
+const CAPS=['Generate posts','Rewrite','Translate','Hashtags','Campaign ideas','Analyze performance','Analyze competitors','Generate report','Suggest posting times','Monthly calendar','Strategic recommendations'];
+const AI_REPLIES={
+  'Generate posts':'Here are 3 post options for the Northwind 2.0 launch:\n\n1. **Hook:** "Your CRM should tell you what to do next." — pair with the automation-canvas demo.\n2. **Proof:** "Atlas Lyon scaled to 6 markets on Northwind." — customer-story carousel.\n3. **Short-form:** "POV: reporting that builds itself" — 15s TikTok.\n\nWant me to tailor each to a specific channel?',
+  'Suggest posting times':'Based on the last 90 days, your highest-engagement windows are:\n\n• **Tue–Thu, 12pm** — 1.7× average\n• **Tue/Thu, 9–11am** — strong for LinkedIn\n• **Weekends** underperform — pause or repurpose.\n\nI can auto-schedule your queue to these slots.',
+  'Analyze competitors':'Quick read on the landscape:\n\n• **Flowly** & **Northstar** are growing fastest — both via short-form + founder-led content.\n• **Vantage** is largest but stagnant (1.9% engagement).\n• **Your edge:** customer-proof storytelling — no competitor does it well.\n\nRecommendation: ship 2 customer stories/week and a weekly founder short.',
+  'default':'On it. Here\'s a quick take:\n\n• Your strongest channel right now is **TikTok** (+38% engagement MoM).\n• Customer-story posts convert **2.3× better** to pipeline.\n• One risk: a pricing complaint is gaining reach — worth a fast, empathetic reply.\n\nWant me to draft the posts, the reply, or a full weekly plan?'
+};
+let chat=[{r:'ai',t:'Hi Cory 👋 I\'m your social copilot. I can generate posts, analyze performance, draft replies, build a calendar, and more. What do you want to do?'}];
+function scrAssistant(){
+  return `${ph('AI Assistant','Your always-on social copilot.','')}
+  <div class="grid split" style="grid-template-columns:240px 1fr">
+    <div class="card"><div class="card__b"><div class="small muted" style="font-weight:700;margin-bottom:9px">CAPABILITIES</div>
+      <div style="display:flex;flex-direction:column;gap:7px">${CAPS.map(c=>`<button class="chip" style="justify-content:flex-start;width:100%" onclick="askAI('${c}')">${icSpark()} ${c}</button>`).join('')}</div>
+    </div></div>
+    <div class="card" style="display:flex;flex-direction:column;min-height:520px">
+      <div class="card__b" style="flex:1;overflow:auto" id="chatThread"></div>
+      <div style="border-top:1px solid var(--border);padding:12px;display:flex;gap:9px">
+        <input class="input" id="chatInput" placeholder="Ask anything — or pick a capability…" onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="btn btn--primary" onclick="sendChat()">${icSend()}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function bindAssistant(){renderChat();}
+function renderChat(){
+  const el=$('chatThread');if(!el)return;
+  el.innerHTML=`<div class="chat">${chat.map(m=>m.r==='user'?`<div class="bubble bubble--user">${escapeHtml(m.t)}</div>`:`<div class="bubble bubble--ai"><div class="ai-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg></div><div>${m.thinking?'<span class="muted">Thinking…</span>':fmtAI(m.t)}</div></div>`).join('')}</div>`;
+  el.scrollTop=el.scrollHeight;
+}
+function fmtAI(t){return escapeHtml(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');}
+function escapeHtml(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function askAI(cap){const inp=$('chatInput');if(inp)inp.value=cap;sendChat(cap);}
+function sendChat(forced){
+  const inp=$('chatInput');const txt=forced||(inp?inp.value.trim():'');if(!txt)return;if(inp)inp.value='';
+  chat.push({r:'user',t:txt});chat.push({r:'ai',thinking:true});renderChat();
+  setTimeout(()=>{chat.pop();chat.push({r:'ai',t:AI_REPLIES[txt]||AI_REPLIES['default']});renderChat();},900);
+}
+
+/* 10. SALESFORCE */
+function scrSalesforce(){
+  const k=[['Pipeline influenced','$1.84M',12.4],['Closed won','$612K',8.9],['MQLs','1,180',6.1],['SQLs','540',4.4],['Attributed leads','3,120',9.7]];
+  const totals=ATTR.reduce((a,r)=>({clicks:a.clicks+r.clicks,leads:a.leads+r.leads,mql:a.mql+r.mql,sql:a.sql+r.sql,opp:a.opp+r.opp,pipe:a.pipe+r.pipe,won:a.won+r.won}),{clicks:0,leads:0,mql:0,sql:0,opp:0,pipe:0,won:0});
+  const fmax=48200;
+  const funnel=FUNNEL.map((s,i)=>{const num=typeof s.v==='number'?s.v:null;const w=num?Math.max(28,num/fmax*100):(i===5?52:46);
+    const prev=i>0?FUNNEL[i-1]:null;const conv=(prev&&num&&typeof prev.v==='number')?((num/prev.v)*100).toFixed(1)+'%':'';
+    return `${i>0&&conv?`<div class="fconv">↓ ${conv} conversion</div>`:''}<div class="fstage" style="background:${s.c};width:${w}%;margin:0 auto"><span style="font-weight:600">${s.l}</span><span class="num" style="font-weight:800">${typeof s.v==='number'?fmt(s.v):s.v}</span></div>`;
+  }).join('');
+  return `${ph('Salesforce integration','Social activity tied to revenue.',`<span class="badge badge--success" style="align-self:center">● Connected</span><button class="btn btn--outline" onclick="toast('Sync started — last sync 2 min ago')">${icSync()} Sync now</button>`)}
+  <div class="grid" style="grid-template-columns:repeat(5,1fr)">${k.map(x=>`<div class="card kpi"><div class="kpi__label">${x[0]}</div><div class="kpi__val num" style="font-size:21px">${x[1]}</div><div class="kpi__foot">${deltaEl(x[2])}</div></div>`).join('')}</div>
+  <div class="grid split" style="grid-template-columns:1.1fr 1fr;margin-top:20px">
+    <div class="card"><div class="card__h"><div class="card__t">Attribution funnel</div><div class="card__d">Social activity → lead → opportunity → revenue</div></div><div class="card__b"><div class="funnel">${funnel}</div></div></div>
+    <div class="card"><div class="card__h"><div class="card__t">Revenue by campaign</div></div><div class="card__b">${hbars([{l:'Northwind 2.0',v:302000,c:'#00A3AD'},{l:'Customer Stories',v:198000,c:'#F59E0B'},{l:'Growth Webinar',v:112000,c:'#6366F1'}])}
+      <div class="section-title" style="margin:20px 0 10px">Integration health</div>
+      <div class="lrow"><span class="dot" style="background:var(--success)"></span><span style="flex:1">API connection</span><span class="badge badge--success">Healthy</span></div>
+      <div class="lrow"><span class="dot" style="background:var(--success)"></span><span style="flex:1">Last sync</span><span class="small muted">2 min ago</span></div>
+      <div class="lrow"><span class="dot" style="background:var(--warning)"></span><span style="flex:1">Field mappings</span><span class="badge badge--warning">2 to review</span></div>
+    </div></div>
+  </div>
+  <div class="card" style="margin-top:20px;overflow:hidden"><div class="card__h"><div class="card__t">Attribution by post</div></div>
+    <div style="overflow:auto"><table class="tbl">
+      <thead><tr><th>Post</th><th>Campaign</th><th class="r">Clicks</th><th class="r">Leads</th><th class="r">MQLs</th><th class="r">SQLs</th><th class="r">Opps</th><th class="r">Pipeline</th><th class="r">Closed won</th></tr></thead>
+      <tbody>${ATTR.map(r=>`<tr><td><div style="display:flex;align-items:center;gap:8px">${pchip(r.p,1)}<span style="max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block">${r.post}</span></div></td><td class="small"><span class="dot" style="background:${CAMP[r.camp].c}"></span> ${CAMP[r.camp].n}</td><td class="r num">${fmt(r.clicks)}</td><td class="r num">${r.leads}</td><td class="r num">${r.mql}</td><td class="r num">${r.sql}</td><td class="r num">${r.opp}</td><td class="r num">${money(r.pipe)}</td><td class="r num">${money(r.won)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td>Total</td><td></td><td class="r num">${fmt(totals.clicks)}</td><td class="r num">${totals.leads}</td><td class="r num">${totals.mql}</td><td class="r num">${totals.sql}</td><td class="r num">${totals.opp}</td><td class="r num">${money(totals.pipe)}</td><td class="r num">${money(totals.won)}</td></tr></tfoot>
+    </table></div></div>`;
+}
+
+/* 11. SETTINGS */
+let setTab='Profile';
+function scrSettings(){
+  const tabs=['Profile','Team & Roles','Connected Accounts','Integrations','Notifications','Approvals'];
+  let body='';
+  if(setTab==='Profile'){body=`<div class="card"><div class="card__b" style="max-width:520px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px"><div class="avatar" style="width:56px;height:56px;font-size:18px">CL</div><div><div style="font-weight:700;font-size:16px">Cory Lawing</div><div class="muted small">Marketing Operations · Admin</div></div></div>
+    <div class="small muted" style="font-weight:600;margin-bottom:6px">FULL NAME</div><input class="input" value="Cory Lawing" style="margin-bottom:12px">
+    <div class="small muted" style="font-weight:600;margin-bottom:6px">EMAIL</div><input class="input" value="cory@northwind.example" style="margin-bottom:12px">
+    <div class="small muted" style="font-weight:600;margin-bottom:6px">TIMEZONE</div><input class="input" value="(GMT+1) Central European Time" style="margin-bottom:16px">
+    <button class="btn btn--primary" onclick="toast('Profile saved')">Save changes</button></div></div>`;}
+  else if(setTab==='Team & Roles'){const team=[['Cory Lawing','Admin','success'],['Mara Lin','Marketing Manager','primary'],['Jordan Diaz','Social Specialist','accent'],['Sam Okafor','Content Creator','info'],['Priya V.','Executive','warning'],['Alex Reed','Read Only','default']];
+    body=`<div class="card"><div class="card__b">${team.map(t=>`<div class="lrow"><div class="avatar" style="width:32px;height:32px;font-size:11px">${t[0].split(' ').map(w=>w[0]).join('')}</div><div style="flex:1"><div style="font-weight:600">${t[0]}</div></div><span class="badge badge--${t[2]}">${t[1]}</span><button class="btn btn--ghost btn--sm" onclick="toast('Manage role (demo)')">Manage</button></div>`).join('')}<button class="btn btn--outline" style="margin-top:12px" onclick="toast('Invite teammate (demo)')">${icPlus()} Invite teammate</button></div></div>`;}
+  else if(setTab==='Connected Accounts'){body=`<div class="card"><div class="card__b">${ACCOUNTS.map(a=>`<div class="lrow">${pchip(a.p)}<div style="flex:1"><div style="font-weight:600">${PLAT[a.p].n}</div><div class="small muted">${a.connected?fmt(a.followers)+' followers':'Not connected'}</div></div><div class="tgl ${a.connected?'on':''}" onclick="this.classList.toggle('on');toast('${PLAT[a.p].n} '+(this.classList.contains('on')?'connected':'disconnected'))"></div></div>`).join('')}</div></div>`;}
+  else if(setTab==='Integrations'){const ints=[['Salesforce','#00A1E0',true],['HubSpot','#FF7A59',false],['Slack','#4A154B',true],['Google Analytics','#E37400',true],['n8n','#EA4B71',true],['OpenAI','#10A37F',true],['Claude','#D97757',true]];
+    body=`<div class="grid g3">${ints.map(i=>`<div class="card card--hover"><div class="card__b"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div class="pchip" style="background:${i[1]};width:32px;height:32px;border-radius:9px;font-size:12px">${i[0][0]}</div><b>${i[0]}</b></div><div style="display:flex;align-items:center;justify-content:space-between"><span class="badge badge--${i[2]?'success':'default'}">${i[2]?'Connected':'Available'}</span><button class="btn btn--${i[2]?'ghost':'outline'} btn--sm" onclick="toast('${i[0]} '+'${i[2]?'settings':'connect'}'+' (demo)')">${i[2]?'Configure':'Connect'}</button></div></div></div>`).join('')}</div>`;}
+  else if(setTab==='Notifications'){const events=['Post published','Post failed','Approval requested','Mention (risk)','Weekly report','Competitor spike'];const ch=['Email','Slack','In-App'];
+    body=`<div class="card" style="overflow:hidden"><div style="overflow:auto"><table class="tbl"><thead><tr><th>Event</th>${ch.map(c=>`<th class="r">${c}</th>`).join('')}</tr></thead><tbody>${events.map((e,ei)=>`<tr><td style="font-weight:500">${e}</td>${ch.map((c,ci)=>`<td class="r"><div class="tgl ${(ei+ci)%3!==2?'on':''}" style="display:inline-block" onclick="this.classList.toggle('on')"></div></td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;}
+  else {body=`<div class="card"><div class="card__b" style="max-width:560px"><div class="card__t" style="margin-bottom:4px">Approval workflow</div><div class="card__d" style="margin-bottom:16px">Require sign-off before posts publish.</div>
+    <div class="lrow"><div style="flex:1"><div style="font-weight:600">Require approval for all posts</div><div class="small muted">New posts go to "Needs approval"</div></div><div class="tgl on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="lrow"><div style="flex:1"><div style="font-weight:600">Auto-approve from Admins</div></div><div class="tgl on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="small muted" style="font-weight:600;margin:14px 0 6px">APPROVERS</div><input class="input" value="Mara Lin, Priya V." style="margin-bottom:14px">
+    <button class="btn btn--primary" onclick="toast('Approval settings saved')">Save</button></div></div>`;}
+  return `${ph('Settings','Workspace, team, and integrations.','')}
+  <div class="grid split" style="grid-template-columns:210px 1fr">
+    <div class="card"><div class="card__b" style="padding:10px">${tabs.map(t=>`<div class="nav__item ${t===setTab?'on':''}" onclick="setTab='${t}';go('settings')" style="margin:0 0 2px">${icGear()} <span>${t}</span></div>`).join('')}</div></div>
+    <div>${body}</div>
+  </div>`;
+}
+
+/* ============================ ICONS ============================ */
+function ic(p){return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;}
+function icHome(){return ic('<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>');}
+function icCal(){return ic('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>');}
+function icPlus(){return ic('<path d="M12 5v14M5 12h14"/>');}
+function icClock(){return ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');}
+function icLib(){return ic('<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>');}
+function icChart(){return ic('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>');}
+function icTarget(){return ic('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>');}
+function icEar(){return ic('<path d="M6 8a6 6 0 0112 0c0 4-3 5-3 8a3 3 0 01-6 0"/><path d="M9 9a3 3 0 016 0"/>');}
+function icSpark(){return ic('<path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z"/>');}
+function icCloud(){return ic('<path d="M7 18a4 4 0 01-1-7.9A5 5 0 0117 9a3.5 3.5 0 011 6.9"/>');}
+function icGear(){return ic('<circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1l2-1.5-2-3.4-2.3 1a7 7 0 00-1.7-1L14.5 2h-5l-.4 2.6a7 7 0 00-1.7 1l-2.3-1-2 3.4L5.1 11a7 7 0 000 2l-2 1.5 2 3.4 2.3-1a7 7 0 001.7 1l.4 2.6h5l.4-2.6a7 7 0 001.7-1l2.3 1 2-3.4-2-1.5a7 7 0 00.1-1z"/>');}
+function icEdit(){return ic('<path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>');}
+function icAlert(){return ic('<path d="M12 9v4M12 17h.01M10.3 3.9l-8 14A2 2 0 004 21h16a2 2 0 001.7-3.1l-8-14a2 2 0 00-3.4 0z"/>');}
+function icRocket(){return ic('<path d="M5 15c-1 1-1.5 4-1.5 4s3-.5 4-1.5M9 12l3 3M15 5c3 0 4 1 4 4 0 5-5 8-8 9l-3-3c1-3 4-8 9-9z"/><circle cx="14.5" cy="9.5" r="1.2"/>');}
+function icImg(){return ic('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/>');}
+function icVideo(){return ic('<rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 9l5-3v12l-5-3"/>');}
+function icDoc(){return ic('<path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/>');}
+function icFolder(){return ic('<path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>');}
+function icTrend(){return ic('<path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/>');}
+function icDown(){return ic('<path d="M3 7l6 6 4-4 8 8"/><path d="M21 17v-5h-5"/>');}
+function icBulb(){return ic('<path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 00-4-10z"/>');}
+function icSend(){return ic('<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>');}
+function icSync(){return ic('<path d="M21 12a9 9 0 11-3-6.7L21 7"/><path d="M21 3v4h-4"/>');}
+
+/* ============================ THEME / NAV ============================ */
+function toggleTheme(){const d=document.documentElement.classList.toggle('dark');$('themeBtn').innerHTML=d?sunIc():moonIc();}
+function sunIc(){return ic('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>');}
+function moonIc(){return ic('<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>');}
+function openNav(){$('sidebar').classList.add('open');$('scrim').classList.add('on');}
+function closeNav(){$('sidebar').classList.remove('open');$('scrim').classList.remove('on');}
+
+/* boot */
+renderNav();
+$('themeBtn').innerHTML=moonIc();
+go('dashboard');
+</script>
+</body>
+</html>
