@@ -490,9 +490,9 @@
   </div>
   <!-- VOICE RECORDER: contact lookup -> Voice Recorder VF with contactId/userId/contactName -->
   <div class="scc-modal" id="sccVoice" role="dialog" aria-modal="true" aria-label="Voice recorder">
-    <div class="scc-modal__bar"><div><div class="scc-modal__title">Voice Recorder</div><div class="scc-modal__sub">Pick a contact \u2014 it is passed into the voice-notes recorder</div></div><div style="flex:1"></div><button class="scc-iconbtn" onclick="closeVoice()">\u2715 Close</button></div>
+    <div class="scc-modal__bar"><div><div class="scc-modal__title">Voice Recorder</div><div class="scc-modal__sub">Pick a contact — it is passed into the voice-notes recorder</div></div><div style="flex:1"></div><button class="scc-iconbtn" onclick="closeVoice()">✕ Close</button></div>
     <div class="scc-modal__body"><div style="max-width:580px;margin:0 auto;">
-      <input id="sccVoiceSearch" class="scc-voice-search" placeholder="Search contacts by name or account\u2026" oninput="renderVoiceList()" />
+      <input id="sccVoiceSearch" class="scc-voice-search" placeholder="Search contacts by name or account…" oninput="renderVoiceList()" />
       <div id="sccVoiceList" class="scc-voice-list"></div>
       <div id="sccVoiceSel"></div>
     </div></div>
@@ -841,7 +841,7 @@ function heroes(d){
     const cap=h.edit==='musp'?`next 6 months \u00b7 vs ${d.muspTarget} target`:h.cap;
     const ed=h.edit==='musp'?` <button class="scc-edit" onclick="setMuspTarget()">set my target</button>`:'';
     const met=hit?` <span class="scc-hero__met">\u2713 Goal met</span>`:'';
-    const clk=hit?` onclick="celebrate()" role="button" tabindex="0" title="Goal met \u2014 tap to celebrate"`:'';
+    const clk=hit?` onclick="celebrate()" role="button" tabindex="0" title="Goal met — tap to celebrate"`:'';
     return `<div class="scc-hero scc-hero--${h.accent} ${hit?'scc-hero--hit':''} scc-reveal"${clk}><div class="scc-micro">${esc(h.lbl)} ${infoTip(h.lbl)}${met}</div><div class="scc-hero__val">${esc(h.val)}</div><div class="scc-hero__cap">${esc(cap)}${ed}</div>${explainLine(h.lbl)}</div>`;
   }).join('')}</section>`;
 }
