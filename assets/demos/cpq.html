@@ -4,6 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Custom CPQ — interactive demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ============ CPQ DEMO — self-contained, genericized ============ */
   :root{
@@ -273,6 +276,73 @@
     .totals{flex-direction:column;align-items:stretch;}
     .totals__spacer{display:none;}
   }
+
+  /* ========== E-SIGNATURE PORTAL (customer-facing) ========== */
+  .esign{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#f7f8fb;}
+  .esign__bar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--brand);color:#fff;}
+  .esign__bar .dot{width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px var(--lime);}
+  .esign__bar .who{font-size:12px;color:#c4cad6;}
+  .esign__bar .who b{color:#fff;}
+  .esign__bar .secure{margin-left:auto;font-size:11px;color:#aeb6c6;display:flex;align-items:center;gap:5px;}
+  .esign__hint{display:flex;align-items:center;gap:8px;padding:9px 16px;background:#fffbe8;border-bottom:1px solid #f0e3a8;font-size:12.5px;color:#7a5c00;}
+  .esign__scroll{max-height:340px;overflow:auto;padding:18px;background:#e9ebf1;}
+
+  /* the contract / order form document */
+  .contract{background:#fff;border:1px solid #e1e4ec;border-radius:8px;box-shadow:0 6px 20px rgba(17,19,26,.08);padding:24px 26px;max-width:640px;margin:0 auto;}
+  .contract h2{margin:0 0 2px;font-size:18px;letter-spacing:-.01em;}
+  .contract .doc-sub{font-size:11.5px;color:var(--muted);margin-bottom:16px;}
+  .contract .parties{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:18px;font-size:12.5px;}
+  .contract .parties > div{flex:1;min-width:160px;}
+  .contract .parties .lbl{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:3px;}
+  .contract table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:8px;}
+  .contract th{text-align:left;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1.5px solid var(--line);padding:6px 4px;}
+  .contract th.r,.contract td.r{text-align:right;}
+  .contract td{padding:7px 4px;border-bottom:1px solid #f1f3f7;}
+  .contract .grand-row td{font-weight:700;font-size:14px;border-top:1.5px solid var(--ink);border-bottom:none;padding-top:9px;}
+  .contract .terms{margin-top:16px;font-size:11px;color:#7a808c;line-height:1.55;border-top:1px dashed var(--line);padding-top:12px;}
+  .contract .terms b{color:var(--ink2);}
+
+  /* signature block inside the document */
+  .sigblock{display:flex;gap:18px;flex-wrap:wrap;margin-top:20px;}
+  .sigslot{flex:1;min-width:200px;}
+  .sigslot .lbl{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px;}
+  .sigslot .line{position:relative;border:1.5px dashed #c3c9d4;border-radius:8px;height:64px;display:flex;align-items:center;justify-content:center;background:#fcfdff;overflow:hidden;}
+  .sigslot .line.filled{border-style:solid;border-color:var(--green-line);background:#fbfffc;}
+  .sigtag{position:absolute;top:-10px;left:10px;background:#e89a2b;color:#fff;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:5px;box-shadow:0 2px 6px rgba(232,154,43,.4);animation:bob 1.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+  .sig-render{font-family:'Caveat','Segoe Script','Brush Script MT',cursive;font-size:32px;color:#13287a;line-height:1;padding:0 8px;}
+  .sig-render img{max-height:56px;}
+  .sig-meta{font-size:10.5px;color:var(--muted);margin-top:5px;}
+  .sig-counter{font-family:'Caveat','Segoe Script',cursive;font-size:26px;color:#3f4a12;}
+
+  /* signing panel (the act of signing) */
+  .signpanel{border-top:1px solid var(--line);background:#fff;padding:16px;}
+  .sign-tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:12px;}
+  .sign-tab{padding:7px 16px;font-size:12.5px;font-weight:600;background:#fff;border:none;cursor:pointer;color:var(--ink2);}
+  .sign-tab.on{background:var(--brand);color:#fff;}
+  .type-box input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none;}
+  .type-box input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(27,30,39,.07);}
+  .type-preview{margin-top:10px;border:1.5px solid var(--line);border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;background:#fcfdff;}
+  .type-preview .sig-render{font-size:40px;}
+  .type-preview .ph{color:#b8bdc8;font-size:13px;}
+  .draw-wrap{border:1.5px solid var(--line);border-radius:10px;background:#fcfdff;position:relative;}
+  .draw-wrap canvas{display:block;width:100%;height:120px;border-radius:10px;touch-action:none;cursor:crosshair;}
+  .draw-wrap .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#b8bdc8;font-size:13px;pointer-events:none;}
+  .draw-clear{position:absolute;top:8px;right:8px;font-size:11px;border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 9px;cursor:pointer;color:var(--ink2);}
+  .agree{display:flex;align-items:flex-start;gap:10px;margin-top:14px;font-size:12.5px;color:var(--ink2);cursor:pointer;user-select:none;line-height:1.4;}
+  .agree .cbx{margin-top:1px;}
+  .agree input{display:none;}
+
+  /* completion certificate */
+  .cert{margin-top:16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .cert__h{background:var(--green-soft);color:var(--green);font-weight:700;font-size:12.5px;padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--green-line);}
+  .cert__r{display:flex;gap:10px;padding:8px 14px;font-size:12px;border-bottom:1px solid #f1f3f7;}
+  .cert__r:last-child{border-bottom:none;}
+  .cert__r .k{color:var(--muted);min-width:120px;}
+  .cert__r .v{font-weight:600;}
+  .signed-banner{display:flex;align-items:center;gap:12px;background:var(--green-soft);border:1px solid var(--green-line);border-radius:10px;padding:12px 14px;margin-bottom:14px;}
+  .signed-banner .ring{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;border:2px solid var(--green-line);flex-shrink:0;}
+  .stamp{position:absolute;right:14px;bottom:10px;transform:rotate(-8deg);border:2px solid var(--green);color:var(--green);font-weight:800;font-size:12px;letter-spacing:.08em;padding:3px 10px;border-radius:6px;opacity:.85;}
 </style>
 </head>
 <body>
@@ -736,21 +806,235 @@ function renderSignField(){
 }
 function sendSign(){
   const to = ($('signTo')&&$('signTo').value)||'';
+  state.signTo = to;
   const via = state.signMethod==='email'?'email':'text message';
-  $('signTitle').textContent='Order form sent';
+  $('signTitle').textContent='Contract sent for signature';
   $('signBody').innerHTML = `
     <div class="sent">
       <div class="sent__ring"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h3>Signature request sent by ${via}</h3>
-      <p>A signable PDF order form is on its way to <b>${to}</b>. The customer can review and sign it from any device — no login required.</p>
+      <p>A signable PDF order form / contract is on its way to <b>${to}</b>. The customer can review and sign it from any device — no login required.</p>
       <div class="track">
-        <div class="track__r"><span class="d"></span><div><b>Order form generated</b> — PDF built from the live quote</div></div>
+        <div class="track__r"><span class="d"></span><div><b>Contract generated</b> — PDF built from the live quote</div></div>
         <div class="track__r"><span class="d"></span><div><b>Sent for signature</b> — delivered via ${via}</div></div>
-        <div class="track__r pending"><span class="d"></span><div><b>Awaiting customer signature</b> — you'll be notified the moment it's signed</div></div>
-        <div class="track__r pending"><span class="d"></span><div><b>Signed & closed</b> — countersigned PDF stored on the record</div></div>
+        <div class="track__r pending" id="trkSign"><span class="d"></span><div><b>Awaiting customer signature</b> — you'll be notified the moment it's signed</div></div>
+        <div class="track__r pending" id="trkDone"><span class="d"></span><div><b>Signed & closed</b> — countersigned PDF stored on the record</div></div>
+      </div>
+      <p style="margin-top:16px;font-size:12.5px;color:var(--muted)">↓ See exactly what the customer receives — open the secure signing link.</p>
+    </div>`;
+  $('signFoot').innerHTML = `
+    <button class="btn btn--ghost" onclick="closeSign()">Done</button>
+    <button class="btn btn--sign" onclick="openSigning()">Open the customer's signing link →</button>`;
+}
+
+/* =========================================================
+   ELECTRONIC SIGNING EXPERIENCE (what the customer sees)
+   ========================================================= */
+function buildContractRows(){
+  const live = state.lines.filter(l=>l.qty>0);
+  return live.map(l=>{ const c=lineCalc(l);
+    return `<tr><td>${l.name}${l.freeProduct?' <span style="color:var(--teal)">(free)</span>':''}</td>
+      <td class="r">${l.qty}</td>
+      <td class="r">${money(l.list)}</td>
+      <td class="r">${money(c.excl)}</td></tr>`;
+  }).join('');
+}
+
+function openSigning(){
+  state.sigMode='type'; state.signerName=''; state.signedData=null; state.agreed=false;
+  $('signTitle').textContent='Review & sign — secure signing link';
+  renderSigning();
+}
+
+function renderSigning(){
+  const t=totals();
+  const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  $('signBody').innerHTML = `
+    <div class="esign">
+      <div class="esign__bar">
+        <span class="dot"></span>
+        <span class="who">Signing for <b>Northwind Industries</b></span>
+        <span class="secure">🔒 Secure · encrypted</span>
+      </div>
+      <div class="esign__hint">✍️ Please review the order form / contract below, then add your signature where indicated.</div>
+      <div class="esign__scroll" id="signScroll">
+        <div class="contract">
+          <h2>Order Form &amp; Service Contract</h2>
+          <div class="doc-sub mono">Quote #Q-2048 · ${today} · Currency: USD</div>
+          <div class="parties">
+            <div><div class="lbl">Provider</div>Northwind Cloud, Inc.<br/><span style="color:var(--muted)">1 Market St, Suite 400</span></div>
+            <div><div class="lbl">Customer</div>Northwind Industries<br/><span style="color:var(--muted)">${state.signTo||'procurement@northwind.com'}</span></div>
+          </div>
+          <table>
+            <thead><tr><th>Product / Service</th><th class="r">Qty</th><th class="r">List</th><th class="r">Price</th></tr></thead>
+            <tbody>
+              ${buildContractRows()}
+              ${state.showTax&&!state.taxExempt?`<tr><td colspan="3" class="r" style="color:var(--muted)">Taxes</td><td class="r">${money(t.tax)}</td></tr>`:''}
+              ${state.taxExempt?`<tr><td colspan="3" class="r" style="color:var(--teal)">Tax status</td><td class="r" style="color:var(--teal)">Exempt</td></tr>`:''}
+              <tr class="grand-row"><td colspan="3" class="r">Total${state.showTax&&!state.taxExempt?' (incl. tax)':''}</td><td class="r">${money(t.incl)}</td></tr>
+            </tbody>
+          </table>
+          <div class="terms">
+            <b>Terms.</b> This order form is governed by the Master Subscription Agreement between the parties. Fees are due net 30 from the contract effective date. The subscription term begins on the effective date and renews annually unless cancelled in writing 30 days prior. By signing electronically below, the signer represents they are authorized to bind the Customer and agrees this electronic signature is the legal equivalent of a handwritten signature.
+          </div>
+          <div class="sigblock">
+            <div class="sigslot">
+              <div class="lbl">Customer signature</div>
+              <div class="line ${state.signedData?'filled':''}" id="custSig">
+                ${state.signedData ? renderSig(state.signedData) : '<span class="sigtag">Sign here</span>'}
+              </div>
+              <div class="sig-meta">${state.signerName?state.signerName:'Authorized signatory, Northwind Industries'}</div>
+            </div>
+            <div class="sigslot">
+              <div class="lbl">Provider (counter-signed)</div>
+              <div class="line filled"><span class="sig-counter">Cory&nbsp;Lawing</span></div>
+              <div class="sig-meta">Northwind Cloud, Inc. · ${today}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="signpanel">
+        <div class="sign-tabs">
+          <button class="sign-tab ${state.sigMode==='type'?'on':''}" onclick="setSigMode('type')">Type</button>
+          <button class="sign-tab ${state.sigMode==='draw'?'on':''}" onclick="setSigMode('draw')">Draw</button>
+        </div>
+        <div id="sigInput"></div>
+        <label class="agree" onclick="toggleAgree(event)">
+          <span class="cbx" style="${state.agreed?'background:var(--brand);border-color:var(--brand)':''}">${state.agreed?check(true):''}</span>
+          I have reviewed the order form / contract and I agree to its terms. I understand my electronic signature is legally binding.
+        </label>
       </div>
     </div>`;
-  $('signFoot').innerHTML = `<button class="btn btn--dark" onclick="closeSign()">Done</button>`;
+  renderSigInput();
+  $('signFoot').innerHTML = `
+    <button class="btn btn--ghost" onclick="renderSign()">‹ Back</button>
+    <button class="btn btn--sign" id="finishBtn" ${canFinish()?'':'disabled'} onclick="finishSigning()">Adopt &amp; sign contract →</button>`;
+}
+
+function renderSig(data){
+  if(data.type==='type') return `<span class="sig-render">${escapeHtml(data.value)}</span>`;
+  return `<span class="sig-render"><img src="${data.value}" alt="signature"></span>`;
+}
+function escapeHtml(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function setSigMode(m){ state.sigMode=m; state.signedData=null; renderSigning(); }
+function toggleAgree(e){ e.preventDefault(); state.agreed=!state.agreed;
+  // light refresh without losing a drawn signature
+  const cb=e.currentTarget.querySelector('.cbx');
+  cb.style.cssText = state.agreed?'background:var(--brand);border-color:var(--brand)':'';
+  cb.innerHTML = state.agreed?check(true):'';
+  syncFinish();
+}
+function canFinish(){ return !!state.signedData && state.agreed; }
+function syncFinish(){ const b=$('finishBtn'); if(b) b.disabled=!canFinish(); }
+
+function renderSigInput(){
+  const box=$('sigInput');
+  if(state.sigMode==='type'){
+    box.innerHTML = `
+      <div class="type-box">
+        <input id="typedName" type="text" placeholder="Type your full name" value="${escapeHtml(state.signerName)}" oninput="onTyped(this.value)">
+        <div class="type-preview">${state.signerName?`<span class="sig-render">${escapeHtml(state.signerName)}</span>`:'<span class="ph">Your signature appears here</span>'}</div>
+      </div>`;
+  } else {
+    box.innerHTML = `
+      <div class="draw-wrap">
+        <canvas id="sigCanvas"></canvas>
+        <div class="ph" id="drawPh">Draw your signature with mouse or finger</div>
+        <button class="draw-clear" onclick="clearDraw()">Clear</button>
+      </div>`;
+    initCanvas();
+  }
+}
+
+function onTyped(v){
+  state.signerName=v;
+  const pv=$('sigInput').querySelector('.type-preview');
+  pv.innerHTML = v?`<span class="sig-render">${escapeHtml(v)}</span>`:'<span class="ph">Your signature appears here</span>';
+  state.signedData = v.trim()?{type:'type',value:v.trim()}:null;
+  // reflect into the document signature slot live
+  updateDocSig();
+  syncFinish();
+}
+function updateDocSig(){
+  const slot=$('custSig'); if(!slot)return;
+  if(state.signedData){ slot.classList.add('filled'); slot.innerHTML=renderSig(state.signedData); }
+  else { slot.classList.remove('filled'); slot.innerHTML='<span class="sigtag">Sign here</span>'; }
+  const meta=slot.parentElement.querySelector('.sig-meta');
+  if(meta) meta.textContent = state.signerName?state.signerName:'Authorized signatory, Northwind Industries';
+}
+
+/* canvas drawing */
+let _ctx,_drawing=false,_dirty=false;
+function initCanvas(){
+  const cv=$('sigCanvas'); if(!cv)return;
+  const ratio=window.devicePixelRatio||1;
+  const w=cv.clientWidth||480, h=120;
+  cv.width=w*ratio; cv.height=h*ratio;
+  _ctx=cv.getContext('2d'); _ctx.scale(ratio,ratio);
+  _ctx.lineWidth=2.4; _ctx.lineCap='round'; _ctx.lineJoin='round'; _ctx.strokeStyle='#13287a';
+  _dirty=false;
+  const pos=e=>{ const r=cv.getBoundingClientRect(); const p=e.touches?e.touches[0]:e; return [p.clientX-r.left,p.clientY-r.top]; };
+  const start=e=>{ e.preventDefault(); _drawing=true; const[x,y]=pos(e); _ctx.beginPath(); _ctx.moveTo(x,y); if(!_dirty){_dirty=true; const ph=$('drawPh'); if(ph)ph.style.display='none';} };
+  const move=e=>{ if(!_drawing)return; e.preventDefault(); const[x,y]=pos(e); _ctx.lineTo(x,y); _ctx.stroke(); };
+  const end=()=>{ if(!_drawing)return; _drawing=false; if(_dirty){ state.signedData={type:'draw',value:cv.toDataURL('image/png')}; updateDocSig(); syncFinish(); } };
+  cv.onmousedown=start; cv.onmousemove=move; window.addEventListener('mouseup',end);
+  cv.ontouchstart=start; cv.ontouchmove=move; cv.ontouchend=end;
+}
+function clearDraw(){ const cv=$('sigCanvas'); if(cv&&_ctx){ _ctx.clearRect(0,0,cv.width,cv.height); _dirty=false; const ph=$('drawPh'); if(ph)ph.style.display=''; } state.signedData=null; updateDocSig(); syncFinish(); }
+
+function finishSigning(){
+  if(!canFinish())return;
+  // advance the rep-side tracker (kept in DOM via state) + show completed contract
+  const t=totals();
+  const stamp=new Date();
+  const when=stamp.toLocaleString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  const sigName = state.signedData.type==='type'? state.signedData.value : 'Authorized signatory';
+  $('signTitle').textContent='Contract signed & completed';
+  $('signBody').innerHTML = `
+    <div class="signed-banner">
+      <div class="ring"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="var(--green)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><b style="color:var(--green)">Signed by the customer.</b> The fully-executed contract is countersigned and stored back on the opportunity automatically.</div>
+    </div>
+    <div class="esign">
+      <div class="esign__scroll">
+        <div class="contract" style="position:relative">
+          <div class="stamp">SIGNED</div>
+          <h2>Order Form &amp; Service Contract</h2>
+          <div class="doc-sub mono">Quote #Q-2048 · Executed ${when} · USD</div>
+          <table>
+            <thead><tr><th>Product / Service</th><th class="r">Qty</th><th class="r">List</th><th class="r">Price</th></tr></thead>
+            <tbody>${buildContractRows()}
+              <tr class="grand-row"><td colspan="3" class="r">Total${state.showTax&&!state.taxExempt?' (incl. tax)':''}</td><td class="r">${money(t.incl)}</td></tr>
+            </tbody>
+          </table>
+          <div class="sigblock">
+            <div class="sigslot">
+              <div class="lbl">Customer signature</div>
+              <div class="line filled">${renderSig(state.signedData)}</div>
+              <div class="sig-meta">${escapeHtml(sigName)} · Northwind Industries</div>
+            </div>
+            <div class="sigslot">
+              <div class="lbl">Provider (counter-signed)</div>
+              <div class="line filled"><span class="sig-counter">Cory&nbsp;Lawing</span></div>
+              <div class="sig-meta">Northwind Cloud, Inc.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cert">
+      <div class="cert__h">✔ Certificate of completion</div>
+      <div class="cert__r"><span class="k">Document</span><span class="v">Order Form &amp; Service Contract — Q-2048.pdf</span></div>
+      <div class="cert__r"><span class="k">Signed by</span><span class="v">${escapeHtml(sigName)} (${state.signTo||'procurement@northwind.com'})</span></div>
+      <div class="cert__r"><span class="k">Method</span><span class="v">Electronic signature · ${state.signedData.type==='draw'?'drawn':'typed'} · ${state.signMethod==='sms'?'SMS link':'email link'}</span></div>
+      <div class="cert__r"><span class="k">Completed</span><span class="v">${when}</span></div>
+      <div class="cert__r"><span class="k">Audit ID</span><span class="v mono">${'EVS-'+Math.random().toString(36).slice(2,10).toUpperCase()}</span></div>
+    </div>`;
+  $('signFoot').innerHTML = `
+    <button class="btn btn--ghost" onclick="closeSign()">Close</button>
+    <button class="btn btn--lime" onclick="toast('Signed PDF downloaded (demo).')">⬇ Download signed PDF</button>`;
+  toast('Contract signed — opportunity moved to Closed Won.');
 }
 
 /* close modals on scrim click / escape */
