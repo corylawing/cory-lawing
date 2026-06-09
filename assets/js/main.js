@@ -274,4 +274,21 @@
     });
   }
 
+
+  /* --- Calendly popup on the existing booking CTAs --------- */
+  // Bind to the links that already point at Calendly — keeps the site's own
+  // buttons/styling untouched, one source of truth for the URL, and the href
+  // stays as a graceful fallback if the widget script hasn't loaded yet.
+  var CAL_URL = "https://calendly.com/corylawing/free-discovery-call-with-cory-lawing";
+  var bookCtas = document.querySelectorAll('a[href*="calendly.com"]');
+  bookCtas.forEach(function (el) {
+    el.addEventListener("click", function (e) {
+      if (window.Calendly && typeof window.Calendly.initPopupWidget === "function") {
+        e.preventDefault();
+        window.Calendly.initPopupWidget({ url: CAL_URL });
+      }
+      // else: let the link navigate to Calendly in a new tab (fallback)
+    });
+  });
+
 })();
