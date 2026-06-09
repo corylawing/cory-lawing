@@ -408,7 +408,7 @@
     panelBody.appendChild(list);
     var foot = el("div", "td-route__foot");
     foot.innerHTML = '<span class="mono">' + state.route.length + ' stops · ~' + Math.round(routeKm()) + ' km driving</span>';
-    var nav = el("a", "td-mini td-mini--go"); nav.textContent = "Open in Google Maps ↗"; nav.href = gmapsUrl(); nav.target = "_blank"; nav.rel = "noopener";
+    var nav = el("a", "td-mini td-mini--go"); nav.textContent = "Take me there →"; nav.href = gmapsUrl(); nav.target = "_blank"; nav.rel = "noopener";
     foot.appendChild(nav);
     var btns = el("div", "td-route__btns");
     var opt = el("button", "td-mini"); opt.textContent = "Optimize order"; opt.addEventListener("click", function () { optimizeRoute(); render(); renderRoute(); });
