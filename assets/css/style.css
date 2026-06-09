@@ -530,7 +530,14 @@ body::before {
 .hero__line {
   display: block;
 }
+/* White setup wraps as its own balanced block (never orphans a word);
+   the lime payoff always drops to its own deliberate line beneath it. */
+.hero__lead {
+  display: block;
+  text-wrap: balance;
+}
 .hero__title em {
+  display: block;
   font-style: italic;
   font-weight: 350;
   color: var(--accent);
