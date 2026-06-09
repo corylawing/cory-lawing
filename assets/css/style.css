@@ -2676,3 +2676,16 @@ body::before {
 .leaflet-tile,
 .leaflet-marker-icon,
 .leaflet-control img { max-width: none !important; max-height: none !important; }
+
+/* ---- Territory demo polish ---- */
+.leaflet-interactive { cursor: pointer; }
+/* Primary "navigate" action in the route footer */
+.td-mini { display: block; text-align: center; text-decoration: none; }
+.td-mini--go { background: var(--accent); color: #0A0A0A !important; border-color: var(--accent); font-weight: 600; width: 100%; margin-top: 0; }
+.td-mini--go:hover { background: var(--accent-2); border-color: var(--accent-2); }
+/* Insight cards: left accent rail by type for a report-like read */
+.td-insight { border-left: 2px solid var(--border-3); }
+.td-insight--stale, .td-insight--risk { border-left-color: #FF7A7A; }
+.td-insight--space { border-left-color: #F2C879; }
+.td-insight--load { border-left-color: #6FD3E6; }
+.td-insight--pipe { border-left-color: var(--accent); }
