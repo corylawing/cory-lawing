@@ -2534,3 +2534,47 @@ body::before {
 .tool__try { font: inherit; color: var(--accent); font-weight: 500; cursor: pointer; background: none; border: 0; padding: 0; white-space: nowrap; border-bottom: 1px solid transparent; transition: border-color .2s var(--ease-out); }
 .tool__try:hover { border-bottom-color: var(--accent-line); }
 .tool__try:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+/* ---- Territory demo v2: search, status filters, detail panel ---- */
+.td-search { display: inline-flex; flex: 1 1 130px; min-width: 120px; }
+.td-search input {
+  width: 100%; height: 30px; padding: 0 .7rem; font: inherit; font-size: .8rem;
+  color: var(--text-1); background: var(--surface); border: 1px solid var(--border-2); border-radius: 999px;
+}
+.td-search input::placeholder { color: var(--text-5); }
+.td-search input:focus { outline: none; border-color: var(--accent-line); box-shadow: 0 0 0 3px var(--accent-dim); }
+
+.td-panel__body { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.td-sec { display: flex; flex-direction: column; gap: .25rem; }
+.td-sec__label { margin: 0 0 .15rem; color: var(--text-4); font-size: .6rem; }
+
+.td-filter { display: flex; align-items: center; gap: .55rem; width: 100%; padding: .45rem .55rem; border-radius: 9px; border: 1px solid transparent; transition: background-color .2s, border-color .2s; }
+.td-filter:hover { background: var(--surface); }
+.td-filter.is-on { background: var(--surface); border-color: var(--border-2); }
+.td-filter__box { width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--border-3); flex-shrink: 0; position: relative; }
+.td-filter.is-on .td-filter__box { background: var(--accent); border-color: var(--accent); }
+.td-filter.is-on .td-filter__box::after { content: ""; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px; border: solid #0A0A0A; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.td-filter__dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.td-filter__name { flex: 1; text-align: left; font-size: .85rem; color: var(--text-2); }
+.td-filter:not(.is-on) .td-filter__name { color: var(--text-4); }
+.td-filter__n { font-size: .72rem; color: var(--text-4); }
+
+.td-back { align-self: flex-start; font-family: var(--mono); font-size: .68rem; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); padding: .3rem 0; cursor: pointer; }
+.td-detail__hero { padding-bottom: .85rem; border-bottom: 1px solid var(--border); }
+.td-badge { display: inline-block; font-family: var(--mono); font-size: .6rem; letter-spacing: .06em; text-transform: uppercase; color: var(--c); border: 1px solid var(--c); border-radius: 999px; padding: .2rem .55rem; margin-bottom: .6rem; }
+.td-detail__name { margin: 0 0 .2rem; font-family: var(--serif); font-weight: 400; font-size: 1.3rem; line-height: 1.15; color: var(--text-1); letter-spacing: -0.015em; font-variation-settings: "opsz" 144, "SOFT" 30; }
+.td-detail__city { margin: 0; color: var(--text-4); font-size: .66rem; text-transform: none; }
+
+.td-fields { display: flex; flex-direction: column; }
+.td-field { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .5rem 0; border-bottom: 1px solid var(--border); }
+.td-field:last-child { border-bottom: none; }
+.td-field__k { font-size: .66rem; color: var(--text-4); text-transform: none; }
+.td-field__v { font-size: .82rem; color: var(--text-1); text-align: right; display: inline-flex; align-items: center; gap: .4rem; }
+.td-dotmini { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.td-team { display: flex; align-items: center; gap: .55rem; padding: .4rem 0; }
+.td-team__av { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-size: .6rem; color: var(--text-1); background: var(--surface-2); border: 1px solid var(--border-2); flex-shrink: 0; }
+.td-team__name { flex: 1; font-size: .82rem; color: var(--text-2); }
+.td-team__role { font-size: .62rem; color: var(--text-4); }
+
+.td-dot.is-selected { filter: drop-shadow(0 0 5px rgba(255,255,255,.5)); }
