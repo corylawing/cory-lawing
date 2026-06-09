@@ -150,6 +150,7 @@
   .lprice__incl{font-size:11px;color:var(--muted);margin-top:1px;}
   .lstatus{text-align:center;}
   .lact{display:flex;justify-content:flex-end;}
+  .mlab{display:none;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;}
   .badge{display:inline-block;font-size:10px;letter-spacing:.03em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:999px;}
   .badge--new{background:var(--green-soft);color:var(--green);}
   .badge--upd{background:#fff4e0;color:#b9760a;}
@@ -284,11 +285,14 @@
 
   @media(max-width:760px){
     .lhead{display:none;}
-    .lrow.lcols{grid-template-columns:1fr 1fr;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;margin:10px 14px;}
+    .lrow.lcols{grid-template-columns:1fr 1fr;gap:14px;padding:16px;border:1px solid var(--line);border-radius:12px;margin:10px 14px;}
     .lrow > *{min-width:0;}
     .lname-cell{grid-column:1 / -1;}
-    .qty-cell,.disc-cell{align-items:flex-start;}
-    .promo-cell{grid-column:1 / -1;}
+    .mlab{display:block;}
+    .qty-cell,.disc-cell{flex-direction:column;align-items:flex-start;gap:5px;}
+    .qty-cell .num,.disc-cell .num{width:100%;max-width:130px;}
+    .disc-cell.low .num,.disc-cell.med .num,.disc-cell.high .num{width:100%;max-width:130px;}
+    .promo-cell{grid-column:1 / -1;align-items:stretch;}
     .lprice{grid-column:1 / -1;align-items:flex-start;border-top:1px dashed var(--line);padding-top:10px;}
     .lstatus{text-align:left;}
     .lact{justify-content:flex-start;}
@@ -700,17 +704,19 @@ function lineRow(l,i){
       ${l.shipping?`<div class="lcode" style="color:var(--teal)">${c.excl===0?'Free shipping — order qualifies':'Auto-calculated for hardware'}</div>`:''}
       ${l.paymentPlan?`<div class="lcode" style="color:var(--ink2)">12 equal monthly installments</div>`:''}
     </div>
-    <div class="qty-cell"><input class="num" type="number" min="0" value="${l.qty}" ${ctrlDisabled&&!l.paymentPlan?'disabled':''} onchange="setQty(${i},this.value)"></div>
+    <div class="qty-cell"><span class="mlab">Qty</span><input class="num" type="number" min="0" value="${l.qty}" ${ctrlDisabled&&!l.paymentPlan?'disabled':''} onchange="setQty(${i},this.value)"></div>
     <div class="disc-cell ${dl.cls}">
+      <span class="mlab">Discount %</span>
       <input class="num" type="number" min="0" max="100" value="${l.disc}" ${discDisabled?'disabled':''} onchange="setDisc(${i},this.value)">
       ${dl.warn?`<div class="disc-flag ${dl.level===2?'high':''}">⚠ ${dl.warn}</div>`
         :(l.limit?`<div class="disc-lim">limit ${l.limit}%</div>`:'')}
     </div>
     <div class="promo-cell">
+      <span class="mlab">Promo</span>
       <button class="promo-btn" ${(!promoElig||ctrlDisabled)?'disabled':''} onclick="openPromo(${i})">${promo?'Change promo':'Add promo'}</button>
       ${promo?`<div class="promo-chip">🎁 ${promo.name} −${promo.disc}%</div>`:''}
     </div>
-    <div class="lprice">
+    <div class="lprice"><span class="mlab">Price excl. tax</span>
       ${c.discounted?`<div class="lprice__base">${money(c.base)}</div>`:''}
       ${c.discPct>0?`<div class="lprice__line">(−${pct(c.discPct)}% discount) <span class="amt">−${money(c.discAmt)}</span></div>`:''}
       ${c.promoPct>0?`<div class="lprice__line promo">(${promo?promo.name:'Promo'} −${pct(c.promoPct)}%) <span class="amt">−${money(c.promoAmt)}</span></div>`:''}
