@@ -399,6 +399,26 @@
   .scc-ai__note{margin-top:9px;color:var(--scc-text-muted);font-size:11px;}
   .scc-ai__ans b{color:var(--scc-text-primary);}
   .scc-ai__foot{margin-top:10px;}
+  /* ===== Voice recorder (mock) ===== */
+  .scc-rec{margin-top:16px;background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:12px;padding:18px;}
+  .scc-rec__hdr{font-size:13px;margin-bottom:14px;color:var(--scc-text-secondary);}
+  .scc-rec__hdr b{color:var(--scc-text-primary);}
+  .scc-rec__stage{display:flex;align-items:center;gap:16px;}
+  .scc-rec__btn{display:inline-flex;align-items:center;gap:9px;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:800;color:#fff;background:var(--scc-accent);box-shadow:0 2px 12px rgba(99,102,241,.35);transition:.2s;flex-shrink:0;}
+  .scc-rec__btn .dot{width:10px;height:10px;border-radius:50%;background:#fff;}
+  .scc-rec__btn.is-rec{background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.18),0 2px 12px rgba(239,68,68,.45);}
+  .scc-rec__btn.is-rec .dot{animation:scc-pulse2 1s infinite;}
+  @keyframes scc-pulse2{0%,100%{opacity:1}50%{opacity:.25}}
+  .scc-rec__time{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:800;min-width:62px;color:var(--scc-text-primary);}
+  .scc-rec__wave{display:flex;align-items:center;gap:3px;height:36px;flex:1;min-width:0;}
+  .scc-rec__wave span{flex:1;max-width:5px;height:16%;background:var(--scc-accent-2);border-radius:3px;opacity:.35;}
+  .scc-rec.is-rec .scc-rec__wave span{animation:scc-eq .9s ease-in-out infinite;opacity:.9;}
+  @keyframes scc-eq{0%,100%{height:16%}50%{height:92%}}
+  .scc-rec__hint{font-size:11px;color:var(--scc-text-muted);margin-top:14px;}
+  .scc-rec__done{margin-top:16px;border-top:1px solid var(--scc-card-border);padding-top:14px;}
+  .scc-rec__saved{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--scc-green-text);}
+  .scc-rec__think{display:flex;align-items:center;gap:9px;color:var(--scc-text-secondary);font-size:12px;margin-top:10px;}
+  .scc-rec__summary{margin-top:12px;background:var(--scc-input-bg);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -428,7 +448,6 @@
       <button class="scc-iconbtn" aria-label="Open Territory Map" onclick="openMaps()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg> Territory Map</button>
       <button class="scc-iconbtn" aria-label="Voice recorder" onclick="openVoice()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg> Voice</button>
       <button class="scc-iconbtn" aria-label="View trends" onclick="openTrend()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> Trends</button>
-      <button class="scc-iconbtn" id="sccWin" aria-label="Demo: celebrate a goal hit" title="Mockup demo — preview the goal-hit celebration" onclick="demoWin()">🎉 Win</button>
       <button class="scc-iconbtn scc-help" id="sccHelp" aria-label="Toggle metric explanations" aria-pressed="false" onclick="toggleExplain()"><span class="scc-help__q">?</span></button>
       <button class="scc-iconbtn" id="sccTheme" aria-label="Toggle dark mode" onclick="toggleTheme()"><svg id="sccThemeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
       <button class="scc-iconbtn scc-refresh" id="sccRefresh" aria-label="Refresh" onclick="refresh()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
@@ -902,19 +921,24 @@ function campaignsHTML(d){
 const VOICE_USERID="id_demo";
 const VOICE_BASE="https://voice.example.com/recorder";
 const VOICE_CONTACTS=[
- {id:"id_demo",name:"Dr. Sophie Laurent",acct:"Atlas Lyon"},
- {id:"id_demo",name:"Dr. Lucas Lef\u00e8vre",acct:"Lef\u00e8vre"},
- {id:"id_demo",name:"Dr. Emma Janssens",acct:"Gent Digital"},
- {id:"id_demo",name:"Dr. Sarah Bright",acct:"Bright Systems"},
- {id:"id_demo",name:"Dr. James Pearl",acct:"Pearl Logistics"},
- {id:"id_demo",name:"Dr. Olivia Camden",acct:"Camden Industries"}
+ {id:"c1",name:"Sophie Laurent",acct:"Atlas Lyon"},
+ {id:"c2",name:"Lucas Lef\u00e8vre",acct:"Lef\u00e8vre Group"},
+ {id:"c3",name:"Emma Janssens",acct:"Gent Digital"},
+ {id:"c4",name:"Sarah Bright",acct:"Bright Systems"},
+ {id:"c5",name:"James Pearl",acct:"Pearl Logistics"},
+ {id:"c6",name:"Olivia Camden",acct:"Camden Industries"}
 ];
 let voiceSel=null;
 function openVoice(){voiceSel=null;document.getElementById('sccVoice').classList.add('is-open');document.getElementById('sccVoiceSearch').value='';renderVoiceList();document.getElementById('sccVoiceSel').innerHTML='';}
-function closeVoice(){document.getElementById('sccVoice').classList.remove('is-open');}
+function closeVoice(){recStop(true);document.getElementById('sccVoice').classList.remove('is-open');}
 function voiceUrl(c){return VOICE_BASE+'?contactId='+c.id+'&userId='+VOICE_USERID+'&contactName='+encodeURIComponent(c.name).replace(/%20/g,'+');}
 function renderVoiceList(){const q=(document.getElementById('sccVoiceSearch').value||'').toLowerCase();const list=VOICE_CONTACTS.filter(c=>c.name.toLowerCase().includes(q)||c.acct.toLowerCase().includes(q));document.getElementById('sccVoiceList').innerHTML=list.map(c=>`<button class="scc-voice-item ${voiceSel&&voiceSel.id===c.id?'sel':''}" onclick="selectVoice('${c.id}')"><div><div class="scc-voice-item__n">${esc(c.name)}</div><div class="scc-voice-item__a">${esc(c.acct)}</div></div></button>`).join('')||'<div class="scc-card__sub">No contacts match.</div>';}
-function selectVoice(id){voiceSel=VOICE_CONTACTS.find(c=>c.id===id);renderVoiceList();const u=voiceUrl(voiceSel);document.getElementById('sccVoiceSel').innerHTML=`<div class="scc-micro" style="margin-top:16px">URL passed to Visualforce</div><div class="scc-voice-url">${esc(u)}</div><button class="scc-btn-primary scc-voice-go" onclick="window.open('${u}','_blank')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg> Open recorder for ${esc(voiceSel.name)}</button>`;}
+function selectVoice(id){voiceSel=VOICE_CONTACTS.find(c=>c.id===id);recStop(true);renderVoiceList();const bars=Array.from({length:30},()=>`<span style="animation-delay:${(Math.random()*0.8).toFixed(2)}s"></span>`).join('');document.getElementById('sccVoiceSel').innerHTML=`<div class="scc-rec" id="sccRec"><div class="scc-rec__hdr">New voice note with <b>${esc(voiceSel.name)}</b> · ${esc(voiceSel.acct)}</div><div class="scc-rec__stage"><button class="scc-rec__btn" id="recBtn" onclick="recToggle()"><span class="dot"></span><span id="recBtnLabel">Record</span></button><div class="scc-rec__time" id="recTime">00:00</div><div class="scc-rec__wave" id="recWave">${bars}</div></div><div class="scc-rec__hint">Tap record to capture the visit — audio is transcribed and the summary is logged to the account.</div><div class="scc-rec__done" id="recDone" hidden></div></div>`;}
+let recOn=false,recTimer=null,recSecs=0;
+function fmtSecs(s){const m=Math.floor(s/60),x=s%60;return (m<10?'0':'')+m+':'+(x<10?'0':'')+x;}
+function recToggle(){const rec=document.getElementById('sccRec');if(!rec)return;if(!recOn){recOn=true;recSecs=0;document.getElementById('recTime').textContent='00:00';document.getElementById('recBtnLabel').textContent='Stop';document.getElementById('recBtn').classList.add('is-rec');rec.classList.add('is-rec');document.getElementById('recDone').hidden=true;recTimer=setInterval(()=>{recSecs++;const t=document.getElementById('recTime');if(t)t.textContent=fmtSecs(recSecs);},1000);}else{recStop(false);}}
+function recStop(silent){recOn=false;if(recTimer){clearInterval(recTimer);recTimer=null;}const rec=document.getElementById('sccRec');if(rec)rec.classList.remove('is-rec');const btn=document.getElementById('recBtn');if(btn)btn.classList.remove('is-rec');const lbl=document.getElementById('recBtnLabel');if(lbl)lbl.textContent='Record';if(silent)return;const done=document.getElementById('recDone');if(!done)return;const dur=fmtSecs(recSecs||23);done.hidden=false;done.innerHTML=`<div class="scc-rec__saved"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Recording saved · ${dur}</div><div class="scc-rec__think" id="recThink"><span class="scc-spinner2"></span> Transcribing &amp; summarising…</div>`;setTimeout(()=>{const th=document.getElementById('recThink');if(th)th.outerHTML=`<div class="scc-rec__summary"><div class="scc-micro" style="margin-bottom:6px">AI summary</div><ul class="scc-ai__list" style="margin-top:0"><li>Discussed renewal timing and expansion interest.</li><li>Agreed next step: send proposal by Friday.</li><li>Risk flag: budget sign-off pending with finance.</li></ul><button class="scc-btn-primary" style="margin-top:12px" onclick="recLogged()">Log to ${esc(voiceSel?voiceSel.acct:'account')}</button></div>`;},1400);}
+function recLogged(){const d=document.getElementById('recDone');if(d)d.innerHTML=`<div class="scc-rec__saved"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Logged to ${esc(voiceSel?voiceSel.acct:'the account')} as an Engagement Interaction.</div>`;}
 function openMaps(){document.getElementById('sccMaps').classList.add('is-open');}
 function closeMaps(){document.getElementById('sccMaps').classList.remove('is-open');}
 function setRevenue(){
@@ -1041,7 +1065,7 @@ function showAi(html){const o=document.getElementById('sccAiOut');if(!o)return;o
 function runAiCmd(i){const cmds=role==='ae'?AE_CMDS:IC_CMDS;const c=cmds[i];if(!c)return;const inp=document.getElementById('sccAiInput');if(inp)inp.value=c.prompt;showAi(typeof c.resp==='function'?c.resp():c.resp);}
 function runAi(){const inp=document.getElementById('sccAiInput');const q=(inp&&inp.value||'').trim();if(!q){showAi('<div class="scc-ai__ans">Try a command below — or ask things like “which deals are at risk?” or “draft my follow-ups.”</div>');return;}showAi(`<div class="scc-ai__ans"><b>On it.</b> Drafting from your current book…<div class="scc-ai__note">“${esc(q)}” — demo response; wired to your CRM with guardrails in production.</div></div>`);}
 
-(function init(){if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)toggleTheme();render();})();
+(function init(){if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)toggleTheme();render();setTimeout(celebrate,650);})();
 </script>
 </body>
 </html>
