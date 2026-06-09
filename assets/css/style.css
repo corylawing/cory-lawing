@@ -2666,3 +2666,13 @@ body::before {
    matches the site's dark theme. Filter targets only basemap tiles — the
    SVG markers/territories/route sit in overlay panes and are untouched. */
 .leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.9) saturate(0.85); }
+
+/* Markers/territories/route render in a Leaflet <svg> overlay — the site's
+   svg{max-width:100%} reset collapses it and hides them. Exempt it too. */
+.leaflet-container svg,
+.leaflet-pane svg,
+.leaflet-overlay-pane svg,
+.leaflet-container img,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-control img { max-width: none !important; max-height: none !important; }
