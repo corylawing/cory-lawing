@@ -2651,3 +2651,13 @@ body::before {
   .td-leaflet { height: 44vh; }
   .td-panel { max-height: none; overflow: visible; }
 }
+
+/* Leaflet fix: the site's global img{max-width:100%} reset breaks tile
+   sizing → blank gray map. Exempt all Leaflet imagery, and force the dark
+   background (Leaflet's stylesheet loads after ours, so use !important). */
+.leaflet-container { background: #0b0d10 !important; }
+.leaflet-container img,
+.leaflet-pane img,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-control img { max-width: none !important; }

@@ -16,7 +16,7 @@
   var reduce = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
   var LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
   var LEAFLET_JS  = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-  var TILES = "https://{s}.basemap.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+  var TILES = "https://{s}.basemap.cartocdn.com/dark_all/{z}/{x}/{y}.png";
 
   // [lat, lng] per city
   var REGIONS = {
@@ -436,13 +436,14 @@
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKey);
     var c = modal.querySelector(".td-close"); if (c) c.focus();
+    var fixSize = function () { if (map) { map.invalidateSize(); map.setView(REGIONS[state.region].view, REGIONS[state.region].zoom); } };
     if (!mapReady) {
       ensureLeaflet(function () {
         initMap(); syncButtons(); render(); renderPanel();
-        setTimeout(function () { if (map) map.invalidateSize(); }, 60);
+        setTimeout(fixSize, 80); setTimeout(fixSize, 450);
       });
     } else {
-      setTimeout(function () { if (map) map.invalidateSize(); }, 60);
+      setTimeout(fixSize, 80); setTimeout(fixSize, 450);
     }
   }
   function closeModal() {
