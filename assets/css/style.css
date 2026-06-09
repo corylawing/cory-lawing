@@ -522,6 +522,9 @@ body::before {
   color: var(--text-1);
   margin: 0 0 1.6rem;
   font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+  /* Balance the lines so the white clause splits evenly instead of
+     orphaning a single word ("that") before the lime phrase wraps. */
+  text-wrap: balance;
 }
 
 .hero__line {
