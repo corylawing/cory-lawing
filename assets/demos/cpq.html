@@ -569,13 +569,15 @@ function render(){
 }
 
 /* ---------- STEP 1 ---------- */
-function renderStep1(){
+function step1Data(){
   const term = state.search.trim().toLowerCase();
   const list = CATALOG.filter(p=>!p.shipping && !p.paymentPlan)
     .filter(p=> !term || p.name.toLowerCase().includes(term) || p.code.toLowerCase().includes(term));
   const allSel = list.length>0 && list.every(p=>state.selected.has(p.id));
-
-  const rows = list.map(p=>{
+  return { list, allSel };
+}
+function step1Rows(list){
+  return list.map(p=>{
     const sel = state.selected.has(p.id);
     const added = state.lines.some(l=>l.id===p.id && l.qty>0);
     return `<div class="prow ${sel?'sel':''} ${added?'added':''}" onclick="toggleProduct('${p.id}')">
@@ -589,41 +591,52 @@ function renderStep1(){
       </div>
       <div class="prow__price">${money(p.list)}<small>list price</small></div>
     </div>`;
-  }).join('');
-
+  }).join('') || '<div class="empty">No products match your search.</div>';
+}
+function renderStep1(){
+  const {list,allSel}=step1Data();
+  const total=CATALOG.filter(p=>!p.shipping&&!p.paymentPlan).length;
   $('stageSlot').innerHTML = `
     <div class="panel">
       <div class="panel__head">
-        <div><div class="panel__title">Add products</div><div class="panel__sub">${state.selected.size} selected · ${CATALOG.filter(p=>!p.shipping&&!p.paymentPlan).length} in price book</div></div>
+        <div><div class="panel__title">Add products</div><div class="panel__sub" id="p1sub">${state.selected.size} selected · ${total} in price book</div></div>
         <div class="panel__spacer"></div>
         <div class="search">
           ${searchIcon()}
-          <input type="text" placeholder="Search products or codes…" value="${state.search}" oninput="onSearch(this.value)">
+          <input type="text" id="p1search" placeholder="Search products or codes…" value="${state.search}" oninput="onSearch(this.value)" autocomplete="off">
         </div>
       </div>
-      <div class="selall" onclick="toggleAll(${!allSel})">
+      <div class="selall" id="selall" onclick="toggleAll()">
         <div class="cbx" style="${allSel?'background:var(--brand);border-color:var(--brand)':''}">${allSel?check(true):''}</div>
         Select all visible
       </div>
-      <div class="plist">${rows || '<div class="empty">No products match your search.</div>'}</div>
+      <div class="plist" id="plist">${step1Rows(list)}</div>
     </div>
     <div class="totals">
-      <div class="tline"><small>Selected</small><b>${state.selected.size} product${state.selected.size===1?'':'s'}</b></div>
+      <div class="tline"><small>Selected</small><b id="p1count">${state.selected.size} product${state.selected.size===1?'':'s'}</b></div>
       <div class="totals__spacer"></div>
-      <button class="btn btn--dark" ${state.selected.size?'':'disabled'} onclick="goStep(2)">Configure pricing →</button>
+      <button class="btn btn--dark" id="p1next" ${state.selected.size?'':'disabled'} onclick="goStep(2)">Configure pricing →</button>
     </div>`;
+}
+/* partial refresh — never touches the search input, so focus is kept while typing */
+function refreshStep1(){
+  if(!$('plist')) return renderStep1();
+  const {list,allSel}=step1Data();
+  $('plist').innerHTML=step1Rows(list);
+  const sa=$('selall'); sa.querySelector('.cbx').style.cssText=allSel?'background:var(--brand);border-color:var(--brand)':''; sa.querySelector('.cbx').innerHTML=allSel?check(true):'';
+  $('p1sub').textContent=`${state.selected.size} selected · ${CATALOG.filter(p=>!p.shipping&&!p.paymentPlan).length} in price book`;
+  $('p1count').textContent=`${state.selected.size} product${state.selected.size===1?'':'s'}`;
+  $('p1next').disabled=!state.selected.size;
 }
 function check(forceOn){ return `<svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="${forceOn?'opacity:1':''}"><path d="M2 6.2L4.6 9 10 2.6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
 function searchIcon(){ return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#888" stroke-width="1.6"/><path d="M11 11l3 3" stroke="#888" stroke-width="1.6" stroke-linecap="round"/></svg>`; }
 
-function onSearch(v){ state.search=v; renderStep1(); }
-function toggleProduct(id){ state.selected.has(id)?state.selected.delete(id):state.selected.add(id); renderStep1(); }
-function toggleAll(on){
-  const term=state.search.trim().toLowerCase();
-  CATALOG.filter(p=>!p.shipping&&!p.paymentPlan)
-    .filter(p=>!term||p.name.toLowerCase().includes(term)||p.code.toLowerCase().includes(term))
-    .forEach(p=> on?state.selected.add(p.id):state.selected.delete(p.id));
-  renderStep1();
+function onSearch(v){ state.search=v; refreshStep1(); }
+function toggleProduct(id){ state.selected.has(id)?state.selected.delete(id):state.selected.add(id); refreshStep1(); }
+function toggleAll(){
+  const {list,allSel}=step1Data(); const on=!allSel;
+  list.forEach(p=> on?state.selected.add(p.id):state.selected.delete(p.id));
+  refreshStep1();
 }
 
 /* ---------- STEP 2 ---------- */
