@@ -798,7 +798,6 @@ function qbrHTML(d){
     <div class="scc-bar" role="progressbar" aria-valuenow="${pct}"><div class="scc-bar__fill" data-w="${pct}" style="width:0"></div></div>
     ${rows?`<div class="scc-qbr__list"><div class="scc-card__sub" style="margin:10px 0 6px">Uncovered — book these:</div>${rows}</div>`:`<div class="scc-card__sub" style="margin-top:10px">All E1/E2 accounts covered this quarter 🎉</div>`}
     ${explainLine("QBR Coverage")}
-    <div class="scc-flags"><b>🟡 To confirm before build:</b> (1) the Event purpose field API name — Tasks use Purpose_LogACall__c; what holds the purpose on Events? (2) what counts as "planned" — a QBR-purpose Event dated in this quarter (incl. future), and on which date (StartDateTime / ActivityDate)? (3) fiscal or calendar quarter? (4) exact purpose value ("Quarterly Business Review" vs "QBR"), and is the Task linked to the account via WhatId or WhoId → Account?</div>
   </section>`;
 }
 function leaderboard(d){
