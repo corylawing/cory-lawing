@@ -389,7 +389,9 @@
 
             <article class="tool reveal" data-reveal-delay="80">
               <div class="tool__media">
-                <div class="tool__coming"><span class="mono">Interactive demo — coming soon</span></div>
+                <button class="tool__launch" data-demo="territory" type="button" aria-haspopup="dialog">
+                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
+                </button>
                 <span class="tool__chip mono">mapping · geodata · crm</span>
               </div>
               <div class="tool__body">
@@ -397,7 +399,7 @@
                 <h3 class="tool__title">Territory&nbsp;Intelligence</h3>
                 <p class="tool__sub">Commercial coverage, mapped</p>
                 <p class="tool__copy">
-                  Mapping experiences that combine customer, prospect, activity, and geographic data so teams plan coverage around real opportunity.
+                  Mapping experiences that combine customer, prospect, activity, and geographic data so teams plan coverage around real opportunity. <button class="tool__try" data-demo="territory" type="button">Try the live demo →</button>
                 </p>
               </div>
             </article>
@@ -770,5 +772,6 @@
   </div>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/territory-demo.js" defer></script>
 </body>
 </html>
