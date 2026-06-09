@@ -2661,3 +2661,8 @@ body::before {
 .leaflet-tile,
 .leaflet-marker-icon,
 .leaflet-control img { max-width: none !important; }
+
+/* Dark-mode the OSM basemap tiles via filter so a reliable tile host still
+   matches the site's dark theme. Filter targets only basemap tiles — the
+   SVG markers/territories/route sit in overlay panes and are untouched. */
+.leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.9) saturate(0.85); }
