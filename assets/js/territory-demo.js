@@ -319,7 +319,11 @@
 
     routeLayer.clearLayers(); numLayer.clearLayers();
     if (state.route.length) {
-      if (state.route.length > 1) L.polyline(state.route.map(function (a) { return [a.lat, a.lng]; }), { pane: "route", color: "#D9F77B", weight: 2.5, dashArray: "6 5", opacity: 0.9, interactive: false }).addTo(routeLayer);
+      if (state.route.length > 1) {
+        var pts = state.route.map(function (a) { return [a.lat, a.lng]; });
+        L.polyline(pts, { pane: "route", color: "#06070A", weight: 7, opacity: 0.9, lineJoin: "round", lineCap: "round", interactive: false }).addTo(routeLayer);
+        L.polyline(pts, { pane: "route", color: "#D9F77B", weight: 3.5, opacity: 1, lineJoin: "round", lineCap: "round", interactive: false }).addTo(routeLayer);
+      }
       state.route.forEach(function (a, i) {
         L.marker([a.lat, a.lng], { pane: "nums", interactive: false, icon: L.divIcon({ className: "td-numicon", html: String(i + 1), iconSize: [20, 20] }) }).addTo(numLayer);
       });
