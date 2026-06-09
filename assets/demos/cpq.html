@@ -107,34 +107,49 @@
 
   /* ---------- Config table (step 2) ---------- */
   .ltbl{width:100%;}
-  .lhead{display:grid;grid-template-columns:minmax(180px,2fr) 78px 130px 150px 1fr 96px 44px;gap:8px;
-    padding:10px 18px;border-bottom:1px solid var(--line);background:#fafbfd;
-    font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;align-items:center;}
+  .lcols{display:grid;grid-template-columns:minmax(160px,1fr) 52px 100px 118px 210px 78px 34px;gap:12px;align-items:center;}
+  .badge{white-space:nowrap;}
+  .lhead{padding:11px 18px;border-bottom:1px solid var(--line);background:#fafbfd;
+    font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;}
   .lhead .r{text-align:right;}
   .lhead .c{text-align:center;}
-  .lrow{display:grid;grid-template-columns:minmax(180px,2fr) 78px 130px 150px 1fr 96px 44px;gap:8px;
-    padding:12px 18px;border-bottom:1px solid #f1f3f7;align-items:center;animation:fade .25s ease;}
+  .lrow{padding:13px 18px;border-bottom:1px solid #f1f3f7;animation:fade .25s ease;}
+  .lrow:last-child{border-bottom:none;}
   .lrow.del{background:var(--red-soft);opacity:.75;}
   .lrow.del .lname,.lrow.del .lbase{text-decoration:line-through;}
   .lrow.free{background:#f1faff;}
   .lrow.ship{background:#f8fafc;}
-  .lname{font-weight:600;font-size:13.5px;}
-  .lcode{font-size:11px;color:var(--muted);}
-  .lbase{font-size:12px;color:var(--muted);}
+  .lname{font-weight:600;font-size:13.5px;line-height:1.25;}
+  .lcode{font-size:11px;color:var(--muted);margin-top:2px;}
+  .lbase{font-size:11.5px;}
   .lbase.strike{text-decoration:line-through;text-decoration-color:var(--orange);color:#aaa;}
-  .num{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:8px;text-align:center;font-weight:600;font-size:13.5px;color:var(--ink);outline:none;background:#fff;}
+  /* numeric inputs — fixed, centered */
+  .num{padding:7px 6px;border:1px solid var(--line);border-radius:8px;text-align:center;font-weight:600;font-size:13.5px;color:var(--ink);outline:none;background:#fff;}
   .num:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(27,30,39,.07);}
   .num:disabled{background:#f3f4f7;color:#9aa0ab;}
-  .disc-wrap{display:flex;flex-direction:column;gap:3px;padding-left:8px;}
-  .disc-wrap.low{border-left:3px solid var(--green);}
-  .disc-wrap.med{border-left:3px solid var(--orange);}
-  .disc-wrap.high{border-left:3px solid var(--red);background:#fff7f6;}
-  .disc-warn{font-size:10.5px;font-weight:700;color:var(--orange);line-height:1.2;}
-  .disc-warn.high{color:var(--red);}
-  .lprice{text-align:right;}
-  .lprice__excl{font-weight:700;font-size:14px;}
-  .lprice__incl{font-size:11.5px;color:var(--muted);}
+  .qty-cell{display:flex;justify-content:center;}
+  .qty-cell .num{width:52px;}
+  /* discount cell — colored input border + status line, no floating bar */
+  .disc-cell{display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .disc-cell .num{width:74px;}
+  .disc-cell.low .num{border-color:var(--green);}
+  .disc-cell.med .num{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-soft);}
+  .disc-cell.high .num{border-color:var(--red);box-shadow:0 0 0 2px var(--red-soft);}
+  .disc-lim{font-size:10.5px;color:var(--muted);}
+  .disc-flag{font-size:10px;font-weight:700;line-height:1.2;text-align:center;display:flex;align-items:center;gap:3px;}
+  .disc-cell.med .disc-flag{color:var(--orange);}
+  .disc-cell.high .disc-flag{color:var(--red);}
+  .promo-cell{display:flex;flex-direction:column;align-items:flex-start;gap:5px;}
+  .lprice{text-align:right;display:flex;flex-direction:column;gap:1px;align-items:flex-end;}
+  .lprice__base{font-size:12px;color:#aaa;text-decoration:line-through;text-decoration-color:var(--orange);}
+  .lprice__line{font-size:11.5px;color:var(--muted);}
+  .lprice__line .amt{color:var(--ink2);font-weight:600;}
+  .lprice__line.promo .amt{color:#0c5ed6;}
+  .lprice__tot{font-weight:700;font-size:14px;margin-top:1px;}
+  .lprice__tot small{font-weight:600;color:var(--muted);font-size:11px;margin-right:3px;}
+  .lprice__incl{font-size:11px;color:var(--muted);margin-top:1px;}
   .lstatus{text-align:center;}
+  .lact{display:flex;justify-content:flex-end;}
   .badge{display:inline-block;font-size:10px;letter-spacing:.03em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:999px;}
   .badge--new{background:var(--green-soft);color:var(--green);}
   .badge--upd{background:#fff4e0;color:#b9760a;}
@@ -144,10 +159,10 @@
   .iconbtn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center;color:#8a90a0;transition:.12s;}
   .iconbtn:hover{border-color:var(--red-line);color:var(--red);background:var(--red-soft);}
   .iconbtn:disabled{opacity:.4;cursor:not-allowed;}
-  .promo-btn{font-size:12px;font-weight:600;padding:6px 10px;border-radius:8px;border:1px dashed #c3c9d4;background:#fff;cursor:pointer;color:var(--ink2);width:100%;transition:.12s;}
+  .promo-btn{font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px dashed #c3c9d4;background:#fff;cursor:pointer;color:var(--ink2);width:100%;transition:.12s;white-space:nowrap;}
   .promo-btn:hover:not(:disabled){border-color:var(--blue);color:var(--blue);}
   .promo-btn:disabled{opacity:.45;cursor:not-allowed;}
-  .promo-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#0c5ed6;background:var(--blue-soft);border-radius:999px;padding:3px 9px;margin-top:4px;}
+  .promo-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#0c5ed6;background:var(--blue-soft);border-radius:999px;padding:2px 9px;white-space:nowrap;}
 
   /* ---------- Toggles ---------- */
   .toggle{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;user-select:none;}
@@ -269,10 +284,14 @@
 
   @media(max-width:760px){
     .lhead{display:none;}
-    .lrow{grid-template-columns:1fr 1fr;gap:10px;padding:14px;border:1px solid var(--line);border-radius:12px;margin:10px 14px;}
+    .lrow.lcols{grid-template-columns:1fr 1fr;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;margin:10px 14px;}
     .lrow > *{min-width:0;}
     .lname-cell{grid-column:1 / -1;}
-    .lprice{text-align:left;}
+    .qty-cell,.disc-cell{align-items:flex-start;}
+    .promo-cell{grid-column:1 / -1;}
+    .lprice{grid-column:1 / -1;align-items:flex-start;border-top:1px dashed var(--line);padding-top:10px;}
+    .lstatus{text-align:left;}
+    .lact{justify-content:flex-start;}
     .totals{flex-direction:column;align-items:stretch;}
     .totals__spacer{display:none;}
   }
@@ -507,13 +526,15 @@ function buildLines(){
 function lineCalc(l){
   const base = l.list * l.qty;
   const discPct = Math.max(0, l.disc||0);
-  const afterDisc = Math.max(0, base - base*discPct/100);
-  const promoAmt = afterDisc * (l.promoDisc||0)/100;
+  const discAmt = base*discPct/100;
+  const afterDisc = Math.max(0, base - discAmt);
+  const promoPct = l.promoDisc||0;
+  const promoAmt = afterDisc * promoPct/100;
   const excl = Math.max(0, afterDisc - promoAmt);
   const taxPct = (state.taxExempt || !state.showTax) ? 0 : (TAX[l.type]||0);
   const incl = excl + excl*taxPct/100;
   const savings = (base - afterDisc) + promoAmt;
-  return { base, excl, incl, taxPct, savings };
+  return { base, excl, incl, taxPct, savings, discPct, discAmt, promoPct, promoAmt, discounted:(discPct>0||promoPct>0) };
 }
 function totals(){
   let save=0,excl=0,tax=0,incl=0;
@@ -526,8 +547,8 @@ function discLevel(l){
   if(l.shipping||l.paymentPlan||l.limit==null) return {cls:'',warn:'',level:0};
   const over = (l.disc||0) - l.limit;
   if(over<=0) return {cls:(l.disc>0?'low':''),warn:'',level:0};
-  if(over<=10) return {cls:'med',warn:'Needs RSM + RSD approval',level:1};
-  return {cls:'high',warn:'Needs RSM + RSD + CFO approval',level:2};
+  if(over<=10) return {cls:'med',warn:'RSM + RSD',level:1};
+  return {cls:'high',warn:'RSM·RSD·CFO',level:2};
 }
 function approvalLevel(){
   return state.lines.filter(l=>l.qty>0).reduce((m,l)=>Math.max(m,discLevel(l).level),0);
@@ -626,9 +647,9 @@ function renderStep2(){
           <input type="checkbox" ${state.showTax&&!state.taxExempt?'checked':''}><span class="tg"></span>Show taxes
         </label>
       </div>
-      <div class="lhead">
+      <div class="lhead lcols">
         <div>Product</div><div class="c">Qty</div><div class="c">Discount %</div><div class="c">Promo</div>
-        <div class="r">Price</div><div class="c">Status</div><div></div>
+        <div class="r">Price excl. tax</div><div class="c">Status</div><div></div>
       </div>
       ${rows}
       ${state.taxExempt?`<div style="padding:10px 18px"><span class="tax-badge">🛡️ Tax exempt — all taxes set to 0.00%</span></div>`:''}
@@ -657,35 +678,37 @@ function lineRow(l,i){
     : '<span class="badge badge--unch">On quote</span>';
   const discDisabled = l.shipping||l.paymentPlan||l.freeProduct||l.qty===0;
   const ctrlDisabled = l.shipping||l.paymentPlan||l.freeProduct||l.qty===0;
-  const strike = (l.disc>0||l.promoDisc>0)?'strike':'';
+  const promoElig = CATALOG.find(p=>p.id===l.id)?.promo;
 
-  return `<div class="lrow ${cls}">
+  return `<div class="lrow lcols ${cls}">
     <div class="lname-cell">
       <div class="lname">${l.name}</div>
-      <div class="lcode mono">${l.code} · <span class="lbase ${strike}">${money(l.base)}</span></div>
+      <div class="lcode mono">${l.code}</div>
       ${l.shipping?`<div class="lcode" style="color:var(--teal)">${c.excl===0?'Free shipping — order qualifies':'Auto-calculated for hardware'}</div>`:''}
       ${l.paymentPlan?`<div class="lcode" style="color:var(--ink2)">12 equal monthly installments</div>`:''}
     </div>
-    <div><input class="num" type="number" min="0" value="${l.qty}" ${ctrlDisabled&&!l.paymentPlan?'disabled':''} onchange="setQty(${i},this.value)"></div>
-    <div>
-      <div class="disc-wrap ${dl.cls}">
-        <input class="num" type="number" min="0" max="100" value="${l.disc}" ${discDisabled?'disabled':''} onchange="setDisc(${i},this.value)">
-        ${dl.warn?`<div class="disc-warn ${dl.level===2?'high':''}">⚠ ${dl.warn}</div>`:''}
-        ${(!dl.warn && l.limit)?`<div class="lcode" style="text-align:center">limit ${l.limit}%</div>`:''}
-      </div>
+    <div class="qty-cell"><input class="num" type="number" min="0" value="${l.qty}" ${ctrlDisabled&&!l.paymentPlan?'disabled':''} onchange="setQty(${i},this.value)"></div>
+    <div class="disc-cell ${dl.cls}">
+      <input class="num" type="number" min="0" max="100" value="${l.disc}" ${discDisabled?'disabled':''} onchange="setDisc(${i},this.value)">
+      ${dl.warn?`<div class="disc-flag ${dl.level===2?'high':''}">⚠ ${dl.warn}</div>`
+        :(l.limit?`<div class="disc-lim">limit ${l.limit}%</div>`:'')}
     </div>
-    <div>
-      <button class="promo-btn" ${(!CATALOG.find(p=>p.id===l.id)?.promo||ctrlDisabled)?'disabled':''} onclick="openPromo(${i})">${promo?'Change promo':'Add promo'}</button>
+    <div class="promo-cell">
+      <button class="promo-btn" ${(!promoElig||ctrlDisabled)?'disabled':''} onclick="openPromo(${i})">${promo?'Change promo':'Add promo'}</button>
       ${promo?`<div class="promo-chip">🎁 ${promo.name} −${promo.disc}%</div>`:''}
     </div>
     <div class="lprice">
-      <div class="lprice__excl">${money(c.excl)}</div>
+      ${c.discounted?`<div class="lprice__base">${money(c.base)}</div>`:''}
+      ${c.discPct>0?`<div class="lprice__line">(−${pct(c.discPct)}% discount) <span class="amt">−${money(c.discAmt)}</span></div>`:''}
+      ${c.promoPct>0?`<div class="lprice__line promo">(${promo?promo.name:'Promo'} −${pct(c.promoPct)}%) <span class="amt">−${money(c.promoAmt)}</span></div>`:''}
+      <div class="lprice__tot">${c.discounted?'<small>Total</small>':''}${money(c.excl)}</div>
       ${state.showTax&&!state.taxExempt?`<div class="lprice__incl">${money(c.incl)} incl. ${c.taxPct}%</div>`:''}
     </div>
     <div class="lstatus">${status}</div>
-    <div><button class="iconbtn" ${l.shipping?'disabled title="Auto-managed"':''} onclick="toggleDelete(${i})">${l.qty===0?undo():trash()}</button></div>
+    <div class="lact"><button class="iconbtn" ${l.shipping?'disabled title="Auto-managed"':''} onclick="toggleDelete(${i})">${l.qty===0?undo():trash()}</button></div>
   </div>`;
 }
+function pct(n){ return Number(n).toFixed(2); }
 function trash(){ return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
 function undo(){ return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 7H10a3 3 0 110 6H6M4 7l2.5-2.5M4 7l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
 
