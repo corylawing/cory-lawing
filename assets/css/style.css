@@ -2309,6 +2309,11 @@ body::before {
 .offer-card:hover { border-color: var(--border-3); transform: translateY(-2px); background: var(--card-hover); }
 .offer-card__price { margin: 0 0 1rem; display: flex; flex-direction: column; gap: .1rem; }
 .offer-card__from { color: var(--text-4); font-size: .66rem; }
+.offer-card__tag {
+  align-self: flex-start; margin: 0 0 1.25rem;
+  font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent);
+  border: 1px solid var(--accent-line); border-radius: 999px; padding: .34rem .75rem;
+}
 .offer-card__amount {
   font-family: var(--serif); font-weight: 400; font-size: 2rem; line-height: 1;
   letter-spacing: -0.02em; color: var(--accent);
