@@ -100,13 +100,15 @@ function isoWeek(dt) {
 /**
  * The week number that governs a given day.
  *
- * A custody week runs from a Friday to the following Friday, and it is named
- * after the civil week that its own opening Friday falls in: the even week is
- * collected on the Friday of that even week. So for any day, take the Friday
- * on or before it and read that Friday's civil week number.
+ * A custody week runs from a Friday to the following Friday, so it straddles
+ * two civil weeks: it holds the Saturday and Sunday of one and the Monday to
+ * Thursday of the next. It is named after the week holding its school days,
+ * which is the later one — so week 36 is the period covering Monday 31 August
+ * to Thursday 3 September, and the children are with the even-week parent
+ * during civil week 36 as the order requires. Taking the civil week of the day
+ * three days on gives exactly that.
  */
-const fridayOnOrBefore = (dt) => addDays(dt, -((dt.getUTCDay() - 5 + 7) % 7));
-const custodyWeek = (dt) => isoWeek(fridayOnOrBefore(dt));
+const custodyWeek = (dt) => isoWeek(addDays(dt, 3));
 
 /** Fete des meres: last Sunday of May, or the first Sunday of June if that Sunday is Pentecost. */
 function feteDesMeres(year) {
@@ -250,6 +252,7 @@ function plan(cfg, fromISO, toISO) {
       date: dt, iso, parent, src, period, summerWk, note,
       week: (period && PETITES.has(period.key) && cfg.holidayWeeks === 'calendar')
         ? isoWeek(dt) : custodyWeek(dt),
+      civilWeek: isoWeek(dt),        // the number a wall calendar shows for this date
       ferie: feries[iso] || null,
       isHandover: prev !== null && prev.parent !== parent,
       from: prev ? prev.parent : null,

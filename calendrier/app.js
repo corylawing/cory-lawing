@@ -326,7 +326,7 @@
 
     let html = `<div class="num"><span>${dt.getUTCDate()}</span><span class="who-i i${d.parent}">${esc(initialOf(d.parent))}</span></div>`;
     // Week number on Mondays, so anyone can check the parity themselves.
-    if (dt.getUTCDay() === 1) html += `<span class="tag wk">${esc(t('wk', { n: d.week }))}</span>`;
+    if (dt.getUTCDay() === 1) html += `<span class="tag wk">${esc(t('wk', { n: d.civilWeek }))}</span>`;
     // Only flag the Tuesday move when it actually changes household — on the
     // mother's own weeks the children are already there.
     if (d.src === 'midweek' && d.isHandover) html += `<span class="tag mid">${esc(t('rMidweekShort'))}</span>`;
