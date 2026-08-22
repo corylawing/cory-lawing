@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<title>Calendrier de garde</title>
+<link rel="stylesheet" href="app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📅</text></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <div class="brand">
+      <span aria-hidden="true">📅</span>
+      <span><span id="brandTitle">Calendrier de garde</span><small id="brandSub">Zone B · Académie d’Aix-Marseille</small></span>
+    </div>
+    <span class="spacer"></span>
+    <button class="btn small" id="langBtn" title="Français / English">EN</button>
+    <button class="btn small" id="settingsBtn">⚙ Réglages</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="banner hidden" id="confirmBanner"></div>
+
+  <section class="hero pA" id="hero"></section>
+
+  <h2 id="upcomingTitle" style="font-size:1rem;margin:0 0 10px;color:var(--muted)">Prochains échanges</h2>
+  <section class="upcoming" id="upcoming"></section>
+
+  <nav class="tabs" role="tablist">
+    <button class="btn" id="tabMonth" aria-pressed="true">Mois</button>
+    <button class="btn" id="tabYear" aria-pressed="false">Année</button>
+    <button class="btn" id="tabHol" aria-pressed="false">Vacances</button>
+  </nav>
+
+  <div class="periodnav">
+    <button class="btn nav-arrow" id="prev" aria-label="Précédent">‹</button>
+    <h2 id="periodLabel">—</h2>
+    <button class="btn nav-arrow" id="next" aria-label="Suivant">›</button>
+    <button class="btn small" id="todayBtn">Aujourd’hui</button>
+  </div>
+
+  <div class="banner hidden" id="projBanner"></div>
+
+  <section id="viewRoot"></section>
+
+  <section class="legend" id="legend"></section>
+
+  <section class="tools">
+    <button class="btn" id="copyBtn">Copier le lien à partager</button>
+    <button class="btn" id="icsBtn">Ajouter à mon téléphone (.ics)</button>
+    <button class="btn" id="printBtn">Imprimer / PDF</button>
+  </section>
+
+  <p class="note" id="disclaimer"></p>
+  <p class="note" id="privacy"></p>
+</div>
+
+<div class="scrim hidden" id="scrim"></div>
+<aside class="drawer hidden" id="drawer" role="dialog" aria-modal="true" aria-label="Réglages"></aside>
+
+<script src="vacances.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
