@@ -64,11 +64,11 @@ const DEFAULTS = {
   //                so handovers fall on Sunday rather than Friday. Offered
   //                for comparison; it is the whole-week formulation that was
   //                requested but not retained.
-  // 'monday' — the eight summer weeks are civil weeks, so week one starts on
-  //            the first Monday of the break and the changeovers fall on the
-  //            week boundary.
+  // 'sunday' — the eight summer weeks run Sunday to Sunday, so week one starts
+  //            on the first Sunday of the break and each changeover happens on
+  //            a Sunday.
   // 'start'  — week one starts on the first day of the break.
-  summerAnchor: 'monday',
+  summerAnchor: 'sunday',
 
   holidayWeeks: 'friday',
   holidayHandover: '18:00',
@@ -100,13 +100,13 @@ function isoWeek(dt) {
 /**
  * The week number that governs a given day.
  *
- * A custody week runs Friday evening to the following Friday morning, so it
- * straddles two civil weeks: it holds the Saturday and Sunday of one and the
- * Monday-to-Thursday of the next. The school days sit in the later week, so
- * that is the week whose number decides the period — which is the same as
- * taking the civil week of the day three days on.
+ * A custody week runs from a Friday to the following Friday, and it is named
+ * after the civil week that its own opening Friday falls in: the even week is
+ * collected on the Friday of that even week. So for any day, take the Friday
+ * on or before it and read that Friday's civil week number.
  */
-const custodyWeek = (dt) => isoWeek(addDays(dt, 3));
+const fridayOnOrBefore = (dt) => addDays(dt, -((dt.getUTCDay() - 5 + 7) % 7));
+const custodyWeek = (dt) => isoWeek(fridayOnOrBefore(dt));
 
 /** Fete des meres: last Sunday of May, or the first Sunday of June if that Sunday is Pentecost. */
 function feteDesMeres(year) {
@@ -173,8 +173,8 @@ function weekParityParent(dt, cfg) {
  * In a summer shorter than eight weeks the sequence is simply cut short.
  */
 function summerWeek(dt, period) {
-  const anchor = cfgSummerAnchor === 'monday'
-    ? onOrAfterWeekday(period.start, 1)   // first Monday: the weeks are civil weeks
+  const anchor = cfgSummerAnchor === 'sunday'
+    ? onOrAfterWeekday(period.start, 0)   // first Sunday: changeovers fall on Sunday
     : period.start;                       // the first day of the holidays
   const n = dayDiff(anchor, dt);
   if (n < 0) return 0;                    // days before week one follow the alternation
