@@ -1,58 +1,118 @@
 /* ---------------------------------------------------------------------------
    engine.js — works out which parent has the children on any given day.
 
-   Two layers, in this order of priority:
-     1. School-holiday rule  (e.g. "each holiday split in half, alternating
-        years") — only applies inside a school-holiday period.
-     2. Term-time rotation   (week/week, fortnight, 2-2-3, every other weekend)
-        — runs continuously, so it also covers holidays when rule = "continue".
+   The rhythm it encodes:
 
-   Everything is computed in UTC so that French summer time never shifts a day.
+     Term time
+       - Even civil weeks with parent A, from Friday at the end of the school
+         day to the following Friday at the start of the school day;
+       - Odd civil weeks with parent B;
+       - Every Tuesday from the end of the school day to Wednesday 18:00 with
+         parent B, until the youngest child starts secondary school.
+
+     Half-term holidays
+       - The same even/odd whole-week alternation.
+
+     Summer holidays — eight weeks, split 3 / 3 / 1 / 1
+       - weeks 1-3 : A in even years, B in odd years
+       - weeks 4-6 : B in even years, A in odd years
+       - week 7    : A in even years, B in odd years
+       - week 8    : B in even years, A in odd years
+
+     Throughout
+       - Even and odd follow ISO-8601 civil week numbering;
+       - Holiday dates are those of the children's education district;
+       - Each parent has the children for the Mother's Day or Father's Day
+         weekend that concerns them.
+
+   Parent A is the father and parent B the mother. Every switch above is
+   configurable, since the wording of these arrangements varies. Everything is
+   computed in UTC so French summer time never shifts a day.
 --------------------------------------------------------------------------- */
+
 (function () {
 'use strict';
 
-
 const H = window.Vacances.helpers;
-const { D, ISO, addDays, dayDiff, onOrBeforeWeekday, onOrAfterWeekday } = H;
+const { D, ISO, addDays, dayDiff, onOrAfterWeekday } = H;
+const easterSunday = window.Vacances.easterSunday;
 
-const mod = (n, m) => ((n % m) + m) % m;
 const other = (p) => (p === 'A' ? 'B' : 'A');
 
-/* 2-2-3 rotation over a 14-day cycle, expressed relative to the anchor parent.
-   0 = anchor parent, 1 = the other parent.
-   Week 1: 2 days / 2 days / 3 days     Week 2: mirrored. */
-const CYCLE_223 = [0,0,1,1,0,0,0, 1,1,0,0,1,1,1];
-
 const DEFAULTS = {
-  v: 1,
-  a: 'Parent A',
-  b: 'Parent B',
-  pattern: 'week',          // week | fortnight | 223 | eow
-  anchor: '2026-07-04',     // start of the 2026 summer holidays
-  anchorParent: 'A',
-  boundary: 5,              // weekday a new period begins (0=Sun … 5=Fri … 6=Sat)
-  time: '16:30',
-  holidayRule: 'splitAlt',  // splitAlt | splitFixed | continue
-  firstHalf: 'A',           // parent taking the FIRST half (in even years if splitAlt)
-  altBasis: 'school',       // school = alternate per school year (2026-2027 counts
-                            // as 2026); calendar = alternate per calendar year
-  splitShort: false,        // also split the short Ascension break
-  resident: 'A',            // main home, only used by pattern 'eow'
-  holStart: 'fri',          // fri = holidays begin Friday after school ("sortie des
-                            // classes"); exact = the literal date in the arrete
-  confirmed: false,         // set once the settings have been checked against the judgment
+  v: 2,
+  a: 'Papa',                // parent A — le pere
+  b: 'Maman',               // parent B — la mere
+  evenWeekParent: 'A',      // even civil weeks with the father
+
+  // Tuesday end-of-school to Wednesday 18:00 at parent B's home, running
+  // until the youngest child starts secondary school.
+  midweek: true,
+  midweekParent: 'B',
+  midweekEnd: '2029-09-01',
+  midweekReturn: '18:00',
+
+  // Each parent takes the Mother's/Father's Day weekend that concerns them.
+  feteDerogation: true,
+
+  time: '16:30',            // Friday handover, at the end of the school day
+  holStart: 'fri',          // holidays begin Friday at the end of the school day
+  confirmed: false,
 };
 
+/* The summer sequence for an EVEN year, one entry per holiday week 1..8.
+   Odd years are the mirror image. 3 / 3 / 1 / 1. */
+const SUMMER_EVEN = ['A', 'A', 'A', 'B', 'B', 'B', 'A', 'B'];
+
+/* ---------------------------- calendar helpers -------------------------- */
+
+/** ISO-8601 week number — the "numerotation des semaines dans le calendrier civil". */
+function isoWeek(dt) {
+  const d = new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate()));
+  d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7) + 3);   // Thursday of this week
+  const firstThu = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  firstThu.setUTCDate(firstThu.getUTCDate() - ((firstThu.getUTCDay() + 6) % 7) + 3);
+  return 1 + Math.round((d - firstThu) / (7 * 86400000));
+}
+
 /**
- * School-holiday periods as the judgment reads them.
+ * The week number that governs a given day.
  *
+ * A custody week runs Friday evening to the following Friday morning, so it
+ * straddles two civil weeks: it holds the Saturday and Sunday of one and the
+ * Monday-to-Thursday of the next. The school days sit in the later week, so
+ * that is the week whose number decides the period — which is the same as
+ * taking the civil week of the day three days on.
+ */
+const custodyWeek = (dt) => isoWeek(addDays(dt, 3));
+
+/** Fete des meres: last Sunday of May, or the first Sunday of June if that Sunday is Pentecost. */
+function feteDesMeres(year) {
+  const may31 = new Date(Date.UTC(year, 4, 31));
+  const lastSun = addDays(may31, -may31.getUTCDay());
+  const pentecost = addDays(easterSunday(year), 49);
+  if (ISO(lastSun) === ISO(pentecost)) {
+    const jun1 = new Date(Date.UTC(year, 5, 1));
+    return addDays(jun1, (7 - jun1.getUTCDay()) % 7);
+  }
+  return lastSun;
+}
+
+/** Fete des peres: third Sunday of June. */
+function feteDesPeres(year) {
+  const jun1 = new Date(Date.UTC(year, 5, 1));
+  return addDays(addDays(jun1, (7 - jun1.getUTCDay()) % 7), 14);
+}
+
+/** The Saturday+Sunday around a given Sunday. */
+const weekendOf = (sunday) => [ISO(addDays(sunday, -1)), ISO(sunday)];
+
+/* --------------------------- school-holiday spans ----------------------- */
+/**
  * The arretes start most holidays on a Saturday ("fin des cours le samedi"),
- * but there is no school that Saturday, so judgments that hand over at the
- * "sortie des classes" really mean the Friday evening. Pulling the start back
- * to the Friday also makes the holiday boundary line up with a Friday
- * changeover, which stops the rotation from awarding a stray single day
- * immediately before a holiday.
+ * but there is no school that day and this judgment hands over at the "sortie
+ * des classes". Pulling the start back to the Friday matches the wording and
+ * lines the holiday boundary up with the Friday changeover.
  */
 function periodsFor(cfg, fromISO, toISO) {
   return window.Vacances.periodsBetween(fromISO, toISO).map((p) => {
@@ -63,61 +123,47 @@ function periodsFor(cfg, fromISO, toISO) {
   });
 }
 
-/** Which parent, purely from the term-time rotation. */
-function rotationParent(date, cfg) {
-  if (cfg.pattern === 'eow') {
-    const anchor = onOrAfterWeekday(D(cfg.anchor), 5);   // first Friday on/after anchor
-    const n = dayDiff(anchor, date);
-    const weekIdx = mod(Math.floor(n / 7), 2);
-    const offset = mod(n, 7);                            // 0=Fri 1=Sat 2=Sun
-    const isVisitWeekend = weekIdx === 0 && offset <= 2;
-    return isVisitWeekend ? other(cfg.resident) : cfg.resident;
-  }
-
-  const anchor = onOrBeforeWeekday(D(cfg.anchor), cfg.boundary);
-  const n = dayDiff(anchor, date);
-  let idx;
-  if (cfg.pattern === 'fortnight')   idx = mod(Math.floor(n / 14), 2);
-  else if (cfg.pattern === '223')    idx = CYCLE_223[mod(n, 14)];
-  else                               idx = mod(Math.floor(n / 7), 2);   // 'week'
-  return idx === 0 ? cfg.anchorParent : other(cfg.anchorParent);
-}
-
-/** Is this holiday period one the judgment splits in half? */
-function isSplittable(period, cfg) {
-  if (cfg.holidayRule === 'continue') return false;
-  if (period.key === 'ascension' && !cfg.splitShort) return false;
-  return true;
+/* ------------------------------ the rhythm ------------------------------ */
+/** Base rule: even civil week to one parent, odd to the other. */
+function weekParityParent(dt, cfg) {
+  const w = custodyWeek(dt);
+  return w % 2 === 0 ? cfg.evenWeekParent : other(cfg.evenWeekParent);
 }
 
 /**
- * Which parent takes the FIRST half of a given holiday period.
- * With altBasis 'school' the whole school year swings together, so the parent
- * who takes the first half of Toussaint also takes the first half of the
- * February and spring holidays. With 'calendar' the flip happens on 1 January.
+ * Which of the eight summer weeks a day falls in, or 0 if it is outside them.
+ * Week 1 starts on the first day of the summer holidays.
  */
-function firstHalfParent(period, cfg) {
-  if (cfg.holidayRule === 'splitFixed') return cfg.firstHalf;
-  const year = cfg.altBasis === 'calendar'
-    ? period.start.getUTCFullYear()
-    : Number(period.sy.slice(0, 4));
-  return year % 2 === 0 ? cfg.firstHalf : other(cfg.firstHalf);
+function summerWeek(dt, period) {
+  const n = dayDiff(period.start, dt);
+  const w = Math.floor(n / 7) + 1;
+  return w >= 1 && w <= 8 ? w : 0;
+}
+
+function summerParent(week, year, cfg) {
+  const seq = SUMMER_EVEN[week - 1];
+  const flip = cfg.evenWeekParent !== 'A';           // honour a swapped mapping
+  const base = year % 2 === 0 ? seq : other(seq);
+  return flip ? other(base) : base;
 }
 
 /**
  * Build a day-by-day plan.
- * @returns Map<iso, {date,iso,parent,src,period,half,ferie,isHandover,from}>
+ * @returns Map<iso, {date,iso,parent,src,period,summerWk,week,ferie,isHandover,from,note}>
  */
 function plan(cfg, fromISO, toISO) {
   const from = D(fromISO), to = D(toISO);
   const periods = periodsFor(cfg, fromISO, toISO);
   const feries = window.Vacances.feriesBetween(fromISO, toISO);
+  const midweekEnd = cfg.midweekEnd ? D(cfg.midweekEnd) : null;
 
-  // Pre-compute the half-split boundary of each period once.
-  const meta = new Map();
-  for (const p of periods) {
-    const total = dayDiff(p.start, p.last) + 1;
-    meta.set(p, { total, half: Math.ceil(total / 2), first: firstHalfParent(p, cfg) });
+  // Mother's Day / Father's Day weekends across the span.
+  const fetes = new Map();
+  if (cfg.feteDerogation) {
+    for (let y = from.getUTCFullYear(); y <= to.getUTCFullYear(); y++) {
+      weekendOf(feteDesMeres(y)).forEach((k) => fetes.set(k, { parent: 'B', kind: 'meres' }));
+      weekendOf(feteDesPeres(y)).forEach((k) => fetes.set(k, { parent: 'A', kind: 'peres' }));
+    }
   }
 
   const out = new Map();
@@ -125,20 +171,35 @@ function plan(cfg, fromISO, toISO) {
   for (let dt = from; dt <= to; dt = addDays(dt, 1)) {
     const iso = ISO(dt);
     const period = periods.find((p) => dt >= p.start && dt <= p.last) || null;
+    const isSummer = !!period && period.key === 'ete';
 
-    let parent, src = 'rotation', half = null;
-    if (period && isSplittable(period, cfg)) {
-      const m = meta.get(period);
-      const isFirst = dayDiff(period.start, dt) < m.half;
-      half = isFirst ? 1 : 2;
-      parent = isFirst ? m.first : other(m.first);
-      src = 'holiday';
+    let parent, src, summerWk = 0, note = null;
+
+    const fete = fetes.get(iso);
+    if (fete) {
+      // "Par derogation a l'organisation ci-dessus convenue…"
+      parent = fete.parent; src = 'fete-' + fete.kind;
+    } else if (isSummer && (summerWk = summerWeek(dt, period))) {
+      parent = summerParent(summerWk, period.start.getUTCFullYear(), cfg);
+      src = 'summer';
+    } else if (!period && cfg.midweek && dt.getUTCDay() === 2 &&
+               (!midweekEnd || dt < midweekEnd)) {
+      // Tuesday night at the mother's, term time only.
+      parent = cfg.midweekParent; src = 'midweek';
     } else {
-      parent = rotationParent(dt, cfg);
+      parent = weekParityParent(dt, cfg);
+      src = period ? (isSummer ? 'summer-tail' : 'holiday-week') : 'term-week';
+    }
+
+    // Wednesday is shared: at the mother's until 18:00, then the father collects.
+    if (!period && cfg.midweek && dt.getUTCDay() === 3 && (!midweekEnd || dt < midweekEnd) &&
+        parent !== cfg.midweekParent) {
+      note = 'midweek-return';
     }
 
     const day = {
-      date: dt, iso, parent, src, period, half,
+      date: dt, iso, parent, src, period, summerWk, note,
+      week: custodyWeek(dt),
       ferie: feries[iso] || null,
       isHandover: prev !== null && prev.parent !== parent,
       from: prev ? prev.parent : null,
@@ -151,22 +212,24 @@ function plan(cfg, fromISO, toISO) {
 
 /** Group a plan into continuous blocks held by one parent. */
 function blocks(planMap) {
-  const days = [...planMap.values()];
   const res = [];
-  for (const d of days) {
+  for (const d of planMap.values()) {
     const last = res[res.length - 1];
     if (last && last.parent === d.parent) { last.end = d.date; last.days++; }
-    else res.push({ parent: d.parent, start: d.date, end: d.date, days: 1, src: d.src, period: d.period });
+    else res.push({ parent: d.parent, start: d.date, end: d.date, days: 1,
+                    src: d.src, period: d.period, summerWk: d.summerWk, week: d.week });
   }
   return res;
 }
 
 /** The next `n` handovers strictly after `afterISO`. */
 function nextHandovers(planMap, afterISO, n = 5) {
-  return [...planMap.values()]
-    .filter((d) => d.iso > afterISO && d.isHandover)
-    .slice(0, n);
+  return [...planMap.values()].filter((d) => d.iso > afterISO && d.isHandover).slice(0, n);
 }
 
-window.Engine = { DEFAULTS, plan, blocks, nextHandovers, rotationParent, other, periodsFor };
+window.Engine = {
+  DEFAULTS, plan, blocks, nextHandovers, periodsFor, other,
+  isoWeek, custodyWeek, feteDesMeres, feteDesPeres, summerParent,
+};
+
 })();

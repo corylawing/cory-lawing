@@ -49,27 +49,55 @@ Add the new Zone B lines to `OFFICIAL` in `vacances.js`, using the same shape:
 `start` is the first full day off; `resume` is the day school starts again. The
 app stops projecting that year automatically and drops the *prévisionnel* label.
 
-## Settings
+## The rhythm
 
-Everything about the rotation is configurable, because judgments word these
-things differently. Open **Réglages**:
+Encoded in `engine.js`, and every switch is adjustable in **Réglages**:
 
-- **Rythme** — one week / one week, two weeks / two weeks, 2-2-3, or one weekend
-  in two.
-- **Point de départ** — the date the alternation is anchored to, and which
-  parent has the children then. Defaults to the start of the 2026 summer
-  holidays.
-- **Jour et heure de l'échange** — which weekday a new period begins, and at
-  what time.
-- **Vacances scolaires** — split in half alternating each year, split in half
-  always in the same order, or let the rotation simply run through.
-- **L'alternance des moitiés change** — per *school* year (2026-2027 stays
-  coherent throughout) or per *calendar* year (the order flips on 1 January).
-  Both readings are common; pick the one your judgment uses.
-- **Début des vacances** — Friday at the *sortie des classes*, or the literal
-  Saturday in the arrêté. The arrêtés start most holidays on a Saturday, but
-  there is no school that day; choosing Friday matches how most judgments are
-  worded and avoids a pointless one-day handover the evening before a holiday.
+**Term time** — even civil weeks with parent A, from Friday at the end of the
+school day to the following Friday at the start of the school day; odd weeks
+with parent B. Plus every **Tuesday end-of-school to Wednesday 18:00 with
+parent B**, until the youngest child starts secondary school.
+
+**Half-term holidays** — the same even/odd whole-week alternation, with no
+midweek Tuesday move.
+
+**Summer holidays** — eight weeks split **3 / 3 / 1 / 1**:
+
+| Weeks | Even years | Odd years |
+|---|---|---|
+| 1-3 | A | B |
+| 4-6 | B | A |
+| 7 | A | B |
+| 8 | B | A |
+
+Any summer days past the eighth week fall back to the even/odd alternation.
+
+**Throughout** — even and odd follow ISO-8601 civil week numbering; holiday
+dates are those of the children's education district; and each parent has the
+children for the Mother's Day or Father's Day weekend that concerns them
+(*fête des mères* is the last Sunday of May, moving to the first Sunday of June
+when that Sunday is Pentecost; *fête des pères* is the third Sunday of June).
+
+### How a custody week maps to a week number
+
+A custody week runs Friday evening to the following Friday morning, so it
+straddles two civil weeks — it holds the Saturday and Sunday of one and the
+Monday-to-Thursday of the next. The school days sit in the later week, so that
+is the week whose number decides the period. In code that is simply the civil
+week of the day three days on. Week numbers are printed on each Monday in the
+month view so either parent can check the parity against any calendar.
+
+### Points that need confirming
+
+Three things are not fully determined and are flagged in the app itself:
+
+1. The half-term clause refers both to an even/odd week alternation and to a
+   Sunday 18:00 return, which do not fit together. Whole-week alternation is
+   applied.
+2. The eight summer weeks are numbered but the start of week 1 is not defined.
+   It starts on the first day of the summer holidays here.
+3. The Tuesday rule runs "until the youngest starts secondary school" with no
+   date. It stops at the September 2029 rentrée; adjustable in the settings.
 
 ## Privacy
 

@@ -113,8 +113,9 @@ button { font: inherit; cursor: pointer; }
   font-size: .7rem; font-weight: 800; width: 19px; height: 19px; border-radius: 6px;
   display: grid; place-items: center; color: #fff;
 }
-.day.pA .who-i { background: var(--a); }
-.day.pB .who-i { background: var(--b); }
+.who-i.iA, .day.pA .who-i { background: var(--a); }
+.who-i.iB, .day.pB .who-i { background: var(--b); }
+.hand .who-i { width: 18px; height: 18px; border-radius: 5px; font-size: .64rem; color: #fff; }
 .day.today { outline: 3px solid var(--ink); outline-offset: -3px; z-index: 2; }
 .day.today .num > span:first-child::before { content: "● "; font-size: .5rem; vertical-align: middle; }
 
@@ -130,6 +131,11 @@ button { font: inherit; cursor: pointer; }
 .day .tag.vac  { background: rgba(0,0,0,.12); }
 .day .tag.proj { border: 1px dashed currentColor; background: transparent; opacity: .8; }
 .day .tag.fer  { background: #7c1d6f; color: #fff; }
+.day .tag.wk   { background: transparent; border: 1px solid currentColor; opacity: .5; font-size: .6rem; }
+.day .tag.mid  { background: #0f766e; color: #fff; }
+.day .tag.fete { background: #a21caf; color: #fff; }
+.banner .pts { margin: 9px 0 0; padding-left: 20px; }
+.banner .pts li { margin-bottom: 7px; }
 .day .hx { position: absolute; right: 5px; bottom: 4px; font-size: .62rem; font-weight: 800; opacity: .75; }
 
 /* holiday bands are drawn as a subtle diagonal texture on top of the colour */
