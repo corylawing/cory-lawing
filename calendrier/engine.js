@@ -147,23 +147,30 @@ function weekParityParent(dt, cfg) {
 }
 
 /**
- * Which of the eight summer weeks a day falls in, or 0 if it is outside them.
+ * Which of the eight summer weeks a day falls in.
  *
- * The eight weeks are the eight full civil weeks of the holidays, so week one
- * begins on the first Monday of the break. That keeps every week in the
- * arrangement a civil week, and it lands the end of week eight on the Sunday
- * before the new school year rather than part-way through August.
+ * Week one begins on the first day of the summer holidays. Eight weeks is 56
+ * days and a summer runs 54 to 62, so the eight named weeks never tile the
+ * break exactly; there are usually a few days left at the end.
  *
- * Days of the holidays outside those eight weeks — the odd days before the
- * first Monday, and anything left at the end — follow the ordinary even/odd
- * alternation. In a short summer the eight weeks are clipped at the last day
- * of the holidays rather than running on into the school term.
+ * Those days stay with the eighth week's parent rather than reverting to the
+ * term-time alternation. Two reasons. The order allocates by period — one
+ * provision for term time, one for the half-term holidays, one for the summer
+ * — so days that are still summer holidays fall under the summer provision,
+ * and importing the term-time rule into them would apply a clause expressly
+ * limited to "periode scolaire" to days that are expressly not. And because
+ * the eighth week alternates with the parity of the year, the leftover days
+ * alternate with it, which keeps the arrangement level over time; assigning
+ * them by civil-week parity instead drifts one way, since late August tends to
+ * fall in even weeks.
+ *
+ * In a summer shorter than eight weeks the sequence is simply cut short.
  */
 function summerWeek(dt, period) {
-  const firstMonday = onOrAfterWeekday(period.start, 1);
-  if (dt < firstMonday || dt > period.last) return 0;
-  const w = Math.floor(dayDiff(firstMonday, dt) / 7) + 1;
-  return w >= 1 && w <= 8 ? w : 0;
+  const n = dayDiff(period.start, dt);
+  if (n < 0) return 0;
+  const w = Math.floor(n / 7) + 1;
+  return w <= 8 ? w : 8;
 }
 
 function summerParent(week, year, cfg) {
