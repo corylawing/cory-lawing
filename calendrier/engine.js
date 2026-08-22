@@ -148,11 +148,21 @@ function weekParityParent(dt, cfg) {
 
 /**
  * Which of the eight summer weeks a day falls in, or 0 if it is outside them.
- * Week 1 starts on the first day of the summer holidays.
+ *
+ * The eight weeks are the eight full civil weeks of the holidays, so week one
+ * begins on the first Monday of the break. That keeps every week in the
+ * arrangement a civil week, and it lands the end of week eight on the Sunday
+ * before the new school year rather than part-way through August.
+ *
+ * Days of the holidays outside those eight weeks — the odd days before the
+ * first Monday, and anything left at the end — follow the ordinary even/odd
+ * alternation. In a short summer the eight weeks are clipped at the last day
+ * of the holidays rather than running on into the school term.
  */
 function summerWeek(dt, period) {
-  const n = dayDiff(period.start, dt);
-  const w = Math.floor(n / 7) + 1;
+  const firstMonday = onOrAfterWeekday(period.start, 1);
+  if (dt < firstMonday || dt > period.last) return 0;
+  const w = Math.floor(dayDiff(firstMonday, dt) / 7) + 1;
   return w >= 1 && w <= 8 ? w : 0;
 }
 
