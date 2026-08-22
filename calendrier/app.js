@@ -285,7 +285,6 @@
       '<strong>' + esc(t('ruleLine', { a: nameOf('A'), b: nameOf('B'), t: cfg.time, h: cfg.holidayHandover })) + '</strong>' +
       (cfg.midweek ? ' <span class="rx">' + esc(t('ruleExtra', { b: nameOf('B'), m: cfg.midweekReturn })) + '</span>' : '');
 
-    renderRules();
     renderHero();
     renderUpcoming();
     renderProjWarn();
@@ -298,25 +297,12 @@
     } else if (view === 'year') {
       $('#periodLabel').textContent = String(cur.getUTCFullYear());
       root.appendChild(yearView(cur.getUTCFullYear()));
-      root.appendChild(nightsCard(cur.getUTCFullYear()));
     } else {
       const sy = schoolYearOf(cur);
       $('#periodLabel').textContent = t('schoolYear', { y: sy });
       root.appendChild(holView(sy));
     }
     renderLegend();
-  }
-
-  function renderRules() {
-    const v = { a: nameOf('A'), b: nameOf('B'), t: cfg.time, m: cfg.midweekReturn, h: cfg.holidayHandover };
-    const items = ['r1', 'r2'];
-    if (cfg.midweek) items.push('r3');
-    items.push('r4', 'r5');
-    if (cfg.feteDerogation) items.push('r6');
-    items.push('r7');
-    $('#rulesBox').innerHTML =
-      `<summary>${esc(t('rulesTitle'))}</summary><ul>` +
-      items.map((k) => `<li>${esc(t(k, v))}</li>`).join('') + '</ul>';
   }
 
   function renderProjWarn() {
@@ -433,94 +419,23 @@
     return wrap;
   }
 
-  /** How the nights actually fall over a year — the question both parents ask. */
-  function nightsCard(year) {
-    let na = 0, nb = 0;
-    for (let dt = new Date(Date.UTC(year, 0, 1)); dt.getUTCFullYear() === year; dt = addDays(dt, 1)) {
-      const d = plan.get(ISO(dt));
-      if (d) (d.parent === 'A' ? na++ : nb++);
-    }
-    const box = document.createElement('div'); box.className = 'vrow'; box.style.marginTop = '16px';
-    const tot = na + nb || 1;
-    box.innerHTML = `<h3>${esc(t('nightsTitle'))}</h3><div class="dates">${esc(t('nightsBody', {
-      a: nameOf('A'), na, pa: (100 * na / tot).toFixed(1),
-      b: nameOf('B'), nb, pb: (100 * nb / tot).toFixed(1), y: year }))}</div>`;
-    return box;
-  }
-
   const schoolYearOf = (dt) => {
     const y = dt.getUTCFullYear();
     return dt.getUTCMonth() >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`;
   };
 
-  /** Days held by each parent inside one period. */
-  function countPeriod(p) {
-    let a = 0, b = 0;
-    for (let dt = p.start; dt <= p.last; dt = addDays(dt, 1)) {
-      const d = plan.get(ISO(dt));
-      if (d) (d.parent === 'A' ? a++ : b++);
-    }
-    return { a, b };
-  }
-
-  function balanceCard(sy, periods) {
-    const small = { a: 0, b: 0 }, all = { a: 0, b: 0 };
-    for (const p of periods) {
-      const c = countPeriod(p);
-      all.a += c.a; all.b += c.b;
-      if (p.key !== 'ete' && p.key !== 'ascension') { small.a += c.a; small.b += c.b; }
-    }
-    const line = (label, c) => {
-      const gap = Math.abs(c.a - c.b);
-      return `<div class="balrow"><span class="ball">${esc(label)}</span>
-        <span class="halfbox pA bal">${esc(nameOf('A'))} <b>${esc(t('dcount', { n: c.a }))}</b></span>
-        <span class="halfbox pB bal">${esc(nameOf('B'))} <b>${esc(t('dcount', { n: c.b }))}</b></span>
-        <span class="pill ${gap === 0 ? 'ok' : ''}">${esc(gap === 0 ? t('holEqual') : t('holGap', { n: gap }))}</span></div>`;
-    };
-    const box = document.createElement('div'); box.className = 'vrow bal-card';
-    box.innerHTML = `<h3>${esc(t('holBalance', { y: sy }))}</h3>
-      ${line(t('holSmall'), small)}${line(t('holAll'), all)}`;
-
-    // Long unbroken stretches are the thing that actually causes arguments,
-    // so surface them a year ahead instead of letting December find them.
-    const y0 = Number(sy.slice(0, 4));
-    const span = new Map([...plan].filter(([k]) => k >= `${y0}-09-01` && k < `${y0 + 1}-09-01`));
-    const longs = E.blocks(span).filter((b) => b.days >= 10);
-    // A changeover landing on Christmas Day or another holiday is the classic
-    // avoidable row. Name it months ahead.
-    const ferHand = [...span.values()].filter((d) => d.isHandover && d.ferie);
-    if (ferHand.length) {
-      box.innerHTML += `<div class="longwarn"><strong>${esc(t('ferHandTitle'))}</strong>` +
-        ferHand.map((d) => `<div class="longrow">
-          <span class="halfbox p${d.parent} bal">${esc(nameOf(d.parent))} <b>${esc(handoverTime(d))}</b></span>
-          <span>${esc(cap(fmtLong(d.date)))} — ${esc(L().fer[d.ferie])}</span></div>`).join('') +
-        `<div class="longnote">${esc(t('ferHandBody'))}</div></div>`;
-    }
-    if (longs.length) {
-      box.innerHTML += `<div class="longwarn"><strong>${esc(t('longTitle'))}</strong>` +
-        longs.map((b) => `<div class="longrow">
-          <span class="halfbox p${b.parent} bal">${esc(nameOf(b.parent))} <b>${esc(t('dcount', { n: b.days }))}</b></span>
-          <span>${esc(cap(fmtLong(b.start)))} → ${esc(cap(fmtLong(b.end)))}</span></div>`).join('') +
-        `<div class="longnote">${esc(t('longBody', { n: Math.max(...longs.map((b) => b.days)) }))}</div></div>`;
-    }
-    return box;
-  }
-
   function holView(sy) {
     const wrap = document.createElement('div'); wrap.className = 'vlist';
     const periods = E.periodsFor(cfg, RANGE_FROM, RANGE_TO).filter((p) => p.sy === sy);
     if (!periods.length) { wrap.innerHTML = '<div class="vrow">—</div>'; return wrap; }
-    wrap.appendChild(balanceCard(sy, periods));
 
     for (const p of periods) {
       const total = dayDiff(p.start, p.last) + 1;
       const inner = E.blocks(new Map([...plan].filter(([k]) => k >= ISO(p.start) && k <= ISO(p.last))));
       const row = document.createElement('div'); row.className = 'vrow';
-      const c = countPeriod(p);
       row.innerHTML = `<h3>${esc(L().vac[p.key])}
           <span class="pill ${isProjected(p) ? '' : 'ok'}">${esc(isProjected(p) ? t('projected') : t('official'))}</span></h3>
-        <div class="dates">${esc(cap(fmtLong(p.start)))} → ${esc(cap(fmtLong(p.last)))} · ${esc(t('days', { n: total }))}
-          &nbsp;·&nbsp; <b>${esc(nameOf('A'))} ${esc(t('dcount', { n: c.a }))}</b> · <b>${esc(nameOf('B'))} ${esc(t('dcount', { n: c.b }))}</b></div>
+        <div class="dates">${esc(cap(fmtLong(p.start)))} → ${esc(cap(fmtLong(p.last)))} · ${esc(t('days', { n: total }))}</div>
         <div class="halves">` + inner.map((b) => {
           const label = b.src === 'summer'
             ? t('rSummer', { w: b.summerWk }) + (b.days > 7 ? ` – ${b.summerWk + Math.round(b.days / 7) - 1}` : '')
