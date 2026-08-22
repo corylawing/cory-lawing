@@ -57,10 +57,14 @@ const DEFAULTS = {
 
   // How the even/odd label is read during the half-term holidays:
   //   'friday'   — the Friday-to-Friday block keeps running, labelled by the
-  //                week holding its Monday-to-Thursday (same as term time)
+  //                week holding its Monday-to-Thursday, exactly as in term
+  //                time. This is the default: it keeps the Friday changeover
+  //                that the operative wording sets out.
   //   'calendar' — whole Monday-to-Sunday civil weeks by their own number,
-  //                so handovers fall on Sunday rather than Friday
-  holidayWeeks: 'calendar',
+  //                so handovers fall on Sunday rather than Friday. Offered
+  //                for comparison; it is the whole-week formulation that was
+  //                requested but not retained.
+  holidayWeeks: 'friday',
   holidayHandover: '18:00',
 
   time: '16:30',            // Friday handover, at the end of the school day
