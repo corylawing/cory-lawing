@@ -54,6 +54,9 @@
       projWarn: 'Dates prévisionnelles à partir de septembre 2028',
       projWarnBody: 'Le ministère publie le calendrier scolaire environ trois ans à l’avance. Les dates officielles vont jusqu’à l’été 2028. Au-delà, les vacances sont estimées et signalées « prévisionnel ». L’alternance des semaines paires et impaires, elle, reste exacte.',
       disclaimer: 'Cet outil est une aide à la lecture du planning. En cas de désaccord, seul le jugement fait foi. Dates scolaires : Zone B, académie d’Aix-Marseille (arrêtés du 22 octobre 2025 et du 21 juillet 2026).',
+      ruleLine: 'Semaine paire → {a}. Semaine impaire → {b}. Échange le vendredi à la sortie des classes, {t}.',
+      ruleLineCal: 'Semaine paire → {a}. Semaine impaire → {b}. Échange le vendredi en période scolaire, le dimanche soir pendant les petites vacances.',
+      ruleExtra: 'Plus : mardi soir → mercredi {m} chez {b}. Vacances d’été partagées en huit semaines.',
       defaultNote: 'Ce rythme est celui qui s’applique à défaut d’accord différent entre les parents. Un accord écrit entre vous prime sur ce qui est affiché ici : ce calendrier sert alors simplement à le mettre noir sur blanc.',
       privacy: 'Aucun texte du jugement n’est enregistré. Les prénoms et les réglages restent dans ce navigateur et dans le lien que vous partagez. Rien n’est envoyé sur Internet.',
       sTitle: 'Réglages', sSub: 'Le rythme fixé pour la garde alternée.',
@@ -122,6 +125,9 @@
       projWarn: 'Projected dates from September 2028 onwards',
       projWarnBody: 'The ministry publishes the school calendar about three years ahead. Official dates run to summer 2028. Beyond that, holidays are estimates and marked “projected”. The even/odd week alternation itself stays exact.',
       disclaimer: 'This tool is a reading aid for the schedule. If there is any disagreement, only the judgment counts. School dates: Zone B, Aix-Marseille district (decrees of 22 October 2025 and 21 July 2026).',
+      ruleLine: 'Even week → {a}. Odd week → {b}. Changeover every Friday at the end of school, {t}.',
+      ruleLineCal: 'Even week → {a}. Odd week → {b}. Changeover Friday in term time, Sunday evening during the half-term holidays.',
+      ruleExtra: 'Plus: Tuesday evening → Wednesday {m} with {b}. Summer split into eight weeks.',
       defaultNote: 'This rhythm is the one that applies failing a different agreement between the parents. A written agreement between you takes precedence over what is shown here; the calendar then simply serves to set it down in black and white.',
       privacy: 'No judgment text is stored. The names and settings stay in this browser and in the link you share. Nothing is sent over the internet.',
       sTitle: 'Settings', sSub: 'The rhythm set for shared residence.',
@@ -260,6 +266,12 @@
     $('#tabMonth').setAttribute('aria-pressed', String(view === 'month'));
     $('#tabYear').setAttribute('aria-pressed', String(view === 'year'));
     $('#tabHol').setAttribute('aria-pressed', String(view === 'hol'));
+
+    $('#ruleLine').innerHTML =
+      '<strong>' + esc(cfg.holidayWeeks === 'calendar'
+        ? t('ruleLineCal', { a: nameOf('A'), b: nameOf('B') })
+        : t('ruleLine', { a: nameOf('A'), b: nameOf('B'), t: cfg.time })) + '</strong>' +
+      (cfg.midweek ? ' <span class="rx">' + esc(t('ruleExtra', { b: nameOf('B'), m: cfg.midweekReturn })) + '</span>' : '');
 
     renderConfirm();
     renderHero();

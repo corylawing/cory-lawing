@@ -66,6 +66,12 @@ button { font: inherit; cursor: pointer; }
 .banner .btn { margin-top: 8px; background: transparent; border-color: currentColor; color: inherit; }
 .hidden { display: none !important; }
 
+/* The whole arrangement in one line, for whoever opens the page cold. */
+.rule { margin: 16px 0 0; padding: 14px 17px; border-radius: var(--radius);
+  background: var(--card); border: 1px solid var(--line-2); font-size: 1rem; line-height: 1.5; }
+.rule strong { font-weight: 700; }
+.rule .rx { color: var(--muted); font-size: .9rem; display: block; margin-top: 4px; }
+
 /* --------------------------------- hero -------------------------------- */
 .hero {
   margin: 18px 0; padding: 26px; border-radius: 20px; box-shadow: var(--shadow);
