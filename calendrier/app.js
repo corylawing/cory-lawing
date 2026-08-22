@@ -119,7 +119,11 @@
       },
   };
 
-  let lang = (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+  // French when the browser's own language is French; English for anything else.
+  const browserLang = String(
+    (navigator.languages && navigator.languages[0]) || navigator.language || ''
+  ).toLowerCase();
+  let lang = browserLang.startsWith('fr') ? 'fr' : 'en';
   const L = () => I18N[lang];
   const t = (k, vars) => {
     let s = L()[k];
