@@ -168,6 +168,10 @@ button { font: inherit; cursor: pointer; }
 .halfbox b { display: block; font-size: .74rem; text-transform: uppercase; letter-spacing: .07em; opacity: .8; }
 .halfbox .nm { font-weight: 800; font-size: 1.02rem; }
 .bal-card { border-color: var(--line-2); }
+.longwarn { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.longwarn strong { display: block; font-size: .84rem; color: var(--warn); margin-bottom: 8px; }
+.longrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: .88rem; margin-bottom: 6px; }
+.longnote { font-size: .82rem; color: var(--muted); margin-top: 6px; }
 .balrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .balrow .ball { font-size: .84rem; font-weight: 700; color: var(--muted); min-width: 140px; }
 .halfbox.bal { padding: 5px 11px; font-size: .88rem; }

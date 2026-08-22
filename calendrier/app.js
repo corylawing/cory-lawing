@@ -77,6 +77,9 @@
       save: 'Enregistrer', reset: 'Réinitialiser', close: 'Fermer',
       days: '{n} jours', day1: '1 jour', weeks: '{n} semaines',
       beforeStart: 'Avant le début du calendrier',
+      longTitle: 'Périodes longues à anticiper',
+      longBody: 'Une même période de {n} jours d’affilée chez le même parent. Cela vient de la numérotation civile des semaines et non d’une décision : certaines années comptent 53 semaines, et deux semaines impaires se suivent alors. À regarder à l’avance plutôt qu’en décembre.',
+      longNone: 'Aucune période de plus de 9 jours cette année.',
       holBalance: 'Bilan des vacances · {y}',
       holSmall: 'Petites vacances', holAll: 'Toutes les vacances',
       holEqual: 'à égalité', holGap: 'écart de {n} j',
@@ -140,6 +143,9 @@
       save: 'Save', reset: 'Reset', close: 'Close',
       days: '{n} days', day1: '1 day', weeks: '{n} weeks',
       beforeStart: 'Before the calendar starts',
+      longTitle: 'Long stretches worth planning for',
+      longBody: 'A single run of {n} days with the same parent. This comes from civil week numbering rather than from any decision: some years have 53 weeks, and two odd weeks then fall back to back. Better looked at in advance than in December.',
+      longNone: 'No stretch longer than 9 days this year.',
       holBalance: 'Holiday balance · {y}',
       holSmall: 'Half-term holidays', holAll: 'All holidays',
       holEqual: 'level', holGap: '{n}-day gap',
@@ -455,6 +461,19 @@
     const box = document.createElement('div'); box.className = 'vrow bal-card';
     box.innerHTML = `<h3>${esc(t('holBalance', { y: sy }))}</h3>
       ${line(t('holSmall'), small)}${line(t('holAll'), all)}`;
+
+    // Long unbroken stretches are the thing that actually causes arguments,
+    // so surface them a year ahead instead of letting December find them.
+    const y0 = Number(sy.slice(0, 4));
+    const span = new Map([...plan].filter(([k]) => k >= `${y0}-09-01` && k < `${y0 + 1}-09-01`));
+    const longs = E.blocks(span).filter((b) => b.days >= 10);
+    if (longs.length) {
+      box.innerHTML += `<div class="longwarn"><strong>${esc(t('longTitle'))}</strong>` +
+        longs.map((b) => `<div class="longrow">
+          <span class="halfbox p${b.parent} bal">${esc(nameOf(b.parent))} <b>${esc(t('dcount', { n: b.days }))}</b></span>
+          <span>${esc(cap(fmtLong(b.start)))} → ${esc(cap(fmtLong(b.end)))}</span></div>`).join('') +
+        `<div class="longnote">${esc(t('longBody', { n: Math.max(...longs.map((b) => b.days)) }))}</div></div>`;
+    }
     return box;
   }
 
