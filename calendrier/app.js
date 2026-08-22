@@ -44,20 +44,19 @@
       legendVac: 'Vacances scolaires', legendToday: 'Aujourd’hui', legendHand: 'échange',
       copy: 'Copier le lien à partager', copied: 'Lien copié ✓',
       ics: 'Ajouter à mon téléphone (.ics)', print: 'Imprimer / PDF',
-      confirmTitle: 'Réglages à vérifier une fois',
-      confirmBody: 'Le rythme appliqué : semaines paires chez le père, semaines impaires chez la mère, mardi soir chez la mère, et les huit semaines d’été partagées 3 / 3 / 1 / 1. Trois points restent à confirmer, listés ci-dessous.',
-      confirmBtn: 'J’ai vérifié',
-      openPoints: 'Points à confirmer', closePoints: 'Masquer',
-      pt1: 'Petites vacances : la clause est ambiguë et les deux lectures possibles s’écartent de trois jours par période. En faveur de l’alternance du vendredi : la clause reprend la rédaction de la période scolaire et garde donc un seul mécanisme toute l’année. En faveur des semaines civiles entières : c’est la seule lecture qui explique l’heure du dimanche soir mentionnée pour les vacances. Aucune des deux ne s’impose : le rythme se détermine entre parents, et c’est ce choix qu’il faut acter une fois pour toutes. Le réglage permet de comparer les deux.',
-      pt2: 'Vacances d’été : le jugement numérote huit semaines sans dire quand commence la première. Elle démarre ici au premier jour des vacances. Les huit semaines ne couvrent pas toujours tout l’été ; les jours restants suivent l’alternance paire/impaire.',
-      pt3: 'Mardi soir → mercredi 18 h : la règle court jusqu’à l’entrée au collège du plus jeune, sans date précise. Elle s’arrête ici à la rentrée de septembre 2029. À corriger dans les réglages si besoin.',
+      rulesTitle: 'Règles appliquées',
+      r1: 'Semaine paire chez {a}, semaine impaire chez {b}, d’après la numérotation des semaines du calendrier civil.',
+      r2: 'Échange le vendredi à la sortie des classes ({t}). La semaine de garde va du vendredi au vendredi suivant.',
+      r3: 'Du mardi soir, sortie des classes, au mercredi {m} chez {b} — jusqu’à la rentrée de septembre 2029, entrée en 6e du plus jeune.',
+      r4: 'Petites vacances : la même alternance paire / impaire se poursuit, avec le même échange du vendredi.',
+      r5: 'Vacances d’été : huit semaines. Les 1re, 2e, 3e et la 7e chez {a} les années paires, les 4e, 5e, 6e et la 8e chez {b} ; inversement les années impaires. La première semaine démarre au premier jour des vacances ; les jours restants suivent l’alternance des semaines.',
+      r6: 'Week-end de la fête des mères chez {b}, week-end de la fête des pères chez {a}.',
+      r7: 'Dates de vacances : celles de l’académie où résident les enfants — Zone B, Aix-Marseille.',
       projWarn: 'Dates prévisionnelles à partir de septembre 2028',
       projWarnBody: 'Le ministère publie le calendrier scolaire environ trois ans à l’avance. Les dates officielles vont jusqu’à l’été 2028. Au-delà, les vacances sont estimées et signalées « prévisionnel ». L’alternance des semaines paires et impaires, elle, reste exacte.',
       disclaimer: 'Cet outil est une aide à la lecture du planning. En cas de désaccord, seul le jugement fait foi. Dates scolaires : Zone B, académie d’Aix-Marseille (arrêtés du 22 octobre 2025 et du 21 juillet 2026).',
       ruleLine: 'Semaine paire → {a}. Semaine impaire → {b}. Échange le vendredi à la sortie des classes, {t}.',
-      ruleLineCal: 'Semaine paire → {a}. Semaine impaire → {b}. Échange le vendredi en période scolaire, le dimanche soir pendant les petites vacances.',
       ruleExtra: 'Plus : mardi soir → mercredi {m} chez {b}. Vacances d’été partagées en huit semaines.',
-      defaultNote: 'Ce rythme est celui qui s’applique à défaut d’accord différent entre les parents. Un accord écrit entre vous prime sur ce qui est affiché ici : ce calendrier sert alors simplement à le mettre noir sur blanc.',
       privacy: 'Aucun texte du jugement n’est enregistré. Les prénoms et les réglages restent dans ce navigateur et dans le lien que vous partagez. Rien n’est envoyé sur Internet.',
       sTitle: 'Réglages', sSub: 'Le rythme fixé pour la garde alternée.',
       sNameA: 'Nom du père affiché', sNameB: 'Nom de la mère affiché',
@@ -69,11 +68,6 @@
       sMidEndH: 'Entrée au collège du plus jeune enfant.',
       sFete: 'Week-ends fête des mères et fête des pères',
       sFeteOn: 'Appliquer la dérogation',
-      sHolWeeks: 'Petites vacances — lecture des semaines',
-      hwFri: 'Alternance du vendredi qui continue',
-      hwCal: 'Semaines civiles entières, lundi → dimanche',
-      sHolWeeksH: 'Les deux lectures se défendent et l’écart est de trois jours par période. Alternance du vendredi : un seul mécanisme toute l’année, celui de la période scolaire. Semaines civiles entières : l’échange tombe le dimanche soir, ce qui est la seule lecture qui donne un sens à l’heure du dimanche mentionnée pour les vacances. À trancher entre parents, puis à ne plus y revenir.',
-      sHolHand: 'Heure de l’échange pendant les petites vacances',
       sHolStart: 'Début des vacances',
       hsFri: 'Le vendredi, à la sortie des classes',
       hsExact: 'Le samedi, date exacte de l’arrêté',
@@ -115,20 +109,19 @@
       legendVac: 'School holidays', legendToday: 'Today', legendHand: 'handover',
       copy: 'Copy link to share', copied: 'Link copied ✓',
       ics: 'Add to my phone (.ics)', print: 'Print / PDF',
-      confirmTitle: 'Check these settings once',
-      confirmBody: 'The rhythm applied: even weeks with the father, odd weeks with the mother, Tuesday night with the mother, and the eight summer weeks split 3 / 3 / 1 / 1. Three points still need confirming, listed below.',
-      confirmBtn: 'Checked',
-      openPoints: 'Points to confirm', closePoints: 'Hide',
-      pt1: 'Half-term holidays: the clause is ambiguous and the two possible readings differ by three days per holiday. For the Friday alternation: the clause repeats the term-time wording, keeping one mechanism all year. For whole civil weeks: it is the only reading that explains the Sunday evening time named for the holidays. Neither is compelled. The rhythm is for the parents to determine, and that is the choice worth settling once and for all. The setting lets you compare the two.',
-      pt2: 'Summer holidays: the judgment numbers eight weeks without saying when the first one starts. Here it starts on the first day of the holidays. The eight weeks do not always cover the whole summer; any remaining days follow the even/odd alternation.',
-      pt3: 'Tuesday evening → Wednesday 18:00: the rule runs until the youngest starts secondary school, with no date given. It stops here at the September 2029 rentrée. Change it in the settings if that is wrong.',
+      rulesTitle: 'Rules applied',
+      r1: 'Even week with {a}, odd week with {b}, by civil calendar week numbering.',
+      r2: 'Changeover Friday at the end of the school day ({t}). A custody week runs Friday to the following Friday.',
+      r3: 'Tuesday from the end of the school day to Wednesday {m} with {b} — until the September 2029 rentrée, when the youngest starts collège.',
+      r4: 'Half-term holidays: the same even / odd alternation continues, with the same Friday changeover.',
+      r5: 'Summer holidays: eight weeks. The 1st, 2nd, 3rd and 7th with {a} in even years, the 4th, 5th, 6th and 8th with {b}; reversed in odd years. Week one starts on the first day of the holidays; any remaining days follow the week alternation.',
+      r6: 'Mother’s Day weekend with {b}, Father’s Day weekend with {a}.',
+      r7: 'Holiday dates: those of the district where the children live — Zone B, Aix-Marseille.',
       projWarn: 'Projected dates from September 2028 onwards',
       projWarnBody: 'The ministry publishes the school calendar about three years ahead. Official dates run to summer 2028. Beyond that, holidays are estimates and marked “projected”. The even/odd week alternation itself stays exact.',
       disclaimer: 'This tool is a reading aid for the schedule. If there is any disagreement, only the judgment counts. School dates: Zone B, Aix-Marseille district (decrees of 22 October 2025 and 21 July 2026).',
       ruleLine: 'Even week → {a}. Odd week → {b}. Changeover every Friday at the end of school, {t}.',
-      ruleLineCal: 'Even week → {a}. Odd week → {b}. Changeover Friday in term time, Sunday evening during the half-term holidays.',
       ruleExtra: 'Plus: Tuesday evening → Wednesday {m} with {b}. Summer split into eight weeks.',
-      defaultNote: 'This rhythm is the one that applies failing a different agreement between the parents. A written agreement between you takes precedence over what is shown here; the calendar then simply serves to set it down in black and white.',
       privacy: 'No judgment text is stored. The names and settings stay in this browser and in the link you share. Nothing is sent over the internet.',
       sTitle: 'Settings', sSub: 'The rhythm set for shared residence.',
       sNameA: 'Name shown for the father', sNameB: 'Name shown for the mother',
@@ -140,11 +133,6 @@
       sMidEndH: 'The youngest child starting collège.',
       sFete: 'Mother’s Day and Father’s Day weekends',
       sFeteOn: 'Apply the derogation',
-      sHolWeeks: 'Half-term holidays — how weeks are read',
-      hwFri: 'The Friday rotation continues',
-      hwCal: 'Whole civil weeks, Monday → Sunday',
-      sHolWeeksH: 'Both readings are defensible and three days per holiday separate them. Friday rotation: one mechanism all year, the term-time one. Whole civil weeks: the changeover falls on Sunday evening, which is the only reading that gives the Sunday time named for the holidays any meaning. To be settled between the parents, then left alone.',
-      sHolHand: 'Handover time during half-term holidays',
       sHolStart: 'Holidays begin',
       hsFri: 'Friday, at the end of the school day',
       hsExact: 'Saturday, the literal date in the decree',
@@ -260,7 +248,6 @@
     $('#copyBtn').textContent = t('copy');
     $('#icsBtn').textContent = t('ics');
     $('#printBtn').textContent = t('print');
-    $('#defaultNote').textContent = t('defaultNote');
     $('#disclaimer').textContent = t('disclaimer');
     $('#privacy').textContent = t('privacy');
     $('#tabMonth').setAttribute('aria-pressed', String(view === 'month'));
@@ -268,12 +255,10 @@
     $('#tabHol').setAttribute('aria-pressed', String(view === 'hol'));
 
     $('#ruleLine').innerHTML =
-      '<strong>' + esc(cfg.holidayWeeks === 'calendar'
-        ? t('ruleLineCal', { a: nameOf('A'), b: nameOf('B') })
-        : t('ruleLine', { a: nameOf('A'), b: nameOf('B'), t: cfg.time })) + '</strong>' +
+      '<strong>' + esc(t('ruleLine', { a: nameOf('A'), b: nameOf('B'), t: cfg.time })) + '</strong>' +
       (cfg.midweek ? ' <span class="rx">' + esc(t('ruleExtra', { b: nameOf('B'), m: cfg.midweekReturn })) + '</span>' : '');
 
-    renderConfirm();
+    renderRules();
     renderHero();
     renderUpcoming();
     renderProjWarn();
@@ -295,25 +280,16 @@
     renderLegend();
   }
 
-  function renderConfirm() {
-    const b = $('#confirmBanner');
-    if (cfg.confirmed && !showPoints) {
-      b.innerHTML = `<div>ℹ</div><div><button class="btn small" id="pointsBtn">${esc(t('openPoints'))}</button></div>`;
-      b.classList.remove('hidden');
-      $('#pointsBtn').onclick = () => { showPoints = true; render(); };
-      return;
-    }
-    b.classList.remove('hidden');
-    const pts = `<ul class="pts"><li>${esc(t('pt1'))}</li><li>${esc(t('pt2'))}</li><li>${esc(t('pt3'))}</li></ul>`;
-    b.innerHTML = `<div>⚠</div><div><strong>${esc(t('confirmTitle'))}</strong>${esc(t('confirmBody'))}
-      ${showPoints ? pts : ''}
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        ${cfg.confirmed ? '' : `<button class="btn small" id="confirmBtn">${esc(t('confirmBtn'))}</button>`}
-        <button class="btn small" id="pointsBtn">${esc(showPoints ? t('closePoints') : t('openPoints'))}</button>
-      </div></div>`;
-    const c = $('#confirmBtn');
-    if (c) c.onclick = () => { cfg.confirmed = true; saveCfg(); render(); };
-    $('#pointsBtn').onclick = () => { showPoints = !showPoints; render(); };
+  function renderRules() {
+    const v = { a: nameOf('A'), b: nameOf('B'), t: cfg.time, m: cfg.midweekReturn };
+    const items = ['r1', 'r2'];
+    if (cfg.midweek) items.push('r3');
+    items.push('r4', 'r5');
+    if (cfg.feteDerogation) items.push('r6');
+    items.push('r7');
+    $('#rulesBox').innerHTML =
+      `<summary>${esc(t('rulesTitle'))}</summary><ul>` +
+      items.map((k) => `<li>${esc(t(k, v))}</li>`).join('') + '</ul>';
   }
 
   function renderProjWarn() {
@@ -570,12 +546,6 @@
         <label style="display:flex;gap:9px;align-items:center;font-weight:600">
           <input type="checkbox" id="fFete" ${cfg.feteDerogation ? 'checked' : ''}> ${esc(t('sFeteOn'))}</label></div>
 
-      <div class="field"><label for="fHW">${esc(t('sHolWeeks'))}</label>
-        <select id="fHW">${opt('calendar', t('hwCal'), cfg.holidayWeeks)}${opt('friday', t('hwFri'), cfg.holidayWeeks)}</select>
-        <div class="help">${esc(t('sHolWeeksH'))}</div>
-        <label for="fHH" style="font-size:.84rem;font-weight:600;margin-top:9px;display:block">${esc(t('sHolHand'))}</label>
-        <input type="time" id="fHH" value="${esc(cfg.holidayHandover)}"></div>
-
       <div class="field"><label for="fHS">${esc(t('sHolStart'))}</label>
         <select id="fHS">${opt('fri', t('hsFri'), cfg.holStart)}${opt('exact', t('hsExact'), cfg.holStart)}</select></div>
 
@@ -601,8 +571,6 @@
       cfg.midweekEnd = $('#fMidEnd').value || E.DEFAULTS.midweekEnd;
       cfg.midweekReturn = $('#fMidRet').value || '18:00';
       cfg.feteDerogation = $('#fFete').checked;
-      cfg.holidayWeeks = $('#fHW').value;
-      cfg.holidayHandover = $('#fHH').value || '18:00';
       cfg.holStart = $('#fHS').value;
       saveCfg(); rebuild(); closeSettings(); render();
     };
