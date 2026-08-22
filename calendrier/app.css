@@ -214,6 +214,8 @@ button { font: inherit; cursor: pointer; }
 .drawer .sub { color: var(--muted); font-size: .88rem; margin-bottom: 18px; }
 .field { margin-bottom: 17px; }
 .field > label { display: block; font-weight: 700; font-size: .88rem; margin-bottom: 6px; }
+.field .locked { font-size: .84rem; color: var(--muted); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; line-height: 1.5; }
 .field .help { font-size: .8rem; color: var(--muted); margin-top: 5px; }
 .field input[type=text], .field input[type=date], .field input[type=time], .field select {
   width: 100%; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 10px;

@@ -27,7 +27,7 @@
       until: 'jusqu’au {d} à {t}',
       next: 'Prochains échanges', handoverTo: 'passage chez {n}',
       month: 'Mois', year: 'Année', hol: 'Vacances',
-      settings: 'Réglages', todayBtn: 'Aujourd’hui',
+      settings: 'Prénoms', todayBtn: 'Aujourd’hui',
       schoolYear: 'Année scolaire {y}',
       dows: ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
       months: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
@@ -58,7 +58,8 @@
       ruleLine: 'Semaine paire → {a}. Semaine impaire → {b}. Échange le vendredi — {t} à la sortie des classes, {h} pendant les vacances.',
       ruleExtra: 'Plus : mardi soir → mercredi {m} chez {b}. Vacances d’été partagées en huit semaines.',
       privacy: 'Aucun texte du jugement n’est enregistré. Les prénoms et les réglages restent dans ce navigateur et dans le lien que vous partagez. Rien n’est envoyé sur Internet.',
-      sTitle: 'Réglages', sSub: 'Le rythme fixé pour la garde alternée.',
+      sTitle: 'Prénoms affichés', sSub: 'Seuls les prénoms sont modifiables.',
+      sLocked: 'Le rythme, les dates et les heures sont fixés et ne peuvent pas être modifiés depuis cette page : semaines paires et impaires, échange du vendredi, mardi soir chez la mère, huit semaines d’été, week-ends de la fête des mères et de la fête des pères. Ils figurent sous « Règles appliquées ».',
       sNameA: 'Nom du père affiché', sNameB: 'Nom de la mère affiché',
       sEven: 'Les semaines paires sont chez',
       sEvenH: 'Le caractère pair ou impair suit la numérotation des semaines du calendrier civil.',
@@ -93,7 +94,7 @@
       until: 'until {d} at {t}',
       next: 'Next handovers', handoverTo: 'moves to {n}',
       month: 'Month', year: 'Year', hol: 'Holidays',
-      settings: 'Settings', todayBtn: 'Today',
+      settings: 'Names', todayBtn: 'Today',
       schoolYear: 'School year {y}',
       dows: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
       months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
@@ -124,7 +125,8 @@
       ruleLine: 'Even week → {a}. Odd week → {b}. Changeover on Friday — {t} at the end of school, {h} during the holidays.',
       ruleExtra: 'Plus: Tuesday evening → Wednesday {m} with {b}. Summer split into eight weeks.',
       privacy: 'No judgment text is stored. The names and settings stay in this browser and in the link you share. Nothing is sent over the internet.',
-      sTitle: 'Settings', sSub: 'The rhythm set for shared residence.',
+      sTitle: 'Display names', sSub: 'Only the names can be changed.',
+      sLocked: 'The rhythm, the dates and the times are fixed and cannot be changed from this page: even and odd weeks, the Friday changeover, Tuesday night with the mother, the eight summer weeks, and the Mother’s and Father’s Day weekends. They are set out under “Rules applied”.',
       sNameA: 'Name shown for the father', sNameB: 'Name shown for the mother',
       sEven: 'Even weeks are with',
       sEvenH: 'Even and odd follow the civil calendar week numbering.',
@@ -177,17 +179,32 @@
   }
   const initialOf = (p) => nameOf(p).trim().charAt(0).toUpperCase();
 
+  /**
+   * Only the display names are taken from a stored or shared config. Every
+   * value that decides a date or an allocation comes from Engine.DEFAULTS, so
+   * neither an edited link nor stale browser storage can shift the schedule.
+   */
+  // A function declaration, not a const: loadCfg runs while the module body is
+  // still executing, and a const would still be uninitialised at that point.
+  function namesOnly(o) {
+    return {
+      ...E.DEFAULTS,
+      ...(typeof o.a === 'string' && o.a.trim() ? { a: o.a.trim().slice(0, 40) } : {}),
+      ...(typeof o.b === 'string' && o.b.trim() ? { b: o.b.trim().slice(0, 40) } : {}),
+    };
+  }
+
   function loadCfg() {
     const hash = location.hash.match(/cfg=([A-Za-z0-9_-]+)/);
     if (hash) {
       try {
-        const json = decodeURIComponent(escape(atob(hash[1].replace(/-/g, '+').replace(/_/g, '/'))));
-        return { ...E.DEFAULTS, ...JSON.parse(json) };
+        return namesOnly(JSON.parse(
+          decodeURIComponent(escape(atob(hash[1].replace(/-/g, '+').replace(/_/g, '/'))))));
       } catch (e) { /* fall through */ }
     }
     try {
       const raw = localStorage.getItem(STORE_KEY);
-      if (raw) return { ...E.DEFAULTS, ...JSON.parse(raw) };
+      if (raw) return namesOnly(JSON.parse(raw));
     } catch (e) {}
     return { ...E.DEFAULTS };
   }
@@ -528,38 +545,22 @@
   }
 
   /* ------------------------------ settings ------------------------------ */
+  /**
+   * The drawer holds the display names and nothing else. Every value that
+   * decides a date or an allocation is fixed in Engine.DEFAULTS, so the
+   * calendar cannot be altered from the page.
+   */
   function openSettings() {
     const s = $('#drawer');
-    const opt = (v, l, c) => `<option value="${v}" ${String(c) === String(v) ? 'selected' : ''}>${esc(l)}</option>`;
     s.innerHTML = `
       <h2>${esc(t('sTitle'))}</h2><div class="sub">${esc(t('sSub'))}</div>
 
-      <div class="field"><label for="fA">${esc(t('sNameA'))}</label><input type="text" id="fA" value="${esc(IS_DEFAULT_NAME(cfg.a,'A') ? '' : cfg.a)}" placeholder="${esc(DEFAULT_NAMES[lang].A)}"></div>
-      <div class="field"><label for="fB">${esc(t('sNameB'))}</label><input type="text" id="fB" value="${esc(IS_DEFAULT_NAME(cfg.b,'B') ? '' : cfg.b)}" placeholder="${esc(DEFAULT_NAMES[lang].B)}"></div>
+      <div class="field"><label for="fA">${esc(t('sNameA'))}</label>
+        <input type="text" id="fA" value="${esc(IS_DEFAULT_NAME(cfg.a, 'A') ? '' : cfg.a)}" placeholder="${esc(DEFAULT_NAMES[lang].A)}"></div>
+      <div class="field"><label for="fB">${esc(t('sNameB'))}</label>
+        <input type="text" id="fB" value="${esc(IS_DEFAULT_NAME(cfg.b, 'B') ? '' : cfg.b)}" placeholder="${esc(DEFAULT_NAMES[lang].B)}"></div>
 
-      <div class="field"><label for="fEven">${esc(t('sEven'))}</label>
-        <select id="fEven">${opt('A', nameOf('A'), cfg.evenWeekParent)}${opt('B', nameOf('B'), cfg.evenWeekParent)}</select>
-        <div class="help">${esc(t('sEvenH'))}</div></div>
-
-      <div class="field"><label for="fTime">${esc(t('sTime'))}</label><input type="time" id="fTime" value="${esc(cfg.time)}">
-        <label for="fHH" style="font-size:.84rem;font-weight:600;margin-top:9px;display:block">${esc(t('sHolHour'))}</label>
-        <input type="time" id="fHH" value="${esc(cfg.holidayHandover)}"></div>
-
-      <div class="field"><label>${esc(t('sMid'))}</label>
-        <label style="display:flex;gap:9px;align-items:center;font-weight:600;margin-bottom:8px">
-          <input type="checkbox" id="fMid" ${cfg.midweek ? 'checked' : ''}> ${esc(t('sMidOn'))}</label>
-        <label for="fMidEnd" style="font-size:.84rem;font-weight:600">${esc(t('sMidEnd'))}</label>
-        <input type="date" id="fMidEnd" value="${esc(cfg.midweekEnd)}" min="${RANGE_FROM}" max="${RANGE_TO}">
-        <div class="help" id="midEcho">${esc(cap(fmtFull(D(cfg.midweekEnd))))} · ${esc(t('sMidEndH'))}</div>
-        <label for="fMidRet" style="font-size:.84rem;font-weight:600;margin-top:9px;display:block">${esc(t('sMidRet'))}</label>
-        <input type="time" id="fMidRet" value="${esc(cfg.midweekReturn)}"></div>
-
-      <div class="field"><label>${esc(t('sFete'))}</label>
-        <label style="display:flex;gap:9px;align-items:center;font-weight:600">
-          <input type="checkbox" id="fFete" ${cfg.feteDerogation ? 'checked' : ''}> ${esc(t('sFeteOn'))}</label></div>
-
-      <div class="field"><label for="fHS">${esc(t('sHolStart'))}</label>
-        <select id="fHS">${opt('fri', t('hsFri'), cfg.holStart)}${opt('exact', t('hsExact'), cfg.holStart)}</select></div>
+      <div class="field"><div class="locked">${esc(t('sLocked'))}</div></div>
 
       <div class="actions">
         <button class="btn primary" id="fSave">${esc(t('save'))}</button>
@@ -569,22 +570,15 @@
       </div>`;
     s.classList.remove('hidden'); $('#scrim').classList.remove('hidden');
 
-    $('#fMidEnd').oninput = (e) => {
-      if (e.target.value) $('#midEcho').textContent = cap(fmtFull(D(e.target.value))) + ' · ' + t('sMidEndH');
-    };
     $('#fClose').onclick = closeSettings;
-    $('#fReset').onclick = () => { cfg = { ...E.DEFAULTS }; saveCfg(); rebuild(); closeSettings(); render(); };
+    $('#fReset').onclick = () => {
+      cfg = { ...E.DEFAULTS };
+      saveCfg(); rebuild(); closeSettings(); render();
+    };
     $('#fSave').onclick = () => {
-      cfg.a = $('#fA').value.trim() || DEFAULT_NAMES.fr.A;
-      cfg.b = $('#fB').value.trim() || DEFAULT_NAMES.fr.B;
-      cfg.evenWeekParent = $('#fEven').value;
-      cfg.time = $('#fTime').value || '16:30';
-      cfg.holidayHandover = $('#fHH').value || '18:00';
-      cfg.midweek = $('#fMid').checked;
-      cfg.midweekEnd = $('#fMidEnd').value || E.DEFAULTS.midweekEnd;
-      cfg.midweekReturn = $('#fMidRet').value || '18:00';
-      cfg.feteDerogation = $('#fFete').checked;
-      cfg.holStart = $('#fHS').value;
+      cfg = { ...E.DEFAULTS,
+        a: $('#fA').value.trim() || DEFAULT_NAMES.fr.A,
+        b: $('#fB').value.trim() || DEFAULT_NAMES.fr.B };
       saveCfg(); rebuild(); closeSettings(); render();
     };
   }
@@ -592,7 +586,8 @@
 
   /* ------------------------------- sharing ------------------------------ */
   const shareLink = () => location.origin + location.pathname + '#cfg=' +
-    btoa(unescape(encodeURIComponent(JSON.stringify(cfg)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    btoa(unescape(encodeURIComponent(JSON.stringify({ a: cfg.a, b: cfg.b }))))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
   function buildIcs() {
     const to = ISO(new Date(Date.UTC(new Date().getUTCFullYear() + 5, 11, 31)));
