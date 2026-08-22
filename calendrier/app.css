@@ -185,6 +185,7 @@ button { font: inherit; cursor: pointer; }
 
 .tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 22px 0; }
 .note { font-size: .84rem; color: var(--muted); margin-top: 18px; }
+.note.lead { font-size: .92rem; color: var(--ink); border-left: 3px solid var(--line-2); padding-left: 13px; }
 .note a { color: inherit; }
 
 /* -------------------------------- drawer ------------------------------- */
