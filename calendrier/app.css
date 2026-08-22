@@ -167,6 +167,11 @@ button { font: inherit; cursor: pointer; }
 .halfbox.pB { background: var(--b-soft); border-color: var(--b-edge); color: var(--b-ink); }
 .halfbox b { display: block; font-size: .74rem; text-transform: uppercase; letter-spacing: .07em; opacity: .8; }
 .halfbox .nm { font-weight: 800; font-size: 1.02rem; }
+.bal-card { border-color: var(--line-2); }
+.balrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.balrow .ball { font-size: .84rem; font-weight: 700; color: var(--muted); min-width: 140px; }
+.halfbox.bal { padding: 5px 11px; font-size: .88rem; }
+.halfbox.bal b { display: inline; font-size: .95rem; text-transform: none; letter-spacing: 0; opacity: 1; }
 .pill { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-edge); }
 .pill.ok { background: transparent; color: var(--muted); border-color: var(--line-2); }
 

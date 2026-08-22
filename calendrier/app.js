@@ -48,7 +48,7 @@
       confirmBody: 'Le rythme appliqué : semaines paires chez le père, semaines impaires chez la mère, mardi soir chez la mère, et les huit semaines d’été partagées 3 / 3 / 1 / 1. Trois points restent à confirmer, listés ci-dessous.',
       confirmBtn: 'J’ai vérifié',
       openPoints: 'Points à confirmer', closePoints: 'Masquer',
-      pt1: 'Petites vacances : la clause mentionne à la fois une alternance par semaines paires et impaires et un retour le dimanche à 18 heures, ce qui ne s’accorde pas avec des semaines complètes. C’est l’alternance par semaine entière, paire/impaire, qui est appliquée ici.',
+      pt1: 'Petites vacances : deux lectures sont possibles. (1) Semaines civiles entières — on lit le numéro de semaine sur le calendrier, l’échange tombe le dimanche soir ; c’est ce qui donne un sens à la mention « dimanche 18 heures » du jugement. (2) L’alternance du vendredi se poursuit comme en période scolaire. Les deux sont défendables et l’écart est de trois jours par période. La lecture retenue est indiquée dans les réglages.',
       pt2: 'Vacances d’été : le jugement numérote huit semaines sans dire quand commence la première. Elle démarre ici au premier jour des vacances. Les huit semaines ne couvrent pas toujours tout l’été ; les jours restants suivent l’alternance paire/impaire.',
       pt3: 'Mardi soir → mercredi 18 h : la règle court jusqu’à l’entrée au collège du plus jeune, sans date précise. Elle s’arrête ici à la rentrée de septembre 2029. À corriger dans les réglages si besoin.',
       projWarn: 'Dates prévisionnelles à partir de septembre 2028',
@@ -65,12 +65,21 @@
       sMidEndH: 'Entrée au collège du plus jeune enfant.',
       sFete: 'Week-ends fête des mères et fête des pères',
       sFeteOn: 'Appliquer la dérogation',
+      sHolWeeks: 'Petites vacances — lecture des semaines',
+      hwCal: 'Semaines civiles entières (lundi → dimanche)',
+      hwFri: 'Alternance du vendredi qui continue',
+      sHolWeeksH: 'Semaines civiles : on lit le numéro de semaine du calendrier, l’échange tombe le dimanche soir. Alternance du vendredi : le rythme de la période scolaire se poursuit sans changement.',
+      sHolHand: 'Heure de l’échange pendant les petites vacances',
       sHolStart: 'Début des vacances',
       hsFri: 'Le vendredi, à la sortie des classes',
       hsExact: 'Le samedi, date exacte de l’arrêté',
       save: 'Enregistrer', reset: 'Réinitialiser', close: 'Fermer',
       days: '{n} jours', day1: '1 jour', weeks: '{n} semaines',
       beforeStart: 'Avant le début du calendrier',
+      holBalance: 'Bilan des vacances · {y}',
+      holSmall: 'Petites vacances', holAll: 'Toutes les vacances',
+      holEqual: 'à égalité', holGap: 'écart de {n} j',
+      dcount: '{n} j',
       nightsTitle: 'Répartition des nuits',
       nightsBody: '{a} : {na} nuits ({pa} %) · {b} : {nb} nuits ({pb} %) sur {y}',
     },
@@ -101,7 +110,7 @@
       confirmBody: 'The rhythm applied: even weeks with the father, odd weeks with the mother, Tuesday night with the mother, and the eight summer weeks split 3 / 3 / 1 / 1. Three points still need confirming, listed below.',
       confirmBtn: 'Checked',
       openPoints: 'Points to confirm', closePoints: 'Hide',
-      pt1: 'Half-term holidays: the clause refers both to an even/odd week alternation and to a return on Sunday at 18:00, which does not fit whole weeks. Whole-week even/odd alternation is what is applied here.',
+      pt1: 'Half-term holidays: two readings are possible. (1) Whole civil weeks — read the week number off a calendar, with the handover on Sunday evening; this is what makes the judgment’s reference to “Sunday 18:00” meaningful. (2) The Friday rotation carries on as in term time. Both are defensible and the difference is three days per holiday. The reading in use is shown in the settings.',
       pt2: 'Summer holidays: the judgment numbers eight weeks without saying when the first one starts. Here it starts on the first day of the holidays. The eight weeks do not always cover the whole summer; any remaining days follow the even/odd alternation.',
       pt3: 'Tuesday evening → Wednesday 18:00: the rule runs until the youngest starts secondary school, with no date given. It stops here at the September 2029 rentrée. Change it in the settings if that is wrong.',
       projWarn: 'Projected dates from September 2028 onwards',
@@ -118,12 +127,21 @@
       sMidEndH: 'The youngest child starting collège.',
       sFete: 'Mother’s Day and Father’s Day weekends',
       sFeteOn: 'Apply the derogation',
+      sHolWeeks: 'Half-term holidays — how weeks are read',
+      hwCal: 'Whole civil weeks (Monday → Sunday)',
+      hwFri: 'The Friday rotation simply continues',
+      sHolWeeksH: 'Civil weeks: read the week number straight off a calendar, with the handover on Sunday evening. Friday rotation: the term-time rhythm carries on unchanged.',
+      sHolHand: 'Handover time during half-term holidays',
       sHolStart: 'Holidays begin',
       hsFri: 'Friday, at the end of the school day',
       hsExact: 'Saturday, the literal date in the decree',
       save: 'Save', reset: 'Reset', close: 'Close',
       days: '{n} days', day1: '1 day', weeks: '{n} weeks',
       beforeStart: 'Before the calendar starts',
+      holBalance: 'Holiday balance · {y}',
+      holSmall: 'Half-term holidays', holAll: 'All holidays',
+      holEqual: 'level', holGap: '{n}-day gap',
+      dcount: '{n} d',
       nightsTitle: 'Split of nights',
       nightsBody: '{a}: {na} nights ({pa}%) · {b}: {nb} nights ({pb}%) over {y}',
     },
@@ -190,6 +208,8 @@
     if (d.src === 'midweek') return cfg.time;
     const prev = plan.get(ISO(addDays(d.date, -1)));
     if (prev && prev.src === 'midweek') return cfg.midweekReturn;
+    // Whole-civil-week holidays change over on Sunday evening, not Friday.
+    if (d.src === 'holiday-cal' && d.date.getUTCDay() === 1) return cfg.holidayHandover;
     return cfg.time;
   }
 
@@ -405,18 +425,51 @@
     return dt.getUTCMonth() >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`;
   };
 
+  /** Days held by each parent inside one period. */
+  function countPeriod(p) {
+    let a = 0, b = 0;
+    for (let dt = p.start; dt <= p.last; dt = addDays(dt, 1)) {
+      const d = plan.get(ISO(dt));
+      if (d) (d.parent === 'A' ? a++ : b++);
+    }
+    return { a, b };
+  }
+
+  function balanceCard(sy, periods) {
+    const small = { a: 0, b: 0 }, all = { a: 0, b: 0 };
+    for (const p of periods) {
+      const c = countPeriod(p);
+      all.a += c.a; all.b += c.b;
+      if (p.key !== 'ete' && p.key !== 'ascension') { small.a += c.a; small.b += c.b; }
+    }
+    const line = (label, c) => {
+      const gap = Math.abs(c.a - c.b);
+      return `<div class="balrow"><span class="ball">${esc(label)}</span>
+        <span class="halfbox pA bal">${esc(nameOf('A'))} <b>${esc(t('dcount', { n: c.a }))}</b></span>
+        <span class="halfbox pB bal">${esc(nameOf('B'))} <b>${esc(t('dcount', { n: c.b }))}</b></span>
+        <span class="pill ${gap === 0 ? 'ok' : ''}">${esc(gap === 0 ? t('holEqual') : t('holGap', { n: gap }))}</span></div>`;
+    };
+    const box = document.createElement('div'); box.className = 'vrow bal-card';
+    box.innerHTML = `<h3>${esc(t('holBalance', { y: sy }))}</h3>
+      ${line(t('holSmall'), small)}${line(t('holAll'), all)}`;
+    return box;
+  }
+
   function holView(sy) {
     const wrap = document.createElement('div'); wrap.className = 'vlist';
     const periods = E.periodsFor(cfg, RANGE_FROM, RANGE_TO).filter((p) => p.sy === sy);
     if (!periods.length) { wrap.innerHTML = '<div class="vrow">—</div>'; return wrap; }
+    wrap.appendChild(balanceCard(sy, periods));
 
     for (const p of periods) {
       const total = dayDiff(p.start, p.last) + 1;
       const inner = E.blocks(new Map([...plan].filter(([k]) => k >= ISO(p.start) && k <= ISO(p.last))));
       const row = document.createElement('div'); row.className = 'vrow';
+      const c = countPeriod(p);
       row.innerHTML = `<h3>${esc(L().vac[p.key])}
           <span class="pill ${isProjected(p) ? '' : 'ok'}">${esc(isProjected(p) ? t('projected') : t('official'))}</span></h3>
-        <div class="dates">${esc(cap(fmtLong(p.start)))} → ${esc(cap(fmtLong(p.last)))} · ${esc(t('days', { n: total }))}</div>
+        <div class="dates">${esc(cap(fmtLong(p.start)))} → ${esc(cap(fmtLong(p.last)))} · ${esc(t('days', { n: total }))}
+          &nbsp;·&nbsp; <b>${esc(nameOf('A'))} ${esc(t('dcount', { n: c.a }))}</b> · <b>${esc(nameOf('B'))} ${esc(t('dcount', { n: c.b }))}</b></div>
         <div class="halves">` + inner.map((b) => {
           const label = b.src === 'summer'
             ? t('rSummer', { w: b.summerWk }) + (b.days > 7 ? ` – ${b.summerWk + Math.round(b.days / 7) - 1}` : '')
@@ -469,6 +522,12 @@
         <label style="display:flex;gap:9px;align-items:center;font-weight:600">
           <input type="checkbox" id="fFete" ${cfg.feteDerogation ? 'checked' : ''}> ${esc(t('sFeteOn'))}</label></div>
 
+      <div class="field"><label for="fHW">${esc(t('sHolWeeks'))}</label>
+        <select id="fHW">${opt('calendar', t('hwCal'), cfg.holidayWeeks)}${opt('friday', t('hwFri'), cfg.holidayWeeks)}</select>
+        <div class="help">${esc(t('sHolWeeksH'))}</div>
+        <label for="fHH" style="font-size:.84rem;font-weight:600;margin-top:9px;display:block">${esc(t('sHolHand'))}</label>
+        <input type="time" id="fHH" value="${esc(cfg.holidayHandover)}"></div>
+
       <div class="field"><label for="fHS">${esc(t('sHolStart'))}</label>
         <select id="fHS">${opt('fri', t('hsFri'), cfg.holStart)}${opt('exact', t('hsExact'), cfg.holStart)}</select></div>
 
@@ -494,6 +553,8 @@
       cfg.midweekEnd = $('#fMidEnd').value || E.DEFAULTS.midweekEnd;
       cfg.midweekReturn = $('#fMidRet').value || '18:00';
       cfg.feteDerogation = $('#fFete').checked;
+      cfg.holidayWeeks = $('#fHW').value;
+      cfg.holidayHandover = $('#fHH').value || '18:00';
       cfg.holStart = $('#fHS').value;
       saveCfg(); rebuild(); closeSettings(); render();
     };

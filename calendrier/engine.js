@@ -55,6 +55,14 @@ const DEFAULTS = {
   // Each parent takes the Mother's/Father's Day weekend that concerns them.
   feteDerogation: true,
 
+  // How the even/odd label is read during the half-term holidays:
+  //   'friday'   — the Friday-to-Friday block keeps running, labelled by the
+  //                week holding its Monday-to-Thursday (same as term time)
+  //   'calendar' — whole Monday-to-Sunday civil weeks by their own number,
+  //                so handovers fall on Sunday rather than Friday
+  holidayWeeks: 'calendar',
+  holidayHandover: '18:00',
+
   time: '16:30',            // Friday handover, at the end of the school day
   holStart: 'fri',          // holidays begin Friday at the end of the school day
   confirmed: false,
@@ -63,6 +71,10 @@ const DEFAULTS = {
 /* The summer sequence for an EVEN year, one entry per holiday week 1..8.
    Odd years are the mirror image. 3 / 3 / 1 / 1. */
 const SUMMER_EVEN = ['A', 'A', 'A', 'B', 'B', 'B', 'A', 'B'];
+
+/* The four "petites vacances". The Ascension bridge is a long weekend rather
+   than a holiday period, so the ordinary Friday rotation runs through it. */
+const PETITES = new Set(['toussaint', 'noel', 'hiver', 'printemps']);
 
 /* ---------------------------- calendar helpers -------------------------- */
 
@@ -186,6 +198,11 @@ function plan(cfg, fromISO, toISO) {
                (!midweekEnd || dt < midweekEnd)) {
       // Tuesday night at the mother's, term time only.
       parent = cfg.midweekParent; src = 'midweek';
+    } else if (period && PETITES.has(period.key) && cfg.holidayWeeks === 'calendar') {
+      // Whole civil weeks, read straight off a calendar.
+      const w = isoWeek(dt);
+      parent = w % 2 === 0 ? cfg.evenWeekParent : other(cfg.evenWeekParent);
+      src = 'holiday-cal';
     } else {
       parent = weekParityParent(dt, cfg);
       src = period ? (isSummer ? 'summer-tail' : 'holiday-week') : 'term-week';
@@ -199,7 +216,8 @@ function plan(cfg, fromISO, toISO) {
 
     const day = {
       date: dt, iso, parent, src, period, summerWk, note,
-      week: custodyWeek(dt),
+      week: (period && PETITES.has(period.key) && cfg.holidayWeeks === 'calendar')
+        ? isoWeek(dt) : custodyWeek(dt),
       ferie: feries[iso] || null,
       isHandover: prev !== null && prev.parent !== parent,
       from: prev ? prev.parent : null,
