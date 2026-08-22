@@ -80,6 +80,8 @@
       longTitle: 'Périodes longues à anticiper',
       longBody: 'Une même période de {n} jours d’affilée chez le même parent. Cela vient de la numérotation civile des semaines et non d’une décision : certaines années comptent 53 semaines, et deux semaines impaires se suivent alors. À regarder à l’avance plutôt qu’en décembre.',
       longNone: 'Aucune période de plus de 9 jours cette année.',
+      ferHandTitle: 'Échange tombant un jour férié',
+      ferHandBody: 'L’échange tombe ce jour-là parce que c’est un vendredi, pas par choix. À convenir à l’avance plutôt que le jour même.',
       holBalance: 'Bilan des vacances · {y}',
       holSmall: 'Petites vacances', holAll: 'Toutes les vacances',
       holEqual: 'à égalité', holGap: 'écart de {n} j',
@@ -146,6 +148,8 @@
       longTitle: 'Long stretches worth planning for',
       longBody: 'A single run of {n} days with the same parent. This comes from civil week numbering rather than from any decision: some years have 53 weeks, and two odd weeks then fall back to back. Better looked at in advance than in December.',
       longNone: 'No stretch longer than 9 days this year.',
+      ferHandTitle: 'Handover falling on a public holiday',
+      ferHandBody: 'The changeover lands there because it is a Friday, not by choice. Worth agreeing in advance rather than on the day itself.',
       holBalance: 'Holiday balance · {y}',
       holSmall: 'Half-term holidays', holAll: 'All holidays',
       holEqual: 'level', holGap: '{n}-day gap',
@@ -467,6 +471,16 @@
     const y0 = Number(sy.slice(0, 4));
     const span = new Map([...plan].filter(([k]) => k >= `${y0}-09-01` && k < `${y0 + 1}-09-01`));
     const longs = E.blocks(span).filter((b) => b.days >= 10);
+    // A changeover landing on Christmas Day or another holiday is the classic
+    // avoidable row. Name it months ahead.
+    const ferHand = [...span.values()].filter((d) => d.isHandover && d.ferie);
+    if (ferHand.length) {
+      box.innerHTML += `<div class="longwarn"><strong>${esc(t('ferHandTitle'))}</strong>` +
+        ferHand.map((d) => `<div class="longrow">
+          <span class="halfbox p${d.parent} bal">${esc(nameOf(d.parent))} <b>${esc(handoverTime(d))}</b></span>
+          <span>${esc(cap(fmtLong(d.date)))} — ${esc(L().fer[d.ferie])}</span></div>`).join('') +
+        `<div class="longnote">${esc(t('ferHandBody'))}</div></div>`;
+    }
     if (longs.length) {
       box.innerHTML += `<div class="longwarn"><strong>${esc(t('longTitle'))}</strong>` +
         longs.map((b) => `<div class="longrow">
