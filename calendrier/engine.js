@@ -64,6 +64,12 @@ const DEFAULTS = {
   //                so handovers fall on Sunday rather than Friday. Offered
   //                for comparison; it is the whole-week formulation that was
   //                requested but not retained.
+  // 'monday' — the eight summer weeks are civil weeks, so week one starts on
+  //            the first Monday of the break and the changeovers fall on the
+  //            week boundary.
+  // 'start'  — week one starts on the first day of the break.
+  summerAnchor: 'monday',
+
   holidayWeeks: 'friday',
   holidayHandover: '18:00',
 
@@ -167,11 +173,15 @@ function weekParityParent(dt, cfg) {
  * In a summer shorter than eight weeks the sequence is simply cut short.
  */
 function summerWeek(dt, period) {
-  const n = dayDiff(period.start, dt);
-  if (n < 0) return 0;
+  const anchor = cfgSummerAnchor === 'monday'
+    ? onOrAfterWeekday(period.start, 1)   // first Monday: the weeks are civil weeks
+    : period.start;                       // the first day of the holidays
+  const n = dayDiff(anchor, dt);
+  if (n < 0) return 0;                    // days before week one follow the alternation
   const w = Math.floor(n / 7) + 1;
-  return w <= 8 ? w : 8;
+  return w <= 8 ? w : 8;                  // the eighth week runs to the end of the break
 }
+let cfgSummerAnchor = 'monday';
 
 function summerParent(week, year, cfg) {
   const seq = SUMMER_EVEN[week - 1];
@@ -185,6 +195,7 @@ function summerParent(week, year, cfg) {
  * @returns Map<iso, {date,iso,parent,src,period,summerWk,week,ferie,isHandover,from,note}>
  */
 function plan(cfg, fromISO, toISO) {
+  cfgSummerAnchor = cfg.summerAnchor || 'monday';
   const from = D(fromISO), to = D(toISO);
   const periods = periodsFor(cfg, fromISO, toISO);
   const feries = window.Vacances.feriesBetween(fromISO, toISO);
