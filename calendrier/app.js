@@ -46,7 +46,7 @@
       ics: 'Ajouter à mon téléphone (.ics)', print: 'Imprimer / PDF',
       rulesTitle: 'Règles appliquées',
       r1: 'Semaine paire chez {a}, semaine impaire chez {b}, d’après la numérotation des semaines du calendrier civil.',
-      r2: 'Échange le vendredi à la sortie des classes ({t}). La semaine de garde va du vendredi au vendredi suivant.',
+      r2: 'Échange le vendredi : à la sortie des classes en période scolaire ({t}), à {h} pendant les vacances, puisqu’il n’y a pas de classe. La semaine de garde va du vendredi au vendredi suivant.',
       r3: 'Du mardi soir, sortie des classes, au mercredi {m} chez {b} — jusqu’à la rentrée de septembre 2029, entrée en 6e du plus jeune.',
       r4: 'Petites vacances : la même alternance paire / impaire se poursuit, avec le même échange du vendredi.',
       r5: 'Vacances d’été : huit semaines. Les 1re, 2e, 3e et la 7e chez {a} les années paires, les 4e, 5e, 6e et la 8e chez {b} ; inversement les années impaires. La première semaine démarre au premier jour des vacances ; les jours restants suivent l’alternance des semaines.',
@@ -55,14 +55,15 @@
       projWarn: 'Dates prévisionnelles à partir de septembre 2028',
       projWarnBody: 'Le ministère publie le calendrier scolaire environ trois ans à l’avance. Les dates officielles vont jusqu’à l’été 2028. Au-delà, les vacances sont estimées et signalées « prévisionnel ». L’alternance des semaines paires et impaires, elle, reste exacte.',
       disclaimer: 'Cet outil est une aide à la lecture du planning. En cas de désaccord, seul le jugement fait foi. Dates scolaires : Zone B, académie d’Aix-Marseille (arrêtés du 22 octobre 2025 et du 21 juillet 2026).',
-      ruleLine: 'Semaine paire → {a}. Semaine impaire → {b}. Échange le vendredi à la sortie des classes, {t}.',
+      ruleLine: 'Semaine paire → {a}. Semaine impaire → {b}. Échange le vendredi — {t} à la sortie des classes, {h} pendant les vacances.',
       ruleExtra: 'Plus : mardi soir → mercredi {m} chez {b}. Vacances d’été partagées en huit semaines.',
       privacy: 'Aucun texte du jugement n’est enregistré. Les prénoms et les réglages restent dans ce navigateur et dans le lien que vous partagez. Rien n’est envoyé sur Internet.',
       sTitle: 'Réglages', sSub: 'Le rythme fixé pour la garde alternée.',
       sNameA: 'Nom du père affiché', sNameB: 'Nom de la mère affiché',
       sEven: 'Les semaines paires sont chez',
       sEvenH: 'Le caractère pair ou impair suit la numérotation des semaines du calendrier civil.',
-      sTime: 'Heure de l’échange du vendredi',
+      sTime: 'Heure de l’échange du vendredi (période scolaire)',
+      sHolHour: 'Heure de l’échange pendant les vacances',
       sMid: 'Mardi soir → mercredi chez la mère',
       sMidOn: 'Appliquer cette règle', sMidEnd: 'Jusqu’au', sMidRet: 'Heure du retour le mercredi',
       sMidEndH: 'Entrée au collège du plus jeune enfant.',
@@ -78,7 +79,7 @@
       longBody: 'Une même période de {n} jours d’affilée chez le même parent. Cela vient de la numérotation civile des semaines et non d’une décision : certaines années comptent 53 semaines, et deux semaines impaires se suivent alors. À regarder à l’avance plutôt qu’en décembre.',
       longNone: 'Aucune période de plus de 9 jours cette année.',
       ferHandTitle: 'Échange tombant un jour férié',
-      ferHandBody: 'L’échange tombe ce jour-là parce que c’est un vendredi, pas par choix. À convenir à l’avance plutôt que le jour même.',
+      ferHandBody: 'L’échange tombe ce jour-là parce que c’est un vendredi, alors même qu’il n’y a pas de classe. À convenir à l’avance plutôt que le jour même.',
       holBalance: 'Bilan des vacances · {y}',
       holSmall: 'Petites vacances', holAll: 'Toutes les vacances',
       holEqual: 'à égalité', holGap: 'écart de {n} j',
@@ -111,7 +112,7 @@
       ics: 'Add to my phone (.ics)', print: 'Print / PDF',
       rulesTitle: 'Rules applied',
       r1: 'Even week with {a}, odd week with {b}, by civil calendar week numbering.',
-      r2: 'Changeover Friday at the end of the school day ({t}). A custody week runs Friday to the following Friday.',
+      r2: 'Changeover on Friday: at the end of the school day in term time ({t}), at {h} during the holidays, since there is no school. A custody week runs Friday to the following Friday.',
       r3: 'Tuesday from the end of the school day to Wednesday {m} with {b} — until the September 2029 rentrée, when the youngest starts collège.',
       r4: 'Half-term holidays: the same even / odd alternation continues, with the same Friday changeover.',
       r5: 'Summer holidays: eight weeks. The 1st, 2nd, 3rd and 7th with {a} in even years, the 4th, 5th, 6th and 8th with {b}; reversed in odd years. Week one starts on the first day of the holidays; any remaining days follow the week alternation.',
@@ -120,14 +121,15 @@
       projWarn: 'Projected dates from September 2028 onwards',
       projWarnBody: 'The ministry publishes the school calendar about three years ahead. Official dates run to summer 2028. Beyond that, holidays are estimates and marked “projected”. The even/odd week alternation itself stays exact.',
       disclaimer: 'This tool is a reading aid for the schedule. If there is any disagreement, only the judgment counts. School dates: Zone B, Aix-Marseille district (decrees of 22 October 2025 and 21 July 2026).',
-      ruleLine: 'Even week → {a}. Odd week → {b}. Changeover every Friday at the end of school, {t}.',
+      ruleLine: 'Even week → {a}. Odd week → {b}. Changeover on Friday — {t} at the end of school, {h} during the holidays.',
       ruleExtra: 'Plus: Tuesday evening → Wednesday {m} with {b}. Summer split into eight weeks.',
       privacy: 'No judgment text is stored. The names and settings stay in this browser and in the link you share. Nothing is sent over the internet.',
       sTitle: 'Settings', sSub: 'The rhythm set for shared residence.',
       sNameA: 'Name shown for the father', sNameB: 'Name shown for the mother',
       sEven: 'Even weeks are with',
       sEvenH: 'Even and odd follow the civil calendar week numbering.',
-      sTime: 'Friday handover time',
+      sTime: 'Friday handover time (term time)',
+      sHolHour: 'Handover time during the holidays',
       sMid: 'Tuesday evening → Wednesday with the mother',
       sMidOn: 'Apply this rule', sMidEnd: 'Until', sMidRet: 'Wednesday return time',
       sMidEndH: 'The youngest child starting collège.',
@@ -143,7 +145,7 @@
       longBody: 'A single run of {n} days with the same parent. This comes from civil week numbering rather than from any decision: some years have 53 weeks, and two odd weeks then fall back to back. Better looked at in advance than in December.',
       longNone: 'No stretch longer than 9 days this year.',
       ferHandTitle: 'Handover falling on a public holiday',
-      ferHandBody: 'The changeover lands there because it is a Friday, not by choice. Worth agreeing in advance rather than on the day itself.',
+      ferHandBody: 'The changeover lands there because it is a Friday, even though there is no school that day. Worth agreeing in advance rather than on the day itself.',
       holBalance: 'Holiday balance · {y}',
       holSmall: 'Half-term holidays', holAll: 'All holidays',
       holEqual: 'level', holGap: '{n}-day gap',
@@ -214,10 +216,18 @@
     if (d.src === 'midweek') return cfg.time;
     const prev = plan.get(ISO(addDays(d.date, -1)));
     if (prev && prev.src === 'midweek') return cfg.midweekReturn;
-    // Whole-civil-week holidays change over on Sunday evening, not Friday.
-    if (d.src === 'holiday-cal' && d.date.getUTCDay() === 1) return cfg.holidayHandover;
+    // Inside a school holiday there is no end of the school day to hand over
+    // at, so the changeover runs on the fixed evening hour. The exception is
+    // the Friday the holidays start on, which is still a school day.
+    if (d.period) {
+      const firstDayIsSchoolDay = d.period.shiftedToFriday && ISO(d.period.start) === d.iso;
+      return firstDayIsSchoolDay ? cfg.time : cfg.holidayHandover;
+    }
     return cfg.time;
   }
+
+  /** True when the changeover is pegged to the school bell rather than a clock. */
+  const isSchoolBell = (d) => !!d && !d.period && d.src !== 'midweek-return';
 
   /** A short human reason for why a day belongs to whom. */
   function reasonOf(d, short) {
@@ -255,7 +265,7 @@
     $('#tabHol').setAttribute('aria-pressed', String(view === 'hol'));
 
     $('#ruleLine').innerHTML =
-      '<strong>' + esc(t('ruleLine', { a: nameOf('A'), b: nameOf('B'), t: cfg.time })) + '</strong>' +
+      '<strong>' + esc(t('ruleLine', { a: nameOf('A'), b: nameOf('B'), t: cfg.time, h: cfg.holidayHandover })) + '</strong>' +
       (cfg.midweek ? ' <span class="rx">' + esc(t('ruleExtra', { b: nameOf('B'), m: cfg.midweekReturn })) + '</span>' : '');
 
     renderRules();
@@ -281,7 +291,7 @@
   }
 
   function renderRules() {
-    const v = { a: nameOf('A'), b: nameOf('B'), t: cfg.time, m: cfg.midweekReturn };
+    const v = { a: nameOf('A'), b: nameOf('B'), t: cfg.time, m: cfg.midweekReturn, h: cfg.holidayHandover };
     const items = ['r1', 'r2'];
     if (cfg.midweek) items.push('r3');
     items.push('r4', 'r5');
@@ -531,7 +541,9 @@
         <select id="fEven">${opt('A', nameOf('A'), cfg.evenWeekParent)}${opt('B', nameOf('B'), cfg.evenWeekParent)}</select>
         <div class="help">${esc(t('sEvenH'))}</div></div>
 
-      <div class="field"><label for="fTime">${esc(t('sTime'))}</label><input type="time" id="fTime" value="${esc(cfg.time)}"></div>
+      <div class="field"><label for="fTime">${esc(t('sTime'))}</label><input type="time" id="fTime" value="${esc(cfg.time)}">
+        <label for="fHH" style="font-size:.84rem;font-weight:600;margin-top:9px;display:block">${esc(t('sHolHour'))}</label>
+        <input type="time" id="fHH" value="${esc(cfg.holidayHandover)}"></div>
 
       <div class="field"><label>${esc(t('sMid'))}</label>
         <label style="display:flex;gap:9px;align-items:center;font-weight:600;margin-bottom:8px">
@@ -567,6 +579,7 @@
       cfg.b = $('#fB').value.trim() || DEFAULT_NAMES.fr.B;
       cfg.evenWeekParent = $('#fEven').value;
       cfg.time = $('#fTime').value || '16:30';
+      cfg.holidayHandover = $('#fHH').value || '18:00';
       cfg.midweek = $('#fMid').checked;
       cfg.midweekEnd = $('#fMidEnd').value || E.DEFAULTS.midweekEnd;
       cfg.midweekReturn = $('#fMidRet').value || '18:00';
