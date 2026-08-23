@@ -135,6 +135,12 @@ const weekendOf = (sunday) => [ISO(addDays(sunday, -1)), ISO(sunday)];
  */
 function periodsFor(cfg, fromISO, toISO) {
   return window.Vacances.periodsBetween(fromISO, toISO).map((p) => {
+    // The summer holidays begin at the end of the last school day, the Friday,
+    // even though the arrete names the Saturday. The half-term holidays keep
+    // the Saturday, because their two halves are counted from it.
+    if (p.key === 'ete' && p.start.getUTCDay() === 6) {
+      return { ...p, start: addDays(p.start, -1), shiftedToFriday: true };
+    }
     if (cfg.holStart === 'fri' && p.start.getUTCDay() === 6) {
       return { ...p, start: addDays(p.start, -1), shiftedToFriday: true };
     }
@@ -174,7 +180,9 @@ function summerWeek(dt, period) {
     ? onOrAfterWeekday(period.start, 0)   // first Sunday: changeovers fall on Sunday
     : period.start;                       // the first day of the holidays
   const n = dayDiff(anchor, dt);
-  if (n < 0) return 0;                    // days before week one follow the alternation
+  // The break starts before the first Sunday, so its opening day or two belong
+  // to whoever has the first week rather than falling back to term parity.
+  if (n < 0) return 1;
   const w = Math.floor(n / 7) + 1;
   return w <= 8 ? w : 8;                  // the eighth week runs to the end of the break
 }

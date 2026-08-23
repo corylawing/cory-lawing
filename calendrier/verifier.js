@@ -117,7 +117,9 @@ const OFF={'2026-10-17':'2026-11-02','2026-12-19':'2027-01-04','2027-02-20':'202
            '2027-12-18':'2028-01-03','2028-02-05':'2028-02-21','2028-04-08':'2028-04-24'};
 let db=0;
 for(const [st,rs] of Object.entries(OFF)){
-  const p=E.periodsFor(cfg,FROM,TO).find(x=>ISO(x.start)===st);
+  // the raw transcription, not the engine's copy: the summer start is shifted
+  // back to the Friday for allocation, which must not mask a data error
+  const p=V.periodsBetween(FROM,TO).find(x=>ISO(x.start)===st);
   if(!p || ISO(p.resume)!==rs){ db++; console.log('      '+st+' -> reprise '+(p?ISO(p.resume):'absent')+' au lieu de '+rs); }
 }
 ok(db===0, db+' dates de vacances incorrectes');
