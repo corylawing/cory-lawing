@@ -4,8 +4,8 @@
    coloured surface is also labelled with the parent's initial. */
 
 :root {
-  --a:        #1d4ed8;  --a-soft: #dbeafe;  --a-ink: #14307f;  --a-edge: #93b4fb;
-  --b:        #c2410c;  --b-soft: #ffedd5;  --b-ink: #7c2d12;  --b-edge: #fdba74;
+  --a:        #2563eb;  --a-soft: #eef4ff;  --a-ink: #1e3a8a;  --a-edge: #c3d7fd;
+  --b:        #ea7317;  --b-soft: #fef4ec;  --b-ink: #8a3d0b;  --b-edge: #fbd8b4;
   --bg:       #f6f7f9;  --card:   #ffffff;  --ink:   #16181d;
   --muted:    #5c6472;  --line:   #e2e5ea;  --line-2:#cbd1da;
   --warn:     #92400e;  --warn-bg:#fef3c7;  --warn-edge:#fcd34d;
@@ -15,8 +15,8 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --a: #6f9bff; --a-soft:#17284f; --a-ink:#cfe0ff; --a-edge:#2f4a86;
-    --b: #ff9557; --b-soft:#3d1f0e; --b-ink:#ffd9c0; --b-edge:#8a4520;
+    --a: #7ba6ff; --a-soft:#141e33; --a-ink:#d3e2ff; --a-edge:#27385e;
+    --b: #ffa262; --b-soft:#2c1a0d; --b-ink:#ffdcc2; --b-edge:#5c3419;
     --bg:#0f1115; --card:#171a21; --ink:#e9ecf2;
     --muted:#9aa3b2; --line:#252a34; --line-2:#333a47;
     --warn:#fde68a; --warn-bg:#3a2c07; --warn-edge:#6b5310;
@@ -72,14 +72,14 @@ button { font: inherit; cursor: pointer; }
 
 /* --------------------------------- hero -------------------------------- */
 .hero {
-  margin: 18px 0; padding: 26px; border-radius: 20px; box-shadow: var(--shadow);
-  border: 2px solid transparent; position: relative; overflow: hidden;
+  margin: 14px 0; padding: 22px 24px; border-radius: 18px;
+  border: 1px solid transparent; position: relative; overflow: hidden;
 }
 .hero.pA { background: var(--a-soft); border-color: var(--a-edge); color: var(--a-ink); }
 .hero.pB { background: var(--b-soft); border-color: var(--b-edge); color: var(--b-ink); }
-.hero .label { font-size: .82rem; text-transform: uppercase; letter-spacing: .09em; font-weight: 700; opacity: .8; }
-.hero .who { font-size: clamp(2.1rem, 7vw, 3.4rem); font-weight: 800; margin: 4px 0 6px; }
-.hero .until { font-size: 1.02rem; font-weight: 600; opacity: .9; }
+.hero .label { font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 600; opacity: .65; }
+.hero .who { font-size: clamp(1.7rem, 5.2vw, 2.5rem); font-weight: 700; margin: 6px 0 4px; letter-spacing: -.02em; }
+.hero .until { font-size: .96rem; font-weight: 500; opacity: .8; }
 .hero .ctx { margin-top: 12px; font-size: .92rem; opacity: .85; }
 .hero .chip {
   display: inline-block; background: rgba(255,255,255,.6); border-radius: 999px;
@@ -88,12 +88,11 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-color-scheme: dark) { .hero .chip { background: rgba(255,255,255,.12); } }
 
 /* ------------------------------- upcoming ------------------------------ */
-.upcoming { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); margin-bottom: 22px; }
-.hand {
-  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-  padding: 12px 14px; box-shadow: var(--shadow); font-size: .92rem;
-}
-.hand .when { font-weight: 700; }
+.upcoming { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line);
+  border-radius: 12px; overflow: hidden; margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.hand { background: var(--card); padding: 11px 14px; font-size: .88rem; }
+.hand .when { font-weight: 600; }
 .hand .move { color: var(--muted); margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
 /* --------------------------------- tabs -------------------------------- */
@@ -103,46 +102,58 @@ button { font: inherit; cursor: pointer; }
 .nav-arrow { width: 42px; height: 42px; justify-content: center; padding: 0; font-size: 1.2rem; }
 
 /* ------------------------------ month grid ----------------------------- */
-.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-.dow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); background: var(--card); border-bottom: 1px solid var(--line); }
-.dow span { padding: 9px 4px; text-align: center; font-size: .76rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
-.grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: var(--line); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
 
-.day { background: var(--card); min-width: 0; overflow: hidden; min-height: 86px; padding: 6px 7px; position: relative; display: flex; flex-direction: column; gap: 3px; }
+/* a narrow gutter for the civil week number, then the seven days */
+.grid {
+  display: grid; grid-template-columns: 2.5rem repeat(7, minmax(0, 1fr));
+  gap: 1px; background: var(--line);
+}
+.hd {
+  background: var(--card); padding: 10px 6px; text-align: center;
+  font-size: .7rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.gut {
+  background: var(--card); display: grid; place-items: center;
+  font-size: .68rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums;
+}
+
+.day {
+  background: var(--card); min-width: 0; min-height: 84px; padding: 9px 10px;
+  position: relative; display: flex; flex-direction: column; gap: 4px;
+}
 .day.pA { background: var(--a-soft); color: var(--a-ink); }
 .day.pB { background: var(--b-soft); color: var(--b-ink); }
-.day.out { opacity: .38; }
-.day .num { font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; }
-.day .who-i {
-  font-size: .7rem; font-weight: 800; width: 19px; height: 19px; border-radius: 6px;
-  display: grid; place-items: center; color: #fff;
-}
-.who-i.iA, .day.pA .who-i { background: var(--a); }
-.who-i.iB, .day.pB .who-i { background: var(--b); }
-.hand .who-i { width: 18px; height: 18px; border-radius: 5px; font-size: .64rem; color: #fff; }
-.day.today { outline: 3px solid var(--ink); outline-offset: -3px; z-index: 2; }
-.day.today .num > span:first-child::before { content: "● "; font-size: .5rem; vertical-align: middle; }
+.day.out { opacity: .32; }
+.day.empty { background: var(--card); color: var(--muted); opacity: .3; }
+.day .num { font-size: 1.02rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; }
 
-/* handover day: a wedge of the OUTGOING parent's colour in the bottom-left
-   corner — clear of the date number (top-left) and the time badge (bottom-right). */
-.day.handover::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
-  background: linear-gradient(45deg, var(--out-c) 0 11%, transparent 11.4%);
+/* a holiday reads as a slightly deeper field with its name set once */
+.day.vac { box-shadow: inset 0 2px 0 rgba(0,0,0,.07); }
+@media (prefers-color-scheme: dark) { .day.vac { box-shadow: inset 0 2px 0 rgba(255,255,255,.1); } }
+.day .vname {
+  font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  opacity: .72; line-height: 1.2;
 }
-.day .num, .day .tag, .day .hx { position: relative; z-index: 1; }
-.day .tag { font-size: .67rem; font-weight: 700; padding: 1px 5px; border-radius: 5px; background: rgba(0,0,0,.07); align-self: flex-start; line-height: 1.35; }
-@media (prefers-color-scheme: dark) { .day .tag { background: rgba(255,255,255,.13); } }
-.day .tag.vac  { background: rgba(0,0,0,.12); }
-.day .tag.proj { border: 1px dashed currentColor; background: transparent; opacity: .8; }
-.day .tag.fer  { background: #7c1d6f; color: #fff; }
-.day .tag.wk   { background: transparent; border: 1px solid currentColor; opacity: .5; font-size: .6rem; }
-.day .tag.mid  { background: #0f766e; color: #fff; }
-.day .tag.fete { background: #a21caf; color: #fff; }
-.day .hx { position: absolute; right: 5px; bottom: 4px; font-size: .62rem; font-weight: 800; opacity: .75; }
 
-/* holiday bands are drawn as a subtle diagonal texture on top of the colour */
-.day.vacday { background-image: repeating-linear-gradient(135deg, rgba(0,0,0,.045) 0 6px, transparent 6px 12px); }
-@media (prefers-color-scheme: dark) { .day.vacday { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 6px, transparent 6px 12px); } }
+/* a public holiday is a dot, not a label */
+.day .fer {
+  position: absolute; top: 11px; right: 10px; width: 6px; height: 6px;
+  border-radius: 50%; background: currentColor; opacity: .45;
+}
+
+/* where a period changes hands: an edge on the incoming parent's side */
+.day.hand { box-shadow: inset 3px 0 0 var(--edge); }
+.day.hand.vac { box-shadow: inset 3px 0 0 var(--edge), inset 0 2px 0 rgba(0,0,0,.07); }
+.day .sw2 {
+  margin-top: auto; display: flex; align-items: baseline; gap: 5px;
+  font-size: .74rem; font-weight: 700;
+}
+.day .sw2 i { font-style: normal; font-weight: 500; opacity: .65; font-size: .68rem; }
+
+.day.today { outline: 2px solid var(--ink); outline-offset: -2px; z-index: 2; }
+.day.today .num { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ------------------------------- year view ----------------------------- */
 .year { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); }
@@ -173,12 +184,14 @@ button { font: inherit; cursor: pointer; }
 .pill.ok { background: transparent; color: var(--muted); border-color: var(--line-2); }
 
 /* -------------------------------- legend ------------------------------- */
-.legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; font-size: .89rem; color: var(--muted); }
+.legend { display: flex; gap: 15px; flex-wrap: wrap; margin: 16px 0 4px; font-size: .84rem; color: var(--muted); }
 .legend .k { display: flex; align-items: center; gap: 7px; }
 .legend .sw { width: 17px; height: 17px; border-radius: 5px; border: 1px solid var(--line-2); }
 .legend .sw.a { background: var(--a-soft); border-color: var(--a-edge); }
 .legend .sw.b { background: var(--b-soft); border-color: var(--b-edge); }
-.legend .sw.v { background: repeating-linear-gradient(135deg, var(--line-2) 0 4px, transparent 4px 8px); }
+.legend .sw.v { background: var(--bg); box-shadow: inset 0 2px 0 var(--line-2); }
+.legend .sw.e { background: var(--bg); box-shadow: inset 3px 0 0 var(--muted); }
+.legend .sw.t { background: var(--bg); outline: 2px solid var(--ink); outline-offset: -2px; }
 
 .tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 22px 0; }
 .note { font-size: .84rem; color: var(--muted); margin-top: 18px; }
@@ -211,16 +224,19 @@ button { font: inherit; cursor: pointer; }
 .drawer .actions { position: sticky; bottom: -20px; background: var(--card); padding: 14px 0; border-top: 1px solid var(--line); display: flex; gap: 9px; }
 
 /* -------------------------------- phones ------------------------------- */
-@media (max-width: 560px) {
+@media (max-width: 620px) {
   body { font-size: 16px; }
-  .day { min-height: 64px; padding: 4px; gap: 2px; }
-  .day .num { font-size: .8rem; }
-  .day .who-i { width: 15px; height: 15px; font-size: .56rem; border-radius: 4px; }
-  .day .tag { font-size: .55rem; padding: 0 3px; }
-  .day .hx { font-size: .5rem; right: 3px; bottom: 2px; }
-  .day .hx .hxt { display: none; }          /* keep the ⇄, drop the time */
-  .dow span { font-size: .6rem; padding: 6px 1px; letter-spacing: 0; }
-  .hero { padding: 20px; border-radius: 16px; }
+  .grid { grid-template-columns: 1.9rem repeat(7, minmax(0, 1fr)); }
+  .hd { padding: 8px 2px; font-size: .6rem; letter-spacing: .03em; }
+  .gut { font-size: .6rem; }
+  .day { min-height: 62px; padding: 5px 4px; gap: 2px; }
+  .day .num { font-size: .84rem; }
+  .day .vname { font-size: .52rem; letter-spacing: .04em; }
+  .day .fer { top: 7px; right: 5px; width: 5px; height: 5px; }
+  .day .sw2 { font-size: .68rem; }
+  .day .sw2 i { display: none; }        /* the initial is enough on a phone */
+  .day.hand { box-shadow: inset 2.5px 0 0 var(--edge); }
+  .hero { padding: 18px 18px; border-radius: 16px; }
   .tools .btn { width: 100%; justify-content: center; }
 }
 

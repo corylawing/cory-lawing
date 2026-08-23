@@ -296,8 +296,10 @@
     }
     const nextDay = plan.get(ISO(addDays(end, 1)));
     const time = handoverTime(nextDay);
-    const chips = [reasonOf(d)];
-    if (d.period) chips.push(L().vac[d.period.key] + (isProjected(d.period) ? ' · ' + t('projected') : ''));
+    const chips = [];
+    if (d.src !== 'term-week') chips.push(reasonOf(d));     // a plain week needs no label
+    if (d.period && d.src === 'term-week') chips.push(L().vac[d.period.key]);
+    if (d.period && isProjected(d.period)) chips.push(t('projected'));
     if (d.ferie) chips.push(L().fer[d.ferie]);
     hero.innerHTML = `
       <div class="label">${esc(t('today'))} · ${esc(cap(fmtFull(d.date)))}</div>
@@ -319,49 +321,59 @@
     }).join('');
   }
 
+  /**
+   * One day. The colour carries whose it is; the initial appears only where a
+   * period changes hands, so a quiet week stays quiet.
+   */
   function dayCell(dt, inMonth) {
     const iso = ISO(dt), d = plan.get(iso);
     const el = document.createElement('div');
-    if (!d) { el.className = 'day out'; el.innerHTML = `<div class="num"><span>${dt.getUTCDate()}</span></div>`; return el; }
+    if (!d) { el.className = 'day empty'; el.innerHTML = `<span class="num">${dt.getUTCDate()}</span>`; return el; }
 
-    el.className = 'day p' + d.parent + (inMonth ? '' : ' out') + (d.period ? ' vacday' : '') +
-      (d.isHandover ? ' handover' : '') + (iso === TODAY_ISO ? ' today' : '');
-    if (d.isHandover && d.from) el.style.setProperty('--out-c', `var(--${d.from === 'A' ? 'a' : 'b'})`);
-    el.title = `${cap(fmtFull(dt))} — ${nameOf(d.parent)} · ${reasonOf(d)}` +
-      (d.ferie ? ` · ${L().fer[d.ferie]}` : '');
+    const firstOfHoliday = d.period && dayDiff(d.period.start, dt) === 0;
+    el.className = 'day p' + d.parent + (inMonth ? '' : ' out')
+      + (d.period ? ' vac' : '') + (d.isHandover ? ' hand' : '')
+      + (iso === TODAY_ISO ? ' today' : '');
+    el.title = `${cap(fmtFull(dt))} — ${nameOf(d.parent)} · ${reasonOf(d)}`
+      + (d.ferie ? ` · ${L().fer[d.ferie]}` : '');
 
-    let html = `<div class="num"><span>${dt.getUTCDate()}</span><span class="who-i i${d.parent}">${esc(initialOf(d.parent))}</span></div>`;
-    // Week number on Mondays, so anyone can check the parity themselves.
-    if (dt.getUTCDay() === 1) html += `<span class="tag wk">${esc(t('wk', { n: d.civilWeek }))}</span>`;
-    // Only flag the Tuesday move when it actually changes household — on the
-    // mother's own weeks the children are already there.
-    if (d.src === 'midweek' && d.isHandover) html += `<span class="tag mid">${esc(t('rMidweekShort'))}</span>`;
-    if (d.note === 'midweek-return') html += `<span class="tag mid">${esc(t('rReturn', { t: cfg.midweekReturn }))}</span>`;
-    if (d.src.startsWith('fete')) html += `<span class="tag fete">${esc(d.src === 'fete-meres' ? t('rMeres') : t('rPeres'))}</span>`;
-    if (d.period && (dt.getUTCDate() === 1 || dayDiff(d.period.start, dt) === 0)) {
-      html += `<span class="tag vac">${esc(L().vac[d.period.key])}</span>`;
-      if (isProjected(d.period)) html += `<span class="tag proj">${esc(t('projected'))}</span>`;
+    let html = `<span class="num">${dt.getUTCDate()}</span>`;
+    if (d.ferie) html += `<span class="fer" aria-hidden="true"></span>`;
+    if (firstOfHoliday) html += `<span class="vname">${esc(L().vac[d.period.key])}</span>`;
+    if (d.isHandover) {
+      html += `<span class="sw2">${esc(initialOf(d.parent))}<i>${esc(handoverTime(d))}</i></span>`;
     }
-    if (d.src === 'summer' && (dayDiff(d.period.start, dt) % 7 === 0)) html += `<span class="tag vac">${esc(t('rSummer', { w: d.summerWk }))}</span>`;
-    if (d.ferie) html += `<span class="tag fer">${esc(L().fer[d.ferie])}</span>`;
-    if (d.isHandover) html += `<span class="hx">⇄<span class="hxt"> ${esc(handoverTime(d))}</span></span>`;
     el.innerHTML = html;
+    if (d.isHandover) el.style.setProperty('--edge', `var(--${d.parent === 'A' ? 'a' : 'b'})`);
     return el;
   }
 
   function monthCard(year, month) {
     const card = document.createElement('div'); card.className = 'card';
-    const dow = document.createElement('div'); dow.className = 'dow';
-    dow.innerHTML = L().dows.map((x) => `<span>${x}</span>`).join('');
     const grid = document.createElement('div'); grid.className = 'grid';
+
+    // header: an empty corner for the week gutter, then the weekday names
+    grid.appendChild(Object.assign(document.createElement('span'), { className: 'hd gut' }));
+    L().dows.forEach((x) => {
+      const h = document.createElement('span'); h.className = 'hd'; h.textContent = x;
+      grid.appendChild(h);
+    });
+
     const first = new Date(Date.UTC(year, month, 1));
     let dt = addDays(first, -((first.getUTCDay() + 6) % 7));
-    for (let i = 0; i < 42; i++) {
-      grid.appendChild(dayCell(dt, dt.getUTCMonth() === month));
-      dt = addDays(dt, 1);
-      if (i >= 34 && dt.getUTCMonth() !== month && dt.getUTCDay() === 1) break;
+    for (let row = 0; row < 6; row++) {
+      const gut = document.createElement('span');
+      gut.className = 'gut';
+      const wk = plan.get(ISO(dt));
+      gut.textContent = wk ? wk.civilWeek : '';
+      grid.appendChild(gut);
+      for (let i = 0; i < 7; i++) {
+        grid.appendChild(dayCell(dt, dt.getUTCMonth() === month));
+        dt = addDays(dt, 1);
+      }
+      if (dt.getUTCMonth() !== month && row >= 4) break;
     }
-    card.appendChild(dow); card.appendChild(grid);
+    card.appendChild(grid);
     return card;
   }
 
@@ -429,8 +441,8 @@
       <span class="k"><span class="sw a"></span>${esc(nameOf('A'))}</span>
       <span class="k"><span class="sw b"></span>${esc(nameOf('B'))}</span>
       <span class="k"><span class="sw v"></span>${esc(t('legendVac'))}</span>
-      <span class="k"><span class="sw" style="outline:2px solid var(--ink);outline-offset:-2px"></span>${esc(t('legendToday'))}</span>
-      <span class="k">⇄ ${esc(t('legendHand'))}</span>`;
+      <span class="k"><span class="sw e"></span>${esc(t('legendHand'))}</span>
+      <span class="k"><span class="sw t"></span>${esc(t('legendToday'))}</span>`;
   }
 
   /* ------------------------------ settings ------------------------------ */
