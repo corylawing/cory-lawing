@@ -38,6 +38,9 @@
       wk: 'S{n}', wkEven: 'Semaine {n} · paire', wkOdd: 'Semaine {n} · impaire',
       rTerm: 'Période scolaire', rHol: 'Petites vacances',
       half1: '1re moitié', half2: '2e moitié',
+      sheetPeriod: 'Période', sheetWhy: 'Motif', sheetHand: 'Échange', sheetHol: 'Vacances',
+      wkEvenPlain: 'Semaine paire', wkOddPlain: 'Semaine impaire',
+      sheetFer: 'Jour férié', sheetWeek: 'Semaine civile',
       rSummer: 'Vacances d’été · semaine {w}', rSummerTail: 'Fin des vacances d’été',
       rMidweek: 'Mardi soir → mercredi {t}', rMidweekShort: 'Mardi',
       rReturn: 'Retour {t}', rMeres: 'Fête des mères', rPeres: 'Fête des pères',
@@ -87,6 +90,9 @@
       wk: 'W{n}', wkEven: 'Week {n} · even', wkOdd: 'Week {n} · odd',
       rTerm: 'Term time', rHol: 'Half-term holidays',
       half1: '1st half', half2: '2nd half',
+      sheetPeriod: 'Period', sheetWhy: 'Reason', sheetHand: 'Handover', sheetHol: 'School holiday',
+      wkEvenPlain: 'Even week', wkOddPlain: 'Odd week',
+      sheetFer: 'Public holiday', sheetWeek: 'Civil week',
       rSummer: 'Summer holidays · week {w}', rSummerTail: 'End of the summer holidays',
       rMidweek: 'Tuesday evening → Wednesday {t}', rMidweekShort: 'Tuesday',
       rReturn: 'Back at {t}', rMeres: 'Mother’s Day', rPeres: 'Father’s Day',
@@ -251,6 +257,10 @@
     $('#tabMonth').setAttribute('aria-pressed', String(view === 'month'));
     $('#tabYear').setAttribute('aria-pressed', String(view === 'year'));
     $('#tabHol').setAttribute('aria-pressed', String(view === 'hol'));
+    document.querySelectorAll('.tabbar button').forEach((b) => {
+      b.setAttribute('aria-current', String(b.dataset.v === view));
+      b.querySelector('.tl').textContent = t(b.dataset.v === 'hol' ? 'hol' : b.dataset.v);
+    });
 
     $('#ruleLine').innerHTML =
       '<strong>' + esc(t('ruleLine', { a: nameOf('A'), b: nameOf('B'), t: cfg.time, h: cfg.holidayHandover })) + '</strong>' +
@@ -321,61 +331,122 @@
     }).join('');
   }
 
-  /**
-   * One day. The colour carries whose it is; the initial appears only where a
-   * period changes hands, so a quiet week stays quiet.
-   */
-  function dayCell(dt, inMonth) {
-    const iso = ISO(dt), d = plan.get(iso);
-    const el = document.createElement('div');
-    if (!d) { el.className = 'day empty'; el.innerHTML = `<span class="num">${dt.getUTCDate()}</span>`; return el; }
+  /* ---- month view: day numbers, then a bar per continuous run ---------- */
 
-    const firstOfHoliday = d.period && dayDiff(d.period.start, dt) === 0;
-    el.className = 'day p' + d.parent + (inMonth ? '' : ' out')
-      + (d.period ? ' vac' : '') + (d.isHandover ? ' hand' : '')
-      + (iso === TODAY_ISO ? ' today' : '');
-    el.title = `${cap(fmtFull(dt))} — ${nameOf(d.parent)} · ${reasonOf(d)}`
-      + (d.ferie ? ` · ${L().fer[d.ferie]}` : '');
-
-    let html = `<span class="num">${dt.getUTCDate()}</span>`;
-    if (d.ferie) html += `<span class="fer" aria-hidden="true"></span>`;
-    if (firstOfHoliday) html += `<span class="vname">${esc(L().vac[d.period.key])}</span>`;
-    if (d.isHandover) {
-      html += `<span class="sw2">${esc(initialOf(d.parent))}<i>${esc(handoverTime(d))}</i></span>`;
-    }
-    el.innerHTML = html;
-    if (d.isHandover) el.style.setProperty('--edge', `var(--${d.parent === 'A' ? 'a' : 'b'})`);
-    return el;
+  /** Group seven days into runs of the same parent. A gap breaks a run. */
+  function runsOf(days, keyFn) {
+    const out = [];
+    days.forEach((d, i) => {
+      const k = d ? keyFn(d) : null;
+      const last = out[out.length - 1];
+      if (k !== null && last && last.key === k && last.end === i - 1) { last.end = i; last.days.push(d); }
+      else if (k !== null) out.push({ key: k, start: i, end: i, days: [d] });
+    });
+    return out;
   }
 
   function monthCard(year, month) {
-    const card = document.createElement('div'); card.className = 'card';
-    const grid = document.createElement('div'); grid.className = 'grid';
+    const card = document.createElement('div'); card.className = 'cal';
 
-    // header: an empty corner for the week gutter, then the weekday names
-    grid.appendChild(Object.assign(document.createElement('span'), { className: 'hd gut' }));
-    L().dows.forEach((x) => {
-      const h = document.createElement('span'); h.className = 'hd'; h.textContent = x;
-      grid.appendChild(h);
-    });
+    const head = document.createElement('div'); head.className = 'cal-hd';
+    head.appendChild(document.createElement('span'));
+    L().dows.forEach((x) => { const h = document.createElement('span'); h.textContent = x; head.appendChild(h); });
+    card.appendChild(head);
 
     const first = new Date(Date.UTC(year, month, 1));
     let dt = addDays(first, -((first.getUTCDay() + 6) % 7));
+
     for (let row = 0; row < 6; row++) {
-      const gut = document.createElement('span');
-      gut.className = 'gut';
-      const wk = plan.get(ISO(dt));
-      gut.textContent = wk ? wk.civilWeek : '';
-      grid.appendChild(gut);
-      for (let i = 0; i < 7; i++) {
-        grid.appendChild(dayCell(dt, dt.getUTCMonth() === month));
-        dt = addDays(dt, 1);
-      }
+      const week = []; const start = dt;
+      for (let i = 0; i < 7; i++) { week.push(plan.get(ISO(dt)) || null); dt = addDays(dt, 1); }
+
+      const wr = document.createElement('div'); wr.className = 'wkrow';
+      const num = document.createElement('div'); num.className = 'wknum';
+      num.textContent = week.find(Boolean) ? week.find(Boolean).civilWeek : '';
+      wr.appendChild(num);
+
+      const body = document.createElement('div'); body.className = 'wkbody';
+
+      // row 1 — the dates
+      week.forEach((d, i) => {
+        const day = addDays(start, i);
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = 'dnum' + (day.getUTCMonth() === month ? '' : ' out')
+          + (ISO(day) === TODAY_ISO ? ' now' : '') + (d ? '' : ' nil');
+        cell.style.gridColumn = (i + 1) + ' / span 1';
+        cell.innerHTML = `<span>${day.getUTCDate()}</span>` + (d && d.ferie ? '<i class="fdot"></i>' : '');
+        if (d) { cell.onclick = () => openSheet(ISO(day)); cell.title = cap(fmtFull(day)); }
+        body.appendChild(cell);
+      });
+
+      // row 2 — one bar per run, carrying the name
+      runsOf(week, (d) => d.parent).forEach((r) => {
+        const bar = document.createElement('button');
+        bar.type = 'button';
+        bar.className = 'bar p' + r.key + (r.days.some((d) => d.isHandover) ? ' opens' : '');
+        bar.style.gridColumn = (r.start + 1) + ' / span ' + (r.end - r.start + 1);
+        const wide = r.end - r.start >= 1;
+        bar.textContent = wide ? nameOf(r.key) : initialOf(r.key);
+        const h = r.days.find((d) => d.isHandover);
+        if (h && wide) bar.innerHTML = `${esc(nameOf(r.key))}<i>${esc(handoverTime(h))}</i>`;
+        bar.onclick = () => openSheet(r.days[0].iso);
+        bar.title = nameOf(r.key) + ' · ' + reasonOf(r.days[0]);
+        body.appendChild(bar);
+      });
+
+      // row 3 — a school-holiday band, named once
+      runsOf(week, (d) => (d.period ? d.period.key : null)).forEach((r) => {
+        const band = document.createElement('div');
+        band.className = 'band';
+        band.style.gridColumn = (r.start + 1) + ' / span ' + (r.end - r.start + 1);
+        band.textContent = L().vac[r.key];
+        band.title = L().vac[r.key];
+        body.appendChild(band);
+      });
+
+      wr.appendChild(body); card.appendChild(wr);
       if (dt.getUTCMonth() !== month && row >= 4) break;
     }
-    card.appendChild(grid);
     return card;
   }
+
+  /** The continuous run of days a given day sits in. */
+  function runBounds(d) {
+    let a = d.date, b = d.date;
+    for (;;) { const p = plan.get(ISO(addDays(a, -1))); if (!p || p.parent !== d.parent) break; a = p.date; }
+    for (;;) { const n = plan.get(ISO(addDays(b, 1))); if (!n || n.parent !== d.parent) break; b = n.date; }
+    return { a, b };
+  }
+
+  /* ---- day detail sheet ------------------------------------------------ */
+  function openSheet(iso) {
+    const d = plan.get(iso); if (!d) return;
+    const el = $('#sheet');
+    const rows = [];
+    const { a, b } = runBounds(d);
+    rows.push([t('sheetPeriod'), fmtShort(a) + ' → ' + fmtShort(b)]);
+    // for a plain term week, say which parity applies without a number: the
+    // period's number and the calendar's differ from Monday to Thursday
+    rows.push([t('sheetWhy'), d.src === 'term-week'
+      ? t(d.week % 2 ? 'wkOddPlain' : 'wkEvenPlain') : reasonOf(d)]);
+    if (d.isHandover) rows.push([t('sheetHand'), handoverTime(d)]);
+    if (d.period) rows.push([t('sheetHol'), L().vac[d.period.key] + (isProjected(d.period) ? ' · ' + t('projected') : '')]);
+    if (d.ferie) rows.push([t('sheetFer'), L().fer[d.ferie]]);
+    rows.push([t('sheetWeek'), String(d.civilWeek)]);
+
+    el.className = 'sheet p' + d.parent;
+    el.innerHTML = `<div class="sheet-top">
+        <div><div class="sheet-lab">${esc(cap(fmtFull(d.date)))}</div>
+        <div class="sheet-who">${esc(nameOf(d.parent))}</div></div>
+        <button class="btn small" id="sheetX" aria-label="${esc(t('close'))}">✕</button>
+      </div>
+      <dl class="sheet-dl">${rows.map(([k, v]) =>
+        `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`;
+    el.classList.remove('hidden'); $('#scrim').classList.remove('hidden');
+    $('#sheetX').onclick = closeSheet;
+  }
+  const closeSheet = () => { $('#sheet').classList.add('hidden'); $('#scrim').classList.add('hidden'); };
 
   function yearView(year) {
     const wrap = document.createElement('div'); wrap.className = 'year';
@@ -441,7 +512,6 @@
       <span class="k"><span class="sw a"></span>${esc(nameOf('A'))}</span>
       <span class="k"><span class="sw b"></span>${esc(nameOf('B'))}</span>
       <span class="k"><span class="sw v"></span>${esc(t('legendVac'))}</span>
-      <span class="k"><span class="sw e"></span>${esc(t('legendHand'))}</span>
       <span class="k"><span class="sw t"></span>${esc(t('legendToday'))}</span>`;
   }
 
@@ -526,13 +596,16 @@
     rebuild();
     $('#langBtn').onclick = () => { lang = lang === 'fr' ? 'en' : 'fr'; render(); };
     $('#settingsBtn').onclick = openSettings;
-    $('#scrim').onclick = closeSettings;
+    $('#scrim').onclick = () => { closeSettings(); closeSheet(); };
     $('#prev').onclick = () => step(-1);
     $('#next').onclick = () => step(1);
     $('#todayBtn').onclick = () => { cur = clampToRange(new Date()); render(); };
     $('#tabMonth').onclick = () => { view = 'month'; render(); };
     $('#tabYear').onclick = () => { view = 'year'; render(); };
     $('#tabHol').onclick = () => { view = 'hol'; render(); };
+    document.querySelectorAll('.tabbar button').forEach((b) => {
+      b.onclick = () => { view = b.dataset.v; closeSheet(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    });
     $('#printBtn').onclick = () => window.print();
     $('#copyBtn').onclick = async () => {
       const url = shareLink();
@@ -548,7 +621,7 @@
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     };
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeSettings();
+      if (e.key === 'Escape') { closeSettings(); closeSheet(); }
       if (e.key === 'ArrowLeft') step(-1);
       if (e.key === 'ArrowRight') step(1);
     });
