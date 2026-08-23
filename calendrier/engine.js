@@ -247,6 +247,13 @@ function plan(cfg, fromISO, toISO) {
         ? cfg.evenYearStarts : other(cfg.evenYearStarts);
       parent = inFirstHalf ? starter : other(starter);
       src = inFirstHalf ? 'holiday-h1' : 'holiday-h2';
+      // The last day of the break is itself a Sunday changeover: school resumes
+      // the next morning, so if the term period that follows belongs to the
+      // other parent they collect at 18:00 and take that night.
+      if (dayDiff(dt, period.last) === 0 && dt.getUTCDay() === 0) {
+        const next = weekParityParent(addDays(dt, 1), cfg);
+        if (next !== parent) { parent = next; src = 'holiday-end'; }
+      }
     } else {
       parent = weekParityParent(dt, cfg);
       src = period ? (isSummer ? 'summer-tail' : 'holiday-week') : 'term-week';
