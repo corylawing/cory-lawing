@@ -58,6 +58,10 @@ const DEFAULTS = {
   // How the even/odd label is read during the half-term holidays:
   holidayHandover: '18:00',   // the half-term changeover, Sunday evening
 
+  // The eight summer weeks run Sunday to Sunday, so week one starts on the
+  // first Sunday of the break and every changeover falls on a Sunday.
+  summerAnchor: 'sunday',
+
   // Each half-term holiday is halved, and the parent taking the first half
   // alternates with the parity of the year the holiday starts in.
   evenYearStarts: 'A',
@@ -174,7 +178,7 @@ function summerWeek(dt, period) {
   const w = Math.floor(n / 7) + 1;
   return w <= 8 ? w : 8;                  // the eighth week runs to the end of the break
 }
-let cfgSummerAnchor = 'monday';
+let cfgSummerAnchor = 'sunday';
 
 function summerParent(week, year, cfg) {
   const seq = SUMMER_EVEN[week - 1];
@@ -188,7 +192,7 @@ function summerParent(week, year, cfg) {
  * @returns Map<iso, {date,iso,parent,src,period,summerWk,week,ferie,isHandover,from,note}>
  */
 function plan(cfg, fromISO, toISO) {
-  cfgSummerAnchor = cfg.summerAnchor || 'monday';
+  cfgSummerAnchor = cfg.summerAnchor || 'sunday';
   const from = D(fromISO), to = D(toISO);
   const periods = periodsFor(cfg, fromISO, toISO);
   const feries = window.Vacances.feriesBetween(fromISO, toISO);
