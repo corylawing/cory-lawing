@@ -89,15 +89,17 @@ function isoWeek(dt) {
 /**
  * The week number that governs a given day.
  *
- * A custody week runs from a Friday to the following Friday, so it straddles
- * two civil weeks: it holds the Saturday and Sunday of one and the Monday to
- * Thursday of the next. It is named after the week holding its school days,
- * which is the later one — so week 36 is the period covering Monday 31 August
- * to Thursday 3 September, and the children are with the even-week parent
- * during civil week 36 as the order requires. Taking the civil week of the day
- * three days on gives exactly that.
+ * An even week goes to the father from the Friday of that even week, after
+ * school, through to the following Friday. So a period is identified by the
+ * civil week its own opening Friday falls in, and for any day that is the
+ * Friday on or before it.
+ *
+ * This is separate from the week number shown on the calendar: each day also
+ * carries civilWeek, the number a diary prints for that date, so the display
+ * stays correct whatever the allocation.
  */
-const custodyWeek = (dt) => isoWeek(addDays(dt, 3));
+const fridayOnOrBefore = (dt) => addDays(dt, -((dt.getUTCDay() - 5 + 7) % 7));
+const custodyWeek = (dt) => isoWeek(fridayOnOrBefore(dt));
 
 /** Fete des meres: last Sunday of May, or the first Sunday of June if that Sunday is Pentecost. */
 function feteDesMeres(year) {
