@@ -37,6 +37,7 @@
              assomption:'Assomption', toussaint:'Toussaint', armistice:'11 Novembre', noel:'Noël' },
       wk: 'S{n}', wkEven: 'Semaine {n} · paire', wkOdd: 'Semaine {n} · impaire',
       rTerm: 'Période scolaire', rHol: 'Petites vacances',
+      half1: '1re moitié', half2: '2e moitié',
       rSummer: 'Vacances d’été · semaine {w}', rSummerTail: 'Fin des vacances d’été',
       rMidweek: 'Mardi soir → mercredi {t}', rMidweekShort: 'Mardi',
       rReturn: 'Retour {t}', rMeres: 'Fête des mères', rPeres: 'Fête des pères',
@@ -48,7 +49,7 @@
       projWarnBody: 'Le ministère publie le calendrier scolaire environ trois ans à l’avance. Les dates officielles vont jusqu’à l’été 2028. Au-delà, les vacances sont estimées et signalées « prévisionnel ». L’alternance des semaines paires et impaires, elle, reste exacte.',
       disclaimer: 'Cet outil est une aide à la lecture du planning. En cas de désaccord, seul le jugement fait foi. Dates scolaires : Zone B, académie d’Aix-Marseille (arrêtés du 22 octobre 2025 et du 21 juillet 2026).',
       ruleLine: 'Semaine paire → {a}. Semaine impaire → {b}. Échange le vendredi — {t} à la sortie des classes, {h} pendant les vacances.',
-      ruleExtra: 'Plus : mardi soir → mercredi {m} chez {b}. Vacances d’été partagées en huit semaines.',
+      ruleExtra: 'Plus : mardi soir → mercredi {m} chez {b}. Petites vacances partagées en deux moitiés, la 1re à {a} les années paires. Été partagé en huit semaines.',
       privacy: 'Aucun texte du jugement n’est enregistré. Les prénoms et les réglages restent dans ce navigateur et dans le lien que vous partagez. Rien n’est envoyé sur Internet.',
       sTitle: 'Prénoms affichés', sSub: 'Seuls les prénoms sont modifiables.',
       sLocked: 'Le rythme, les dates et les heures sont fixés et ne peuvent pas être modifiés depuis cette page : semaines paires et impaires, échange du vendredi, mardi soir chez la mère, huit semaines d’été, week-ends de la fête des mères et de la fête des pères. Ils figurent sous « Règles appliquées ».',
@@ -85,6 +86,7 @@
              assomption:'Assumption', toussaint:'All Saints', armistice:'Armistice Day', noel:'Christmas Day' },
       wk: 'W{n}', wkEven: 'Week {n} · even', wkOdd: 'Week {n} · odd',
       rTerm: 'Term time', rHol: 'Half-term holidays',
+      half1: '1st half', half2: '2nd half',
       rSummer: 'Summer holidays · week {w}', rSummerTail: 'End of the summer holidays',
       rMidweek: 'Tuesday evening → Wednesday {t}', rMidweekShort: 'Tuesday',
       rReturn: 'Back at {t}', rMeres: 'Mother’s Day', rPeres: 'Father’s Day',
@@ -96,7 +98,7 @@
       projWarnBody: 'The ministry publishes the school calendar about three years ahead. Official dates run to summer 2028. Beyond that, holidays are estimates and marked “projected”. The even/odd week alternation itself stays exact.',
       disclaimer: 'This tool is a reading aid for the schedule. If there is any disagreement, only the judgment counts. School dates: Zone B, Aix-Marseille district (decrees of 22 October 2025 and 21 July 2026).',
       ruleLine: 'Even week → {a}. Odd week → {b}. Changeover on Friday — {t} at the end of school, {h} during the holidays.',
-      ruleExtra: 'Plus: Tuesday evening → Wednesday {m} with {b}. Summer split into eight weeks.',
+      ruleExtra: 'Plus: Tuesday evening → Wednesday {m} with {b}. Half-term holidays split in two halves, the first to {a} in even years. Summer split into eight weeks.',
       privacy: 'No judgment text is stored. The names and settings stay in this browser and in the link you share. Nothing is sent over the internet.',
       sTitle: 'Display names', sSub: 'Only the names can be changed.',
       sLocked: 'The rhythm, the dates and the times are fixed and cannot be changed from this page: even and odd weeks, the Friday changeover, Tuesday night with the mother, the eight summer weeks, and the Mother’s and Father’s Day weekends. They are set out under “Rules applied”.',
@@ -220,6 +222,9 @@
       case 'midweek':    return short ? t('rMidweekShort') : t('rMidweek', { t: cfg.midweekReturn });
       case 'summer':     return t('rSummer', { w: d.summerWk });
       case 'summer-tail':return t('rSummerTail');
+      case 'holiday-h1':
+      case 'holiday-h2': return (d.period ? L().vac[d.period.key] + ' · ' : '') +
+                                  t(d.src === 'holiday-h1' ? 'half1' : 'half2');
       case 'holiday-week': return (d.period ? L().vac[d.period.key] + ' · ' : '') +
                                   t(d.week % 2 ? 'wkOdd' : 'wkEven', { n: d.week });
       default:           return t(d.week % 2 ? 'wkOdd' : 'wkEven', { n: d.week });
@@ -249,7 +254,8 @@
 
     $('#ruleLine').innerHTML =
       '<strong>' + esc(t('ruleLine', { a: nameOf('A'), b: nameOf('B'), t: cfg.time, h: cfg.holidayHandover })) + '</strong>' +
-      (cfg.midweek ? ' <span class="rx">' + esc(t('ruleExtra', { b: nameOf('B'), m: cfg.midweekReturn })) + '</span>' : '');
+      (cfg.midweek ? ' <span class="rx">' + esc(t('ruleExtra',
+        { a: nameOf('A'), b: nameOf('B'), m: cfg.midweekReturn })) + '</span>' : '');
 
     renderHero();
     renderUpcoming();
@@ -406,6 +412,8 @@
           const label = b.src === 'summer'
             ? t('rSummer', { w: b.summerWk }) + (b.days > 7 ? ` – ${b.summerWk + Math.round(b.days / 7) - 1}` : '')
             : b.src === 'summer-tail' ? t('rSummerTail')
+            : b.src === 'holiday-h1' ? t('half1')
+            : b.src === 'holiday-h2' ? t('half2')
             : t(b.week % 2 ? 'wkOdd' : 'wkEven', { n: b.week });
           return `<div class="halfbox p${b.parent}"><b>${esc(label)}</b>
             <span class="nm">${esc(nameOf(b.parent))}</span>

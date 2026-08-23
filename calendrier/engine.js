@@ -58,8 +58,12 @@ const DEFAULTS = {
   // How the even/odd label is read during the half-term holidays:
   holidayHandover: '18:00',   // the half-term changeover, Sunday evening
 
+  // Each half-term holiday is halved, and the parent taking the first half
+  // alternates with the parity of the year the holiday starts in.
+  evenYearStarts: 'A',
+
   time: '16:30',            // Friday handover, at the end of the school day
-  holStart: 'fri',          // holidays begin Friday at the end of the school day
+  holStart: 'exact',        // a holiday begins on the Saturday named in the arrete
   confirmed: false,
 };
 
@@ -218,14 +222,17 @@ function plan(cfg, fromISO, toISO) {
       // Tuesday night at the mother's, term time only.
       parent = cfg.midweekParent; src = 'midweek';
     } else if (period && PETITES.has(period.key)) {
-      // The half-term clause ends a period at Sunday 18:00, not at the
-      // following Friday. So the periods are the civil weeks themselves and
-      // the changeover falls on the Sunday evening — which means the Sunday
-      // night belongs to the incoming parent, hence the day's own week read
-      // one day forward.
-      const w = isoWeek(addDays(dt, 1));
-      parent = w % 2 === 0 ? cfg.evenWeekParent : other(cfg.evenWeekParent);
-      src = 'holiday-cal';
+      // A half-term holiday is split in two. It begins on the Saturday after
+      // the last week of school and the changeover falls on the middle Sunday,
+      // so the first half ends on a Saturday. Which parent takes the first
+      // half alternates with the parity of the year.
+      const total = dayDiff(period.start, period.last) + 1;
+      const half = Math.ceil(total / 2);
+      const inFirstHalf = dayDiff(period.start, dt) < half;
+      const starter = period.start.getUTCFullYear() % 2 === 0
+        ? cfg.evenYearStarts : other(cfg.evenYearStarts);
+      parent = inFirstHalf ? starter : other(starter);
+      src = inFirstHalf ? 'holiday-h1' : 'holiday-h2';
     } else {
       parent = weekParityParent(dt, cfg);
       src = period ? (isSummer ? 'summer-tail' : 'holiday-week') : 'term-week';
@@ -239,8 +246,7 @@ function plan(cfg, fromISO, toISO) {
 
     const day = {
       date: dt, iso, parent, src, period, summerWk, note,
-      week: (period && PETITES.has(period.key))
-        ? isoWeek(addDays(dt, 1)) : custodyWeek(dt),
+      week: custodyWeek(dt),
       civilWeek: isoWeek(dt),        // the number a wall calendar shows for this date
       ferie: feries[iso] || null,
       isHandover: prev !== null && prev.parent !== parent,
