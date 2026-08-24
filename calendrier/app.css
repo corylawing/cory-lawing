@@ -11,8 +11,11 @@
   --ink-2:   #5f636a;
   --muted:   #9aa0a6;
 
+  /* hue = what kind of week it is; weight = which parent holds it.
+     blue  = periode scolaire      green = vacances scolaires
+     solid = parent A              pale  = parent B */
   --a:       #1a73e8;  --a-2: #1765cc;  --a-soft: #e8f0fe;  --a-ink: #174ea6;
-  --b:       #e8710a;  --b-2: #cf6209;  --b-soft: #fef1e4;  --b-ink: #a1500a;
+  --v:       #0b8043;  --v-2: #0a7038;  --v-soft: #e6f4ea;  --v-ink: #0b6b3a;
 
   --r: 12px;
   --shadow-1: 0 1px 2px rgba(31,34,37,.08);
@@ -26,7 +29,7 @@
     --bg:#131417; --bg-2:#1b1d21; --line:#2a2d32; --line-2:#3a3e45;
     --ink:#e8eaed; --ink-2:#b0b4ba; --muted:#8a9096;
     --a:#8ab4f8; --a-2:#a8c7fa; --a-soft:#1c2a41; --a-ink:#c6dafc;
-    --b:#fcad70; --b-2:#fdc396; --b-soft:#3a2412; --b-ink:#fdd6b0;
+    --v:#5bb974; --v-2:#81c995; --v-soft:#16281d; --v-ink:#a8dab5;
     --shadow-1: 0 1px 2px rgba(0,0,0,.5);
     --shadow-2: 0 8px 28px -8px rgba(0,0,0,.7), 0 2px 6px rgba(0,0,0,.4);
   }
@@ -72,11 +75,11 @@ button { font: inherit; cursor: pointer; }
 
 /* --------------------------------- hero ------------------------------- */
 .hero { margin: 14px 0 20px; padding: 18px 20px; border-radius: 16px; position: relative; }
-.hero.pA { background: var(--a-soft); }
-.hero.pB { background: var(--b-soft); }
+.hero { background: var(--a-soft); }
+.hero.sV { background: var(--v-soft); }
 .hero .label { font-size: .72rem; color: var(--ink-2); font-weight: 500; }
 .hero .who { font-size: clamp(1.45rem, 4.4vw, 1.9rem); font-weight: 600; letter-spacing: -.02em; margin: 5px 0 3px; }
-.hero.pA .who { color: var(--a-ink); } .hero.pB .who { color: var(--b-ink); }
+.hero .who { color: var(--a-ink); } .hero.sV .who { color: var(--v-ink); }
 .hero .until { font-size: .88rem; color: var(--ink-2); }
 .hero .ctx { margin-top: 11px; display: flex; gap: 6px; flex-wrap: wrap; }
 .hero .chip { font-size: .74rem; padding: 3px 10px; border-radius: 999px; background: var(--bg); color: var(--ink-2); }
@@ -88,7 +91,10 @@ button { font: inherit; cursor: pointer; }
 .hand .when { font-weight: 500; }
 .hand .move { color: var(--muted); margin-top: 5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: .8rem; }
 .who-i { width: 17px; height: 17px; border-radius: 999px; display: grid; place-items: center; font-size: .6rem; font-weight: 700; color: #fff; flex: none; }
-.who-i.iA { background: var(--a); } .who-i.iB { background: var(--b); }
+.who-i.iA { background: var(--a); }
+.who-i.iB { background: var(--a-soft); color: var(--a-ink); box-shadow: inset 0 0 0 1px var(--a); }
+.who-i.vA { background: var(--v); }
+.who-i.vB { background: var(--v-soft); color: var(--v-ink); box-shadow: inset 0 0 0 1px var(--v); }
 
 /* ---------------------------- view switcher --------------------------- */
 .tabs { display: inline-flex; gap: 4px; margin: 0 0 12px; }
@@ -129,16 +135,20 @@ button { font: inherit; cursor: pointer; }
   text-overflow: ellipsis; transition: filter .15s var(--ease);
 }
 .bar:hover { filter: brightness(1.08); }
-.bar.pA { background: var(--a); } .bar.pB { background: var(--b); }
+/* blue in term time, green in the school holidays; filled for one parent,
+   outlined for the other, and the name is written on every bar. */
+.bar.sS.pA { background: var(--a); color: #fff; }
+.bar.sS.pB { background: var(--a-soft); color: var(--a-ink); box-shadow: inset 0 0 0 1px var(--a); }
+.bar.sV.pA { background: var(--v); color: #fff; }
+.bar.sV.pB { background: var(--v-soft); color: var(--v-ink); box-shadow: inset 0 0 0 1px var(--v); }
 .bar i { font-style: normal; opacity: .78; margin-left: 6px; font-size: .68rem; }
-@media (prefers-color-scheme: dark) { .bar { color: #0f1113; } }
+@media (prefers-color-scheme: dark) { .bar.pA { color: #0f1113; } }
 
 /* the school-holiday band under it */
 .band {
   grid-row: 3; height: 16px; line-height: 16px; border-radius: 4px;
-  background: var(--bg-2); color: var(--muted); font-size: .62rem; font-weight: 500;
+  background: var(--v-soft); color: var(--v-ink); font-size: .62rem; font-weight: 500;
   padding: 0 6px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-  box-shadow: inset 0 0 0 1px var(--line);
 }
 
 /* -------------------------------- year -------------------------------- */
@@ -148,12 +158,13 @@ button { font: inherit; cursor: pointer; }
 .mini .mg { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
 .mini .mg span { aspect-ratio: 1; border-radius: 999px; display: grid; place-items: center; font-size: .56rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .mini .mg span.pA { background: var(--a); color: #fff; }
-.mini .mg span.pB { background: var(--b); color: #fff; }
-.mini .mg span.vac { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.mini .mg span.pB { background: var(--a-soft); color: var(--a-ink); box-shadow: inset 0 0 0 1px var(--a); }
+.mini .mg span.pA.vac { background: var(--v); color: #fff; box-shadow: none; }
+.mini .mg span.pB.vac { background: var(--v-soft); color: var(--v-ink); box-shadow: inset 0 0 0 1px var(--v); }
 .mini .mg span.today { outline: 2px solid var(--ink); outline-offset: 1px; }
 .mini .mg span.blank { background: transparent; }
 .mini .outside { margin-top: 8px; font-size: .68rem; color: var(--muted); }
-@media (prefers-color-scheme: dark) { .mini .mg span.pA, .mini .mg span.pB { color: #0f1113; } }
+@media (prefers-color-scheme: dark) { .mini .mg span.pA { color: #0f1113; } }
 
 /* ------------------------------ holidays ------------------------------ */
 .vlist { display: grid; gap: 10px; }
@@ -163,8 +174,8 @@ button { font: inherit; cursor: pointer; }
 .halves { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; margin-top: 11px; }
 @media (max-width: 640px) { .halves { grid-template-columns: 1fr; } }
 .halfbox { border-radius: 10px; padding: 10px 12px; font-size: .82rem; }
-.halfbox.pA { background: var(--a-soft); color: var(--a-ink); }
-.halfbox.pB { background: var(--b-soft); color: var(--b-ink); }
+.halfbox { background: var(--v-soft); color: var(--v-ink); }
+.halfbox.pA { box-shadow: inset 0 0 0 2px var(--v); }
 .halfbox b { display: block; font-size: .68rem; font-weight: 500; opacity: .8; }
 .halfbox .nm { font-weight: 600; font-size: .95rem; }
 .pill { font-size: .64rem; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: var(--bg-2); color: var(--muted); }
@@ -173,9 +184,10 @@ button { font: inherit; cursor: pointer; }
 .legend { display: flex; gap: 14px; flex-wrap: wrap; margin: 14px 0 4px; font-size: .78rem; color: var(--muted); }
 .legend .k { display: flex; align-items: center; gap: 6px; }
 .legend .sw { width: 14px; height: 14px; border-radius: 4px; background: var(--bg-2); }
-.legend .sw.a { background: var(--a); } .legend .sw.b { background: var(--b); }
-.legend .sw.v { background: var(--bg-2); box-shadow: inset 0 0 0 1px var(--line-2); }
-.legend .sw.e { background: var(--bg-2); box-shadow: inset 0 0 0 1px var(--line-2); }
+.legend .sw.a { background: var(--a); }
+.legend .sw.b { background: var(--a-soft); box-shadow: inset 0 0 0 1px var(--a); }
+.legend .sw.va { background: var(--v); }
+.legend .sw.vb { background: var(--v-soft); box-shadow: inset 0 0 0 1px var(--v); }
 .legend .sw.t { border-radius: 999px; background: var(--a); }
 .tools { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 0; }
 .note { font-size: .76rem; color: var(--muted); margin-top: 14px; line-height: 1.6; }
@@ -208,7 +220,7 @@ button { font: inherit; cursor: pointer; }
 .sheet-top { display: flex; align-items: flex-start; gap: 12px; }
 .sheet-lab { font-size: .76rem; color: var(--muted); }
 .sheet-who { font-size: 1.25rem; font-weight: 600; letter-spacing: -.01em; margin-top: 2px; }
-.sheet.pA .sheet-who { color: var(--a-ink); } .sheet.pB .sheet-who { color: var(--b-ink); }
+.sheet .sheet-who { color: var(--a-ink); } .sheet.sV .sheet-who { color: var(--v-ink); }
 .sheet-dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; margin: 16px 0 0; font-size: .86rem; }
 .sheet-dl dt { color: var(--muted); }
 .sheet-dl dd { margin: 0; font-weight: 500; }

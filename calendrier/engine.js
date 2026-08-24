@@ -67,7 +67,6 @@ const DEFAULTS = {
   evenYearStarts: 'A',
 
   time: '16:30',            // Friday handover, at the end of the school day
-  holStart: 'exact',        // a holiday begins on the Saturday named in the arrete
   confirmed: false,
 };
 
@@ -135,13 +134,11 @@ const weekendOf = (sunday) => [ISO(addDays(sunday, -1)), ISO(sunday)];
  */
 function periodsFor(cfg, fromISO, toISO) {
   return window.Vacances.periodsBetween(fromISO, toISO).map((p) => {
-    // The summer holidays begin at the end of the last school day, the Friday,
-    // even though the arrete names the Saturday. The half-term holidays keep
-    // the Saturday, because their two halves are counted from it.
-    if (p.key === 'ete' && p.start.getUTCDay() === 6) {
-      return { ...p, start: addDays(p.start, -1), shiftedToFriday: true };
-    }
-    if (cfg.holStart === 'fri' && p.start.getUTCDay() === 6) {
+    // Every holiday the arrete opens on a Saturday really begins at the end of
+    // the last school day, the Friday before: that is the "sortie des classes"
+    // the judgment hands over at, and it is what both parents did in October.
+    // The Ascension bridge starts on a Thursday and is left alone.
+    if (p.start.getUTCDay() === 6) {
       return { ...p, start: addDays(p.start, -1), shiftedToFriday: true };
     }
     return p;

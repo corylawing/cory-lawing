@@ -25,6 +25,8 @@ console.log('A. Dates confirmed by both parents');
  ['2026-11-02','PAPA','semaine de la rentree (periode du 30 oct, S44 paire)'],
  ['2026-11-05','PAPA','fin de la periode'],
  ['2026-11-06','MAMAN','vendredi suivant'],
+ ['2026-12-17','PAPA','fin de sa periode paire S50, du 11 au 18 decembre'],
+ ['2026-12-18','PAPA','Noel commence a la sortie des classes le vendredi 18'],
  ['2026-12-19','PAPA','Noel 1re moitie'],['2026-12-25','PAPA','Noel'],
  ['2026-12-26','PAPA','fin 1re moitie'],['2026-12-27','MAMAN','Noel 2e moitie'],
  ['2027-01-03','MAMAN','fin des vacances de Noel'],
@@ -32,6 +34,8 @@ console.log('A. Dates confirmed by both parents');
  ['2027-02-28','PAPA','Hiver 2e moitie'],
  ['2027-03-06','PAPA','fin de la 2e moitie'],
  ['2027-03-07','MAMAN','dernier dimanche, retour 18h'],
+ ['2027-02-19','MAMAN','Hiver commence vendredi 19 a la sortie des classes'],
+ ['2027-04-16','MAMAN','Printemps commence vendredi 16 a la sortie des classes'],
  ['2027-04-17','MAMAN','Printemps 1re moitie'],['2027-04-25','PAPA','Printemps 2e moitie'],
 ].forEach(([k,w,l])=>ok(who(k)===w, k+' devrait etre '+w+' ('+l+') — obtenu '+who(k)));
 
@@ -75,9 +79,10 @@ for(const p of E.periodsFor(cfg,FROM,TO)){
   if(!['toussaint','noel','hiver','printemps'].includes(p.key)) continue;
   let a=0,b=0;
   for(let dt=p.start; dt<=p.last; dt=addDays(dt,1)){ const d=plan.get(ISO(dt)); if(d) d.parent==='A'?a++:b++; }
-  // up to two days apart: the closing Sunday hands over at 18:00, so it can
-  // fall on the other side of the split
-  if(Math.abs(a-b)>2) { hb++; console.log('      '+p.sy+' '+p.key+' : '+a+'/'+b); }
+  // A half-term holiday runs 17 nights: it opens at the sortie des classes on
+  // the Friday and closes on the Sunday evening. The split is 9/8, and the
+  // closing Sunday hands back at 18:00, so it can move one more night across.
+  if(Math.abs(a-b)>3) { hb++; console.log('      '+p.sy+' '+p.key+' : '+a+'/'+b); }
   // first half must follow the parity of the starting year
   const first=plan.get(ISO(p.start)).parent;
   const expect = p.start.getUTCFullYear()%2===0 ? 'A':'B';
@@ -132,6 +137,27 @@ for(const [st,rs] of Object.entries(OFF)){
   if(!p || ISO(p.resume)!==rs){ db++; console.log('      '+st+' -> reprise '+(p?ISO(p.resume):'absent')+' au lieu de '+rs); }
 }
 ok(db===0, db+' dates de vacances incorrectes');
+
+console.log('L. A holiday the arrete opens on a Saturday now opens the Friday before');
+/* The arrete names the day after the last class. When that is a Saturday the
+   last school day is the Friday, and the judgment hands over at the sortie des
+   classes, so the period is pulled back one day. When the arrete names a
+   weekday instead - summer 2028 starts Tuesday 4 July "apres la classe" - that
+   day is itself the last school day and nothing is shifted. */
+let shiftBad=0, satLeft=0;
+{
+  const raw=V.periodsBetween(FROM,TO);
+  const got=E.periodsFor(cfg,FROM,TO);
+  ok(raw.length===got.length,'nombre de periodes: '+raw.length+' vs '+got.length);
+  raw.forEach((r,i)=>{
+    const g=got[i];
+    const want = r.start.getUTCDay()===6 ? ISO(addDays(r.start,-1)) : ISO(r.start);
+    if(ISO(g.start)!==want){ shiftBad++; console.log('      '+r.sy+' '+r.key+' : '+ISO(g.start)+' au lieu de '+want); }
+    if(g.start.getUTCDay()===6) satLeft++;
+  });
+}
+ok(shiftBad===0, shiftBad+' periodes mal decalees');
+ok(satLeft===0, satLeft+' periodes commencent encore un samedi');
 
 console.log('K. Night balance over ten years');
 let a=0,b=0; for(const d of plan.values()) d.parent==='A'?a++:b++;

@@ -10,7 +10,7 @@ Open `index.html` — there is no build step, no server, and no dependencies.
 
 | View | What you get |
 |---|---|
-| **Mois** | A month grid. Every day is coloured by parent and stamped with their initial. Handover days carry a `⇄` and the time. |
+| **Mois** | A month grid with the civil week number down the left. Each stretch is drawn as one filled bar carrying the parent's name and, on a changeover day, the time. |
 | **Année** | All twelve months at once — the easiest way to see the rhythm across a whole year. |
 | **Vacances** | Every school holiday of the year listed with both halves spelled out: who has which dates. This is the view that settles arguments. |
 
@@ -19,6 +19,20 @@ handovers.
 
 Other buttons: **FR/EN** toggle, **copy a share link**, **export `.ics`** so the
 schedule lands in both parents' phone calendars, and **print/PDF**.
+
+### Colour coding
+
+Two things are colour-coded at once, so a single glance answers both "when is
+this?" and "who has them?".
+
+| | Term time (*période scolaire*) | School holidays (*vacances*) |
+|---|---|---|
+| **Parent A** | filled blue | filled green |
+| **Parent B** | outlined blue | outlined green |
+
+Blue is the school term, green is the holidays; filled is parent A, outlined is
+parent B. The week number in the left-hand gutter is the ordinary ISO week
+number of that calendar row, so it can be checked against any wall calendar.
 
 ## School holiday dates
 
@@ -51,15 +65,27 @@ app stops projecting that year automatically and drops the *prévisionnel* label
 
 ## The rhythm
 
-Encoded in `engine.js`, and every switch is adjustable in **Réglages**:
+Encoded in `engine.js`. It is fixed: the settings drawer holds the two display
+names and nothing else, so neither an edited share link nor stale browser
+storage can move a date.
 
-**Term time** — even civil weeks with parent A, from Friday at the end of the
-school day to the following Friday at the start of the school day; odd weeks
-with parent B. Plus every **Tuesday end-of-school to Wednesday 18:00 with
-parent B**, until the youngest child starts secondary school.
+**Term time** — even weeks with parent A, odd weeks with parent B, handing over
+on Friday at the *sortie des classes* (16:30). Plus every **Tuesday end-of-school
+to Wednesday 18:00 with parent B**, until the youngest child starts secondary
+school.
 
-**Half-term holidays** — the same even/odd whole-week alternation, with no
-midweek Tuesday move.
+**Half-term holidays** (*petites vacances*: Toussaint, Noël, hiver, printemps) —
+split in two halves. The first half goes to parent A in even years and to parent
+B in odd years; the second half to the other. The closing Sunday hands back at
+18:00 to whoever the following week belongs to, so the split reads 9 nights / 7
+nights + the last Sunday.
+
+**When a holiday starts** — the *arrêté* names the day after the last class,
+almost always a Saturday. There is no school that day, and this judgment hands
+over at the *sortie des classes*, so a Saturday start is pulled back to the
+Friday before. Where an *arrêté* names a weekday instead — summer 2028 begins
+Tuesday 4 July *après la classe* — that day is itself the last school day and
+nothing is shifted.
 
 **Summer holidays** — eight weeks split **3 / 3 / 1 / 1**:
 
@@ -70,7 +96,8 @@ midweek Tuesday move.
 | 7 | A | B |
 | 8 | B | A |
 
-Any summer days past the eighth week fall back to the even/odd alternation.
+The eighth week absorbs any days past it, so the summer never falls back to the
+term-time rhythm mid-August.
 
 **Throughout** — even and odd follow ISO-8601 civil week numbering; holiday
 dates are those of the children's education district; and each parent has the
@@ -78,33 +105,44 @@ children for the Mother's Day or Father's Day weekend that concerns them
 (*fête des mères* is the last Sunday of May, moving to the first Sunday of June
 when that Sunday is Pentecost; *fête des pères* is the third Sunday of June).
 
+### Years with 53 weeks
+
+2026, 2032, 2037 and 2043 have 53 ISO weeks. The extra week is always an odd
+one, so it always falls to parent B — a 53-week year can never hand parent A the
+double week. The app says so in a banner on those years.
+
 ### How a custody week maps to a week number
 
-A custody week runs Friday evening to the following Friday morning, so it
-straddles two civil weeks — it holds the Saturday and Sunday of one and the
-Monday-to-Thursday of the next. The school days sit in the later week, so that
-is the week whose number decides the period. In code that is simply the civil
-week of the day three days on. Week numbers are printed on each Monday in the
-month view so either parent can check the parity against any calendar.
+A custody week runs Friday evening to the following Friday, so it straddles two
+civil weeks: the Saturday and Sunday of one, the Monday to Thursday of the next.
+The period takes the number of its opening Friday, which means that from Monday
+to Thursday the period's number is one behind the number the wall calendar shows
+for that date. The gutter prints the calendar's own number, not the period's, so
+it always agrees with any other calendar.
 
 ### Points that need confirming
 
-Three things are not fully determined and are flagged in the app itself:
+Two things are not fully determined by the wording:
 
 1. The half-term clause refers both to an even/odd week alternation and to a
-   Sunday 18:00 return, which do not fit together. Whole-week alternation is
-   applied.
-2. The eight summer weeks are numbered but the start of week 1 is not defined.
-   It starts on the first day of the summer holidays here.
-3. The Tuesday rule runs "until the youngest starts secondary school" with no
-   date. It stops at the September 2029 rentrée; adjustable in the settings.
+   Sunday 18:00 return, which do not sit together. Two halves plus a Sunday
+   18:00 hand-back is applied — the reading both parents used in October 2026.
+2. Which civil week names a Friday-to-Friday period, given the straddle above.
+
+### Checking it
+
+`node verifier.js` re-runs every assertion — dates both parents have confirmed,
+the civil week numbers, the term parity, the holiday splits, the summer 3/3/1/1,
+the Tuesday clause, and the published *arrêté* dates — over eleven school years.
 
 ## Privacy
 
-No judgment text is stored anywhere in this app, by design. The only things
-kept are the two names and the rotation settings, and they live in two places
-only: this browser's `localStorage`, and the share link if you generate one
-(encoded in the part after `#`, which browsers never send to a server).
+No judgment text is stored anywhere in this app, by design. The only thing kept
+is the two display names, and they live in two places only: this browser's
+`localStorage`, and the share link if you generate one (encoded in the part
+after `#`, which browsers never send to a server). A shared or edited link can
+change the names and nothing else — every value that decides a date is fixed in
+the code.
 
 Nothing is transmitted anywhere. The page is also marked `noindex, nofollow`.
 
@@ -117,11 +155,9 @@ Nothing is transmitted anywhere. The page is also marked `noindex, nofollow`.
 | `vacances.js` | Zone B holiday dates, projections, jours fériés |
 | `engine.js` | Works out which parent has the children on any given day |
 | `app.js` | Interface, FR/EN wording, share link, `.ics` export |
+| `verifier.js` | `node verifier.js` — the checks described above |
 
 ## A caveat worth keeping in view
 
-This is a reading aid for a schedule. It renders whatever rotation is set in
-**Réglages** — it cannot read a judgment and does not know what yours says. Check
-each setting against the judgment before sharing the calendar; the banner at the
-top of the page stays up until you confirm you have. Where the two disagree,
-the judgment governs.
+This is a reading aid. It renders one settled reading of one judgment; it is not
+the judgment. Where the two disagree, the judgment governs.

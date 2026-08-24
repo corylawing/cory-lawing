@@ -45,7 +45,10 @@
       rMidweek: 'Mardi soir → mercredi {t}', rMidweekShort: 'Mardi',
       rReturn: 'Retour {t}', rMeres: 'Fête des mères', rPeres: 'Fête des pères',
       official: 'dates officielles', projected: 'prévisionnel',
-      legendVac: 'Vacances scolaires', legendToday: 'Aujourd’hui', legendHand: 'échange',
+      legendVac: 'vacances', legendTerm: 'période scolaire',
+      legendToday: 'Aujourd’hui', legendHand: 'échange',
+      wk53: '{y} compte 53 semaines',
+      wk53Body: 'Une année de 53 semaines a une semaine impaire de plus. Cette semaine supplémentaire revient donc à {b}. C’est ainsi.',
       copy: 'Copier le lien à partager', copied: 'Lien copié ✓',
       ics: 'Ajouter à mon téléphone (.ics)', print: 'Imprimer / PDF',
       projWarn: 'Dates prévisionnelles à partir de septembre 2028',
@@ -97,7 +100,10 @@
       rMidweek: 'Tuesday evening → Wednesday {t}', rMidweekShort: 'Tuesday',
       rReturn: 'Back at {t}', rMeres: 'Mother’s Day', rPeres: 'Father’s Day',
       official: 'official dates', projected: 'projected',
-      legendVac: 'School holidays', legendToday: 'Today', legendHand: 'handover',
+      legendVac: 'holidays', legendTerm: 'school term',
+      legendToday: 'Today', legendHand: 'handover',
+      wk53: '{y} has 53 weeks',
+      wk53Body: 'A 53-week year has one extra odd week, so that extra week goes to {b}. That is the way it is.',
       copy: 'Copy link to share', copied: 'Link copied ✓',
       ics: 'Add to my phone (.ics)', print: 'Print / PDF',
       projWarn: 'Projected dates from September 2028 onwards',
@@ -270,6 +276,7 @@
     renderHero();
     renderUpcoming();
     renderProjWarn();
+    renderWk53();
 
     const root = $('#viewRoot');
     root.innerHTML = '';
@@ -287,6 +294,16 @@
     renderLegend();
   }
 
+  /** A 53-week year hands the odd-week parent one week more. Say so. */
+  function renderWk53() {
+    const b = $('#wk53Banner');
+    const y = cur.getUTCFullYear();
+    const show = view !== 'holidays' && E.isoWeek(new Date(Date.UTC(y, 11, 28))) === 53;
+    b.classList.toggle('hidden', !show);
+    if (show) b.innerHTML = `<div>🗓️</div><div><strong>${esc(t('wk53', { y }))}</strong>`
+      + `${esc(t('wk53Body', { b: nameOf('B') }))}</div>`;
+  }
+
   function renderProjWarn() {
     const b = $('#projBanner');
     const show = cur.getUTCFullYear() >= 2028;
@@ -297,7 +314,7 @@
   function renderHero() {
     const d = plan.get(TODAY_ISO) || plan.get(RANGE_FROM);
     const hero = $('#hero');
-    hero.className = 'hero p' + d.parent;
+    hero.className = 'hero p' + d.parent + (d.period ? ' sV' : ' sS');
     let end = d.date;
     for (;;) {
       const nxt = plan.get(ISO(addDays(end, 1)));
@@ -325,7 +342,7 @@
       const time = handoverTime(h);
       return `<div class="hand">
         <div class="when">${esc(cap(fmtLong(h.date)))} · ${esc(time)}</div>
-        <div class="move"><span class="who-i i${h.parent}">${esc(initialOf(h.parent))}</span>
+        <div class="move"><span class="who-i ${h.period ? 'v' : 'i'}${h.parent}">${esc(initialOf(h.parent))}</span>
           ${esc(t('handoverTo', { n: nameOf(h.parent) }))} · <span style="opacity:.8">${esc(reasonOf(h))}</span></div>
       </div>`;
     }).join('');
@@ -380,18 +397,22 @@
         body.appendChild(cell);
       });
 
-      // row 2 — one bar per run, carrying the name
-      runsOf(week, (d) => d.parent).forEach((r) => {
+      // row 2 — one bar per run. A run is broken both by a change of parent
+      // and by the school-term / holiday boundary, so the colour can carry
+      // both: blue in term time, green in the holidays.
+      runsOf(week, (d) => d.parent + (d.period ? 'V' : 'S')).forEach((r) => {
+        const who = r.key[0];
         const bar = document.createElement('button');
         bar.type = 'button';
-        bar.className = 'bar p' + r.key + (r.days.some((d) => d.isHandover) ? ' opens' : '');
+        bar.className = 'bar p' + who + ' s' + r.key[1]
+          + (r.days.some((d) => d.isHandover) ? ' opens' : '');
         bar.style.gridColumn = (r.start + 1) + ' / span ' + (r.end - r.start + 1);
         const wide = r.end - r.start >= 1;
-        bar.textContent = wide ? nameOf(r.key) : initialOf(r.key);
+        bar.textContent = wide ? nameOf(who) : initialOf(who);
         const h = r.days.find((d) => d.isHandover);
-        if (h && wide) bar.innerHTML = `${esc(nameOf(r.key))}<i>${esc(handoverTime(h))}</i>`;
+        if (h && wide) bar.innerHTML = `${esc(nameOf(who))}<i>${esc(handoverTime(h))}</i>`;
         bar.onclick = () => openSheet(r.days[0].iso);
-        bar.title = nameOf(r.key) + ' · ' + reasonOf(r.days[0]);
+        bar.title = nameOf(who) + ' · ' + reasonOf(r.days[0]);
         body.appendChild(bar);
       });
 
@@ -435,7 +456,7 @@
     if (d.ferie) rows.push([t('sheetFer'), L().fer[d.ferie]]);
     rows.push([t('sheetWeek'), String(d.civilWeek)]);
 
-    el.className = 'sheet p' + d.parent;
+    el.className = 'sheet p' + d.parent + (d.period ? ' sV' : ' sS');
     el.innerHTML = `<div class="sheet-top">
         <div><div class="sheet-lab">${esc(cap(fmtFull(d.date)))}</div>
         <div class="sheet-who">${esc(nameOf(d.parent))}</div></div>
@@ -493,7 +514,10 @@
         <div class="dates">${esc(cap(fmtLong(p.start)))} → ${esc(cap(fmtLong(p.last)))} · ${esc(t('days', { n: total }))}</div>
         <div class="halves">` + inner.map((b) => {
           const label = b.src === 'summer'
-            ? t('rSummer', { w: b.summerWk }) + (b.days > 7 ? ` – ${b.summerWk + Math.round(b.days / 7) - 1}` : '')
+            ? (() => {                                   // the eighth week absorbs the tail
+                const last = Math.min(8, b.summerWk + Math.ceil(b.days / 7) - 1);
+                return t('rSummer', { w: b.summerWk }) + (last > b.summerWk ? ` – ${last}` : '');
+              })()
             : b.src === 'summer-tail' ? t('rSummerTail')
             : b.src === 'holiday-h1' ? t('half1')
             : b.src === 'holiday-h2' ? t('half2')
@@ -508,10 +532,12 @@
   }
 
   function renderLegend() {
+    const term = t('legendTerm'), vac = t('legendVac');
     $('#legend').innerHTML = `
-      <span class="k"><span class="sw a"></span>${esc(nameOf('A'))}</span>
-      <span class="k"><span class="sw b"></span>${esc(nameOf('B'))}</span>
-      <span class="k"><span class="sw v"></span>${esc(t('legendVac'))}</span>
+      <span class="k"><span class="sw a"></span>${esc(nameOf('A') + ' · ' + term)}</span>
+      <span class="k"><span class="sw b"></span>${esc(nameOf('B') + ' · ' + term)}</span>
+      <span class="k"><span class="sw va"></span>${esc(nameOf('A') + ' · ' + vac)}</span>
+      <span class="k"><span class="sw vb"></span>${esc(nameOf('B') + ' · ' + vac)}</span>
       <span class="k"><span class="sw t"></span>${esc(t('legendToday'))}</span>`;
   }
 
