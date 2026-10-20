@@ -41,7 +41,8 @@
     region: null, accounts: [], hubs: [], colorBy: "status",
     filters: { Customer: true, SQL: true, Prospect: true, Churned: true },
     isolateRep: -1, selected: null, q: "",
-    mode: "explore", route: [], insightsOpen: false, showGaps: false
+    mode: "route", route: [], routeBaselineKm: 0, routeOptimized: false,
+    insightsOpen: false, showGaps: false
   };
   var built = false, mapReady = false, overlay, modal, mapDiv, map;
   var hullLayer, gapLayer, markerLayer, routeLayer, numLayer, hubLayer;
@@ -77,7 +78,9 @@
     for (i = 0; i < K; i++) { var cc = cities[(i * step) % cities.length]; hubs.push({ lat: cc[1], lng: cc[2] }); }
     state.region = name; state.accounts = accts; state.hubs = hubs;
     state.isolateRep = -1; state.selected = null; state.q = ""; state.route = [];
+    state.routeBaselineKm = 0; state.routeOptimized = false;
     assign();
+    if (state.mode === "route") buildSampleRoute();
   }
   function assign() {
     state.accounts.forEach(function (a) {
@@ -144,13 +147,53 @@
   }
 
   /* ---- route --------------------------------------------- */
-  function routeKm() { var d = 0; for (var i = 1; i < state.route.length; i++) d += km(state.route[i - 1], state.route[i]); return d; }
-  function toggleStop(a) { var i = state.route.indexOf(a); if (i === -1) state.route.push(a); else state.route.splice(i, 1); }
+  function routeKmFor(route) { var d = 0; for (var i = 1; i < route.length; i++) d += km(route[i - 1], route[i]); return d; }
+  function routeKm() { return routeKmFor(state.route); }
+  function routeMinutes() { return Math.round((routeKm() / 78) * 60 + Math.max(0, state.route.length - 1) * 18); }
+  function formatDuration(minutes) {
+    var h = Math.floor(minutes / 60), m = Math.round(minutes % 60 / 5) * 5;
+    if (m === 60) { h++; m = 0; }
+    return h ? h + "h" + (m ? " " + m + "m" : "") : m + "m";
+  }
+  function buildSampleRoute() {
+    var plans = {
+      "EMEA": ["Paris", "Berlin", "London", "Munich", "Amsterdam"],
+      "N. America": ["Chicago", "Boston", "Atlanta", "Toronto", "New York"],
+      "APAC": ["Singapore", "Taipei", "Bangkok", "Seoul", "Manila"]
+    };
+    var used = [], route = [];
+    (plans[state.region] || []).forEach(function (city) {
+      var candidates = state.accounts.filter(function (a) { return a.city === city && used.indexOf(a) === -1; });
+      candidates.sort(function (a, b) { return b.value - a.value; });
+      if (candidates[0]) { route.push(candidates[0]); used.push(candidates[0]); }
+    });
+    if (route.length < 5) {
+      state.accounts.slice().sort(function (a, b) { return b.value - a.value; }).some(function (a) {
+        if (used.indexOf(a) === -1) { route.push(a); used.push(a); }
+        return route.length === 5;
+      });
+    }
+    state.route = route;
+    state.routeBaselineKm = routeKmFor(route);
+    state.routeOptimized = false;
+  }
+  function toggleStop(a) {
+    var i = state.route.indexOf(a);
+    if (i === -1) state.route.push(a); else state.route.splice(i, 1);
+    state.routeBaselineKm = routeKm(); state.routeOptimized = false;
+  }
   function optimizeRoute() {
     if (state.route.length < 3) return;
+    var before = routeKm();
     var rem = state.route.slice(1), ord = [state.route[0]], cur = state.route[0];
     while (rem.length) { var bi = 0, bd = 1e9; rem.forEach(function (a, i) { var d = d2(cur, a); if (d < bd) { bd = d; bi = i; } }); cur = rem.splice(bi, 1)[0]; ord.push(cur); }
-    state.route = ord;
+    state.route = ord; state.routeBaselineKm = before; state.routeOptimized = true;
+  }
+  function focusRoute() {
+    if (!mapReady || !state.route.length) return;
+    if (state.route.length === 1) { map.setView([state.route[0].lat, state.route[0].lng], 8); return; }
+    var bounds = window.L.latLngBounds(state.route.map(function (a) { return [a.lat, a.lng]; }));
+    map.fitBounds(bounds, { padding: [62, 62], maxZoom: 7 });
   }
   function gmapsUrl() {
     var pts = state.route.map(function (a) { return a.lat.toFixed(5) + "," + a.lng.toFixed(5); });
@@ -196,6 +239,7 @@
         b.classList.add("is-on"); genRegion(name);
         if (mapReady) { createMarkers(); map.setView(REGIONS[name].view, REGIONS[name].zoom); }
         if (searchInput) searchInput.value = ""; syncButtons(); render(); renderPanel();
+        if (state.mode === "route") setTimeout(focusRoute, 80);
       });
       regWrap.appendChild(b);
     });
@@ -215,7 +259,15 @@
 
     var acts = el("div", "td-acts");
     routeBtn = el("button", "td-act"); routeBtn.innerHTML = "<span>Route</span>";
-    routeBtn.addEventListener("click", function () { state.mode = state.mode === "route" ? "explore" : "route"; if (state.mode === "route") { state.selected = null; state.insightsOpen = false; } syncButtons(); render(); renderPanel(); });
+    routeBtn.addEventListener("click", function () {
+      state.mode = state.mode === "route" ? "explore" : "route";
+      if (state.mode === "route") {
+        state.selected = null; state.insightsOpen = false;
+        if (!state.route.length) buildSampleRoute();
+      }
+      syncButtons(); render(); renderPanel();
+      if (state.mode === "route") setTimeout(focusRoute, 60);
+    });
     insBtn = el("button", "td-act"); insBtn.innerHTML = "<span>Intelligence</span>";
     insBtn.addEventListener("click", function () { state.insightsOpen = !state.insightsOpen; if (state.insightsOpen) state.selected = null; syncButtons(); renderPanel(); });
     rebBtn = el("button", "td-act"); rebBtn.innerHTML = "<span>Rebalance</span>"; rebBtn.style.display = "none";
@@ -321,8 +373,14 @@
     if (state.route.length) {
       if (state.route.length > 1) {
         var pts = state.route.map(function (a) { return [a.lat, a.lng]; });
-        L.polyline(pts, { pane: "route", color: "#06070A", weight: 7, opacity: 0.9, lineJoin: "round", lineCap: "round", interactive: false }).addTo(routeLayer);
-        L.polyline(pts, { pane: "route", color: "#D9F77B", weight: 3.5, opacity: 1, lineJoin: "round", lineCap: "round", interactive: false }).addTo(routeLayer);
+        L.polyline(pts, { pane: "route", className: "td-route-shadow", color: "#06070A", weight: 10, opacity: 0.92, lineJoin: "round", lineCap: "round", interactive: false }).addTo(routeLayer);
+        L.polyline(pts, { pane: "route", className: "td-route-line", color: "#D9F77B", weight: 4.5, opacity: 1, lineJoin: "round", lineCap: "round", interactive: false }).addTo(routeLayer);
+        for (var s = 1; s < state.route.length; s++) {
+          var from = state.route[s - 1], to = state.route[s];
+          var mid = [(from.lat + to.lat) / 2, (from.lng + to.lng) / 2];
+          var angle = Math.atan2(to.lat - from.lat, (to.lng - from.lng) * Math.cos(mid[0] * Math.PI / 180)) * 180 / Math.PI;
+          L.marker(mid, { pane: "nums", interactive: false, icon: L.divIcon({ className: "td-arrowicon", html: '<span style="transform:rotate(' + (-angle) + 'deg)">→</span>', iconSize: [24, 24] }) }).addTo(numLayer);
+        }
       }
       state.route.forEach(function (a, i) {
         L.marker([a.lat, a.lng], { pane: "nums", interactive: false, icon: L.divIcon({ className: "td-numicon", html: String(i + 1), iconSize: [20, 20] }) }).addTo(numLayer);
@@ -377,6 +435,7 @@
   }
 
   function renderDetail(a) {
+    panelBody.innerHTML = "";
     var back = el("button", "td-back"); back.innerHTML = "&larr; Back"; back.addEventListener("click", function () { state.selected = null; render(); renderPanel(); });
     panelBody.appendChild(back);
     var hero = el("div", "td-detail__hero");
@@ -398,29 +457,48 @@
   }
 
   function renderRoute() {
-    var h = el("div", "td-sec"); h.appendChild(label("Route builder"));
-    var hint = el("p", "td-routehint"); hint.textContent = "Click accounts on the map to add stops in order."; h.appendChild(hint); panelBody.appendChild(h);
-    if (!state.route.length) { var em = el("p", "td-empty"); em.textContent = "No stops yet."; panelBody.appendChild(em); return; }
+    panelBody.innerHTML = "";
+    var h = el("div", "td-route__hero");
+    h.innerHTML = '<span class="td-route__eyebrow mono">Field route planning</span><strong class="td-route__title">' + (state.routeOptimized ? "Route optimized" : "Demo route ready") + '</strong><p class="td-routehint">A five-stop route is preloaded so you can see the workflow immediately. Click any account to add or remove a stop.</p>';
+    panelBody.appendChild(h);
+    if (!state.route.length) {
+      var em = el("div", "td-route__empty"); em.innerHTML = '<strong>No stops selected</strong><span>Load the example or click accounts on the map.</span>';
+      var load = el("button", "td-mini td-mini--go"); load.textContent = "Load example route";
+      load.addEventListener("click", function () { buildSampleRoute(); syncButtons(); render(); renderRoute(); setTimeout(focusRoute, 60); });
+      em.appendChild(load); panelBody.appendChild(em); return;
+    }
+    var distance = routeKm(), saved = state.routeOptimized ? Math.max(0, state.routeBaselineKm - distance) : 0;
+    var summary = el("div", "td-route__summary");
+    summary.innerHTML = '<div class="td-route__stat"><strong>' + state.route.length + '</strong><span class="mono">stops</span></div><div class="td-route__stat"><strong>' + Math.round(distance).toLocaleString() + '</strong><span class="mono">est. km</span></div><div class="td-route__stat"><strong>' + formatDuration(routeMinutes()) + '</strong><span class="mono">travel</span></div>';
+    panelBody.appendChild(summary);
+    if (state.routeOptimized) {
+      var win = el("div", "td-route__saved");
+      win.innerHTML = '<span class="td-route__savedicon">✓</span><span><strong>' + Math.round(saved) + ' km removed</strong><small>Estimated reduction after reordering the stops.</small></span>';
+      panelBody.appendChild(win);
+    }
     var list = el("div", "td-stops");
     state.route.forEach(function (a, i) {
       var row = el("div", "td-stop");
-      row.innerHTML = '<span class="td-stop__n">' + (i + 1) + '</span><span class="td-stop__name">' + a.name + '<span class="td-stop__city mono">' + a.city + '</span></span>';
+      var leg = i ? Math.round(km(state.route[i - 1], a)) + " km from stop " + i : "Starting point";
+      row.innerHTML = '<span class="td-stop__n">' + (i + 1) + '</span><span class="td-stop__name">' + a.name + '<span class="td-stop__city mono">' + a.city + '</span><span class="td-stop__leg">' + leg + '</span></span>';
       var rm = el("button", "td-stop__rm"); rm.setAttribute("aria-label", "Remove stop"); rm.innerHTML = "&times;";
       rm.addEventListener("click", function () { toggleStop(a); syncButtons(); render(); renderRoute(); });
       row.appendChild(rm); list.appendChild(row);
     });
     panelBody.appendChild(list);
     var foot = el("div", "td-route__foot");
-    foot.innerHTML = '<span class="mono">' + state.route.length + ' stops · ~' + Math.round(routeKm()) + ' km driving</span>';
-    var nav = el("a", "td-mini td-mini--go"); nav.textContent = "Take me there →"; nav.href = gmapsUrl(); nav.target = "_blank"; nav.rel = "noopener";
+    var nav = el("a", "td-mini td-mini--go"); nav.textContent = "Open route in Google Maps"; nav.href = gmapsUrl(); nav.target = "_blank"; nav.rel = "noopener";
     foot.appendChild(nav);
     var btns = el("div", "td-route__btns");
-    var opt = el("button", "td-mini"); opt.textContent = "Optimize order"; opt.addEventListener("click", function () { optimizeRoute(); render(); renderRoute(); });
-    var clr = el("button", "td-mini td-mini--ghost"); clr.textContent = "Clear"; clr.addEventListener("click", function () { state.route = []; syncButtons(); render(); renderRoute(); });
-    btns.appendChild(opt); btns.appendChild(clr); foot.appendChild(btns); panelBody.appendChild(foot);
+    var opt = el("button", "td-mini"); opt.textContent = state.routeOptimized ? "Optimized" : "Optimize stop order"; opt.disabled = state.routeOptimized;
+    opt.addEventListener("click", function () { optimizeRoute(); render(); renderRoute(); setTimeout(focusRoute, 60); });
+    var reset = el("button", "td-mini td-mini--ghost"); reset.textContent = "Reset demo"; reset.addEventListener("click", function () { buildSampleRoute(); syncButtons(); render(); renderRoute(); setTimeout(focusRoute, 60); });
+    var clr = el("button", "td-mini td-mini--ghost"); clr.textContent = "Clear"; clr.addEventListener("click", function () { state.route = []; state.routeBaselineKm = 0; state.routeOptimized = false; syncButtons(); render(); renderRoute(); });
+    btns.appendChild(opt); btns.appendChild(reset); btns.appendChild(clr); foot.appendChild(btns); panelBody.appendChild(foot);
   }
 
   function renderInsights() {
+    panelBody.innerHTML = "";
     var d = intel();
     var h = el("div", "td-sec"); h.appendChild(label("Territory intelligence")); panelBody.appendChild(h);
     var bars = el("div", "td-bars");
@@ -455,7 +533,8 @@
     if (!mapReady) {
       ensureLeaflet(function () {
         initMap(); syncButtons(); render(); renderPanel();
-        setTimeout(fixSize, 80); setTimeout(fixSize, 450);
+        setTimeout(function () { fixSize(); if (state.mode === "route") focusRoute(); }, 80);
+        setTimeout(function () { fixSize(); if (state.mode === "route") focusRoute(); }, 450);
       });
     } else {
       setTimeout(fixSize, 80); setTimeout(fixSize, 450);
