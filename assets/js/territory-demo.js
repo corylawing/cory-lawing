@@ -135,9 +135,9 @@
     var maxCount = Math.max.apply(null, rep.map(function (rr) { return rr.count; }));
     var insights = [], diff = rep[maxI].count - rep[minI].count;
     if (diff >= 4) insights.push(["load", REP_NAMES[maxI] + " carries " + rep[maxI].count + " accounts vs " + REP_NAMES[minI] + "'s " + rep[minI].count + ". Rebalancing could shift ~" + Math.floor(diff / 2) + " to even the load."]);
-    else insights.push(["load", "Territories are well balanced — load spread is just " + diff + " accounts."]);
-    if (stale > 0) insights.push(["stale", stale + " accounts haven't been touched in " + STALE + "+ days — worth a coverage sweep."]);
-    if (whitespace > 0) insights.push(["space", whitespace + " prospects sit 350km+ from the nearest rep — white space to route into."]);
+    else insights.push(["load", "Territories are well balanced. The load spread is just " + diff + " accounts."]);
+    if (stale > 0) insights.push(["stale", stale + " accounts haven't been touched in " + STALE + "+ days. They are worth a coverage sweep."]);
+    if (whitespace > 0) insights.push(["space", whitespace + " prospects sit 350km+ from the nearest rep. This is white space to route into."]);
     insights.push(["pipe", "$" + (pipe / 1000).toFixed(1) + "M pipeline + ARR across " + state.region + ", " + sql + " open SQLs."]);
     if (atRisk > 0) insights.push(["risk", atRisk + " accounts at risk (churned, or customers quiet 90+ days)."]);
     return { rep: rep, maxCount: maxCount, stale: stale, whitespace: whitespace, insights: insights };
@@ -178,7 +178,7 @@
   function build() {
     overlay = el("div", "td-overlay"); overlay.setAttribute("aria-hidden", "true");
     modal = el("div", "td-modal"); modal.setAttribute("role", "dialog"); modal.setAttribute("aria-modal", "true");
-    modal.setAttribute("aria-label", "Territory Intelligence — interactive demo");
+    modal.setAttribute("aria-label", "Territory Intelligence interactive demo");
 
     var head = el("div", "td-head");
     var ttl = el("div", "td-head__titles");
@@ -236,7 +236,7 @@
     stage.appendChild(mapWrap); stage.appendChild(panel);
 
     var foot = el("p", "td-foot mono");
-    foot.textContent = "Sample data on a live map — colours accounts by status or rep territory, builds routes, and surfaces coverage intelligence. Click a marker for detail.";
+    foot.textContent = "Sample data on a live map. Colour accounts by status or rep territory, build routes, and surface coverage intelligence. Click a marker for detail.";
 
     modal.appendChild(head); modal.appendChild(bar); modal.appendChild(stage); modal.appendChild(foot);
     overlay.appendChild(modal); document.body.appendChild(overlay);
@@ -364,7 +364,7 @@
     });
     panelBody.appendChild(fSec);
     if (state.colorBy === "territory") {
-      var lSec = el("div", "td-sec"); lSec.appendChild(label("Reps — click to isolate"));
+      var lSec = el("div", "td-sec"); lSec.appendChild(label("Reps: click to isolate"));
       var c2 = [0, 0, 0, 0, 0]; state.accounts.forEach(function (a) { if (isShown(a)) c2[a.rep]++; });
       REP_NAMES.forEach(function (nm, i) {
         var row = el("button", "td-rep" + (state.isolateRep === i ? " is-on" : ""));
@@ -382,7 +382,7 @@
     var hero = el("div", "td-detail__hero");
     hero.innerHTML = '<span class="td-badge" style="--c:' + STATUS_COLOR[a.status] + '">' + a.status + '</span><h4 class="td-detail__name">' + a.name + '</h4><p class="td-detail__city mono">' + a.city + ' · ' + a.seg + '</p>';
     panelBody.appendChild(hero);
-    var rows = [["Pipeline / ARR", "$" + a.value + "k"], ["Owner", '<span class="td-dotmini" style="background:' + REP_COLORS[a.rep] + '"></span>' + REP_NAMES[a.rep]], ["Last touch", a.lastSeen + " days ago" + (a.lastSeen > STALE ? ' <span class="td-flag">stale</span>' : "")], ["Next activity", a.nextSubj ? (a.nextSubj + " · in " + a.nextIn + "d") : "—"]];
+    var rows = [["Pipeline / ARR", "$" + a.value + "k"], ["Owner", '<span class="td-dotmini" style="background:' + REP_COLORS[a.rep] + '"></span>' + REP_NAMES[a.rep]], ["Last touch", a.lastSeen + " days ago" + (a.lastSeen > STALE ? ' <span class="td-flag">stale</span>' : "")], ["Next activity", a.nextSubj ? (a.nextSubj + " · in " + a.nextIn + "d") : "None"]];
     if (a.status === "SQL") rows.push(["Opportunity", a.oppStage + " · " + a.oppDays + "d in stage"]);
     var fl = el("div", "td-fields");
     rows.forEach(function (r) { var row = el("div", "td-field"); row.innerHTML = '<span class="td-field__k mono">' + r[0] + '</span><span class="td-field__v">' + r[1] + '</span>'; fl.appendChild(row); });
@@ -392,7 +392,7 @@
     var tSec = el("div", "td-sec"); tSec.appendChild(label("Account team"));
     team.forEach(function (m) { var row = el("div", "td-team"); var ini = m.name.replace(/[^A-Za-z]/g, "").slice(0, 2).toUpperCase(); row.innerHTML = '<span class="td-team__av">' + ini + '</span><span class="td-team__name">' + m.name + '</span><span class="td-team__role mono">' + m.role + '</span>'; tSec.appendChild(row); });
     panelBody.appendChild(tSec);
-    var add = el("button", "td-addstop"); add.textContent = (state.route.indexOf(a) === -1 ? "+ Add to route" : "✓ In route — remove");
+    var add = el("button", "td-addstop"); add.textContent = (state.route.indexOf(a) === -1 ? "+ Add to route" : "✓ In route. Remove");
     add.addEventListener("click", function () { toggleStop(a); syncButtons(); render(); renderDetail(a); });
     panelBody.appendChild(add);
   }
