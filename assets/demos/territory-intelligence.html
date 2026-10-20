@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+
+  <title>GTM Territory Intelligence &amp; Route Planning | Cory Lawing</title>
+  <meta name="description" content="Try a live, sample-data demo of a GTM territory intelligence and multi-stop route-planning application designed and built by Cory Lawing." />
+  <meta name="robots" content="index,follow" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="GTM Territory Intelligence &amp; Route Planning" />
+  <meta property="og:description" content="Explore accounts, segment territories, surface coverage intelligence, and build an optimized multi-stop route in a live demo." />
+  <meta property="og:url" content="https://corylawing.github.io/cory-lawing/assets/demos/territory-intelligence.html" />
+  <meta property="og:image" content="https://corylawing.github.io/cory-lawing/assets/img/territory-card.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GTM Territory Intelligence &amp; Route Planning" />
+  <meta name="twitter:description" content="A live, sample-data GTM mapping and route-planning demo." />
+  <meta name="twitter:image" content="https://corylawing.github.io/cory-lawing/assets/img/territory-card.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&amp;family=Geist:wght@300..700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <style>
+    html, body { min-height: 100%; }
+    body { margin: 0; background: #0a0a0a; color: #f3f4ef; }
+    .demo-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: clamp(1.25rem, 4vw, 4rem);
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(10,10,10,.97) 0%, rgba(10,10,10,.82) 48%, rgba(10,10,10,.44) 100%),
+        url("../img/territory-card.jpg") center / cover no-repeat;
+    }
+    .demo-page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to right, black, transparent 78%);
+      pointer-events: none;
+    }
+    .demo-card {
+      width: min(720px, 100%);
+      justify-self: start;
+      position: relative;
+      z-index: 1;
+    }
+    .demo-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      margin: 0 0 1.2rem;
+      color: #d9f77b;
+      font: 600 .69rem/1 "Geist Mono", ui-monospace, monospace;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .demo-kicker::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #d9f77b; box-shadow: 0 0 16px rgba(217,247,123,.8); }
+    .demo-title {
+      margin: 0;
+      max-width: 670px;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: clamp(3rem, 7vw, 6.2rem);
+      font-weight: 420;
+      line-height: .91;
+      letter-spacing: -.055em;
+      font-variation-settings: "opsz" 144, "SOFT" 35;
+    }
+    .demo-title em { color: #d9f77b; font-weight: 420; }
+    .demo-copy { max-width: 620px; margin: 1.5rem 0 0; color: rgba(243,244,239,.73); font: 400 clamp(1rem, 1.8vw, 1.2rem)/1.65 "Geist", sans-serif; }
+    .demo-capabilities { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1.55rem 0 0; padding: 0; list-style: none; }
+    .demo-capabilities li { padding: .46rem .72rem; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(18,18,18,.55); backdrop-filter: blur(10px); color: rgba(243,244,239,.78); font: 500 .72rem/1 "Geist Mono", ui-monospace, monospace; }
+    .demo-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .85rem; margin-top: 2rem; }
+    .demo-launch {
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      border: 0;
+      border-radius: 999px;
+      padding: .9rem 1.3rem;
+      background: #d9f77b;
+      color: #0a0a0a;
+      font: 700 .86rem/1 "Geist", sans-serif;
+      cursor: pointer;
+      box-shadow: 0 18px 45px rgba(0,0,0,.35);
+      transition: transform .2s ease, filter .2s ease;
+    }
+    .demo-launch:hover { transform: translateY(-2px); filter: brightness(1.04); }
+    .demo-note { color: rgba(243,244,239,.48); font: 500 .67rem/1.5 "Geist Mono", ui-monospace, monospace; }
+    .demo-credit { position: absolute; left: clamp(1.25rem, 4vw, 4rem); bottom: 1.2rem; z-index: 1; color: rgba(243,244,239,.42); font: 500 .65rem/1 "Geist Mono", ui-monospace, monospace; }
+
+    /* The direct demo gets the full browser canvas. The standard close button
+       returns visitors to this introduction instead of leaving the page. */
+    .td-overlay { padding: clamp(.35rem, 1.2vw, .9rem); background: rgba(3,4,5,.9); }
+    .td-modal { width: min(1440px, 100%); max-height: calc(100vh - 1.8rem); }
+    .td-leaflet { height: min(66vh, 690px); }
+    .td-panel { max-height: min(66vh, 690px); }
+    .td-head__eyebrow::after { content: " · fictional accounts"; }
+
+    @media (max-width: 720px) {
+      .demo-page { align-items: end; background-position: 60% center; }
+      .demo-title { font-size: clamp(2.75rem, 14vw, 4.5rem); }
+      .demo-copy { font-size: .98rem; }
+      .demo-credit { display: none; }
+      .td-overlay { padding: 0; }
+      .td-modal { max-height: 100vh; }
+      .td-leaflet { height: 45vh; }
+      .td-panel { max-height: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="demo-page">
+    <section class="demo-card" aria-labelledby="demo-title">
+      <p class="demo-kicker">Interactive product demo</p>
+      <h1 class="demo-title" id="demo-title">GTM Territory <em>Intelligence</em></h1>
+      <p class="demo-copy">A working demonstration of how CRM, activity, and geographic data can become a practical field-sales application. Explore fictional accounts, compare territory coverage, surface risks, and build a route directly from the map.</p>
+      <ul class="demo-capabilities" aria-label="Demo capabilities">
+        <li>Account segmentation</li>
+        <li>Territory coverage</li>
+        <li>Multi-stop routing</li>
+        <li>Coverage intelligence</li>
+        <li>Sample data only</li>
+      </ul>
+      <div class="demo-actions">
+        <button class="demo-launch" id="launch-demo" data-demo="territory" type="button">Open the live map <span aria-hidden="true">↗</span></button>
+        <span class="demo-note">No login required<br />Nothing is saved</span>
+      </div>
+    </section>
+    <p class="demo-credit">Designed and built by Cory Lawing</p>
+  </main>
+
+  <script src="../js/territory-demo.js" defer></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      if (!new URLSearchParams(window.location.search).has("intro")) {
+        window.requestAnimationFrame(function () {
+          document.getElementById("launch-demo").click();
+        });
+      }
+    });
+  </script>
+</body>
+</html>
