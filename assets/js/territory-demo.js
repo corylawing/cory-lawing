@@ -41,12 +41,12 @@
     region: null, accounts: [], hubs: [], colorBy: "status",
     filters: { Customer: true, SQL: true, Prospect: true, Churned: true },
     isolateRep: -1, selected: null, q: "",
-    mode: "route", route: [], routeBaselineKm: 0, routeOptimized: false,
+    mode: "route", route: [], routeBaselineKm: 0, routeOptimized: false, routeLabel: "",
     insightsOpen: false, showGaps: false
   };
   var built = false, mapReady = false, overlay, modal, mapDiv, map;
   var hullLayer, gapLayer, markerLayer, routeLayer, numLayer, hubLayer;
-  var panelBody, kpiWrap, searchInput, rebBtn, routeBtn, insBtn, loadEl, lastFocus = null;
+  var panelRail, panelBody, kpiWrap, searchInput, rebBtn, routeBtn, insBtn, loadEl, mapHint, lastFocus = null;
 
   /* ---- geo helpers (planar approx at regional scale) ----- */
   function d2(a, b) { var dlat = a.lat - b.lat, dlng = (a.lng - b.lng) * Math.cos(a.lat * Math.PI / 180); return dlat * dlat + dlng * dlng; }
@@ -149,31 +149,51 @@
   /* ---- route --------------------------------------------- */
   function routeKmFor(route) { var d = 0; for (var i = 1; i < route.length; i++) d += km(route[i - 1], route[i]); return d; }
   function routeKm() { return routeKmFor(state.route); }
-  function routeMinutes() { return Math.round((routeKm() / 78) * 60 + Math.max(0, state.route.length - 1) * 18); }
+  function routeDriveMinutesFor(distance) { return Math.round(distance / 48 * 60); }
+  function routeMinutes() { return routeDriveMinutesFor(routeKm()) + state.route.length * 45; }
   function formatDuration(minutes) {
     var h = Math.floor(minutes / 60), m = Math.round(minutes % 60 / 5) * 5;
     if (m === 60) { h++; m = 0; }
     return h ? h + "h" + (m ? " " + m + "m" : "") : m + "m";
   }
+  function formatClock(minutes) {
+    var normalized = Math.round(minutes / 5) * 5;
+    var h = Math.floor(normalized / 60) % 24, m = normalized % 60;
+    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+  }
+  function stopSchedule() {
+    var cursor = 9 * 60;
+    return state.route.map(function (a, i) {
+      if (i) cursor += 45 + routeDriveMinutesFor(km(state.route[i - 1], a));
+      return formatClock(cursor);
+    });
+  }
   function buildSampleRoute() {
     var plans = {
-      "EMEA": ["Paris", "Berlin", "London", "Munich", "Amsterdam"],
-      "N. America": ["Chicago", "Boston", "Atlanta", "Toronto", "New York"],
-      "APAC": ["Singapore", "Taipei", "Bangkok", "Seoul", "Manila"]
+      "EMEA": { label: "Paris metro", city: "Paris", lat: 48.8566, lng: 2.3522 },
+      "N. America": { label: "Chicago metro", city: "Chicago", lat: 41.8781, lng: -87.6298 },
+      "APAC": { label: "Singapore metro", city: "Singapore", lat: 1.3521, lng: 103.8198 }
     };
-    var used = [], route = [];
-    (plans[state.region] || []).forEach(function (city) {
-      var candidates = state.accounts.filter(function (a) { return a.city === city && used.indexOf(a) === -1; });
-      candidates.sort(function (a, b) { return b.value - a.value; });
-      if (candidates[0]) { route.push(candidates[0]); used.push(candidates[0]); }
-    });
-    if (route.length < 5) {
-      state.accounts.slice().sort(function (a, b) { return b.value - a.value; }).some(function (a) {
-        if (used.indexOf(a) === -1) { route.push(a); used.push(a); }
-        return route.length === 5;
-      });
+    var plan = plans[state.region] || plans.EMEA;
+    var anchor = { lat: plan.lat, lng: plan.lng };
+    var nearby = state.accounts.filter(function (a) { return a.city === plan.city && a.status !== "Churned"; }).slice();
+    if (nearby.length < 5) {
+      state.accounts.filter(function (a) { return nearby.indexOf(a) === -1 && a.status !== "Churned"; })
+        .sort(function (a, b) { return d2(a, anchor) - d2(b, anchor); })
+        .some(function (a) { nearby.push(a); return nearby.length === 5; });
     }
+    nearby.sort(function (a, b) { return b.value - a.value; });
+    var five = nearby.slice(0, 5);
+    var offsets = [[-0.03, -0.08], [0.04, 0.01], [-0.02, 0.11], [-0.08, 0.04], [0.01, -0.12]];
+    five.forEach(function (a, i) {
+      a.lat = plan.lat + offsets[i][0];
+      a.lng = plan.lng + offsets[i][1];
+      a.city = plan.city;
+    });
+    var order = [0, 4, 1, 3, 2];
+    var route = order.map(function (index) { return five[index]; }).filter(Boolean);
     state.route = route;
+    state.routeLabel = plan.label;
     state.routeBaselineKm = routeKmFor(route);
     state.routeOptimized = false;
   }
@@ -193,7 +213,7 @@
     if (!mapReady || !state.route.length) return;
     if (state.route.length === 1) { map.setView([state.route[0].lat, state.route[0].lng], 8); return; }
     var bounds = window.L.latLngBounds(state.route.map(function (a) { return [a.lat, a.lng]; }));
-    map.fitBounds(bounds, { padding: [62, 62], maxZoom: 7 });
+    map.fitBounds(bounds, { padding: [72, 72], maxZoom: 10 });
   }
   function gmapsUrl() {
     var pts = state.route.map(function (a) { return a.lat.toFixed(5) + "," + a.lng.toFixed(5); });
@@ -231,6 +251,8 @@
     head.appendChild(ttl); head.appendChild(close);
 
     var bar = el("div", "td-bar");
+    var regGroup = el("div", "td-control");
+    var regLabel = el("span", "td-control__label mono"); regLabel.textContent = "Market";
     var regWrap = el("div", "td-seg");
     Object.keys(REGIONS).forEach(function (name, i) {
       var b = el("button", "td-seg__btn"); b.textContent = name; if (i === 0) b.classList.add("is-on");
@@ -243,6 +265,9 @@
       });
       regWrap.appendChild(b);
     });
+    regGroup.appendChild(regLabel); regGroup.appendChild(regWrap);
+    var colGroup = el("div", "td-control");
+    var colLabel = el("span", "td-control__label mono"); colLabel.textContent = "Map view";
     var colWrap = el("div", "td-seg");
     [["status", "By status"], ["territory", "By territory"]].forEach(function (v, i) {
       var b = el("button", "td-seg__btn"); b.textContent = v[1]; if (i === 0) b.classList.add("is-on");
@@ -252,13 +277,14 @@
       });
       colWrap.appendChild(b);
     });
+    colGroup.appendChild(colLabel); colGroup.appendChild(colWrap);
     var search = el("div", "td-search");
-    searchInput = el("input"); searchInput.type = "search"; searchInput.placeholder = "Search…"; searchInput.setAttribute("aria-label", "Search accounts");
+    searchInput = el("input"); searchInput.type = "search"; searchInput.placeholder = "Find an account"; searchInput.setAttribute("aria-label", "Search accounts");
     searchInput.addEventListener("input", function () { state.q = searchInput.value.trim().toLowerCase(); render(); updateKpis(); });
     search.appendChild(searchInput);
 
     var acts = el("div", "td-acts");
-    routeBtn = el("button", "td-act"); routeBtn.innerHTML = "<span>Route</span>";
+    routeBtn = el("button", "td-act"); routeBtn.innerHTML = '<span class="td-act__icon" aria-hidden="true">↳</span><span>Plan day</span>';
     routeBtn.addEventListener("click", function () {
       state.mode = state.mode === "route" ? "explore" : "route";
       if (state.mode === "route") {
@@ -268,27 +294,36 @@
       syncButtons(); render(); renderPanel();
       if (state.mode === "route") setTimeout(focusRoute, 60);
     });
-    insBtn = el("button", "td-act"); insBtn.innerHTML = "<span>Intelligence</span>";
-    insBtn.addEventListener("click", function () { state.insightsOpen = !state.insightsOpen; if (state.insightsOpen) state.selected = null; syncButtons(); renderPanel(); });
-    rebBtn = el("button", "td-act"); rebBtn.innerHTML = "<span>Rebalance</span>"; rebBtn.style.display = "none";
+    insBtn = el("button", "td-act"); insBtn.innerHTML = '<span class="td-act__icon" aria-hidden="true">✦</span><span>Insights</span>';
+    insBtn.addEventListener("click", function () {
+      state.insightsOpen = !state.insightsOpen;
+      if (state.insightsOpen) { state.selected = null; state.mode = "explore"; }
+      syncButtons(); render(); renderPanel();
+      if (mapReady) {
+        if (state.insightsOpen) map.setView(REGIONS[state.region].view, REGIONS[state.region].zoom);
+        else if (state.mode === "route") setTimeout(focusRoute, 60);
+      }
+    });
+    rebBtn = el("button", "td-act"); rebBtn.innerHTML = '<span class="td-act__icon" aria-hidden="true">⇄</span><span>Rebalance</span>'; rebBtn.style.display = "none";
     rebBtn.addEventListener("click", function () { rebalanceStep(); render(); renderPanel(); });
     acts.appendChild(routeBtn); acts.appendChild(insBtn); acts.appendChild(rebBtn);
 
-    bar.appendChild(regWrap); bar.appendChild(colWrap); bar.appendChild(search); bar.appendChild(acts);
+    bar.appendChild(regGroup); bar.appendChild(colGroup); bar.appendChild(search); bar.appendChild(acts);
 
     var stage = el("div", "td-stage");
     var mapWrap = el("div", "td-map");
     mapDiv = el("div", "td-leaflet");
     loadEl = el("div", "td-loading"); loadEl.innerHTML = '<span class="mono">Loading map…</span>';
-    mapWrap.appendChild(mapDiv); mapWrap.appendChild(loadEl);
+    mapHint = el("div", "td-map-hint mono");
+    mapWrap.appendChild(mapDiv); mapWrap.appendChild(loadEl); mapWrap.appendChild(mapHint);
 
-    var panel = el("div", "td-panel");
+    panelRail = el("div", "td-panel");
     kpiWrap = el("div", "td-kpis"); panelBody = el("div", "td-panel__body");
-    panel.appendChild(kpiWrap); panel.appendChild(panelBody);
-    stage.appendChild(mapWrap); stage.appendChild(panel);
+    panelRail.appendChild(kpiWrap); panelRail.appendChild(panelBody);
+    stage.appendChild(mapWrap); stage.appendChild(panelRail);
 
     var foot = el("p", "td-foot mono");
-    foot.textContent = "Sample data on a live map. Colour accounts by status or rep territory, build routes, and surface coverage intelligence. Click a marker for detail.";
+    foot.textContent = "Fictional sample data. Explore accounts, compare territory coverage, plan a field day, and surface GTM risks from one workspace.";
 
     modal.appendChild(head); modal.appendChild(bar); modal.appendChild(stage); modal.appendChild(foot);
     overlay.appendChild(modal); document.body.appendChild(overlay);
@@ -299,8 +334,12 @@
   function syncButtons() {
     rebBtn.style.display = state.colorBy === "territory" ? "" : "none";
     routeBtn.classList.toggle("is-on", state.mode === "route");
-    routeBtn.querySelector("span").textContent = state.route.length ? ("Route · " + state.route.length) : "Route";
+    routeBtn.querySelectorAll("span")[1].textContent = state.route.length ? ("Plan day · " + state.route.length) : "Plan day";
     insBtn.classList.toggle("is-on", state.insightsOpen);
+    if (mapHint) {
+      mapHint.textContent = state.insightsOpen ? "Review signals and highlight coverage gaps" : state.mode === "route" ? "Select an account to add or remove it" : "Select an account to open the record";
+      mapHint.classList.toggle("is-route", state.mode === "route" || state.insightsOpen);
+    }
   }
 
   /* ---- map init + markers -------------------------------- */
@@ -362,25 +401,21 @@
       var m = a.m; if (!m) return;
       var shown = isShown(a);
       if (!shown) { m.setStyle({ fillOpacity: 0.06, opacity: 0.06, weight: 0, radius: 4 }); return; }
-      var inRoute = state.route.indexOf(a) !== -1, sel = a === state.selected;
+      var inRoute = state.mode === "route" && state.route.indexOf(a) !== -1, sel = a === state.selected;
       var color = terr ? REP_COLORS[a.rep] : STATUS_COLOR[a.status];
-      var fo = 0.9; if (terr && state.isolateRep !== -1 && state.isolateRep !== a.rep) fo = 0.14;
-      m.setStyle({ fillColor: color, fillOpacity: fo, radius: (sel || inRoute) ? 9 : 6, weight: (sel || inRoute) ? 2.5 : 1, color: (sel || inRoute) ? "#FFFFFF" : "#0b0d10", opacity: 1 });
+      var fo = 0.9;
+      if (state.mode === "route" && state.route.length && !inRoute) fo = 0.16;
+      if (terr && state.isolateRep !== -1 && state.isolateRep !== a.rep) fo = 0.14;
+      m.setStyle({ fillColor: color, fillOpacity: fo, radius: (sel || inRoute) ? 9 : (state.mode === "route" ? 4.5 : 6), weight: (sel || inRoute) ? 2.5 : 1, color: (sel || inRoute) ? "#FFFFFF" : "#0b0d10", opacity: state.mode === "route" && state.route.length && !inRoute ? 0.32 : 1 });
       if (sel || inRoute) m.bringToFront();
     });
 
     routeLayer.clearLayers(); numLayer.clearLayers();
-    if (state.route.length) {
+    if (state.mode === "route" && state.route.length) {
       if (state.route.length > 1) {
         var pts = state.route.map(function (a) { return [a.lat, a.lng]; });
         L.polyline(pts, { pane: "route", className: "td-route-shadow", color: "#06070A", weight: 10, opacity: 0.92, lineJoin: "round", lineCap: "round", interactive: false }).addTo(routeLayer);
         L.polyline(pts, { pane: "route", className: "td-route-line", color: "#D9F77B", weight: 4.5, opacity: 1, lineJoin: "round", lineCap: "round", interactive: false }).addTo(routeLayer);
-        for (var s = 1; s < state.route.length; s++) {
-          var from = state.route[s - 1], to = state.route[s];
-          var mid = [(from.lat + to.lat) / 2, (from.lng + to.lng) / 2];
-          var angle = Math.atan2(to.lat - from.lat, (to.lng - from.lng) * Math.cos(mid[0] * Math.PI / 180)) * 180 / Math.PI;
-          L.marker(mid, { pane: "nums", interactive: false, icon: L.divIcon({ className: "td-arrowicon", html: '<span style="transform:rotate(' + (-angle) + 'deg)">→</span>', iconSize: [24, 24] }) }).addTo(numLayer);
-        }
       }
       state.route.forEach(function (a, i) {
         L.marker([a.lat, a.lng], { pane: "nums", interactive: false, icon: L.divIcon({ className: "td-numicon", html: String(i + 1), iconSize: [20, 20] }) }).addTo(numLayer);
@@ -408,7 +443,14 @@
   }
 
   /* ---- panel --------------------------------------------- */
-  function renderPanel() { panelBody.innerHTML = ""; if (state.insightsOpen) return renderInsights(); if (state.mode === "route") return renderRoute(); if (state.selected) return renderDetail(state.selected); renderDefault(); }
+  function renderPanel() {
+    panelBody.innerHTML = "";
+    if (panelRail) panelRail.scrollTop = 0;
+    if (state.insightsOpen) return renderInsights();
+    if (state.mode === "route") return renderRoute();
+    if (state.selected) return renderDetail(state.selected);
+    renderDefault();
+  }
   function label(txt) { var p = el("p", "td-sec__label mono"); p.textContent = txt; return p; }
 
   function renderDefault() {
@@ -459,7 +501,7 @@
   function renderRoute() {
     panelBody.innerHTML = "";
     var h = el("div", "td-route__hero");
-    h.innerHTML = '<span class="td-route__eyebrow mono">Field route planning</span><strong class="td-route__title">' + (state.routeOptimized ? "Route optimized" : "Demo route ready") + '</strong><p class="td-routehint">A five-stop route is preloaded so you can see the workflow immediately. Click any account to add or remove a stop.</p>';
+    h.innerHTML = '<span class="td-route__eyebrow mono">' + state.routeLabel + ' · Tuesday field day</span><strong class="td-route__title">' + (state.routeOptimized ? "Your day is optimized" : "A realistic day, ready to refine") + '</strong><p class="td-routehint">Five nearby accounts are scheduled into one practical field day. Select another account on the map to update the plan.</p>';
     panelBody.appendChild(h);
     if (!state.route.length) {
       var em = el("div", "td-route__empty"); em.innerHTML = '<strong>No stops selected</strong><span>Load the example or click accounts on the map.</span>';
@@ -469,30 +511,32 @@
     }
     var distance = routeKm(), saved = state.routeOptimized ? Math.max(0, state.routeBaselineKm - distance) : 0;
     var summary = el("div", "td-route__summary");
-    summary.innerHTML = '<div class="td-route__stat"><strong>' + state.route.length + '</strong><span class="mono">stops</span></div><div class="td-route__stat"><strong>' + Math.round(distance).toLocaleString() + '</strong><span class="mono">est. km</span></div><div class="td-route__stat"><strong>' + formatDuration(routeMinutes()) + '</strong><span class="mono">travel</span></div>';
+    summary.innerHTML = '<div class="td-route__stat"><strong>' + state.route.length + '</strong><span class="mono">visits</span></div><div class="td-route__stat"><strong>' + Math.round(distance).toLocaleString() + ' km</strong><span class="mono">route distance</span></div><div class="td-route__stat"><strong>' + formatDuration(routeMinutes()) + '</strong><span class="mono">field day</span></div>';
     panelBody.appendChild(summary);
     if (state.routeOptimized) {
       var win = el("div", "td-route__saved");
-      win.innerHTML = '<span class="td-route__savedicon">✓</span><span><strong>' + Math.round(saved) + ' km removed</strong><small>Estimated reduction after reordering the stops.</small></span>';
+      win.innerHTML = '<span class="td-route__savedicon">✓</span><span><strong>' + Math.round(saved) + ' km and ' + formatDuration(routeDriveMinutesFor(saved)) + ' saved</strong><small>The same visits, reordered into a more efficient drive.</small></span>';
       panelBody.appendChild(win);
     }
     var list = el("div", "td-stops");
+    var schedule = stopSchedule();
     state.route.forEach(function (a, i) {
       var row = el("div", "td-stop");
-      var leg = i ? Math.round(km(state.route[i - 1], a)) + " km from stop " + i : "Starting point";
-      row.innerHTML = '<span class="td-stop__n">' + (i + 1) + '</span><span class="td-stop__name">' + a.name + '<span class="td-stop__city mono">' + a.city + '</span><span class="td-stop__leg">' + leg + '</span></span>';
+      var legKm = i ? km(state.route[i - 1], a) : 0;
+      var leg = i ? Math.round(legKm) + " km · " + formatDuration(routeDriveMinutesFor(legKm)) + " drive" : "Day starts here";
+      row.innerHTML = '<span class="td-stop__time mono">' + schedule[i] + '</span><span class="td-stop__n">' + (i + 1) + '</span><span class="td-stop__name">' + a.name + '<span class="td-stop__meta mono">' + a.status + ' · ' + a.city + '</span><span class="td-stop__leg">' + leg + '</span></span>';
       var rm = el("button", "td-stop__rm"); rm.setAttribute("aria-label", "Remove stop"); rm.innerHTML = "&times;";
       rm.addEventListener("click", function () { toggleStop(a); syncButtons(); render(); renderRoute(); });
       row.appendChild(rm); list.appendChild(row);
     });
     panelBody.appendChild(list);
     var foot = el("div", "td-route__foot");
-    var nav = el("a", "td-mini td-mini--go"); nav.textContent = "Open route in Google Maps"; nav.href = gmapsUrl(); nav.target = "_blank"; nav.rel = "noopener";
+    var nav = el("a", "td-mini td-mini--go"); nav.textContent = "Open day route in Google Maps"; nav.href = gmapsUrl(); nav.target = "_blank"; nav.rel = "noopener";
     foot.appendChild(nav);
     var btns = el("div", "td-route__btns");
     var opt = el("button", "td-mini"); opt.textContent = state.routeOptimized ? "Optimized" : "Optimize stop order"; opt.disabled = state.routeOptimized;
     opt.addEventListener("click", function () { optimizeRoute(); render(); renderRoute(); setTimeout(focusRoute, 60); });
-    var reset = el("button", "td-mini td-mini--ghost"); reset.textContent = "Reset demo"; reset.addEventListener("click", function () { buildSampleRoute(); syncButtons(); render(); renderRoute(); setTimeout(focusRoute, 60); });
+    var reset = el("button", "td-mini td-mini--ghost"); reset.textContent = "Reset day"; reset.addEventListener("click", function () { buildSampleRoute(); syncButtons(); render(); renderRoute(); setTimeout(focusRoute, 60); });
     var clr = el("button", "td-mini td-mini--ghost"); clr.textContent = "Clear"; clr.addEventListener("click", function () { state.route = []; state.routeBaselineKm = 0; state.routeOptimized = false; syncButtons(); render(); renderRoute(); });
     btns.appendChild(opt); btns.appendChild(reset); btns.appendChild(clr); foot.appendChild(btns); panelBody.appendChild(foot);
   }
