@@ -184,9 +184,277 @@ h1,h2,h3{margin:0;}
   .trow .chev{display:none;}
   .policy{flex-direction:column;align-items:flex-start;}
 }
+
+/* =======================================================================
+   Upgrade layer. Everything below adds to the original; nothing above
+   was removed. Same palette, same type, same shapes.
+   ======================================================================= */
+html,body{height:100%;}
+body{height:100vh;height:100dvh;overflow:hidden;}
+.vp{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px;}
+.small{font-size:12.5px;}
+.linkbtn{background:none;border:0;padding:6px 2px;color:var(--lime);font-weight:600;font-size:12.5px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--lime-line);}
+.linkbtn:hover{text-decoration-color:var(--lime);}
+.pill .dot.off{background:var(--amber);box-shadow:0 0 8px var(--amber);}
+.kbd{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;border:1px solid var(--line2);border-bottom-width:2px;border-radius:5px;padding:0 6px;color:var(--ink2);background:var(--panel2);display:inline-block;min-width:20px;text-align:center;line-height:18px;}
+
+/* upload, real file input + example */
+.upload{max-width:660px;}
+.drop{cursor:pointer;}
+.drop.over{border-color:var(--lime);border-style:solid;background:rgba(217,247,123,.06);}
+.drop.over .drop__ic{background:var(--lime);color:var(--lime-ink);}
+.drop__acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.drop__hint{font-size:12px;color:var(--faint);margin-top:12px;}
+.drop__busy{font-size:12.5px;color:var(--lime);margin-top:12px;}
+.drop__busy:empty{display:none;}
+.uperr{margin-top:14px;text-align:left;border:1px solid var(--rose);background:var(--rose-soft);border-radius:14px;padding:13px 16px;}
+.uperr__h{display:flex;align-items:center;gap:9px;color:var(--rose);font-size:13.5px;}
+.uperr__h .linkbtn{margin-left:auto;color:var(--ink2);}
+.uperr ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--ink2);line-height:1.6;}
+.upcard{text-align:left;margin-top:14px;padding:16px 18px;}
+.cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:10px 0 10px;}
+.colk{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 11px;}
+.colk b{font-size:12.5px;color:var(--lime);font-weight:600;}
+.req,.opt{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:1px 7px;margin-left:6px;}
+.req{color:var(--lime);border:1px solid var(--lime-line);}
+.opt{color:var(--muted);border:1px solid var(--line2);}
+.upx{text-align:left;margin-top:14px;overflow:hidden;}
+.upx__h{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+.fileic{width:38px;height:44px;border-radius:7px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center;font-size:10px;font-weight:800;color:var(--lime);letter-spacing:.04em;flex-shrink:0;position:relative;}
+.fileic:after{content:"";position:absolute;top:-1px;right:-1px;width:11px;height:11px;background:var(--bg);border-left:1px solid var(--line2);border-bottom:1px solid var(--line2);border-bottom-left-radius:4px;}
+.upx__n{font-size:13px;font-weight:600;color:var(--ink);word-break:break-all;}
+.upx__acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
+.csvta{display:block;width:100%;min-height:170px;background:#0e1118;color:var(--ink2);border:0;font-size:12px;line-height:1.7;padding:12px 14px;resize:vertical;white-space:pre;overflow:auto;outline:none;tab-size:2;}
+.csvta:focus{box-shadow:inset 0 0 0 1px var(--lime-line);}
+.upx__f{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 14px;border-top:1px solid var(--line);font-size:12px;}
+.proc__f{text-align:center;font-size:12.5px;margin:-8px 0 14px;}
+
+/* banner additions */
+.aibanner__acts{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:11px;}
+.aibanner__note{margin-top:8px;font-size:12.5px;color:var(--amber);}
+
+/* agent activity (batch and per expense) */
+.agent{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:18px;}
+.agent>summary{list-style:none;cursor:pointer;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px;min-height:46px;}
+.agent>summary b{white-space:nowrap;}
+.agent>summary .muted{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.agent>summary::-webkit-details-marker{display:none;}
+.agent__ic{width:26px;height:26px;border-radius:8px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center;color:var(--lime);flex-shrink:0;}
+.agent .caret{margin-left:auto;color:var(--faint);transition:transform .2s;font-size:16px;}
+.agent[open] .caret{transform:rotate(90deg);}
+.calls{border-top:1px solid var(--line);padding:10px 16px 12px;font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.55;}
+.call{display:grid;grid-template-columns:16px 1fr auto;gap:8px;padding:3px 0;align-items:baseline;}
+.call .g{font-weight:800;text-align:center;}
+.call .ln{min-width:0;overflow-wrap:anywhere;}
+.call .fn{color:var(--teal);}
+.call .args{color:var(--muted);}
+.call .arrow{color:var(--faint);}
+.call .res{color:var(--ink2);}
+.call .ms{color:var(--faint);font-size:11px;}
+.call.ok .g{color:var(--green);} .call.warn .g{color:var(--amber);} .call.fail .g{color:var(--rose);}
+.call.skip .g{color:var(--faint);} .call.wait .g{color:var(--violet);}
+.call.fail .res{color:var(--rose);} .call.warn .res{color:var(--amber);} .call.wait .res{color:var(--violet);}
+.agent__f{padding:0 16px 12px;font-size:12px;color:var(--faint);}
+.agent--d{margin:20px 0 0;background:var(--panel2);}
+.agent--d .calls{padding:10px 14px 12px;}
+
+/* policy row additions */
+.thr select{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;color:var(--ink);padding:5px 7px;font-size:12.5px;font-family:inherit;outline:none;}
+.thr select:focus{border-color:var(--lime-line);}
+
+/* toolbar, tabs, progress */
+.tbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.tabs{display:inline-flex;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:3px;}
+.tab{border:0;background:transparent;color:var(--muted);padding:7px 14px;border-radius:9px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:7px;}
+.tab .ct{font-size:11px;opacity:.75;}
+.tab.on{background:var(--panel2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line2);}
+.tbar__acts{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
+.frow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.frow .filters{margin-bottom:0;flex:1;}
+.prog{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);}
+.prog__bar{width:120px;height:6px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;}
+.prog__bar i{display:block;height:100%;background:var(--lime);border-radius:999px;transition:width .3s;}
+.trow.sel{background:var(--panel2);outline:1px solid var(--lime-line);outline-offset:-1px;}
+.trow:focus-visible{outline:2px solid var(--lime);outline-offset:-2px;}
+.mini{font-size:10.5px;font-weight:700;border-radius:6px;padding:1px 6px;background:var(--violet-soft);color:var(--violet);white-space:nowrap;margin-left:4px;}
+.mini--t{background:rgba(61,198,206,.13);color:var(--teal);}
+.keys{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted);margin:10px 2px 0;}
+.keys>span{display:inline-flex;align-items:center;gap:5px;}
+.empty{padding:34px;text-align:center;}
+.empty b{display:block;color:var(--ink);margin-bottom:4px;}
+
+/* completion */
+.done{border:1px solid var(--lime-line);background:linear-gradient(120deg,rgba(217,247,123,.09),rgba(217,247,123,.02));border-radius:var(--radius);padding:16px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+.done__ic{width:38px;height:38px;border-radius:11px;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center;flex-shrink:0;}
+.done__txt{flex:1;min-width:220px;}
+.done__acts{display:flex;gap:9px;flex-wrap:wrap;}
+.done .pstep{padding:4px 0;font-size:13px;}
+
+/* audit log */
+.audit{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+.ahead,.arow{display:grid;grid-template-columns:96px 190px 150px 1fr;gap:14px;align-items:start;}
+.ahead{padding:11px 18px;border-bottom:1px solid var(--line);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);font-weight:700;}
+.arow{padding:12px 18px;border-bottom:1px solid var(--line);font-size:12.5px;}
+.arow:last-child{border-bottom:none;}
+.awho{display:flex;align-items:center;gap:9px;min-width:0;}
+.awho .memava{width:26px;height:26px;font-size:10px;}
+.awho .memava.ai{background:var(--lime);color:var(--lime-ink);border-color:var(--lime);}
+.awho .memava.emp{background:rgba(61,198,206,.15);color:var(--teal);border-color:rgba(61,198,206,.4);}
+.abadge{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px;background:var(--panel2);color:var(--ink2);border:1px solid var(--line2);white-space:nowrap;}
+.abadge.g{background:var(--green-soft);color:var(--green);border-color:transparent;}
+.abadge.r{background:var(--rose-soft);color:var(--rose);border-color:transparent;}
+.abadge.a{background:var(--amber-soft);color:var(--amber);border-color:transparent;}
+.abadge.v{background:var(--violet-soft);color:var(--violet);border-color:transparent;}
+.abadge.t{background:rgba(61,198,206,.13);color:var(--teal);border-color:transparent;}
+.abadge.l{background:rgba(217,247,123,.1);color:var(--lime);border-color:transparent;}
+.awhat{font-weight:600;color:var(--ink);overflow-wrap:anywhere;}
+.awhy{color:var(--ink2);margin-top:2px;overflow-wrap:anywhere;white-space:pre-line;}
+.ameta{font-size:12px;color:var(--muted);margin:0 2px 10px;}
+
+/* drawer additions */
+.drawer__t{font-weight:700;font-size:16px;margin-top:3px;overflow-wrap:anywhere;}
+.drawer__nav{margin-left:auto;display:flex;gap:6px;flex-shrink:0;}
+.drawer__nav .drawer__x{margin-left:0;}
+.drawer__x:disabled{opacity:.35;cursor:not-allowed;}
+.drawer__keys{margin-left:auto;align-self:center;display:flex;gap:4px;align-items:center;font-size:11.5px;color:var(--faint);}
+.vs{font-size:14px;line-height:1.55;font-weight:600;color:var(--ink);margin:2px 0 8px;}
+.vs .lbl{font-weight:500;color:var(--muted);}
+.conf{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+.conf b{color:var(--ink);}
+.conf__bar{width:110px;height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;}
+.conf__bar i{display:block;height:100%;background:var(--lime);border-radius:999px;}
+.conf__why{font-size:12px;color:var(--muted);margin:3px 0 10px;}
+.sec{margin-top:20px;}
+.sec__h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;}
+.meter{position:relative;height:10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);}
+.meter__fill{height:100%;border-radius:999px;}
+.meter__cap{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);border-radius:2px;}
+.meter__lbls{position:relative;height:18px;margin-top:6px;font-size:11.5px;color:var(--muted);}
+.meter__lbls span{position:absolute;top:0;white-space:nowrap;}
+.axis{position:relative;height:30px;margin-top:4px;}
+.axis__track{position:absolute;left:0;right:0;top:14px;height:2px;background:var(--line2);border-radius:2px;}
+.axis__tick{position:absolute;top:11px;width:1px;height:8px;background:var(--line2);}
+.axis__win{position:absolute;top:6px;height:18px;border-radius:6px;background:rgba(217,247,123,.1);border:1px dashed var(--lime-line);}
+.axis__act{position:absolute;top:9px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px var(--panel);}
+.axis__exp{position:absolute;top:8px;width:14px;height:14px;margin-left:-7px;transform:rotate(45deg);border-radius:3px;box-shadow:0 0 0 3px var(--panel);}
+.axis__exp.ok{background:var(--green);} .axis__exp.bad{background:var(--rose);} .axis__exp.off{background:var(--faint);}
+.axis__lbls{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);margin-top:2px;}
+.axis__key{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:6px 0 2px;}
+.axis__key span{display:inline-flex;align-items:center;gap:6px;}
+.axis__key i{display:inline-block;width:9px;height:9px;}
+.k-act{border-radius:50%;background:var(--teal);}
+.k-exp{transform:rotate(45deg);border-radius:2px;background:var(--rose);}
+.k-win{border-radius:3px;border:1px dashed var(--lime-line);background:rgba(217,247,123,.1);}
+.tl__r .tlt{color:var(--muted);}
+.bars{position:relative;display:flex;align-items:flex-end;gap:8px;height:84px;border-bottom:1px solid var(--line2);padding-right:66px;}
+.bar{flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center;}
+.bar i{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--line2);}
+.bars__avg{position:absolute;left:0;right:0;border-top:1.5px dashed var(--ink2);opacity:.75;pointer-events:none;}
+.bars__avg em{position:absolute;right:0;top:-9px;font-style:normal;font-size:10.5px;line-height:16px;color:var(--ink2);background:var(--panel);padding:0 0 0 6px;}
+.bars__lbls{display:flex;gap:8px;margin-top:5px;padding-right:66px;}
+.bars__lbls span{flex:1;text-align:center;font-size:10.5px;color:var(--faint);}
+.bars__lbls b{color:var(--ink2);}
+.fld{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);font-weight:600;}
+.inp{width:100%;background:var(--panel2);border:1px solid var(--line2);border-radius:9px;color:var(--ink);padding:9px 11px;font:inherit;font-size:13px;font-weight:500;outline:none;min-height:40px;}
+.inp:focus{border-color:var(--lime-line);}
+textarea.inp{min-height:190px;resize:vertical;line-height:1.55;}
+select.inp{appearance:auto;}
+input[type=date].inp{color-scheme:dark;}
+.compose{border:1px solid var(--lime-line);border-radius:12px;background:rgba(217,247,123,.04);padding:14px;margin-top:20px;display:flex;flex-direction:column;gap:11px;}
+.compose__h{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.compose__to{font-size:12px;color:var(--muted);}
+.compose__f{display:flex;gap:9px;align-items:center;flex-wrap:wrap;}
+.thread{margin-top:20px;display:flex;flex-direction:column;gap:10px;}
+.msg{border-radius:12px;padding:11px 13px;font-size:12.5px;line-height:1.55;}
+.msg--out{background:var(--panel2);border:1px solid var(--line2);}
+.msg--in{background:rgba(61,198,206,.08);border:1px solid rgba(61,198,206,.35);}
+.msg__h{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;letter-spacing:.02em;}
+.msg--in .msg__h{color:var(--teal);}
+.msg__b{white-space:pre-wrap;color:var(--ink2);overflow-wrap:anywhere;}
+.msg__wait{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--violet);}
+.spin{width:13px;height:13px;border-radius:50%;border:2px solid var(--violet-soft);border-top-color:var(--violet);animation:spin .8s linear infinite;flex-shrink:0;}
+.note{margin-top:20px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fgrid .wide{grid-column:1/-1;}
+.fcheck{flex-direction:row;align-items:center;gap:10px;color:var(--ink2);font-size:13px;min-height:40px;cursor:pointer;}
+.fcheck input{width:18px;height:18px;accent-color:var(--lime);}
+.pre{margin-top:18px;border:1px solid var(--line2);border-radius:12px;padding:14px 15px;background:var(--panel2);}
+.pre__h{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px;}
+.pre__rows{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--ink2);margin-top:10px;}
+.pre__rows div{display:flex;gap:8px;align-items:baseline;}
+.pre__rows .g{width:14px;text-align:center;font-weight:800;flex-shrink:0;}
+.why{font-size:12px;color:var(--muted);align-self:center;}
+
+/* modal */
+.modal{position:fixed;inset:0;display:grid;place-items:center;padding:16px;z-index:70;background:rgba(6,8,14,.66);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .18s;}
+.modal.on{opacity:1;pointer-events:auto;}
+.modal__card{width:min(460px,100%);max-height:calc(100% - 8px);overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.55);}
+.modal__t{font-size:18px;font-weight:800;letter-spacing:-.01em;margin:4px 0 6px;}
+.modal__card p{margin:0 0 12px;font-size:13px;line-height:1.55;}
+.modal__f{display:flex;gap:9px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;}
+.mlist{border:1px solid var(--line);border-radius:11px;overflow:hidden;}
+.mlist__r{display:grid;grid-template-columns:auto 1fr auto;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12.5px;align-items:center;}
+.mlist__r:last-child{border-bottom:none;}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.klist{display:flex;flex-direction:column;gap:8px;margin-top:8px;font-size:13px;}
+.klist__r{display:flex;align-items:center;gap:12px;}
+.klist__r .kbd{min-width:46px;}
+
+.toast{display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100vw - 32px);}
+.toast span{min-width:0;}
+.toast button{background:var(--lime-ink);color:var(--lime);border:0;border-radius:8px;padding:6px 11px;font-weight:700;font-size:12.5px;min-height:32px;flex-shrink:0;}
+.toast.show button{pointer-events:auto;}
+
+@media (hover:none){ .keys,.drawer__keys,.kb-only{display:none!important;} }
+@media(max-width:900px){
+  .ahead{display:none;}
+  .arow{grid-template-columns:1fr auto;gap:6px 12px;}
+  .arow .a-when{grid-column:2;grid-row:1;text-align:right;}
+  .arow .a-who{grid-column:1;grid-row:1;}
+  .arow .a-act{grid-column:1/-1;}
+  .arow .a-det{grid-column:1/-1;}
+}
+@media(max-width:680px){
+  .app{padding:16px 16px 90px;}
+  .btn,.chip,.tab{min-height:40px;}
+  .linkbtn{min-height:40px;}
+  .synccheck{min-height:40px;}
+  .drawer__x{width:40px;height:40px;}
+  .thr input,.thr select{min-height:40px;width:76px;}
+  .thr select{width:auto;}
+  .policy .thr{width:100%;}
+  .keys,.drawer__keys,.kb-only{display:none!important;}
+  .tbar__acts{margin-left:0;width:100%;}
+  .tbar__acts .btn{flex:1;}
+  .tabs{width:100%;}
+  .tab{flex:1;justify-content:center;}
+  .prog{width:100%;}
+  .prog__bar{flex:1;}
+  .fgrid{grid-template-columns:1fr;}
+  .drawer__h{padding:14px 16px;}
+  .drawer__b{padding:16px;}
+  .drawer__f{padding:12px 16px;}
+  .upload{margin:18px auto;}
+  .drop{padding:30px 18px;}
+  .upx__acts{margin-left:0;width:100%;}
+  .upx__acts .btn{flex:1;}
+  .done__acts{width:100%;}
+  .done__acts .btn{flex:1;}
+  .call{grid-template-columns:16px 1fr;}
+  .call .ms{display:none;}
+  .toast{bottom:84px;}
+  .policy .thr .faint{margin-left:auto;}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+  .proc__ring,.spin{animation:none!important;}
+  .btn--lime:hover{transform:none;}
+}
 </style>
 </head>
 <body>
+<div class="vp" id="vp">
 <div class="app">
   <div class="top">
     <div class="top__mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -195,21 +463,33 @@ h1,h2,h3{margin:0;}
       <div class="top__title">Expense Guard</div>
     </div>
     <div class="top__spacer"></div>
-    <span class="pill"><span class="dot"></span> Salesforce activity synced</span>
+    <span class="pill" id="syncPill"><span class="dot"></span> Salesforce activity synced</span>
     <button class="btn btn--ghost" id="newBatchBtn" onclick="startUpload()" style="display:none">Upload new batch</button>
   </div>
   <div id="stage"></div>
 </div>
+</div>
 
 <div class="scrim" id="scrim" onclick="closeDrawer()"></div>
-<aside class="drawer" id="drawer"></aside>
-<div class="toast" id="toast"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-label="Expense detail"></aside>
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 const $=id=>document.getElementById(id);
-function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2300);}
+const RM=(()=>{try{return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}})();
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(m,actLabel,fn){
+  const t=$('toast');t.innerHTML='';
+  const s=document.createElement('span');s.textContent=m;t.appendChild(s);
+  if(actLabel){const b=document.createElement('button');b.type='button';b.textContent=actLabel;b.onclick=()=>{t.classList.remove('show');fn();};t.appendChild(b);}
+  t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),actLabel?5200:2300);
+}
 const money=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const money0=n=>'$'+Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+const clone=o=>JSON.parse(JSON.stringify(o));
+const hm=d=>new Date(d).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+const hms=d=>new Date(d).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit'});
 
 /* editable policy thresholds (set by Finance) */
 let THRESH={Rideshare:50, Meals:75, Hotel:300, Airfare:650, 'Client entertainment':400};
@@ -223,7 +503,23 @@ const ACTIVITY={
   'Pearl Logistics':['Mar 2','Mar 17'],
   'Camden Industries':['Mar 11']
 };
-const DAYNUM=d=>parseInt(d.replace('Mar ',''),10);
+/* what each logged activity was (fictional) */
+const ACT_DETAIL={
+  'Atlas Lyon|Mar 3':{type:'Call',title:'Discovery call with procurement'},
+  'Atlas Lyon|Mar 12':{type:'Meeting',title:'On-site workshop at the Lyon office'},
+  'Atlas Lyon|Mar 19':{type:'Call',title:'Proposal follow-up'},
+  'Bright Systems|Mar 5':{type:'Call',title:'Intro call with the IT director'},
+  'Bright Systems|Mar 14':{type:'Meeting',title:'Solution demo with the CFO'},
+  'Gent Digital|Mar 8':{type:'Meeting',title:'Kickoff video call'},
+  'Gent Digital|Mar 21':{type:'Visit',title:'Site visit and team dinner'},
+  'Pearl Logistics|Mar 2':{type:'Call',title:'Renewal check-in'},
+  'Pearl Logistics|Mar 17':{type:'Visit',title:'Warehouse site visit'},
+  'Camden Industries|Mar 11':{type:'Meeting',title:'Quarterly business review'}
+};
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+/* day number for a "Mar 12" label; works across months so any uploaded date compares correctly */
+const DAYNUM=d=>{const p=String(d).split(' ');const mi=MONTHS.indexOf(p[0]);return Math.round(Date.UTC(2026,mi<0?2:mi,parseInt(p[1],10)||1)/864e5);};
+const fromDayNum=n=>{const dt=new Date(n*864e5);return MONTHS[dt.getUTCMonth()]+' '+dt.getUTCDate();};
 
 /* uploaded expense batch (mock) */
 let EXPENSES=[
@@ -242,30 +538,70 @@ let EXPENSES=[
   {id:'E-1053', emp:'Sam Okafor',  cat:'Meals',               merch:'Team lunch (5)',            amt:142.00, date:'Mar 19', acct:null,              rcpt:true},
   {id:'E-1054', emp:'Priya V.',    cat:'Hotel',               merch:'Hilton — 1 night',          amt:268.00, date:'Mar 17', acct:'Pearl Logistics', rcpt:true}
 ];
+const SAMPLE=clone(EXPENSES);
 let resolutions={}; // id -> 'approved' | 'rejected'
 
-/* spend "memory" — each employee's trailing 3-month average for this period.
+/* spend "memory" — each employee's average month over the last six months.
    The app flags anyone running significantly (>40%) above their own baseline. */
 const EMP_AVG={'Mara Lin':430,'Jordan Diaz':560,'Sam Okafor':545,'Priya V.':515,'Alex Reed':540};
 const OVER_AVG_PCT=40; // "significantly above" threshold
+const HIST_MONTHS=['Sep','Oct','Nov','Dec','Jan','Feb'];
+const EMP_HIST={ // monthly totals; each row averages to EMP_AVG
+  'Mara Lin':[410,455,390,470,420,435],
+  'Jordan Diaz':[530,600,545,590,520,575],
+  'Sam Okafor':[560,510,580,525,555,540],
+  'Priya V.':[490,540,500,530,505,525],
+  'Alex Reed':[575,520,555,500,560,530]
+};
 function empSpend(){
   const tot={};
   EXPENSES.forEach(e=>{tot[e.emp]=(tot[e.emp]||0)+e.amt;});
-  return Object.keys(EMP_AVG).map(emp=>{
+  const names=Object.keys(EMP_AVG).filter(n=>tot[n]!=null).concat(Object.keys(tot).filter(n=>EMP_AVG[n]==null));
+  return names.map(emp=>{
     const total=tot[emp]||0, avg=EMP_AVG[emp];
+    if(avg==null) return {emp,total,avg:null,deltaPct:null,flag:false,nohist:true};
     const deltaPct=Math.round((total-avg)/avg*100);
     return {emp,total,avg,deltaPct,flag:deltaPct>=OVER_AVG_PCT};
-  }).sort((a,b)=>b.deltaPct-a.deltaPct);
+  }).sort((a,b)=>(b.deltaPct==null?-1e9:b.deltaPct)-(a.deltaPct==null?-1e9:a.deltaPct));
 }
+function memFor(emp,extra){
+  const total=EXPENSES.filter(e=>e.emp===emp).reduce((s,e)=>s+e.amt,0)+(extra||0), avg=EMP_AVG[emp];
+  if(avg==null) return {emp,total,avg:null,deltaPct:null,flag:false,nohist:true};
+  const deltaPct=Math.round((total-avg)/avg*100);
+  return {emp,total,avg,deltaPct,flag:deltaPct>=OVER_AVG_PCT};
+}
+
+/* ---------- app state for the upgrade ---------- */
+const REVIEWER={name:'Dana Cole',role:'Finance reviewer'};
+let WIN=0;              // CRM match window in days (0 = same day, 1 = within a day)
+let view='expenses';    // 'expenses' | 'audit'
+let selId=null, drawerId=null, drawerMode=null;
+let AUDIT=[], UNDO=[], ASKED={}, NOTES={};
+let posted=false, postStep=-1;
+let composeFor=null, composeDraft='', composeSubj='';
+let agentOpenB=false, agentOpenD=true, fadeNext=true, modalOpen=false, stageMode='review';
+let BATCH={label:'Sample batch: March expenses',source:'sample',skipped:[],orig:null};
 
 /* ---- evaluation ---- */
 function evaluate(e){
   if(resolutions[e.id]==='approved') return {key:'appr',label:'Approved',cls:'s-appr',color:'var(--green)',flag:false,reasons:['Manually approved by Finance.']};
   if(resolutions[e.id]==='rejected') return {key:'rej',label:'Rejected',cls:'s-rej',color:'var(--rose)',flag:true,reasons:['Rejected by Finance — sent back to employee.']};
+  return assess(e);
+}
+function nearestAct(e){
+  const acts=(ACTIVITY[e.acct]||[]).slice().sort((a,b)=>DAYNUM(a)-DAYNUM(b));
+  if(!acts.length) return null;
+  const d=acts.reduce((best,x)=>Math.abs(DAYNUM(x)-DAYNUM(e.date))<Math.abs(DAYNUM(best)-DAYNUM(e.date))?x:best,acts[0]);
+  return {d,gap:Math.abs(DAYNUM(d)-DAYNUM(e.date)),det:ACT_DETAIL[e.acct+'|'+d]||null};
+}
+/* the AI's own judgement, ignoring any human decision */
+function assess(e){
   const reasons=[]; let key='clear';
   const cap=THRESH[e.cat];
   const over = cap!=null && e.amt>cap;
-  const noAct = e.acct && !(ACTIVITY[e.acct]||[]).includes(e.date);
+  const near = e.acct?nearestAct(e):null;
+  const crmChecked = !!e.acct && synced;
+  const noAct = crmChecked && !(near && near.gap<=WIN);
   const dup = !!e.dup;
   const noRcpt = e.rcpt===false;
   // priority: noActivity > over > dup > receipt
@@ -273,16 +609,19 @@ function evaluate(e){
   else if(over){ key='over'; }
   else if(dup){ key='dup'; }
   else if(noRcpt){ key='rcpt'; }
-  if(over) reasons.push(`${e.cat} policy cap is ${money0(cap)} — this expense is ${money(e.amt)}, ${money(e.amt-cap)} over.`);
+  if(over) reasons.push(`${esc(e.cat)} policy cap is ${money0(cap)} — this expense is ${money(e.amt)}, ${money(e.amt-cap)} over.`);
   if(noAct){
-    const acts=(ACTIVITY[e.acct]||[]).slice().sort((a,b)=>DAYNUM(a)-DAYNUM(b));
-    const nearest=acts.reduce((best,d)=>Math.abs(DAYNUM(d)-DAYNUM(e.date))<Math.abs(DAYNUM(best)-DAYNUM(e.date))?d:best,acts[0]);
-    const gap=nearest?Math.abs(DAYNUM(nearest)-DAYNUM(e.date)):'—';
-    reasons.push(`Booked to <b>${e.acct}</b> on ${e.date}, but no call, meeting, or visit is logged at that account that day. Nearest activity: ${nearest||'none'}${nearest?` (${gap} day${gap===1?'':'s'} off)`:''}.`);
+    if(!near) reasons.push(`Booked to <b>${esc(e.acct)}</b> on ${e.date}, but Salesforce has no logged activity for this account.`);
+    else reasons.push(`Booked to <b>${esc(e.acct)}</b> on ${e.date}, but no call, meeting, or visit is logged at that account ${WIN?'within a day of it':'that day'}. Nearest activity: ${near.d} (${near.gap} day${near.gap===1?'':'s'} off).`);
   }
   if(dup) reasons.push(`Possible duplicate of ${e.dup} — same merchant, amount, and date.`);
   if(noRcpt) reasons.push('No receipt attached.');
-  if(key==='clear') reasons.push(e.acct?`Within policy and matches a logged activity at ${e.acct} on ${e.date}.`:'Within policy. Internal expense (no customer link required).');
+  if(key==='clear'){
+    if(e.acct && !synced) reasons.push(`Within policy. The CRM cross-check was off for this batch, so the link to ${esc(e.acct)} is not verified.`);
+    else if(e.acct) reasons.push(near.gap===0?`Within policy and matches a logged activity at ${esc(e.acct)} on ${e.date}.`:`Within policy and matches a logged activity at ${esc(e.acct)} on ${near.d}, ${near.gap} day from the expense.`);
+    else reasons.push('Within policy. Internal expense (no customer link required).');
+  }
+  if(cap==null) reasons.push(`No policy cap is set for ${esc(e.cat)}.`);
   const map={
     clear:{label:'Cleared',cls:'s-clear',color:'var(--green)'},
     over:{label:'Over policy',cls:'s-over',color:'var(--amber)'},
@@ -290,7 +629,7 @@ function evaluate(e){
     dup:{label:'Possible duplicate',cls:'s-dup',color:'var(--violet)'},
     rcpt:{label:'Missing receipt',cls:'s-rcpt',color:'var(--amber)'}
   }[key];
-  return {key,label:map.label,cls:map.cls,color:map.color,flag:key!=='clear',reasons,over,noAct,dup,noRcpt};
+  return {key,label:map.label,cls:map.cls,color:map.color,flag:key!=='clear',reasons,over,noAct,dup,noRcpt,cap,near,crmChecked};
 }
 function stats(){
   let total=0,atRisk=0,flagged=0,cleared=0;
@@ -298,35 +637,400 @@ function stats(){
   return {count:EXPENSES.length,total,atRisk,flagged,cleared};
 }
 
+/* confidence and the one-sentence verdict */
+function confidence(e,a){
+  const cap=a.cap;
+  if(a.key==='clear'){
+    if(e.acct&&synced) return {p:a.near&&a.near.gap===0?96:88,why:a.near&&a.near.gap===0?'Every check passed and the CRM match is on the same day.':'Every check passed. The CRM match is one day off, which the window allows.'};
+    if(e.acct) return {p:78,why:'The CRM cross-check was off, so the customer link is not verified.'};
+    return {p:93,why:'Internal expense within policy, with a receipt and no duplicate.'};
+  }
+  if(a.key==='noact'){
+    let p,why;
+    if(!a.near){p=90;why='Salesforce has no activity at all for this account.';}
+    else if(a.near.gap<=1+WIN){p=74;why=`Lower because a ${(a.near.det?a.near.det.type:'logged activity').toLowerCase()} ${a.near.gap} day${a.near.gap===1?'':'s'} away could be a logging delay.`;}
+    else if(a.near.gap<=3){p=86;why=`The nearest activity is ${a.near.gap} days away.`;}
+    else {p=93;why=`The nearest activity is ${a.near.gap} days away.`;}
+    if(a.over){p=Math.min(97,p+4);why+=' It is also over the cap.';}
+    return {p,why};
+  }
+  if(a.key==='over'){const r=(e.amt-cap)/cap;
+    if(r<.1) return {p:81,why:`Only ${Math.round(r*100)}% over the cap.`};
+    return {p:r<.3?89:95,why:`${Math.round(r*100)}% over the cap.`};}
+  if(a.key==='dup') return {p:91,why:'Same employee, merchant, amount and date as another line.'};
+  return {p:98,why:'The receipt field is empty.'};
+}
+function verdictLine(e,a){
+  const cap=a.cap;
+  if(a.key==='clear'){
+    const capTxt=cap!=null?`within the ${money0(cap)} ${e.cat} cap`:'within policy';
+    if(e.acct&&synced){const d=a.near.det;return `Approve: ${money(e.amt)} is ${capTxt} and matches ${d?'a '+d.type.toLowerCase()+' with '+e.acct:e.acct+' activity'} on ${a.near.d}.`;}
+    if(e.acct) return `Approve with care: ${money(e.amt)} is ${capTxt}, but the CRM link to ${e.acct} was not checked.`;
+    return `Approve: ${money(e.amt)} is ${capTxt} and needs no customer link.`;
+  }
+  if(a.key==='noact') return `Ask ${e.emp} to justify it: no ${e.acct} activity is logged ${WIN?'within a day of':'on'} ${e.date}${a.near?`, the nearest is ${a.near.d}`:''}${a.over?`, and it is ${money(e.amt-cap)} over the ${money0(cap)} cap`:''}.`;
+  if(a.key==='over') return `Ask ${e.emp} to justify it or reject: ${money(e.amt)} is ${money(e.amt-cap)} over the ${money0(cap)} ${e.cat} cap.`;
+  if(a.key==='dup') return `Reject as a likely duplicate of ${e.dup}: same employee, merchant, amount and date.`;
+  return `Hold for a receipt: ${money(e.amt)} is within policy, but no receipt is attached.`;
+}
+function shortReason(e,a){
+  if(a.key==='noact') return a.near?`no ${e.acct} activity on ${e.date}`:`no Salesforce activity for ${e.acct}`;
+  if(a.key==='over') return `${money(e.amt-a.cap)} over the ${money0(a.cap)} ${e.cat} cap`;
+  if(a.key==='dup') return `duplicate of ${e.dup}`;
+  if(a.key==='rcpt') return 'no receipt attached';
+  return 'all checks passed';
+}
+
+/* tool-call style trace of the checks run on one expense */
+const GLYPH={ok:'✓',warn:'!',fail:'✕',skip:'–',wait:'…'};
+function fakeMs(seed,i){let h=0;const s=seed+':'+i;for(let k=0;k<s.length;k++)h=(h*31+s.charCodeAt(k))>>>0;return 14+h%170;}
+function agentTrace(e){
+  const a=assess(e), cap=a.cap, L=[];
+  L.push([cap!=null?'ok':'warn','policy.lookup',`category: "${e.cat}"`,cap!=null?`cap ${money0(cap)}`:'no cap set']);
+  if(cap!=null) L.push([a.over?'warn':'ok','policy.compare',`${money(e.amt)} vs ${money0(cap)}`,a.over?`over by ${money(e.amt-cap)}`:`within cap, ${Math.round(e.amt/cap*100)}% used`]);
+  if(e.acct){
+    if(!synced) L.push(['skip','crm.activities',`account: "${e.acct}"`,'skipped, cross-check off for this batch']);
+    else {
+      const lo=fromDayNum(DAYNUM(e.date)-3), hi=fromDayNum(DAYNUM(e.date)+3);
+      const res=a.noAct?(a.near?`none ${WIN?'within 1 day':'on '+e.date}; nearest ${a.near.d} (${a.near.gap}d)`:'no activity on record'):`match ${a.near.d}${a.near.det?' · '+a.near.det.type:''}`;
+      L.push([a.noAct?'fail':'ok','crm.activities',`"${e.acct}", ${lo} to ${hi}`,res]);
+    }
+  } else L.push(['ok','crm.link',`expense: ${e.id}`,'internal, no customer']);
+  L.push([e.rcpt===false?'warn':'ok','receipts.get',e.id,e.rcpt===false?'missing':'attached']);
+  L.push([e.dup?'warn':'ok','dupes.scan',`${e.emp}, ${money(e.amt)}, ${e.date}`,e.dup?`matches ${e.dup}`:'none']);
+  const m=memFor(e.emp);
+  L.push([m.nohist?'skip':m.flag?'warn':'ok','spend.history',`"${e.emp}", 6 months`,m.nohist?'no history yet':`avg ${money0(m.avg)}/mo, batch ${money0(m.total)} (${m.deltaPct>=0?'+':''}${m.deltaPct}%)`]);
+  const c=confidence(e,a);
+  L.push([a.flag?'warn':'ok','review.verdict',e.id,`${a.label}, confidence ${c.p}%`]);
+  if(ASKED[e.id]){
+    L.push(['ok','notify.email',e.emp,`sent ${hm(ASKED[e.id].ts)}, approved by ${REVIEWER.name}`]);
+    L.push(ASKED[e.id].reply?['ok','inbox.reply',e.emp,`received ${hm(ASKED[e.id].reply.ts)}`]:['wait','inbox.reply',e.emp,'waiting']);
+  }
+  const r=resolutions[e.id];
+  const last=r?AUDIT.slice().reverse().find(x=>x.ids&&x.ids.includes(e.id)&&(x.action==='Approved'||x.action==='Rejected'||x.action==='Bulk approved')):null;
+  L.push([r?'ok':'wait','human.approval',REVIEWER.name,r?`${r}${last?' at '+hm(last.ts):''}`:'waiting on Finance']);
+  return L;
+}
+function batchTrace(){
+  const N=EXPENSES.length, A=EXPENSES.map(assess);
+  const emps=[...new Set(EXPENSES.map(e=>e.emp))], known=emps.filter(n=>EMP_AVG[n]!=null).length;
+  const accts=[...new Set(EXPENSES.filter(e=>e.acct).map(e=>e.acct))];
+  const actCount=accts.reduce((s,a)=>s+(ACTIVITY[a]||[]).length,0);
+  const over=A.filter(a=>a.over).length, noact=A.filter(a=>a.noAct).length, dups=A.filter(a=>a.dup).length, rc=A.filter(a=>a.noRcpt).length;
+  const mem=empSpend().filter(m=>m.flag).length, fl=A.filter(a=>a.flag).length;
+  const dec=EXPENSES.filter(e=>resolutions[e.id]).length, ap=EXPENSES.filter(e=>resolutions[e.id]==='approved').length;
+  const sk=BATCH.skipped.length;
+  return [
+    [sk?'warn':'ok','csv.parse',`"${BATCH.label}"`,`${N} rows${sk?`, ${sk} skipped`:''}`],
+    ['ok','employees.match',`${emps.length} names`,`${known} with history${emps.length-known?`, ${emps.length-known} new`:''}`],
+    synced?[noact?'warn':'ok','crm.activities',`${accts.length} accounts, ${WIN?'within 1 day':'same day'}`,`${actCount} logged, ${noact} expense${noact===1?'':'s'} unmatched`]:['skip','crm.activities','all accounts','skipped, cross-check off'],
+    [over?'warn':'ok','policy.apply',`${Object.keys(THRESH).length} caps`,`${over} over`],
+    [dups?'warn':'ok','dupes.scan',`${N} rows`,`${dups} possible`],
+    [rc?'warn':'ok','receipts.check',`${N} rows`,`${rc} missing`],
+    [mem?'warn':'ok','spend.history',`${known} employees, 6 months`,`${mem} above +${OVER_AVG_PCT}%`],
+    [fl?'warn':'ok','review.flag',`${N} expenses`,`${fl} flagged, ${N-fl} cleared`],
+    [dec===N&&N?'ok':'wait','human.approval',REVIEWER.name,`${dec} of ${N} decided`],
+    [posted?'ok':'wait','salesforce.write','approved only',posted?`${ap} written`:'waits for your approval']
+  ];
+}
+function callsHTML(L,seed){
+  return `<div class="calls">${L.map((c,i)=>`<div class="call ${c[0]}"><span class="g">${GLYPH[c[0]]}</span><span class="ln"><span class="fn">${c[1]}</span><span class="args">(${esc(c[2])})</span> <span class="arrow">→</span> <span class="res">${esc(c[3])}</span></span><span class="ms">${c[0]==='wait'||c[0]==='skip'?'':fakeMs(seed,i)+'ms'}</span></div>`).join('')}</div>`;
+}
+
+/* ---------- audit log ---------- */
+function logA(o){
+  const ids=o.ids||[];
+  let what='';
+  if(ids.length===1){const e=EXPENSES.find(x=>x.id===ids[0]);what=e?`${e.id} · ${e.merch} · ${money(e.amt)}`:ids[0];}
+  else if(ids.length>1){what=`${ids.length} expenses: ${ids.slice(0,5).join(', ')}${ids.length>5?` and ${ids.length-5} more`:''}`;}
+  AUDIT.push(Object.assign({ts:new Date(),who:REVIEWER.name,kind:'human',what,batch:BATCH.label},o));
+  const ct=$('auditCt'); if(ct) ct.textContent=AUDIT.length;
+}
+function logBatchAI(ts){
+  const t0=ts?+ts:Date.now();
+  const A=EXPENSES.map(e=>[e,assess(e)]);
+  const cl=A.filter(x=>!x[1].flag).map(x=>x[0].id), fl=A.filter(x=>x[1].flag).map(x=>x[0].id);
+  logA({ts:new Date(t0),who:'Expense Guard AI',kind:'ai',action:'Processed batch',ids:[],what:BATCH.label,why:`${EXPENSES.length} line items read${BATCH.skipped.length?`, ${BATCH.skipped.length} skipped`:''}. ${synced?'Cross-checked against Salesforce activity.':'CRM cross-check was off.'}`});
+  if(cl.length) logA({ts:new Date(t0+1400),who:'Expense Guard AI',kind:'ai',action:'Auto-cleared',ids:cl,why:'Within policy, receipt attached, no duplicate, and matched CRM activity. Waiting on Finance before anything is posted.'});
+  if(fl.length){
+    const cnt={};A.filter(x=>x[1].flag).forEach(x=>{cnt[x[1].label]=(cnt[x[1].label]||0)+1;});
+    logA({ts:new Date(t0+1600),who:'Expense Guard AI',kind:'ai',action:'Flagged',ids:fl,why:Object.keys(cnt).map(k=>`${cnt[k]} ${k.toLowerCase()}`).join(', ')+'.'});
+  }
+}
+const BADGE={'Approved':'g','Bulk approved':'g','Rejected':'r','Asked employee':'v','Employee replied':'t','Undo':'a','Reopened':'a','Added expense':'l','Policy changed':'','Processed batch':'l','Auto-cleared':'g','Flagged':'a','Posted to Salesforce':'l','Wrote to Salesforce':'l'};
+function auditHTML(){
+  if(!AUDIT.length) return `<div class="tblwrap"><div class="empty muted"><b>No decisions yet</b>Approve or reject an expense and it is recorded here with who, when and why.</div></div>`;
+  const rows=AUDIT.slice().reverse().map(a=>{
+    const ini=a.kind==='ai'?'AI':a.who.split(' ').map(w=>w[0]).join('').slice(0,2);
+    const role=a.kind==='ai'?'Agent':a.kind==='emp'?'Employee':REVIEWER.role;
+    return `<div class="arow">
+      <div class="a-when num muted">${hms(a.ts)}</div>
+      <div class="a-who awho"><span class="memava ${a.kind==='ai'?'ai':a.kind==='emp'?'emp':''}">${esc(ini)}</span><div style="min-width:0"><div style="font-weight:600">${esc(a.who)}</div><div class="sub">${role}</div></div></div>
+      <div class="a-act"><span class="abadge ${BADGE[a.action]||''}">${esc(a.action)}</span></div>
+      <div class="a-det">${a.what?`<div class="awhat">${esc(a.what)}</div>`:''}<div class="awhy">${esc(a.why||'')}</div></div>
+    </div>`;}).join('');
+  return `<div class="ameta">${AUDIT.length} entr${AUDIT.length===1?'y':'ies'}, newest first. Every decision is kept, including undone ones.</div>
+  <div class="audit"><div class="ahead"><div>When</div><div>Who</div><div>Decision</div><div>Expense and reason</div></div>${rows}</div>`;
+}
+
+/* ---------- decisions, undo ---------- */
+function canDecide(){
+  if(posted){toast('This batch is posted. Start again to review a new batch.');return false;}
+  if(postStep>=0){toast('Posting to Salesforce. One moment.');return false;}
+  return true;
+}
+function defaultWhy(e,r){
+  const a=assess(e);
+  let w;
+  if(r==='approved') w=a.key==='clear'?'Accepted the AI clearance.':`Approved over the AI flag (${a.label.toLowerCase()}: ${shortReason(e,a)}).`;
+  else w=a.key==='clear'?'Rejected although the AI cleared it.':`Rejected: ${shortReason(e,a)}. Sent back to ${e.emp}.`;
+  const n=(NOTES[e.id]||'').trim();
+  if(ASKED[e.id]&&ASKED[e.id].reply) w+=' Employee reply was on file.';
+  return n?`${w}\nNote: ${n}`:w;
+}
+function decide(ids,r,label,why,action){
+  const prev={};ids.forEach(id=>{prev[id]=resolutions[id]||null;});
+  ids.forEach(id=>{if(r)resolutions[id]=r;else delete resolutions[id];});
+  UNDO.push({ids,prev,label});
+  logA({action:action||(r==='approved'?'Approved':r==='rejected'?'Rejected':'Reopened'),ids,why});
+}
+function undoLast(){
+  if(posted){toast('This batch is posted. Undo is closed.');return;}
+  if(postStep>=0) return;
+  const u=UNDO.pop();
+  if(!u){toast('Nothing to undo yet');return;}
+  Object.keys(u.prev).forEach(id=>{if(u.prev[id])resolutions[id]=u.prev[id];else delete resolutions[id];});
+  logA({action:'Undo',ids:u.ids,why:`Reversed: ${u.label}.`});
+  if(stageMode==='review') renderReview();
+  if(drawerMode==='detail'&&drawerId) openDetail(drawerId);
+  toast(`Undone: ${u.label}`);
+}
+
 /* ---------- UPLOAD ---------- */
 let synced=true;
+const COLS=[
+  {k:'date',req:true,d:'2026-03-12, 3/12/2026 or Mar 12'},
+  {k:'employee',req:true,d:'Full name, e.g. Mara Lin'},
+  {k:'category',req:true,d:'Meals, Hotel, Airfare, Rideshare, Client entertainment'},
+  {k:'merchant',req:true,d:'Vendor and purpose'},
+  {k:'amount',req:true,d:'84.20 or $1,240.00'},
+  {k:'account',req:false,d:'Salesforce account. Blank means internal.'},
+  {k:'receipt',req:false,d:'yes or no. Blank means yes.'}
+];
+const EXAMPLE_CSV=`date,employee,category,merchant,amount,account,receipt
+2026-03-04,Mara Lin,Meals,Cafe Lumen (client breakfast),38.50,Atlas Lyon,yes
+2026-03-12,Mara Lin,Hotel,Hotel Carlton Lyon,342.00,Atlas Lyon,yes
+2026-03-14,Jordan Diaz,Client entertainment,"Oyster Bar (dinner, 3)",268.00,Bright Systems,yes
+2026-03-22,Sam Okafor,Rideshare,Uber to Gent Digital,31.40,Gent Digital,no
+2026-03-27,Priya V.,Airfare,United SFO to ORD,488.00,,yes
+2026-03-25,Taylor Brooks,Meals,Team offsite lunch,64.00,,yes`;
+let csvDraft=EXAMPLE_CSV, UPERR=null;
 function renderUpload(){
+  stageMode='upload';
   $('newBatchBtn').style.display='none';
   $('stage').innerHTML=`
   <div class="upload fade">
-    <div class="drop" onclick="processBatch()">
+    <div class="drop" id="drop">
       <div class="drop__ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
       <h2>Upload expense batch</h2>
       <p>Drop a CSV or receipt export from your card provider. Expense Guard parses every line, matches it to the employee and the customer account, and reviews it against policy.</p>
-      <button class="btn btn--lime">Choose file &amp; process</button>
+      <div class="drop__acts">
+        <button class="btn btn--lime" onclick="processBatch()">Use the sample batch</button>
+        <button class="btn btn--ghost" onclick="pickFile()"><svg viewBox="0 0 24 24" fill="none"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Choose CSV file</button>
+      </div>
+      <div class="drop__hint kb-only">or drag a .csv file onto this box</div>
+      <div class="drop__busy" id="dropBusy" aria-live="polite"></div>
       <div class="synccheck" onclick="event.stopPropagation();synced=!synced;renderUpload()">
         <span class="cbx ${synced?'on':''}">${synced?check():''}</span> Cross-check against Salesforce activity
       </div>
+      <input type="file" id="csvFile" accept=".csv,.tsv,.txt,text/csv,text/plain" hidden onchange="handleFile(this.files[0]);this.value=''">
     </div>
+    <div id="uperr">${upErrHTML()}</div>
     <p class="muted" style="font-size:12.5px;margin-top:14px">Sample batch: <b>March expenses</b> · 14 line items · 5 employees</p>
+
+    <div class="card upcard">
+      <div class="eyebrow">Expected columns</div>
+      <div class="cols">${COLS.map(c=>`<div class="colk"><div><b class="mono">${c.k}</b>${c.req?'<span class="req">required</span>':'<span class="opt">optional</span>'}</div><div class="sub">${c.d}</div></div>`).join('')}</div>
+      <div class="sub">Headers are matched loosely, so "Vendor" works for merchant. Comma, semicolon and tab separated files all work. Up to 500 lines and 1 MB.</div>
+    </div>
+
+    <div class="card upx">
+      <div class="upx__h">
+        <span class="fileic">CSV</span>
+        <div style="min-width:0"><div class="upx__n mono">expenses-example.csv</div><div class="sub" id="exMeta">${exMetaText()}</div></div>
+        <div class="upx__acts"><button class="btn btn--ghost btn--sm" onclick="copyEx()">Copy</button><button class="btn btn--lime btn--sm" onclick="runEx()">Run this CSV</button></div>
+      </div>
+      <textarea class="csvta mono" id="csvEx" spellcheck="false" aria-label="Example CSV, editable" oninput="csvDraft=this.value;$('exMeta').textContent=exMetaText()">${esc(csvDraft)}</textarea>
+      <div class="upx__f"><button class="linkbtn" onclick="resetEx()">Reset example</button><span class="faint">Edit it and run it. Delete the amount column to see how a bad file is handled.</span></div>
+    </div>
   </div>`;
+  wireDrop();
 }
 function check(){return `<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6.2L4.6 9 10 2.6" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
-function startUpload(){renderUpload();}
+function startUpload(){procToken++;closeDrawer();closeModal();renderUpload();$('vp').scrollTop=0;}
+function exMetaText(){const n=csvDraft.split(/\r?\n/).filter(l=>l.trim()).length;const kb=(new Blob([csvDraft]).size/1024).toFixed(1);return `${n} line${n===1?'':'s'} · ${kb} KB · editable`;}
+function resetEx(){csvDraft=EXAMPLE_CSV;const t=$('csvEx');if(t)t.value=csvDraft;$('exMeta').textContent=exMetaText();showUpErr(null);}
+function copyEx(){
+  const t=$('csvEx');
+  const fallback=()=>{try{t.focus();t.select();}catch(_){}toast('Selected. Press Ctrl+C or Cmd+C to copy.');};
+  try{ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(csvDraft).then(()=>toast('Example CSV copied'),fallback);} else fallback(); }catch(_){fallback();}
+}
+function runEx(){const r=buildBatch(csvDraft,'expenses-example.csv');if(r.error)showUpErr(r.error);else{showUpErr(null);processBatch(r);}}
+function pickFile(){const f=$('csvFile');if(f)f.click();}
+function upErrHTML(){
+  if(!UPERR) return '';
+  return `<div class="uperr fade" role="alert"><div class="uperr__h"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v5.5M12 16.5v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b>${esc(UPERR.title)}</b><button class="linkbtn" onclick="showUpErr(null)">Dismiss</button></div><ul>${UPERR.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul></div>`;
+}
+function showUpErr(err){UPERR=err;const el=$('uperr');if(el){el.innerHTML=upErrHTML();if(err)el.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});}const b=$('dropBusy');if(b)b.textContent='';}
+function wireDrop(){
+  const d=$('drop');if(!d)return;
+  let depth=0;
+  d.addEventListener('dragenter',ev=>{ev.preventDefault();depth++;d.classList.add('over');});
+  d.addEventListener('dragover',ev=>{ev.preventDefault();try{ev.dataTransfer.dropEffect='copy';}catch(_){}});
+  d.addEventListener('dragleave',()=>{depth=Math.max(0,depth-1);if(!depth)d.classList.remove('over');});
+  d.addEventListener('drop',ev=>{
+    ev.preventDefault();depth=0;d.classList.remove('over');
+    const fs=ev.dataTransfer&&ev.dataTransfer.files;
+    if(!fs||!fs.length){showUpErr({title:'Nothing to read',items:['Drop a .csv file from your computer, or use the sample batch.']});return;}
+    handleFile(fs[0],fs.length>1);
+  });
+  d.addEventListener('click',ev=>{if(ev.target.closest('button,.synccheck,input,label,a'))return;pickFile();});
+}
+window.addEventListener('dragover',ev=>{ev.preventDefault();});
+window.addEventListener('drop',ev=>{ev.preventDefault();});
+
+function handleFile(file,many){
+  if(!file) return;
+  const name=file.name||'file';
+  const ext=(name.includes('.')?name.split('.').pop():'').toLowerCase();
+  const okType=['csv','tsv','txt'].includes(ext)||/csv|text\/plain|tab-separated/.test(file.type||'');
+  if(!okType){showUpErr({title:`${name} is not a CSV file`,items:[`Expense Guard reads CSV files with a header row. ${ext?'.'+ext+' files':'This file type'} cannot be parsed.`,'Export the statement from your card provider as CSV, or run the example below.']});return;}
+  if(file.size===0){showUpErr({title:`${name} is empty`,items:['Add a header row and at least one expense line.']});return;}
+  if(file.size>1024*1024){showUpErr({title:`${name} is too large`,items:[`It is ${(file.size/1048576).toFixed(1)} MB. The limit is 1 MB, about 500 lines.`,'Split the export by month and upload each part.']});return;}
+  const b=$('dropBusy');if(b)b.textContent=`Reading ${name}…`;
+  let fr;
+  try{fr=new FileReader();}catch(_){showUpErr({title:'This browser cannot read files here',items:['Paste the CSV into the example box below and run it instead.']});return;}
+  fr.onload=()=>{
+    const res=buildBatch(String(fr.result||''),name);
+    if(res.error){showUpErr(res.error);return;}
+    if(many) res.note='Only the first file was read.';
+    showUpErr(null);processBatch(res);
+  };
+  fr.onerror=()=>showUpErr({title:`${name} could not be read`,items:['Choose it again. If it keeps failing, paste its contents into the example box below.']});
+  fr.readAsText(file);
+}
+
+/* CSV parsing with quoted fields, CRLF, BOM and delimiter detection */
+function parseCSV(text){
+  text=text.replace(/^﻿/,'');
+  const first=(text.split(/\r?\n/).find(l=>l.trim())||'');
+  const delim=[',',';','\t'].map(d=>[d,first.split(d).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c==='"'&&f==='') q=true;
+    else if(c===delim){row.push(f);f='';}
+    else if(c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n')i++; row.push(f);rows.push(row);row=[];f=''; }
+    else f+=c;
+  }
+  if(f!==''||row.length){row.push(f);rows.push(row);}
+  return {rows:rows.filter(r=>r.some(x=>x.trim()!=='')),unterminated:q,delim};
+}
+const HDR={
+  date:['date','txndate','transactiondate','expensedate','day','posteddate'],
+  employee:['employee','employeename','name','emp','submitter','submittedby','spender','cardholder'],
+  category:['category','type','expensetype','expensecategory'],
+  merchant:['merchant','description','vendor','payee','merchantname','details','item'],
+  amount:['amount','total','amountusd','cost','value','usd'],
+  account:['account','customer','customeraccount','client','sfaccount','salesforceaccount','accountname'],
+  receipt:['receipt','hasreceipt','receiptattached','receipts']
+};
+const CAT_ALIAS={rideshare:'Rideshare',taxi:'Rideshare',uber:'Rideshare',lyft:'Rideshare',cab:'Rideshare',ride:'Rideshare',
+  meals:'Meals',meal:'Meals',food:'Meals',lunch:'Meals',dinner:'Meals',breakfast:'Meals',
+  hotel:'Hotel',hotels:'Hotel',lodging:'Hotel',accommodation:'Hotel',
+  airfare:'Airfare',flight:'Airfare',flights:'Airfare',air:'Airfare',
+  cliententertainment:'Client entertainment',entertainment:'Client entertainment'};
+const normH=h=>String(h||'').toLowerCase().replace(/[^a-z]/g,'');
+function normCat(s){s=String(s||'').trim();const k=normH(s);if(!k)return '';return CAT_ALIAS[k]||Object.keys(THRESH).find(c=>normH(c)===k)||(s.charAt(0).toUpperCase()+s.slice(1));}
+function normEmp(s){s=String(s||'').trim().replace(/\s+/g,' ');if(!s)return '';return Object.keys(EMP_AVG).find(n=>n.toLowerCase()===s.toLowerCase())||s;}
+function normAcct(s){s=String(s||'').trim().replace(/\s+/g,' ');if(!s||/^(internal|none|n\/a|na|-+)$/i.test(s))return null;return Object.keys(ACTIVITY).find(n=>n.toLowerCase()===s.toLowerCase())||s;}
+function parseDate(s){
+  s=String(s||'').trim();if(!s)return null;
+  let m,mi,d;
+  if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/))){mi=+m[2]-1;d=+m[3];}
+  else if((m=s.match(/^(\d{1,2})[\/.](\d{1,2})(?:[\/.](\d{2,4}))?$/))){mi=+m[1]-1;d=+m[2];}
+  else if((m=s.match(/^([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2})(?:,?\s+\d{4})?$/))){mi=MONTHS.findIndex(x=>x.toLowerCase()===m[1].toLowerCase());d=+m[2];}
+  else if((m=s.match(/^(\d{1,2})\s+([A-Za-z]{3})[a-z]*\.?(?:\s+\d{4})?$/))){d=+m[1];mi=MONTHS.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());}
+  else return null;
+  if(!(mi>=0&&mi<12))return null;
+  const dim=new Date(Date.UTC(2026,mi+1,0)).getUTCDate();
+  if(!(d>=1&&d<=dim))return null;
+  return MONTHS[mi]+' '+d;
+}
+function parseAmt(s){
+  s=String(s||'').trim().replace(/[$€£\s]/g,'');
+  if(/^\d+,\d{1,2}$/.test(s)) s=s.replace(',','.');
+  s=s.replace(/,/g,'');
+  if(!/^\d+(\.\d+)?$/.test(s)) return NaN;
+  return Math.round(parseFloat(s)*100)/100;
+}
+function markDups(list,against){
+  const seen={};
+  (against||[]).forEach(e=>{seen[[e.emp,e.merch.toLowerCase(),e.amt,e.date].join('|')]=e.id;});
+  list.forEach(e=>{const k=[e.emp,e.merch.toLowerCase(),e.amt,e.date].join('|');if(seen[k]&&!e.dup)e.dup=seen[k];else if(!seen[k])seen[k]=e.id;});
+}
+function buildBatch(text,name){
+  if(!text||!text.trim()) return {error:{title:`${name} is empty`,items:['Add a header row and at least one expense line.']}};
+  const head=text.slice(0,2000);
+  if(/\u0000/.test(head)||/^%PDF/.test(head)||(head.match(/�/g)||[]).length>5) return {error:{title:`${name} is not a text file`,items:['It looks like a PDF, image or spreadsheet. Save it as CSV first.']}};
+  if(/^\s*[<{\[]/.test(head)) return {error:{title:`${name} is not a CSV`,items:['It looks like HTML, XML or JSON. Expense Guard needs comma separated rows with a header line.']}};
+  const P=parseCSV(text), rows=P.rows;
+  if(rows.length<2) return {error:{title:'No expense lines found',items:['The file has a header row but no lines under it.']}};
+  const hdr=rows[0].map(normH), idx={};
+  Object.keys(HDR).forEach(f=>{idx[f]=hdr.findIndex(h=>HDR[f].includes(h));});
+  const missing=['date','employee','category','merchant','amount'].filter(f=>idx[f]<0);
+  if(missing.length) return {error:{title:`Missing column${missing.length>1?'s':''}: ${missing.join(', ')}`,items:[`Found: ${rows[0].map(h=>h.trim()||'(blank)').join(', ')}`,'Expected: date, employee, category, merchant, amount, plus optional account and receipt.']}};
+  if(rows.length-1>500) return {error:{title:'Too many lines',items:[`The file has ${rows.length-1} lines. The limit is 500.`]}};
+  const out=[],skipped=[];
+  rows.slice(1).forEach((r,i)=>{
+    const line=i+2, get=f=>idx[f]>=0?String(r[idx[f]]==null?'':r[idx[f]]).trim():'';
+    const date=parseDate(get('date'));
+    if(!date){skipped.push(`Line ${line}: "${get('date')||'blank'}" is not a date.`);return;}
+    const amt=parseAmt(get('amount'));
+    if(!(amt>0)){skipped.push(`Line ${line}: amount "${get('amount')||'blank'}" is not a positive number.`);return;}
+    const emp=normEmp(get('employee'));
+    if(!emp){skipped.push(`Line ${line}: employee is blank.`);return;}
+    const merch=get('merchant');
+    if(!merch){skipped.push(`Line ${line}: merchant is blank.`);return;}
+    const cat=normCat(get('category'));
+    if(!cat){skipped.push(`Line ${line}: category is blank.`);return;}
+    const rc=get('receipt');
+    out.push({id:`E-${2001+out.length}`,emp,cat,merch:merch.slice(0,120),amt,date,acct:normAcct(get('account')),rcpt:rc===''?true:!/^(no|n|false|0|missing|none)$/i.test(rc)});
+  });
+  if(P.unterminated) skipped.push('The last quoted field was never closed, so the final line may be cut short.');
+  if(!out.length) return {error:{title:'No valid expense lines',items:skipped.slice(0,6).concat(skipped.length>6?[`and ${skipped.length-6} more`]:[])}};
+  markDups(out);
+  return {rows:out,skipped,name};
+}
 
 /* ---------- PROCESSING ---------- */
-function processBatch(){
-  const steps=['Parsing 14 line items','Matching to employees & cards', synced?'Cross-checking Salesforce activity':'Skipping CRM cross-check','Applying Finance policy thresholds','AI review & flagging'];
-  $('stage').innerHTML=`<div class="proc fade"><div class="proc__ring"></div><div id="psteps">${steps.map((s,i)=>`<div class="pstep ${i===0?'on':''}" id="ps${i}"><span class="d">${i+1}</span>${s}</div>`).join('')}</div></div>`;
+let procToken=0;
+function processBatch(parsed){
+  const tok=++procToken;
+  if(parsed&&parsed.rows){EXPENSES=clone(parsed.rows);BATCH={label:parsed.name,source:'csv',skipped:parsed.skipped||[],orig:clone(parsed.rows),note:parsed.note||''};}
+  else {EXPENSES=clone(SAMPLE);BATCH={label:'Sample batch: March expenses',source:'sample',skipped:[],orig:null};}
+  resolutions={};ASKED={};NOTES={};UNDO=[];posted=false;postStep=-1;filter='all';selId=null;view='expenses';composeFor=null;
+  closeDrawer();closeModal();
+  stageMode='proc';$('newBatchBtn').style.display='none';
+  const steps=[`Parsing ${EXPENSES.length} line item${EXPENSES.length===1?'':'s'}`,'Matching to employees & cards', synced?'Cross-checking Salesforce activity':'Skipping CRM cross-check','Applying Finance policy thresholds','AI review & flagging'];
+  $('stage').innerHTML=`<div class="proc fade"><div class="proc__ring"></div><div class="proc__f muted">${esc(BATCH.label)}</div><div id="psteps">${steps.map((s,i)=>`<div class="pstep ${i===0?'on':''}" id="ps${i}"><span class="d">${i+1}</span>${s}</div>`).join('')}</div></div>`;
+  $('vp').scrollTop=0;
   let i=0;
   const run=()=>{
+    if(tok!==procToken) return;
     if(i>0){const p=$('ps'+(i-1));p.classList.remove('on');p.classList.add('done');p.querySelector('.d').innerHTML=check2();}
-    if(i>=steps.length){setTimeout(renderReview,400);return;}
+    if(i>=steps.length){setTimeout(()=>{if(tok!==procToken)return;logBatchAI();fadeNext=true;renderReview();},400);return;}
     $('ps'+i).classList.add('on');i++;setTimeout(run,560);
   };
   setTimeout(run,420);
@@ -335,20 +1039,40 @@ function check2(){return `<svg width="11" height="11" viewBox="0 0 12 12" fill="
 
 /* ---------- REVIEW ---------- */
 let filter='all';
+const SPARK=`<svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg>`;
+function syncPill(){const p=$('syncPill');if(p)p.innerHTML=synced?'<span class="dot"></span> Salesforce activity synced':'<span class="dot off"></span> CRM cross-check off';}
+function clearedPending(){return EXPENSES.filter(e=>!resolutions[e.id]&&!assess(e).flag);}
 function renderReview(){
+  stageMode='review';
   $('newBatchBtn').style.display='';
+  syncPill();
   const s=stats();
   const overN=EXPENSES.filter(e=>evaluate(e).key==='over').length;
   const noactN=EXPENSES.filter(e=>evaluate(e).key==='noact').length;
   const otherN=EXPENSES.filter(e=>['dup','rcpt'].includes(evaluate(e).key)).length;
   const mem=empSpend(); const memFlags=mem.filter(m=>m.flag);
+  const pendFlag=EXPENSES.filter(e=>!resolutions[e.id]&&assess(e).flag);
+  const decided=EXPENSES.filter(e=>resolutions[e.id]).length, N=EXPENSES.length;
+  const cp=clearedPending();
+  const lastU=UNDO[UNDO.length-1];
+  const fade=fadeNext?'fade':'';fadeNext=false;
   $('stage').innerHTML=`
-  <div class="fade">
+  <div class="${fade}">
     <div class="aibanner">
       <div class="aibanner__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg></div>
-      <div><div style="display:flex;align-items:center;gap:9px;margin-bottom:3px"><b>AI review complete</b><span class="aibanner__tag">AI generated</span></div>
-      <div style="font-size:13.5px;line-height:1.6">Reviewed <b>${s.count} expenses</b> (${money0(s.total)}). Flagged <b>${s.flagged}</b> totalling <b style="color:var(--rose)">${money0(s.atRisk)} at risk</b> — ${overN} over policy, ${noactN} with no matching customer activity${otherN?`, ${otherN} other`:''}. ${s.cleared} auto-cleared and ready to post back to Salesforce.${memFlags.length?` Memory check: <b style="color:var(--amber)">${memFlags.map(m=>m.emp).join(', ')}</b> ${memFlags.length===1?'is':'are'} running well above ${memFlags.length===1?'their':'their'} monthly average — flagged for inspection.`:''}</div></div>
+      <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:9px;margin-bottom:3px"><b>AI review complete</b><span class="aibanner__tag">AI generated</span></div>
+      <div style="font-size:13.5px;line-height:1.6">Reviewed <b>${s.count} expenses</b> (${money0(s.total)}). Flagged <b>${s.flagged}</b> totalling <b style="color:var(--rose)">${money0(s.atRisk)} at risk</b> — ${overN} over policy, ${noactN} with no matching customer activity${otherN?`, ${otherN} other`:''}. ${s.cleared} auto-cleared and ready to post back to Salesforce.${memFlags.length?` Memory check: <b style="color:var(--amber)">${memFlags.map(m=>esc(m.emp)).join(', ')}</b> ${memFlags.length===1?'is':'are'} running well above ${memFlags.length===1?'their':'their'} monthly average — flagged for inspection.`:''}</div>
+      ${BATCH.skipped.length||BATCH.note||!synced?`<div class="aibanner__note">${BATCH.skipped.length?`${BATCH.skipped.length} line${BATCH.skipped.length===1?' was':'s were'} skipped: ${esc(BATCH.skipped.slice(0,2).join(' '))}${BATCH.skipped.length>2?' See Agent activity for the rest.':''} `:''}${BATCH.note?esc(BATCH.note)+' ':''}${!synced?'The CRM cross-check was off for this batch.':''}</div>`:''}
+      <div class="aibanner__acts">${pendFlag.length&&!posted?`<button class="btn btn--lime btn--sm" onclick="startTriage()">Review ${pendFlag.length} flagged</button><span class="faint small kb-only">or press <span class="kbd">J</span> to step through the list</span>`:`<span class="muted small">${posted?'This batch is posted.':'No flagged items are waiting.'}</span>`}</div>
+      </div>
     </div>
+
+    <details class="agent" ${agentOpenB?'open':''} ontoggle="agentOpenB=this.open">
+      <summary><span class="agent__ic">${SPARK}</span><b>Agent activity</b><span class="muted small">${N} expenses · ${N*7} checks · ${(N*0.17+0.4).toFixed(1)}s</span><span class="caret">›</span></summary>
+      ${callsHTML(batchTrace(),'batch')}
+      ${BATCH.skipped.length?`<div class="agent__f">${BATCH.skipped.map(x=>esc(x)).join('<br>')}</div>`:''}
+      <div class="agent__f">Open any expense to see the checks run on it. Nothing is written to Salesforce until you approve.</div>
+    </details>
 
     <div class="kpis">
       ${kpi('Expenses',s.count,'this batch','var(--ink)')}
@@ -361,39 +1085,64 @@ function renderReview(){
     <div class="policy">
       <div class="policy__lbl">⚙ Policy thresholds <span class="faint" style="text-transform:none;letter-spacing:0;font-weight:500">— set by Finance, applied live</span></div>
       ${Object.keys(THRESH).map(c=>`<label class="thr">${c} <span class="faint">$</span><input type="number" value="${THRESH[c]}" min="0" onchange="setThr('${c}',this.value)"></label>`).join('')}
+      <label class="thr">CRM match <select onchange="setWin(this.value)" aria-label="CRM match window"><option value="0" ${WIN===0?'selected':''}>same day</option><option value="1" ${WIN===1?'selected':''}>within 1 day</option></select></label>
     </div>
 
-    <div class="filters">
-      ${chip('all','All',s.count)}
-      ${chip('flag','Flagged',s.flagged)}
-      ${chip('noact','No CRM activity',noactN)}
-      ${chip('over','Over policy',overN)}
-      ${chip('clear','Cleared',s.cleared)}
+    <div class="tbar">
+      <div class="tabs" role="tablist">
+        <button class="tab ${view==='expenses'?'on':''}" role="tab" aria-selected="${view==='expenses'}" onclick="setView('expenses')">Expenses <span class="ct num">${N}</span></button>
+        <button class="tab ${view==='audit'?'on':''}" role="tab" aria-selected="${view==='audit'}" onclick="setView('audit')">Audit log <span class="ct num" id="auditCt">${AUDIT.length}</span></button>
+      </div>
+      <div class="tbar__acts">
+        ${posted?`<span class="muted small" style="align-self:center">Posted. Decisions are locked. Start again or upload a new batch to keep reviewing.</span>`:`
+        <button class="btn btn--ghost btn--sm" onclick="undoLast()" ${lastU&&!posted?'':'disabled'} title="${lastU?'Undo: '+esc(lastU.label):'Nothing to undo yet'}"><svg viewBox="0 0 24 24" fill="none"><path d="M9 14L4 9l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h10a6 6 0 010 12h-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>${posted?'Posted, undo closed':lastU?'Undo last decision':'Nothing to undo'}</button>
+        <button class="btn btn--ghost btn--sm" onclick="askBulk()" ${cp.length&&!posted?'':'disabled'}>${posted?'Batch posted':cp.length?`Approve cleared (${cp.length})`:'No cleared items waiting'}</button>
+        <button class="btn btn--lime btn--sm" onclick="openAddForm()" ${posted?'disabled':''}><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Add an expense</button>`}
+      </div>
+    </div>
+
+    ${view==='audit'?auditHTML():`
+    <div id="doneCard">${doneHTML()}</div>
+    <div class="frow">
+      <div class="filters">
+        ${chip('all','All',s.count)}
+        ${chip('flag','Flagged',s.flagged)}
+        ${chip('noact','No CRM activity',noactN)}
+        ${chip('over','Over policy',overN)}
+        ${chip('clear','Cleared',s.cleared)}
+      </div>
+      <div class="prog"><span class="num"><b style="color:var(--ink)">${decided}</b> of ${N} decided</span><span class="prog__bar"><i style="width:${N?Math.round(decided/N*100):0}%"></i></span></div>
     </div>
 
     <div class="tblwrap">
       <div class="thead"><div>Date</div><div>Expense</div><div>Account</div><div class="r">Amount</div><div>AI status</div><div></div></div>
       <div id="rows"></div>
     </div>
+    <div class="keys"><span><span class="kbd">J</span><span class="kbd">K</span> move</span><span><span class="kbd">Enter</span> open</span><span><span class="kbd">A</span> approve</span><span><span class="kbd">R</span> reject</span><span><span class="kbd">U</span> undo</span><button class="linkbtn" onclick="showKeys()">All shortcuts</button></div>
 
-    <div class="eyebrow" style="margin:24px 0 10px;display:flex;align-items:center;gap:8px">🧠 Spend memory — this batch vs. each employee's monthly average</div>
+    <div class="eyebrow" style="margin:24px 0 10px;display:flex;align-items:center;gap:8px">🧠 Spend memory — this batch vs. each employee's six-month average</div>
     <div class="memgrid">
-      ${mem.map(m=>{const ratio=Math.min(180,m.total/m.avg*100);const fillW=(ratio/180*100).toFixed(0);const initials=m.emp.split(' ').map(w=>w[0]).join('').slice(0,2);
+      ${mem.map(m=>{const initials=m.emp.split(' ').map(w=>w[0]).join('').slice(0,2);
+        if(m.nohist) return `<div class="memcard">
+          <div class="memcard__top"><div class="memava">${esc(initials)}</div><div style="flex:1;min-width:0"><div style="font-weight:600">${esc(m.emp)}</div><div class="sub">no six-month history</div></div><div class="delta faint">new</div></div>
+          <div class="membar"></div>
+          <div class="memcard__foot"><span class="num" style="font-weight:700">${money0(m.total)}</span> this batch <span class="muted" style="margin-left:auto;font-size:11.5px">no baseline yet</span></div></div>`;
+        const ratio=Math.min(180,m.total/m.avg*100);const fillW=(ratio/180*100).toFixed(0);
         return `<div class="memcard ${m.flag?'flag':''}">
           <div class="memcard__top">
-            <div class="memava">${initials}</div>
-            <div style="flex:1;min-width:0"><div style="font-weight:600">${m.emp}</div><div class="sub">avg ${money0(m.avg)}/mo</div></div>
+            <div class="memava">${esc(initials)}</div>
+            <div style="flex:1;min-width:0"><div style="font-weight:600">${esc(m.emp)}</div><div class="sub">avg ${money0(m.avg)}/mo</div></div>
             <div class="delta ${m.deltaPct>=OVER_AVG_PCT?'hi':m.deltaPct>=0?'up':'dn'}">${m.deltaPct>=0?'+':''}${m.deltaPct}%</div>
           </div>
           <div class="membar"><div class="membar__avg" title="monthly average"></div><div class="membar__fill" style="width:${fillW}%;background:${m.flag?'var(--rose)':'var(--lime)'}"></div></div>
           <div class="memcard__foot"><span class="num" style="font-weight:700">${money0(m.total)}</span> this batch ${m.flag?`<span class="status s-noact" style="margin-left:auto">⚠ Inspect</span>`:`<span class="muted" style="margin-left:auto;font-size:11.5px">within range</span>`}</div>
         </div>`;}).join('')}
-    </div>
+    </div>`}
   </div>`;
-  renderRows();
+  if(view!=='audit') renderRows();
 }
 function kpi(l,v,s,c){return `<div class="kpi"><div class="kpi__l">${l}</div><div class="kpi__v num" style="color:${c}">${v}</div><div class="kpi__s muted">${s}</div></div>`;}
-function chip(k,l,n){return `<span class="chip ${filter===k?'on':''}" onclick="filter='${k}';renderRows();syncChips()">${l} <span class="ct num">${n}</span></span>`;}
+function chip(k,l,n){return `<span class="chip ${filter===k?'on':''}" role="button" tabindex="0" onclick="filter='${k}';renderRows();syncChips()">${l} <span class="ct num">${n}</span></span>`;}
 function syncChips(){document.querySelectorAll('.chip').forEach(c=>{});renderReviewChips();}
 function renderReviewChips(){ // re-render the chip row active state
   const s=stats();const overN=EXPENSES.filter(e=>evaluate(e).key==='over').length;const noactN=EXPENSES.filter(e=>evaluate(e).key==='noact').length;
@@ -410,65 +1159,430 @@ function renderRows(){
   const el=$('rows');if(!el)return;
   const list=EXPENSES.filter(e=>passFilter(e,evaluate(e)));
   el.innerHTML=list.map(e=>{const v=evaluate(e);
-    return `<div class="trow ${v.flag?'flag':''}" style="--flagc:${v.flag?v.color:'transparent'}" onclick="openDetail('${e.id}')">
+    const tag=ASKED[e.id]?(ASKED[e.id].reply?'<span class="mini mini--t">Replied</span>':'<span class="mini">Asked</span>'):'';
+    return `<div class="trow ${v.flag?'flag':''} ${e.id===selId?'sel':''}" data-id="${e.id}" tabindex="0" style="--flagc:${v.flag?v.color:'transparent'}" onclick="openDetail('${e.id}')">
       <div class="num muted" style="font-size:12.5px">${e.date}</div>
-      <div class="cat-cell"><div class="merch">${e.merch.replace(/"/g,'&quot;')}</div><div class="sub">${e.emp} · <span class="cattag">${e.cat}</span></div></div>
-      <div class="acct-cell acct">${e.acct?e.acct:'<span class="faint">— internal —</span>'}</div>
+      <div class="cat-cell"><div class="merch">${esc(e.merch)}</div><div class="sub">${esc(e.emp)} · <span class="cattag">${esc(e.cat)}</span>${tag}</div></div>
+      <div class="acct-cell acct">${e.acct?esc(e.acct):'<span class="faint">— internal —</span>'}</div>
       <div class="amt-cell r amt num">${money(e.amt)}</div>
       <div class="status-cell"><span class="status ${v.cls}">${dotFor(v.key)} ${v.label}</span></div>
       <div class="chev">›</div>
     </div>`;}).join('') || `<div style="padding:34px;text-align:center" class="muted">Nothing in this filter.</div>`;
 }
 function dotFor(k){const c={clear:'var(--green)',over:'var(--amber)',noact:'var(--rose)',dup:'var(--violet)',rcpt:'var(--amber)',appr:'var(--green)',rej:'var(--rose)'}[k];return `<span style="width:7px;height:7px;border-radius:50%;background:${c};display:inline-block"></span>`;}
-function setThr(c,v){THRESH[c]=Math.max(0,parseFloat(v)||0);renderReview();}
+function setThr(c,v){const old=THRESH[c];THRESH[c]=Math.max(0,parseFloat(v)||0);if(old!==THRESH[c])logA({action:'Policy changed',ids:[],what:`${c} cap`,why:`${c} cap changed from ${money0(old)} to ${money0(THRESH[c])}. Every expense was re-checked.`});renderReview();if(drawerMode==='detail'&&drawerId)openDetail(drawerId);}
+function setWin(v){const old=WIN;WIN=parseInt(v,10)?1:0;if(old!==WIN)logA({action:'Policy changed',ids:[],what:'CRM match window',why:`CRM match window set to ${WIN?'within 1 day':'same day'}. Every expense was re-checked.`});renderReview();if(drawerMode==='detail'&&drawerId)openDetail(drawerId);}
+function setView(v){view=v;fadeNext=true;renderReview();}
+function startTriage(){
+  filter='flag';view='expenses';renderReview();
+  const first=EXPENSES.find(e=>!resolutions[e.id]&&assess(e).flag);
+  if(first)openDetail(first.id);else toast('No flagged items are waiting');
+}
+
+/* ---------- completion and posting ---------- */
+function doneHTML(){
+  const N=EXPENSES.length;if(!N)return '';
+  const all=EXPENSES.every(e=>resolutions[e.id]);
+  if(!all&&!posted)return '';
+  const ap=EXPENSES.filter(e=>resolutions[e.id]==='approved'), rj=EXPENSES.filter(e=>resolutions[e.id]==='rejected');
+  const sum=l=>money0(l.reduce((s,e)=>s+e.amt,0));
+  const ic=`<div class="done__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+  if(posted) return `<div class="done">${ic}<div class="done__txt"><b>Posted to Salesforce</b><div class="muted small">${ap.length} approved expense${ap.length===1?'':'s'} (${sum(ap)}) written to Salesforce. ${rj.length} returned to employees with the reason from the audit log.</div></div><div class="done__acts"><button class="btn btn--lime" onclick="startAgain()">Start again</button><button class="btn btn--ghost" onclick="startUpload()">Upload new batch</button></div></div>`;
+  if(postStep>=0){
+    const st=postSteps();
+    return `<div class="done">${ic}<div class="done__txt"><b>Posting to Salesforce</b>${st.map((s,i)=>`<div class="pstep ${i<postStep?'done':i===postStep?'on':''}"><span class="d">${i<postStep?check2():i+1}</span>${s}</div>`).join('')}</div></div>`;
+  }
+  return `<div class="done">${ic}<div class="done__txt"><b>All ${N} expenses decided</b><div class="muted small">${ap.length} approved (${sum(ap)}), ${rj.length} rejected (${sum(rj)}). Nothing is written to Salesforce until you post.</div></div><div class="done__acts"><button class="btn btn--lime" onclick="postBatch()">Post to Salesforce</button></div></div>`;
+}
+function postSteps(){
+  const ap=EXPENSES.filter(e=>resolutions[e.id]==='approved').length, rj=EXPENSES.length-ap;
+  return [`Writing ${ap} approved expense${ap===1?'':'s'} to Salesforce`,`Returning ${rj} to employees`,'Saving the audit log'];
+}
+function renderDone(){const el=$('doneCard');if(el)el.innerHTML=doneHTML();}
+function postBatch(){
+  if(posted||postStep>=0)return;
+  if(!EXPENSES.every(e=>resolutions[e.id])){toast('Decide every expense first');return;}
+  postStep=0;renderDone();
+  const n=postSteps().length;
+  const tick=()=>{
+    postStep++;
+    if(postStep>=n){
+      posted=true;postStep=-1;
+      const apIds=EXPENSES.filter(e=>resolutions[e.id]==='approved').map(e=>e.id), rjIds=EXPENSES.filter(e=>resolutions[e.id]==='rejected').map(e=>e.id);
+      logA({action:'Posted to Salesforce',ids:[],what:BATCH.label,why:`Approved ${apIds.length} and returned ${rjIds.length}. Posted after review by ${REVIEWER.name}.`});
+      if(apIds.length) logA({who:'Expense Guard AI',kind:'ai',action:'Wrote to Salesforce',ids:apIds,why:'salesforce.write created an expense record for each approved line, linked to its account activity.'});
+      fadeNext=false;renderReview();toast('Posted to Salesforce');return;
+    }
+    renderDone();setTimeout(tick,RM?150:600);
+  };
+  setTimeout(tick,RM?150:600);
+}
+function startAgain(){
+  if(BATCH.source==='csv'&&BATCH.orig) processBatch({rows:BATCH.orig,name:BATCH.label,skipped:BATCH.skipped});
+  else processBatch();
+}
+
+/* ---------- bulk approve, modal, shortcuts ---------- */
+function openModal(html){$('modal').innerHTML=`<div class="modal__card" role="dialog" aria-modal="true">${html}</div>`;$('modal').classList.add('on');modalOpen=true;setTimeout(()=>{const f=$('modal').querySelector('[data-autofocus]');if(f)f.focus();},40);}
+function closeModal(){const m=$('modal');if(!m)return;m.classList.remove('on');modalOpen=false;}
+function askBulk(){
+  if(!canDecide())return;
+  const list=clearedPending();
+  if(!list.length){toast('No cleared items waiting');return;}
+  const tot=list.reduce((s,e)=>s+e.amt,0);
+  openModal(`<div class="eyebrow">Bulk approve</div><h3 class="modal__t">Approve ${list.length} cleared expense${list.length===1?'':'s'}?</h3>
+    <p class="muted">Each one passed every check the agent ran: within its cap, receipt attached, not a duplicate${synced?', and matched CRM activity':''}. Total ${money(tot)}. You can undo this.</p>
+    <div class="mlist">${list.map(e=>`<div class="mlist__r"><span class="mono faint">${e.id}</span><span class="ell">${esc(e.merch)}</span><span class="num">${money(e.amt)}</span></div>`).join('')}</div>
+    <div class="modal__f"><button class="btn btn--ghost" onclick="closeModal()">Cancel</button><button class="btn btn--green" data-autofocus onclick="bulkApprove()">Approve ${list.length}</button></div>`);
+}
+function bulkApprove(){
+  const ids=clearedPending().map(e=>e.id);closeModal();
+  if(!ids.length||!canDecide())return;
+  decide(ids,'approved',`bulk approval of ${ids.length} cleared`,`Bulk approval of items the AI cleared. Confirmed in the dialog.`,'Bulk approved');
+  renderReview();
+  toast(`Approved ${ids.length} cleared expense${ids.length===1?'':'s'}`,'Undo',undoLast);
+}
+function showKeys(){
+  openModal(`<div class="eyebrow">Keyboard</div><h3 class="modal__t">Shortcuts</h3>
+  <div class="klist">${[['J','Next expense'],['K','Previous expense'],['Enter','Open the selected expense'],['A','Approve'],['R','Reject'],['U','Undo the last decision'],['Esc','Close the drawer or dialog'],['?','Show this list']].map(([k,d])=>`<div class="klist__r"><span class="kbd">${k}</span><span>${d}</span></div>`).join('')}</div>
+  <div class="modal__f"><button class="btn btn--lime" data-autofocus onclick="closeModal()">Done</button></div>`);
+}
+
+/* ---------- keyboard ---------- */
+function visibleIds(){return EXPENSES.filter(e=>passFilter(e,evaluate(e))).map(e=>e.id);}
+function markSel(){document.querySelectorAll('.trow').forEach(r=>r.classList.toggle('sel',r.dataset.id===selId));}
+function selectRow(id){
+  selId=id;markSel();
+  const el=document.querySelector(`.trow[data-id="${id}"]`);
+  if(el)el.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});
+}
+function move(d){
+  if(view!=='expenses'){view='expenses';renderReview();}
+  const ids=visibleIds();if(!ids.length)return;
+  const cur=drawerMode==='detail'&&drawerId?drawerId:selId;
+  let i=ids.indexOf(cur);
+  i=i<0?(d>0?0:ids.length-1):Math.min(ids.length-1,Math.max(0,i+d));
+  selectRow(ids[i]);
+  if(drawerMode==='detail'&&drawerId)openDetail(ids[i]);
+}
+function kbDecide(r){
+  const id=drawerMode==='detail'&&drawerId?drawerId:selId;
+  if(!id){toast('Press J to select an expense first');return;}
+  if(!canDecide())return;
+  const e=EXPENSES.find(x=>x.id===id);if(!e)return;
+  if(resolutions[id]===r){toast(`${id} is already ${r}`);return;}
+  const ids=visibleIds(), i=ids.indexOf(id), wasOpen=drawerMode==='detail'&&!!drawerId;
+  decide([id],r,`${r==='approved'?'approved':'rejected'} ${id}`,defaultWhy(e,r));
+  renderReview();
+  const nids=visibleIds();
+  let next=ids.slice(i+1).find(x=>nids.includes(x));
+  if(!next&&nids.length)next=nids.filter(x=>x!==id).slice(-1)[0]||null;
+  if(next){selectRow(next);if(wasOpen)openDetail(next);}
+  else{selId=id;markSel();if(wasOpen)closeDrawer();}
+  toast(`Expense ${id} ${r}`,'Undo',undoLast);
+}
+document.addEventListener('keydown',ev=>{
+  const t=ev.target;
+  const typing=t&&t.closest&&t.closest('input,textarea,select,[contenteditable="true"]');
+  if(ev.key==='Escape'){
+    if(modalOpen){closeModal();ev.preventDefault();return;}
+    if(typing){t.blur();return;}
+    if($('drawer').classList.contains('on')){closeDrawer();ev.preventDefault();}
+    return;
+  }
+  if(typing||modalOpen)return;
+  if((ev.metaKey||ev.ctrlKey)&&!ev.altKey&&ev.key.toLowerCase()==='z'&&stageMode==='review'){ev.preventDefault();undoLast();return;}
+  if(ev.metaKey||ev.ctrlKey||ev.altKey)return;
+  if(stageMode!=='review')return;
+  const k=ev.key.length===1?ev.key.toLowerCase():ev.key.toLowerCase();
+  if((k==='enter'||k===' ')&&t&&t.closest&&t.closest('button,a,summary,[role="button"]')){
+    if(t.classList.contains('chip')){t.click();ev.preventDefault();}
+    return;
+  }
+  if(k==='enter'&&t&&t.classList&&t.classList.contains('trow')){openDetail(t.dataset.id);ev.preventDefault();return;}
+  if(ev.key==='?'){showKeys();ev.preventDefault();return;}
+  if(drawerMode==='form'&&$('drawer').classList.contains('on'))return;
+  switch(k){
+    case 'j':move(1);break;
+    case 'k':move(-1);break;
+    case 'a':if(view!=='expenses')return;kbDecide('approved');break;
+    case 'r':if(view!=='expenses')return;kbDecide('rejected');break;
+    case 'u':undoLast();break;
+    case 'enter':case 'o':if(selId&&!drawerId)openDetail(selId);else return;break;
+    default:return;
+  }
+  ev.preventDefault();
+});
 
 /* ---------- DETAIL DRAWER ---------- */
+function meterHTML(e,a){
+  const cap=a.cap;
+  if(cap==null) return `<div class="sec"><div class="sec__h"><span class="eyebrow">Policy meter · ${esc(e.cat)}</span></div><div class="muted small">No cap is set for ${esc(e.cat)}, so there is nothing to measure against.</div></div>`;
+  const max=Math.max(cap*1.5,e.amt*1.08), pct=Math.min(100,e.amt/max*100), cp=cap/max*100, over=e.amt>cap, ratio=Math.round(e.amt/cap*100);
+  return `<div class="sec"><div class="sec__h"><span class="eyebrow">Policy meter · ${esc(e.cat)}</span><span class="num small" style="font-weight:700;color:${over?'var(--amber)':'var(--green)'}">${ratio}% of cap</span></div>
+    <div class="meter" role="img" aria-label="${money(e.amt)} against a ${money0(cap)} cap"><div class="meter__fill" style="width:${pct.toFixed(1)}%;background:${over?'var(--amber)':'var(--green)'}"></div><span class="meter__cap" style="left:calc(${cp.toFixed(1)}% - 1px)"></span></div>
+    <div class="meter__lbls"><span style="left:0">$0</span><span style="left:${cp.toFixed(1)}%;transform:translateX(-50%);color:var(--ink2)">cap ${money0(cap)}</span></div>
+    <div class="small" style="color:var(--ink2)">${money(e.amt)} spent, ${over?`<b style="color:var(--amber)">${money(e.amt-cap)} over</b>`:`${money(cap-e.amt)} under`} the cap.</div></div>`;
+}
+function axisHTML(e,acts,a){
+  const c=DAYNUM(e.date), lo=c-6, hi=c+6, pos=n=>4+(n-lo)/12*92;
+  const inr=acts.filter(d=>DAYNUM(d)>=lo&&DAYNUM(d)<=hi), out=acts.length-inr.length;
+  const wl=pos(c-WIN-.45), wr=pos(c+WIN+.45);
+  const cls=!synced?'off':a.noAct?'bad':'ok';
+  return `<div class="axis" aria-hidden="true"><div class="axis__track"></div>
+    ${Array.from({length:13},(_,i)=>`<span class="axis__tick" style="left:${pos(lo+i).toFixed(2)}%"></span>`).join('')}
+    <span class="axis__win" style="left:${wl.toFixed(2)}%;width:${(wr-wl).toFixed(2)}%"></span>
+    ${inr.map(d=>`<span class="axis__act" style="left:${pos(DAYNUM(d)).toFixed(2)}%"></span>`).join('')}
+    <span class="axis__exp ${cls}" style="left:${pos(c).toFixed(2)}%"></span></div>
+    <div class="axis__lbls"><span>${fromDayNum(lo)}</span><span>${e.date}</span><span>${fromDayNum(hi)}</span></div>
+    <div class="axis__key"><span><i class="k-act"></i>CRM activity</span><span><i class="k-exp"></i>Expense</span><span><i class="k-win"></i>Match window</span>${out?`<span class="faint">${out} more outside these 13 days</span>`:''}</div>`;
+}
+function spendHTML(e){
+  const h=EMP_HIST[e.emp], m=memFor(e.emp);
+  const head=`<div class="sec__h"><span class="eyebrow">Spend memory · ${esc(e.emp)}</span>${h?`<span class="delta ${m.deltaPct>=OVER_AVG_PCT?'hi':m.deltaPct>=0?'up':'dn'}">${m.deltaPct>=0?'+':''}${m.deltaPct}% vs avg</span>`:''}</div>`;
+  if(!h) return `<div class="sec">${head}<div class="muted small">No six-month history for ${esc(e.emp)}. The memory check is skipped until there is a baseline.</div></div>`;
+  const vals=h.concat([m.total]), max=Math.max(...vals,m.avg)*1.18;
+  return `<div class="sec">${head}
+    <div class="bars">${vals.map((v,i)=>{const last=i===vals.length-1;return `<div class="bar" title="${last?'This batch':HIST_MONTHS[i]}: ${money0(v)}"><i style="height:${(v/max*100).toFixed(1)}%;${last?`background:${m.flag?'var(--rose)':'var(--lime)'}`:''}"></i></div>`;}).join('')}
+      <span class="bars__avg" style="bottom:${(m.avg/max*100).toFixed(1)}%"><em>avg ${money0(m.avg)}</em></span></div>
+    <div class="bars__lbls">${HIST_MONTHS.map(x=>`<span>${x}</span>`).join('')}<span><b>Batch</b></span></div>
+    <div class="small" style="margin-top:9px;color:var(--ink2)">${money0(m.total)} in this batch against a six-month average of ${money0(m.avg)} a month. ${m.flag?`That is above the +${OVER_AVG_PCT}% line, so ${esc(e.emp)} is flagged for inspection.`:'That is within range.'}</div></div>`;
+}
+function emailFor(emp){return emp.toLowerCase().replace(/[^a-z ]/g,'').trim().replace(/\s+/g,'.')+'@company.example';}
+function draftMessage(e){
+  const a=assess(e), first=e.emp.split(' ')[0], lines=[];
+  if(a.over) lines.push(`- The ${e.cat} cap is ${money0(a.cap)}. This expense is ${money(e.amt-a.cap)} over.`);
+  if(a.noAct) lines.push(a.near?`- No ${e.acct} activity is logged in Salesforce ${WIN?'within a day of':'on'} ${e.date}. The nearest is ${a.near.d}${a.near.det?` (${a.near.det.type.toLowerCase()}: ${a.near.det.title})`:''}.`:`- Salesforce has no logged activity for ${e.acct}.`);
+  if(a.dup) lines.push(`- It matches ${e.dup}: same merchant, amount and date.`);
+  if(a.noRcpt) lines.push('- No receipt is attached.');
+  const ask=a.noAct?'Could you tell me who you met and why? If it was a customer meeting, please log it in Salesforce so the record matches.'
+    :a.over?(['Meals','Client entertainment'].includes(e.cat)?'Could you share the business reason and the number of attendees?':'Could you share the business reason for the higher cost?')
+    :a.dup?'Could you confirm whether this was submitted twice?'
+    :a.noRcpt?'Could you attach the receipt?'
+    :'Could you confirm the business purpose?';
+  return `Hi ${first},\n\nExpense Guard flagged ${e.id} (${e.merch}, ${money(e.amt)} on ${e.date}) for review:\n${lines.length?lines.join('\n'):'- It passed every check. This is a routine spot check.'}\n\n${ask}\n\nThanks,\n${REVIEWER.name}\nFinance`;
+}
+function cannedReply(e){
+  const a=assess(e);
+  if(a.noAct&&a.near) return `The ${e.merch} expense followed the ${a.near.d} ${(a.near.det?a.near.det.type:'meeting').toLowerCase()} with ${e.acct}. I logged the activity on ${a.near.d} instead of ${e.date}. I will add a note in Salesforce today.`;
+  if(a.noAct) return `This was a first meeting with ${e.acct}. They are not in Salesforce yet. I will create the account and log the meeting today.`;
+  if(a.over){
+    const why={Rideshare:'Surge pricing at the airport, and the client site was across town.',Hotel:'The usual hotel was sold out because of a trade fair, so I booked the nearest one.',Airfare:'The meeting was confirmed late, so the fare had gone up.'}[e.cat]||'More people joined than planned, so it ran over.';
+    return `${why} Happy to cover the ${money(e.amt-a.cap)} above the cap if Finance prefers.`;
+  }
+  if(a.dup) return `That one is a duplicate. I submitted it twice by mistake. Please reject ${e.id}.`;
+  if(a.noRcpt) return `Sorry, the receipt did not upload. It was a ride back from a late client dinner. I have emailed the receipt to Finance.`;
+  return `Confirmed. It was for ${e.acct?'the '+e.acct+' account':'internal team work'}, as listed.`;
+}
 function openDetail(id){
-  const e=EXPENSES.find(x=>x.id===id);const v=evaluate(e);
+  const e=EXPENSES.find(x=>x.id===id);if(!e)return;
+  const same=drawerId===id&&drawerMode==='detail';
+  const bEl=$('drawer').querySelector('.drawer__b');const st=same&&bEl?bEl.scrollTop:0;
+  if(!same&&composeFor!==id)composeFor=null;
+  drawerId=id;drawerMode='detail';selId=id;markSel();
+  const v=evaluate(e), a=assess(e), c=confidence(e,a);
+  const ids=visibleIds(), idx=ids.indexOf(id);
   let timeline='';
   if(e.acct){
     const acts=(ACTIVITY[e.acct]||[]).slice().sort((a,b)=>DAYNUM(a)-DAYNUM(b));
     const all=Array.from(new Set([...acts,e.date])).sort((a,b)=>DAYNUM(a)-DAYNUM(b));
-    timeline=`<div class="eyebrow" style="margin:18px 0 8px">Salesforce activity · ${e.acct}</div>
+    const matched=synced&&!a.noAct;
+    timeline=`<div class="eyebrow" style="margin:18px 0 8px">Salesforce activity · ${esc(e.acct)}</div>
+      ${!synced?`<div class="small" style="color:var(--amber);margin-bottom:8px">The CRM cross-check was off for this batch. Shown for reference only.</div>`:''}
+      ${axisHTML(e,acts,a)}
       <div class="tl">${all.map(d=>{const isExp=d===e.date;const hasAct=acts.includes(d);
-        const cls=isExp?(hasAct?'match':'gap'):'';
-        const lbl=hasAct?'Logged activity (call / meeting / visit)':'';
-        return `<div class="tl__r ${cls}"><span class="d"></span><span class="num" style="width:54px">${d}</span><span style="flex:1">${isExp?`<b>Expense booked here</b>${hasAct?' — matches activity ✓':' — <span style="color:var(--rose)">no activity ✗</span>'}`:lbl}</span></div>`;}).join('')}</div>`;
+        const cls=isExp?(matched?'match':'gap'):'';
+        const det=ACT_DETAIL[e.acct+'|'+d];
+        const lbl=hasAct?(det?`${det.type} · <span class="tlt">${esc(det.title)}</span>`:'Logged activity (call / meeting / visit)'):'';
+        return `<div class="tl__r ${cls}"><span class="d"></span><span class="num" style="width:54px;flex-shrink:0">${d}</span><span style="flex:1;min-width:0">${isExp?`<b>Expense booked here</b>${matched?(hasAct?' — matches activity ✓':` — matches ${a.near.d} ✓`):' — <span style="color:var(--rose)">no activity ✗</span>'}`:lbl}</span></div>`;}).join('')}</div>
+      ${!acts.length?`<div class="muted small" style="margin-top:8px">Salesforce has no logged activity for ${esc(e.acct)}.</div>`:''}`;
   } else {
     timeline=`<div class="eyebrow" style="margin:18px 0 8px">Customer link</div><div class="muted" style="font-size:13px">No customer account on this expense — treated as internal, no CRM cross-check required.</div>`;
   }
   const resolved=resolutions[e.id];
+  const ask=ASKED[e.id];
+  const thread=ask?`<div class="thread">
+      <div class="msg msg--out"><div class="msg__h">You asked ${esc(e.emp)} · ${hm(ask.ts)}</div><div class="msg__b">${esc(ask.msg)}</div></div>
+      ${ask.reply?`<div class="msg msg--in"><div class="msg__h">${esc(e.emp)} replied · ${hm(ask.reply.ts)}</div><div class="msg__b">${esc(ask.reply.text)}</div></div>`:`<div class="msg__wait"><span class="spin"></span> Waiting for ${esc(e.emp)} to reply</div>`}
+    </div>`:'';
+  const compose=composeFor===id?`<div class="compose" id="compose">
+      <div class="compose__h"><b>Ask ${esc(e.emp)}</b><span class="aibanner__tag">AI drafted</span><span class="faint small">Edit before sending</span></div>
+      <div class="compose__to">To: <span class="mono">${esc(emailFor(e.emp))}</span></div>
+      <label class="fld">Subject<input class="inp" id="cSubj" value="${esc(composeSubj)}" oninput="composeSubj=this.value"></label>
+      <label class="fld">Message<textarea class="inp" id="cMsg" oninput="composeDraft=this.value;syncSend()">${esc(composeDraft)}</textarea></label>
+      <div class="compose__f"><button class="btn btn--lime btn--sm" id="cSend" onclick="sendAsk('${e.id}')">Send</button><button class="btn btn--ghost btn--sm" onclick="cancelCompose()">Cancel</button><span class="why" id="cWhy"></span></div>
+    </div>`:'';
   $('drawer').innerHTML=`
     <div class="drawer__h">
-      <div><div class="eyebrow">${e.id} · ${e.cat}</div><div style="font-weight:700;font-size:16px;margin-top:3px">${e.merch.replace(/"/g,'&quot;')}</div></div>
-      <button class="drawer__x" onclick="closeDrawer()">×</button>
+      <div style="min-width:0"><div class="eyebrow">${e.id} · ${esc(e.cat)}</div><div class="drawer__t">${esc(e.merch)}</div></div>
+      <div class="drawer__nav">
+        <button class="drawer__x" onclick="move(-1)" aria-label="Previous expense" title="Previous (K)" ${idx<=0?'disabled':''}>‹</button>
+        <button class="drawer__x" onclick="move(1)" aria-label="Next expense" title="Next (J)" ${idx<0||idx>=ids.length-1?'disabled':''}>›</button>
+        <button class="drawer__x" onclick="closeDrawer()" aria-label="Close">×</button>
+      </div>
     </div>
     <div class="drawer__b">
       <div class="bigamt num">${money(e.amt)}</div>
-      <div style="margin-top:4px"><span class="status ${v.cls}">${dotFor(v.key)} ${v.label}</span></div>
+      <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="status ${v.cls}">${dotFor(v.key)} ${v.label}</span>${resolved?`<span class="faint small">AI said: ${a.label}</span>`:''}${ask?(ask.reply?'<span class="mini mini--t">Replied</span>':'<span class="mini">Asked</span>'):''}</div>
       <div class="verdict" style="border-color:${v.flag?v.color:'var(--line2)'};background:${v.flag?'color-mix(in srgb,'+v.color+' 9%,transparent)':'var(--panel2)'}">
         <div class="verdict__h" style="color:${v.color}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg> AI assessment</div>
+        <div class="vs">${resolved?'<span class="lbl">AI recommended. </span>':''}${esc(verdictLine(e,a))}</div>
+        <div class="conf"><span>Confidence <b class="num">${c.p}%</b></span><span class="conf__bar"><i style="width:${c.p}%"></i></span></div>
+        <div class="conf__why">${esc(c.why)}</div>
         <ul>${v.reasons.map(r=>`<li>${r}</li>`).join('')}</ul>
       </div>
-      <div class="kv"><span class="k">Employee</span><span>${e.emp}</span></div>
+      <div class="kv"><span class="k">Employee</span><span>${esc(e.emp)}</span></div>
       <div class="kv"><span class="k">Date</span><span class="num">${e.date}</span></div>
-      <div class="kv"><span class="k">Account</span><span>${e.acct||'— internal —'}</span></div>
+      <div class="kv"><span class="k">Account</span><span>${e.acct?esc(e.acct):'— internal —'}</span></div>
       <div class="kv"><span class="k">Category cap</span><span class="num">${THRESH[e.cat]!=null?money0(THRESH[e.cat]):'—'}</span></div>
       <div class="kv"><span class="k">Receipt</span><span>${e.rcpt?'Attached':'<span style="color:var(--amber)">Missing</span>'}</span></div>
+      ${meterHTML(e,a)}
       ${timeline}
+      ${spendHTML(e)}
+      <details class="agent agent--d" ${agentOpenD?'open':''} ontoggle="agentOpenD=this.open">
+        <summary><span class="agent__ic">${SPARK}</span><b>Agent activity</b><span class="muted small">${agentTrace(e).length} checks on ${e.id}</span><span class="caret">›</span></summary>
+        ${callsHTML(agentTrace(e),e.id)}
+      </details>
+      ${thread}
+      ${compose}
+      ${!resolved&&!posted?`<label class="fld note">Decision note <span class="faint" style="font-weight:500">Optional. Saved to the audit log with your decision.</span><input class="inp" id="noteIn" value="${esc(NOTES[e.id]||'')}" oninput="NOTES['${e.id}']=this.value" placeholder="e.g. Manager confirmed the client dinner"></label>`:''}
     </div>
     <div class="drawer__f">
-      ${resolved?`<div class="muted" style="align-self:center;font-size:13px">Resolved: <b style="color:${resolved==='approved'?'var(--green)':'var(--rose)'}">${resolved}</b></div><button class="btn btn--ghost btn--sm" onclick="resolve('${e.id}',null)">Undo</button>`
+      ${posted?`<div class="muted" style="align-self:center;font-size:13px">Posted to Salesforce as <b style="color:${resolved==='approved'?'var(--green)':'var(--rose)'}">${resolved}</b>. Start again to review a new batch.</div>`
+      :resolved?`<div class="muted" style="align-self:center;font-size:13px">Resolved: <b style="color:${resolved==='approved'?'var(--green)':'var(--rose)'}">${resolved}</b></div><button class="btn btn--ghost btn--sm" onclick="resolve('${e.id}',null)">Undo</button>`
       :`<button class="btn btn--green btn--sm" onclick="resolve('${e.id}','approved')">Approve</button>
-        <button class="btn btn--ghost btn--sm" onclick="toast('Justification requested from ${e.emp}')">Request justification</button>
-        <button class="btn btn--rose btn--sm" onclick="resolve('${e.id}','rejected')">Reject</button>`}
+        <button class="btn btn--ghost btn--sm" onclick="openCompose('${e.id}')">${ask?'Ask again':'Ask the employee'}</button>
+        <button class="btn btn--rose btn--sm" onclick="resolve('${e.id}','rejected')">Reject</button>
+        <span class="drawer__keys"><span class="kbd">A</span><span class="kbd">R</span><span class="kbd">J</span><span class="kbd">K</span></span>`}
+    </div>`;
+  const nb=$('drawer').querySelector('.drawer__b');if(nb)nb.scrollTop=st;
+  $('drawer').classList.add('on');$('scrim').classList.add('on');
+  if(composeFor===id)syncSend();
+}
+function closeDrawer(){$('drawer').classList.remove('on');$('scrim').classList.remove('on');drawerId=null;drawerMode=null;composeFor=null;}
+function resolve(id,r){
+  if(!canDecide())return;
+  const e=EXPENSES.find(x=>x.id===id);if(!e)return;
+  decide([id],r,r?`${r} ${id}`:`reopen ${id}`,r?defaultWhy(e,r):`Decision on ${id} reopened from the expense drawer.`);
+  closeDrawer(); renderReview();
+  if(r) toast(`Expense ${id} ${r}`,'Undo',undoLast); else toast('Resolution undone');
+}
+
+/* ask the employee */
+function openCompose(id){
+  const e=EXPENSES.find(x=>x.id===id);if(!e)return;
+  const a=assess(e);
+  composeFor=id;composeDraft=draftMessage(e);composeSubj=`Expense ${id}: ${a.flag?a.label.toLowerCase():'quick check'}`;
+  openDetail(id);
+  const c=$('compose');if(c){c.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});const t=$('cMsg');if(t)setTimeout(()=>{try{t.focus({preventScroll:true});}catch(_){t.focus();}},60);}
+}
+function syncSend(){
+  const b=$('cSend'),w=$('cWhy');if(!b)return;
+  const empty=!composeDraft.trim();
+  b.disabled=empty;if(w)w.textContent=empty?'Write a message to send':'';
+}
+function cancelCompose(){const id=composeFor;composeFor=null;if(id)openDetail(id);}
+function sendAsk(id){
+  const e=EXPENSES.find(x=>x.id===id);if(!e)return;
+  const msg=composeDraft.trim();if(!msg){syncSend();return;}
+  const tok=procToken;
+  ASKED[id]={ts:new Date(),msg,subj:composeSubj};
+  logA({action:'Asked employee',ids:[id],why:`Sent to ${e.emp}: "${composeSubj}". ${msg.split('\n').filter(l=>l.trim()).slice(1,2).join(' ')}`});
+  composeFor=null;
+  openDetail(id);renderRows();
+  toast(`Justification requested from ${e.emp}`);
+  setTimeout(()=>{
+    if(tok!==procToken||!ASKED[id]||ASKED[id].reply)return;
+    const text=cannedReply(e);
+    ASKED[id].reply={ts:new Date(),text};
+    logA({who:e.emp,kind:'emp',action:'Employee replied',ids:[id],why:text});
+    if(stageMode==='review'){ if(view==='audit')renderReview(); else renderRows(); }
+    if(drawerMode==='detail'&&drawerId===id&&composeFor!==id)openDetail(id);
+    toast(`${e.emp} replied on ${id}`);
+  },RM?1200:2600);
+}
+
+/* ---------- ADD AN EXPENSE ---------- */
+let FORM={emp:'Mara Lin',cat:'Meals',merch:'',amt:'',date:'2026-03-24',acct:'Atlas Lyon',rcpt:true};
+function nextId(){const n=EXPENSES.reduce((m,e)=>Math.max(m,parseInt(String(e.id).replace(/\D/g,''),10)||0),1000);return 'E-'+(n+1);}
+function formExpense(){
+  const emp=normEmp(FORM.emp), merch=String(FORM.merch||'').trim(), amt=parseAmt(FORM.amt), date=parseDate(FORM.date);
+  const why=!emp?'Enter an employee':!merch?'Enter a merchant':!(amt>0)?'Enter an amount above $0':!date?'Pick a date':'';
+  if(why)return {why};
+  const e={id:nextId(),emp,cat:FORM.cat,merch:merch.slice(0,120),amt,date,acct:normAcct(FORM.acct),rcpt:!!FORM.rcpt};
+  markDups([e],EXPENSES);
+  return {e};
+}
+function openAddForm(){
+  if(posted){toast('This batch is posted. Start again to add expenses.');return;}
+  drawerMode='form';drawerId=null;composeFor=null;
+  const empNames=[...new Set(Object.keys(EMP_AVG).concat(EXPENSES.map(e=>e.emp)))];
+  const accts=[...new Set(Object.keys(ACTIVITY).concat(EXPENSES.filter(e=>e.acct).map(e=>e.acct)))];
+  $('drawer').innerHTML=`
+    <div class="drawer__h">
+      <div style="min-width:0"><div class="eyebrow">New expense · ${esc(BATCH.label)}</div><div class="drawer__t">Add an expense</div></div>
+      <div class="drawer__nav"><button class="drawer__x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+    </div>
+    <div class="drawer__b">
+      <p class="muted small" style="margin:0 0 16px">Checked by the same rules as the batch: the category cap, CRM activity at the account on the day, and the employee's six-month average.</p>
+      <form id="addForm" onsubmit="event.preventDefault();addExpense()" novalidate>
+        <div class="fgrid">
+          <label class="fld">Employee<input class="inp" name="emp" list="empList" value="${esc(FORM.emp)}" autocomplete="off" oninput="formChanged()"></label>
+          <label class="fld">Category<select class="inp" name="cat" onchange="formChanged()">${Object.keys(THRESH).map(c=>`<option ${c===FORM.cat?'selected':''}>${c}</option>`).join('')}</select></label>
+          <label class="fld wide">Merchant and purpose<input class="inp" name="merch" value="${esc(FORM.merch)}" placeholder="Bistro Paul (client lunch, 2)" autocomplete="off" oninput="formChanged()"></label>
+          <label class="fld">Amount (USD)<input class="inp num" name="amt" type="number" inputmode="decimal" min="0" step="0.01" value="${esc(FORM.amt)}" placeholder="0.00" oninput="formChanged()"></label>
+          <label class="fld">Date<input class="inp" name="date" type="date" min="2026-01-01" max="2026-12-31" value="${esc(FORM.date)}" oninput="formChanged()"></label>
+          <label class="fld wide">Customer account <span class="faint" style="font-weight:500">Leave blank for an internal expense</span><input class="inp" name="acct" list="acctList" value="${esc(FORM.acct)}" autocomplete="off" oninput="formChanged()"></label>
+          <label class="fld wide fcheck"><input type="checkbox" name="rcpt" ${FORM.rcpt?'checked':''} onchange="formChanged()"> Receipt attached</label>
+        </div>
+        <datalist id="empList">${empNames.map(n=>`<option value="${esc(n)}">`).join('')}</datalist>
+        <datalist id="acctList">${accts.map(n=>`<option value="${esc(n)}">`).join('')}</datalist>
+        <div id="precheck"></div>
+      </form>
+    </div>
+    <div class="drawer__f">
+      <button class="btn btn--lime btn--sm" id="addBtn" onclick="addExpense()">Add to batch</button>
+      <button class="btn btn--ghost btn--sm" onclick="closeDrawer()">Cancel</button>
+      <span class="why" id="addWhy"></span>
     </div>`;
   $('drawer').classList.add('on');$('scrim').classList.add('on');
+  formChanged();
+  setTimeout(()=>{const m=document.querySelector('#addForm [name=merch]');if(m&&!(window.matchMedia&&matchMedia('(hover:none)').matches))m.focus();},RM?0:300);
 }
-function closeDrawer(){$('drawer').classList.remove('on');$('scrim').classList.remove('on');}
-function resolve(id,r){ if(r)resolutions[id]=r; else delete resolutions[id]; closeDrawer(); renderReview(); toast(r?`Expense ${id} ${r}`:'Resolution undone'); }
+function formChanged(){
+  const f=$('addForm');if(!f)return;
+  FORM={emp:f.emp.value,cat:f.cat.value,merch:f.merch.value,amt:f.amt.value,date:f.date.value,acct:f.acct.value,rcpt:f.rcpt.checked};
+  const r=formExpense(), b=$('addBtn'), w=$('addWhy'), pc=$('precheck');
+  b.disabled=!!r.why; w.textContent=r.why||'';
+  if(r.why){pc.innerHTML=`<div class="pre"><div class="pre__h"><span class="agent__ic">${SPARK}</span><b>AI pre-check</b></div><div class="muted small">Runs as you type. ${esc(r.why)} to see the verdict.</div></div>`;return;}
+  const e=r.e, a=assess(e), c=confidence(e,a), m=memFor(e.emp,e.amt);
+  const G=(k,t)=>`<div><span class="g" style="color:${k==='ok'?'var(--green)':k==='skip'?'var(--faint)':k==='fail'?'var(--rose)':'var(--amber)'}">${GLYPH[k]}</span><span>${t}</span></div>`;
+  const rows=[
+    a.cap!=null?G(a.over?'warn':'ok',a.over?`${money(e.amt)} is ${money(e.amt-a.cap)} over the ${money0(a.cap)} ${esc(e.cat)} cap.`:`${money(e.amt)} is within the ${money0(a.cap)} ${esc(e.cat)} cap.`):G('warn',`No cap is set for ${esc(e.cat)}.`),
+    !e.acct?G('ok','Internal expense. No CRM check needed.'):!synced?G('skip','CRM cross-check is off for this batch.'):a.noAct?G('fail',a.near?`No ${esc(e.acct)} activity ${WIN?'within a day of':'on'} ${e.date}. Nearest: ${a.near.d}.`:`Salesforce has no activity for ${esc(e.acct)}.`):G('ok',`Matches ${esc(e.acct)} activity on ${a.near.d}.`),
+    m.nohist?G('skip',`No six-month history for ${esc(e.emp)} yet.`):G(m.flag?'warn':'ok',`${esc(e.emp)} would be at ${money0(m.total)}, ${m.deltaPct>=0?'+':''}${m.deltaPct}% vs the ${money0(m.avg)} six-month average.`),
+    e.dup?G('warn',`Looks like a duplicate of ${e.dup}.`):G('ok','No duplicate found.'),
+    e.rcpt?G('ok','Receipt attached.'):G('warn','No receipt.')
+  ];
+  pc.innerHTML=`<div class="pre"><div class="pre__h"><span class="agent__ic">${SPARK}</span><b>AI pre-check</b><span class="status ${a.cls}" style="margin-left:auto">${dotFor(a.key)} ${a.label}</span></div>
+    <div class="vs" style="font-size:13px">${esc(verdictLine(e,a))}</div>
+    <div class="conf"><span>Confidence <b class="num">${c.p}%</b></span><span class="conf__bar"><i style="width:${c.p}%"></i></span></div>
+    <div class="pre__rows">${rows.join('')}</div></div>`;
+}
+function addExpense(){
+  if(posted){toast('This batch is posted. Start again to add expenses.');return;}
+  const r=formExpense();if(r.why){toast(r.why);return;}
+  const e=r.e;EXPENSES.push(e);
+  const a=assess(e), c=confidence(e,a);
+  logA({action:'Added expense',ids:[e.id],why:`Entered by hand. AI verdict: ${a.label} (${c.p}% confidence). ${verdictLine(e,a)}`});
+  FORM.merch='';FORM.amt='';
+  filter='all';view='expenses';renderReview();
+  openDetail(e.id);selectRow(e.id);
+  toast(`${e.id} added. AI verdict: ${a.label}`);
+}
 
 /* boot */
+logBatchAI(new Date(Date.now()-3*60*1000));
 renderReview();
 </script>
 </body>

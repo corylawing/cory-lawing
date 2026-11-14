@@ -433,6 +433,293 @@
   .scc-rec__saved{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--scc-green-text);}
   .scc-rec__think{display:flex;align-items:center;gap:9px;color:var(--scc-text-secondary);font-size:12px;margin-top:10px;}
   .scc-rec__summary{margin-top:12px;background:var(--scc-input-bg);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.5;}
+
+  /* ===================== UPGRADE (additive) ===================== */
+  html,body{background:#f0f2f5;}
+  body:has(.scc--dark){background:#111827;}
+  .scc{min-height:100dvh;}
+  .scc.scc--dark{color-scheme:dark;}
+  .scc code{overflow-wrap:anywhere;}
+  .scc-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .scc-kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);}
+  .scc-search{min-width:168px;justify-content:flex-start;color:rgba(255,255,255,.72);}
+  .scc-search .scc-kbd{margin-left:auto;}
+  .scc-btn-sec{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;background:var(--scc-card-bg);color:var(--scc-text-primary);border:1px solid var(--scc-card-border);transition:.2s;}
+  .scc-btn-sec:hover{border-color:var(--scc-accent);color:var(--scc-indigo-text);}
+  .scc-btn-ghost{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:9px;font-size:12px;font-weight:700;color:var(--scc-text-secondary);transition:.2s;}
+  .scc-btn-ghost:hover{background:var(--scc-card-bg);color:var(--scc-text-primary);}
+  .scc-btn-primary:disabled,.scc-btn-sec:disabled,.scc-btn-ghost:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none;}
+  .scc-linkbtn{font-size:11px;font-weight:700;color:var(--scc-indigo-text);padding:3px 6px;border-radius:6px;}
+  .scc-linkbtn:hover{background:var(--scc-indigo-bg);}
+  @keyframes scc-flash{0%{box-shadow:0 0 0 0 rgba(99,102,241,.55);}100%{box-shadow:0 0 0 12px rgba(99,102,241,0);}}
+  .is-flash{animation:scc-flash 1s ease-out 2;}
+
+  /* queue: counts, why-it-ranks, agent proposal */
+  .scc-fchip__n{font-variant-numeric:tabular-nums;opacity:.65;margin-left:5px;}
+  .scc-chip.is-zero{opacity:.5;}
+  .scc-action.is-open{box-shadow:var(--scc-shadow-hover);}
+  .scc-action.is-open:hover{transform:none;}
+  button.scc-score{transition:box-shadow .2s;}
+  button.scc-score:hover{box-shadow:0 0 0 2px var(--scc-accent);}
+  .scc-why-t{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:0;font-size:11px;font-weight:700;color:var(--scc-indigo-text);}
+  .scc-why-t svg{transition:transform .2s;}
+  .scc-action.is-open .scc-why-t svg{transform:rotate(90deg);}
+  .scc-action__detail{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px;padding-top:13px;border-top:1px dashed var(--scc-card-border);}
+  .scc-action__detail.is-anim{animation:scc-in .35s ease both;}
+  .scc-dh{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+  .scc-sig{padding:5px 0;}
+  .scc-sig__top{display:flex;align-items:baseline;gap:10px;font-size:12px;}
+  .scc-sig__l{flex:1;min-width:0;color:var(--scc-text-primary);font-weight:600;}
+  .scc-sig__p{font-weight:800;font-variant-numeric:tabular-nums;}
+  .scc-sig__bar{height:7px;border-radius:20px;background:var(--scc-input-bg);margin-top:5px;overflow:hidden;}
+  .scc-sig__fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--scc-accent),var(--scc-accent-3));transform-origin:left center;}
+  .scc-action--critical .scc-sig__fill{background:linear-gradient(90deg,#ef4444,#f87171);}
+  .scc-action--medium .scc-sig__fill{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+  .scc-action--critical .scc-sig__p{color:var(--scc-red-text);}
+  .scc-action--medium .scc-sig__p{color:var(--scc-amber-text);}
+  .scc-action--low .scc-sig__p{color:var(--scc-indigo-text);}
+  .is-anim .scc-sig__fill{animation:scc-grow .7s cubic-bezier(.2,.7,.2,1) both;}
+  @keyframes scc-grow{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  .scc-sig__sum{display:flex;align-items:baseline;gap:8px;margin-top:6px;padding-top:8px;border-top:1px solid var(--scc-card-border);font-size:11px;color:var(--scc-text-secondary);font-variant-numeric:tabular-nums;}
+  .scc-sig__sum b{margin-left:auto;font-size:15px;font-weight:800;color:var(--scc-text-primary);white-space:nowrap;}
+  .scc-ev{margin-top:12px;display:flex;flex-direction:column;gap:5px;}
+  .scc-evrow{display:flex;align-items:baseline;gap:4px 8px;flex-wrap:wrap;font-size:11px;color:var(--scc-text-secondary);padding:6px 8px;border-radius:7px;background:var(--scc-input-bg);}
+  .scc-evrow__t{font-weight:700;color:var(--scc-text-primary);}
+  .scc-evrow__id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:var(--scc-indigo-text);margin-left:auto;white-space:nowrap;}
+  .scc-prop{border:1px solid var(--scc-card-border);border-radius:10px;background:var(--scc-input-bg);padding:12px 13px;}
+  .scc-prop__head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .scc-prop__conf{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--scc-green-bg);color:var(--scc-green-text);}
+  .scc-prop__kind{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;margin-top:7px;}
+  .scc-prop__kind svg{color:var(--scc-accent);flex-shrink:0;}
+  .scc-mail{margin-top:9px;background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:8px;font-size:12px;overflow:hidden;}
+  .scc-mail__row{display:flex;gap:8px;padding:7px 10px;border-bottom:1px solid var(--scc-card-border);align-items:baseline;}
+  .scc-mail__k{width:52px;flex-shrink:0;font-size:11px;color:var(--scc-text-muted);}
+  .scc-mail__v{min-width:0;flex:1;overflow-wrap:anywhere;font-weight:700;}
+  .scc-mail__v small{font-weight:500;color:var(--scc-text-muted);font-size:11px;}
+  .scc-mail__body{padding:10px;white-space:pre-wrap;line-height:1.55;font-weight:500;color:var(--scc-text-primary);}
+  .scc-attach{display:inline-flex;align-items:center;gap:6px;margin:0 10px 10px;padding:4px 9px;border-radius:7px;background:var(--scc-indigo-bg);color:var(--scc-indigo-text);font-size:11px;font-weight:700;}
+  .scc-datechg{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:9px;background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:8px;padding:10px 12px;}
+  .scc-datechg__old{font-size:13px;font-weight:700;color:var(--scc-text-muted);text-decoration:line-through;}
+  .scc-datechg__new{font-size:19px;font-weight:800;letter-spacing:-.01em;color:var(--scc-indigo-text);}
+  .scc-datechg__lab{display:block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--scc-text-muted);margin-bottom:2px;text-decoration:none;}
+  .scc-datechg__arrow{color:var(--scc-text-muted);}
+  .scc-task{margin-top:9px;background:var(--scc-card-bg);border:1px solid var(--scc-card-border);border-radius:8px;padding:10px 12px;}
+  .scc-task__s{font-size:13px;font-weight:800;}
+  .scc-task__d{font-size:11px;color:var(--scc-text-secondary);margin-top:3px;}
+  .scc-task__n{font-size:12px;line-height:1.5;color:var(--scc-text-primary);margin-top:7px;font-weight:500;}
+  .scc-prop__reason{font-size:12px;line-height:1.5;color:var(--scc-text-secondary);margin-top:9px;}
+  .scc-prop__reason b{color:var(--scc-text-primary);}
+  .scc-prop__also{font-size:11px;color:var(--scc-text-muted);margin-top:6px;line-height:1.45;}
+  .scc-steps{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+  .scc-stp{display:inline-flex;align-items:center;gap:5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;font-weight:600;padding:3px 7px;border-radius:6px;background:var(--scc-card-bg);border:1px solid var(--scc-card-border);color:var(--scc-text-muted);}
+  .scc-stp svg{width:10px;height:10px;flex-shrink:0;}
+  .scc-stp.ok{color:var(--scc-green-text);}
+  .scc-stp.wait{color:var(--scc-amber-text);background:var(--scc-amber-bg);border-color:transparent;}
+  .scc-stp.run{color:var(--scc-indigo-text);border-color:var(--scc-accent);}
+  .scc-stp.skip{text-decoration:line-through;}
+  .scc-stp .scc-spinner2{width:9px;height:9px;border-width:1.5px;}
+  .scc-prop__btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;}
+  .scc-prop__note{font-size:10px;color:var(--scc-text-muted);margin-top:8px;}
+  .scc-field{display:flex;flex-direction:column;gap:4px;margin-top:9px;}
+  .scc-field label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--scc-text-muted);}
+  .scc-in{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--scc-card-border);background:var(--scc-card-bg);color:var(--scc-text-primary);font:inherit;font-size:12px;font-weight:500;}
+  .scc-in:focus{outline:none;border-color:var(--scc-accent);box-shadow:0 0 0 3px rgba(99,102,241,.18);}
+  textarea.scc-in{min-height:150px;resize:vertical;line-height:1.5;}
+  .scc-err{font-size:11px;font-weight:600;color:var(--scc-red-text);}
+  .scc-action.is-leaving{animation:scc-leave .32s ease forwards;pointer-events:none;}
+  @keyframes scc-leave{to{opacity:0;transform:translateX(18px);}}
+  .scc-qfoot{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--scc-card-border);font-size:11px;color:var(--scc-text-secondary);}
+  .scc-qfoot b{color:var(--scc-text-primary);}
+  .scc-qempty{margin-top:14px;padding:18px;border:1px dashed var(--scc-card-border);border-radius:10px;text-align:center;font-size:12px;color:var(--scc-text-secondary);}
+  .scc-qclear{text-align:center;padding:26px 16px 22px;border:1px dashed var(--scc-card-border);border-radius:12px;margin-top:14px;background:linear-gradient(180deg,rgba(22,163,74,.06),transparent);}
+  .scc-qclear__ic{width:46px;height:46px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:var(--scc-green-bg);color:var(--scc-green-text);}
+  .scc-qclear__t{font-size:18px;font-weight:800;letter-spacing:-.02em;}
+  .scc-qclear__s{font-size:12px;color:var(--scc-text-secondary);margin:6px auto 14px;max-width:440px;line-height:1.5;}
+  .scc-qclear__btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+
+  /* assistant + agent activity */
+  .scc-aiwrap{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;align-items:start;}
+  .scc-aiwrap .scc-ai__cmds{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
+  .scc-cite{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 4px;margin-left:4px;border-radius:5px;font-size:10px;font-weight:800;line-height:1;background:var(--scc-indigo-bg);color:var(--scc-indigo-text);vertical-align:1px;position:relative;}
+  .scc-cite:hover{background:var(--scc-accent);color:#fff;}
+  .scc-src{margin-top:12px;padding-top:10px;border-top:1px solid var(--scc-card-border);}
+  .scc-src__list{display:flex;flex-direction:column;gap:5px;margin-top:7px;}
+  .scc-src__item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:6px 9px;border-radius:8px;font-size:11px;color:var(--scc-text-secondary);background:var(--scc-card-bg);border:1px solid var(--scc-card-border);transition:.15s;}
+  .scc-src__item:hover{border-color:var(--scc-accent);}
+  .scc-src__n{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:5px;font-size:10px;font-weight:800;background:var(--scc-indigo-bg);color:var(--scc-indigo-text);flex-shrink:0;}
+  .scc-src__txt{min-width:0;flex:1;display:flex;flex-direction:column;gap:1px;}
+  .scc-src__name{font-weight:700;color:var(--scc-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .scc-src__f{color:var(--scc-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .scc-src__id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:var(--scc-indigo-text);white-space:nowrap;}
+  .scc-ai__meta{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-top:12px;}
+  .scc-ai__runline{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:var(--scc-text-muted);}
+  .scc-ai__think .scc-mono{font-size:11px;color:var(--scc-indigo-text);}
+  .scc-agent .scc-card__head{margin-bottom:10px;}
+  .scc-agent__badge{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,var(--scc-accent-2),var(--scc-accent-3));box-shadow:0 2px 10px rgba(99,102,241,.35);}
+  .scc-agent__list{display:flex;flex-direction:column;gap:7px;max-height:470px;overflow:auto;margin:0 -4px;padding:0 4px 2px;}
+  .scc-agent__more{margin-top:8px;}
+  .scc-agent__empty{font-size:12px;line-height:1.5;color:var(--scc-text-muted);padding:18px 14px;text-align:center;border:1px dashed var(--scc-card-border);border-radius:10px;}
+  .scc-run{border:1px solid var(--scc-card-border);border-radius:10px;overflow:hidden;background:var(--scc-card-bg);flex-shrink:0;}
+  .scc-run__h{display:flex;align-items:center;gap:7px;width:100%;padding:8px 10px;text-align:left;color:var(--scc-text-primary);}
+  .scc-run__h .scc-caret{color:var(--scc-text-muted);}
+  .scc-run__t{font-size:12px;font-weight:700;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .scc-run__time{font-size:10px;color:var(--scc-text-muted);font-variant-numeric:tabular-nums;}
+  .scc-run__st{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:20px;white-space:nowrap;}
+  .st-done{background:var(--scc-green-bg);color:var(--scc-green-text);}
+  .st-wait{background:var(--scc-amber-bg);color:var(--scc-amber-text);}
+  .st-run{background:var(--scc-indigo-bg);color:var(--scc-indigo-text);}
+  .st-skip{background:var(--scc-input-bg);color:var(--scc-text-muted);}
+  .scc-run__steps{background:var(--scc-input-bg);padding:7px 10px 8px;border-top:1px solid var(--scc-card-border);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.45;}
+  .scc-rs{display:grid;grid-template-columns:14px minmax(0,1fr);gap:7px;padding:2px 0;align-items:start;}
+  .scc-rs__i{display:flex;align-items:center;justify-content:center;height:16px;}
+  .scc-rs__i svg{width:11px;height:11px;}
+  .scc-rs__i--ok{color:var(--scc-green-solid);}
+  .scc-rs__i--wait{color:#f59e0b;}
+  .scc-rs__i--skip{color:var(--scc-text-muted);}
+  .scc-rs__i .scc-spinner2{width:10px;height:10px;border-width:1.5px;}
+  .scc-rs__c{min-width:0;overflow-wrap:anywhere;}
+  .scc-rs__tool{color:var(--scc-indigo-text);font-weight:700;}
+  .scc-rs__arg{color:var(--scc-text-secondary);}
+  .scc-rs__res{color:var(--scc-text-muted);}
+  .scc-rs--wait .scc-rs__res{color:var(--scc-amber-text);font-weight:700;}
+
+  /* command palette (dark, like the trend modal) */
+  .scc-pal{position:fixed;inset:0;z-index:120;display:flex;align-items:flex-start;justify-content:center;padding:11vh 16px 16px;}
+  .scc-pal[hidden]{display:none;}
+  .scc-pal__bd{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;animation:scc-bd .15s ease forwards;}
+  .scc-pal__panel{position:relative;width:min(640px,100%);max-height:min(580px,78vh);display:flex;flex-direction:column;background:#0f172a;border:1px solid #334155;border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,.5);color:#e2e8f0;overflow:hidden;transform:translateY(14px) scale(.98);opacity:0;animation:scc-tin .22s cubic-bezier(.16,1,.3,1) forwards;}
+  .scc-pal__bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #1e293b;}
+  .scc-pal__bar>svg{color:#818cf8;flex-shrink:0;}
+  .scc-pal__in{flex:1;min-width:0;background:none;border:none;color:#f8fafc;font:inherit;font-size:15px;font-weight:600;outline:none;padding:6px 0;}
+  .scc-pal__in::placeholder{color:#64748b;}
+  .scc-pal__x{font-size:10px;font-weight:700;color:#94a3b8;padding:4px 8px;border-radius:6px;background:#1e293b;border:1px solid #334155;}
+  .scc-pal__list{overflow:auto;padding:4px 6px 8px;flex:1;}
+  .scc-pal__grp{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#64748b;padding:10px 10px 4px;}
+  .scc-pal__item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:7px 10px;border-radius:9px;color:#cbd5e1;min-height:44px;}
+  .scc-pal__item[aria-selected="true"]{background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.2));box-shadow:inset 0 0 0 1px rgba(129,140,248,.45);}
+  .scc-pal__ic{width:28px;height:28px;border-radius:8px;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#a5b4fc;flex-shrink:0;}
+  .scc-pal__ic svg{width:15px;height:15px;}
+  .scc-pal__txt{min-width:0;flex:1;}
+  .scc-pal__l{display:block;font-size:13px;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .scc-pal__s{display:block;font-size:11px;color:#7c8aa0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+  .scc-pal__hint{font-size:10px;font-weight:700;color:#94a3b8;padding:2px 7px;border-radius:6px;background:#1e293b;white-space:nowrap;flex-shrink:0;}
+  .scc-pal__foot{display:flex;gap:14px;flex-wrap:wrap;font-size:10px;color:#64748b;padding:8px 14px;border-top:1px solid #1e293b;}
+  .scc-pal__foot b{color:#94a3b8;}
+  .scc-pal__empty{padding:30px 16px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.5;}
+
+  /* in-page dialog (replaces browser prompt) */
+  .scc-dlg{position:fixed;inset:0;z-index:110;display:flex;align-items:center;justify-content:center;padding:16px;}
+  .scc-dlg[hidden]{display:none;}
+  .scc-dlg__bd{position:absolute;inset:0;background:rgba(15,17,23,.55);backdrop-filter:blur(3px);}
+  .scc-dlg__panel{position:relative;width:min(420px,100%);background:var(--scc-card-bg);color:var(--scc-text-primary);border:1px solid var(--scc-card-border);border-radius:14px;box-shadow:var(--scc-shadow-drop);padding:20px;overflow:hidden;transform:translateY(12px) scale(.98);opacity:0;animation:scc-tin .22s cubic-bezier(.16,1,.3,1) forwards;}
+  .scc-dlg__panel::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--scc-accent),var(--scc-accent-3));}
+  .scc-dlg__t{font-size:17px;font-weight:800;letter-spacing:-.02em;}
+  .scc-dlg__s{font-size:12px;color:var(--scc-text-secondary);margin-top:4px;line-height:1.45;}
+  .scc-dlg__l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--scc-text-muted);margin:16px 0 6px;}
+  .scc-dlg__field{display:flex;align-items:center;gap:8px;border:1px solid var(--scc-card-border);background:var(--scc-input-bg);border-radius:9px;padding:0 12px;}
+  .scc-dlg__field:focus-within{border-color:var(--scc-accent);box-shadow:0 0 0 3px rgba(99,102,241,.18);}
+  .scc-dlg__field input{flex:1;min-width:0;border:none;background:none;color:var(--scc-text-primary);font:inherit;font-size:18px;font-weight:800;padding:10px 0;outline:none;}
+  .scc-dlg__aff{font-size:14px;font-weight:700;color:var(--scc-text-muted);}
+  .scc-dlg__hint{font-size:11px;color:var(--scc-text-muted);margin-top:6px;min-height:15px;}
+  .scc-dlg__hint.is-err{color:var(--scc-red-text);font-weight:600;}
+  .scc-dlg__btns{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+
+  /* toasts */
+  .scc-toasts{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:130;display:flex;flex-direction:column;gap:8px;align-items:center;width:min(540px,calc(100vw - 32px));pointer-events:none;}
+  .scc-toast{pointer-events:auto;display:flex;align-items:center;gap:10px;width:100%;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:12px;padding:8px 8px 8px 14px;box-shadow:0 12px 32px rgba(0,0,0,.35);font-size:12px;line-height:1.4;transform:translateY(12px);opacity:0;animation:scc-tin .22s cubic-bezier(.16,1,.3,1) forwards;transition:opacity .2s;}
+  .scc-toast__ic{color:#4ade80;flex-shrink:0;display:flex;}
+  .scc-toast--warn .scc-toast__ic{color:#fbbf24;}
+  .scc-toast__m{flex:1;min-width:0;padding:6px 0;}
+  .scc-toast__b{font-size:12px;font-weight:800;color:#a5b4fc;padding:0 12px;min-height:34px;border-radius:8px;white-space:nowrap;}
+  .scc-toast__b:hover{background:#1e293b;}
+  .scc-toast.is-out{opacity:0;}
+
+  /* pipeline board: pointer drag + stage buttons */
+  .scc-kancard{position:relative;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+  .scc-kancard__top{display:flex;align-items:flex-start;gap:6px;}
+  .scc-kancard__top .scc-kancard__name{flex:1;min-width:0;}
+  .scc-kangrip{display:flex;align-items:center;justify-content:center;width:22px;height:22px;margin:-3px -6px 0 0;border-radius:6px;color:var(--scc-text-muted);touch-action:none;cursor:grab;flex-shrink:0;}
+  .scc-kangrip:hover{background:var(--scc-input-bg);color:var(--scc-text-secondary);}
+  .scc-kancard__foot{display:flex;align-items:center;gap:6px;margin-top:6px;}
+  .scc-kancard__foot .scc-typchip{margin-top:0;}
+  .scc-kanadv{margin-left:auto;font-size:10px;font-weight:700;color:var(--scc-indigo-text);padding:3px 7px;border-radius:6px;background:var(--scc-indigo-bg);opacity:0;transition:opacity .15s;white-space:nowrap;}
+  .scc-kancard:hover .scc-kanadv,.scc-kanadv:focus-visible{opacity:1;}
+  .scc-kancard.is-lift{opacity:.4;}
+  .scc-kancard.is-moved{animation:scc-flash 1s ease-out 1;}
+  .scc-kanghost{position:fixed;z-index:75;pointer-events:none;margin:0;opacity:.96;box-shadow:0 18px 40px rgba(0,0,0,.28),0 0 0 2px var(--scc-accent);transform:rotate(2deg);}
+  .scc-kancol.is-won .scc-kancol__head{background:linear-gradient(90deg,rgba(22,163,74,.12),transparent);}
+  .scc-kanhint{display:none;font-size:11px;color:var(--scc-text-secondary);margin:0 0 10px;}
+  .scc-kancol__empty{font-size:11px;color:var(--scc-text-muted);text-align:center;padding:14px 6px;border:1px dashed var(--scc-card-border);border-radius:9px;}
+  @media(hover:none){.scc-kanadv{opacity:1;}.scc-kanhint{display:block;}}
+
+  .is-quiet .scc-reveal{animation:none!important;opacity:1;transform:none;}
+  .is-quiet .scc-bar__fill{transition:none;}
+  .scc-typchip{white-space:nowrap;}
+  @media(hover:hover) and (min-width:769px){.scc-kanadv{position:absolute;right:8px;bottom:8px;box-shadow:0 0 0 3px var(--scc-card-bg);}}
+  .scc-trend__panel{max-height:calc(100dvh - 24px);overflow:auto;}
+  .scc-chartwrap{touch-action:pan-y;}
+
+  .scc-aiwrap>*{min-width:0;}
+  .scc-i{flex-shrink:0;}
+  @media(max-width:1100px){.scc-aiwrap{grid-template-columns:minmax(0,1fr);}}
+  @media(max-width:768px){
+    .scc-lbl,.scc-search .scc-kbd{display:none;}
+    .scc-search{min-width:40px;}
+    .scc-header{gap:10px;}
+    .scc-header__title{font-size:16px;}
+    .scc-header__right{width:100%;gap:6px;}
+    .scc-iconbtn{height:40px;min-width:40px;}
+    .scc-seg{height:40px;}
+    .scc-seg button{min-width:44px;}
+    .scc-demo{padding:2px 3px 2px 10px;}
+    .scc-card__head{flex-wrap:wrap;}
+    .scc-queue-hero .scc-card__title{font-size:20px;}
+    .scc-action__detail{grid-template-columns:1fr;gap:14px;}
+    .scc-kanadv{opacity:1;}
+    .scc-kanhint{display:block;}
+    .scc-kangrip{width:40px;height:40px;margin:-10px -12px -8px 0;}
+    .scc-kanadv{min-height:40px;padding:0 10px;}
+    .scc button:not(.scc-i):not(.scc-cite):not(.scc-kangrip),.scc .scc-in,.scc input{min-height:40px;}
+    .scc-fchip,.scc-tab,.scc-scope button,.scc-musp-toggle button,.scc-tsplit button,.scc-ttab{display:inline-flex;align-items:center;justify-content:center;}
+    .scc-edit,.scc-linkbtn{padding:0 10px;display:inline-flex;align-items:center;}
+    .scc-i,.scc-cite{position:relative;}
+    .scc-i::after,.scc-cite::after{content:"";position:absolute;inset:-14px;}
+    .scc-score{width:40px;height:40px;}
+    .scc-toast__b{min-width:40px;}
+    .scc-trend__close{width:40px;height:40px;}
+    .scc-why-t{min-height:40px;}
+    .scc-pal{padding:12px;}
+    .scc-pal__panel{max-height:calc(100dvh - 24px);}
+    .scc-pal__foot{display:none;}
+    .scc-up__time{width:48px;}
+    .scc-qbr__row{flex-wrap:wrap;}
+    .scc-qbr__last{white-space:normal;}
+    .scc-crow{align-items:start;}
+    .scc-vps{flex-wrap:wrap;}
+    .scc-trend__panel{padding:16px;}
+    .scc-stat{padding:10px 6px;}
+    .scc-stat__v{font-size:15px;}
+  }
+  @media(max-width:560px){
+    .scc-header__spacer{display:none;}
+    .scc-action{grid-template-columns:minmax(0,1fr);gap:10px;}
+    .scc-action__right{justify-content:space-between;}
+    .scc-action__reason{white-space:normal;}
+    .scc-briefing{gap:12px;}
+    .scc-briefing__hi{font-size:19px;}
+    .scc-greet{align-items:flex-start;}
+    .scc-greet__emoji{width:40px;height:40px;font-size:24px;}
+    .scc-filterbar .scc-fchip{padding:0 12px;}
+    .scc-prop__btns>button{flex:1 1 auto;justify-content:center;}
+    .scc-prop__btns .scc-err{flex-basis:100%;}
+    .scc-tiles .scc-segtile{min-width:0;}
+    .scc-camp{flex-wrap:wrap;}
+    .scc-camp__badge{margin-left:63px;}
+    .scc-firstactivation{align-items:flex-start;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .scc *,.scc *::before,.scc *::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}
+  }
 </style>
 </head>
 <body>
@@ -447,6 +734,7 @@
     </div>
     <div class="scc-header__spacer"></div>
     <div class="scc-header__right">
+      <button class="scc-iconbtn scc-search" id="sccSearchBtn" aria-label="Search deals, sections and commands" onclick="openPalette()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> <span class="scc-lbl">Search</span> <kbd class="scc-kbd" id="sccKbd">Ctrl K</kbd></button>
       <div class="scc-demo" title="Mockup only — in production this is auto-detected from UserRole + the SCC_Dual_Role permission">
         <span class="scc-demo__lbl">Demo&nbsp;as</span>
         <div class="scc-seg" role="group" aria-label="Simulate user role">
@@ -459,9 +747,9 @@
         <button id="sccRoleAE" aria-pressed="true" onclick="setRole('ae')">AE view</button>
         <button id="sccRoleIC" aria-pressed="false" onclick="setRole('ic')">CSM view</button>
       </div>
-      <button class="scc-iconbtn" aria-label="Open Territory Map" onclick="openMaps()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg> Territory Map</button>
-      <button class="scc-iconbtn" aria-label="Voice recorder" onclick="openVoice()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg> Voice</button>
-      <button class="scc-iconbtn" aria-label="View trends" onclick="openTrend()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> Trends</button>
+      <button class="scc-iconbtn" aria-label="Open Territory Map" onclick="openMaps()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg> <span class="scc-lbl">Territory Map</span></button>
+      <button class="scc-iconbtn" aria-label="Voice recorder" onclick="openVoice()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg> <span class="scc-lbl">Voice</span></button>
+      <button class="scc-iconbtn" aria-label="View trends" onclick="openTrend()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> <span class="scc-lbl">Trends</span></button>
       <button class="scc-iconbtn scc-help" id="sccHelp" aria-label="Toggle metric explanations" aria-pressed="false" onclick="toggleExplain()"><span class="scc-help__q">?</span></button>
       <button class="scc-iconbtn" id="sccTheme" aria-label="Toggle dark mode" onclick="toggleTheme()"><svg id="sccThemeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
       <button class="scc-iconbtn scc-refresh" id="sccRefresh" aria-label="Refresh" onclick="refresh()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
@@ -476,7 +764,7 @@
       <div style="flex:1"></div>
       <button class="scc-iconbtn" onclick="closeKanban()">✕ Close</button>
     </div>
-    <div class="scc-modal__body"><div class="scc-kan" id="sccKan"></div></div>
+    <div class="scc-modal__body"><div class="scc-kanhint">On touch, hold a card or its grip and drag it to another stage. The arrow button moves a card one stage.</div><div class="scc-kan" id="sccKan"></div></div>
   </div>
 
   <!-- TREND -->
@@ -511,6 +799,30 @@
       <div id="sccVoiceSel"></div>
     </div></div>
   </div>
+  <!-- COMMAND PALETTE (Ctrl/Cmd K) -->
+  <div class="scc-pal" id="sccPal" role="dialog" aria-modal="true" aria-label="Search and commands" hidden>
+    <div class="scc-pal__bd" onclick="closePalette()"></div>
+    <div class="scc-pal__panel">
+      <div class="scc-pal__bar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="sccPalIn" class="scc-pal__in" placeholder="Jump to a deal, section or command" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="sccPalList" aria-autocomplete="list" oninput="palQuery()" onkeydown="palKey(event)" />
+        <button class="scc-pal__x" onclick="closePalette()" aria-label="Close search">Esc</button></div>
+      <div class="scc-pal__list" id="sccPalList" role="listbox" aria-label="Results"></div>
+      <div class="scc-pal__foot"><span><b>↑ ↓</b> move</span><span><b>Enter</b> open</span><span><b>Esc</b> close</span></div>
+    </div>
+  </div>
+  <!-- IN-PAGE DIALOG (target setters) -->
+  <div class="scc-dlg" id="sccDlg" role="dialog" aria-modal="true" aria-labelledby="sccDlgT" hidden>
+    <div class="scc-dlg__bd" onclick="closeDlg()"></div>
+    <form class="scc-dlg__panel" onsubmit="return saveDlg(event)" novalidate>
+      <div class="scc-dlg__t" id="sccDlgT"></div>
+      <div class="scc-dlg__s" id="sccDlgS"></div>
+      <label class="scc-dlg__l" for="sccDlgIn" id="sccDlgL"></label>
+      <div class="scc-dlg__field"><span class="scc-dlg__aff" id="sccDlgPre"></span><input id="sccDlgIn" inputmode="decimal" autocomplete="off" oninput="validateDlg()" /><span class="scc-dlg__aff" id="sccDlgSuf"></span></div>
+      <div class="scc-dlg__hint" id="sccDlgHint" aria-live="polite"></div>
+      <div class="scc-dlg__btns"><button type="button" class="scc-btn-ghost" onclick="closeDlg()">Cancel</button><button type="submit" class="scc-btn-primary" id="sccDlgOk">Save target</button></div>
+    </form>
+  </div>
+  <div class="scc-toasts" id="sccToasts" aria-live="polite"></div>
   <div id="sccTipEl" class="scc-tipfixed"></div>
 </div>
 
@@ -721,15 +1033,16 @@ let demo="ae", role="ae", queueExpanded=false, activeTier="all", activeSeg="all"
 let lbTab="Pipeline Movement", lbScope="area", trendIdx=0, trendSplit="total";
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
-function render(){
+function render(quiet){
   const d=DATA[role];
   document.getElementById('sccSub').textContent=d.persona;
   if(!LB[role][lbTab]) lbTab=d.leaderboard.defaultTab;
+  ensurePrepared(role,QS[role].open);
   document.getElementById('sccPage').innerHTML=`
     ${briefing(d)}
     ${queue(d)}
-    ${aiHTML(d)}
-    <div class="scc-context-label">Scorecard — how you're tracking</div>
+    <div class="scc-aiwrap">${aiHTML(d)}${agentHTML()}</div>
+    <div class="scc-context-label" id="sccScore">Scorecard — how you're tracking</div>
     ${heroes(d)} ${statBand(d)} ${role==='ae'?vpsHTML(d):''}
     <div class="scc-main">
       <div class="scc-col">
@@ -741,49 +1054,70 @@ function render(){
       <div class="scc-col">${leaderboard(d)} ${targets(d)} ${focusHTML(d)} ${campaignsHTML(d)} ${upcoming(d)}</div>
     </div>
     <div class="scc-status" style="padding:4px 2px 12px;"><span class="scc-dot scc-dot--green"></span> Data healthy · ${NOW_TS} · scores refresh hourly · trends nightly</div>`;
-  stagger();
+  /* upgrade: in-place changes (filters, tabs, targets, board moves) skip the page-wide entrance replay */
+  document.getElementById('sccPage').classList.toggle('is-quiet',!!quiet);
+  if(!quiet)stagger();
   requestAnimationFrame(()=>document.querySelectorAll('.scc-bar__fill').forEach(el=>el.style.width=el.dataset.w+'%'));
   animateGreetCount();
 }
 function briefing(d){
-  return `<section class="scc-card scc-briefing scc-reveal">
+  const st=QS[role], nH=handledCount(role), left=openActs(role).length;
+  const count=Math.max(0,d.briefingCount-nH), from=(briefShown[role]==null?0:briefShown[role]); briefShown[role]=count;
+  const hi=left?`${getGreeting()}, ${esc(d.greeting)}. <b><span class="scc-count" data-from="${from}" data-to="${count}">${from}</span> items</b> need attention today.`
+               :`${getGreeting()}, ${esc(d.greeting)}. <b>Queue clear</b> for today.`;
+  const sub=left?(nH?`${nH} handled so far. Next up: ${esc(openActs(role)[0].name)}.`:'Prioritised queue below — start at the top.'):`${nH} actions handled. Every write is in Agent activity.`;
+  return `<section class="scc-card scc-briefing scc-reveal" id="sccBrief">
     <div class="scc-greet">
       <span class="scc-greet__emoji" aria-hidden="true">${getGreetEmoji()}</span>
-      <div><div class="scc-briefing__hi">${getGreeting()}, ${esc(d.greeting)}. <b><span class="scc-count" data-to="${d.briefingCount}">0</span> items</b> need attention today.</div>
-      <div class="scc-briefing__sub">Prioritised queue below — start at the top.</div></div>
+      <div><div class="scc-briefing__hi">${hi}</div>
+      <div class="scc-briefing__sub">${sub}</div></div>
     </div>
-    <div class="scc-chips">${d.chips.map(c=>`<span class="scc-chip ${c.cls}"><b>${esc(c.t.split(' ')[0])}</b> ${esc(c.t.split(' ').slice(1).join(' '))}</span>`).join('')}</div></section>`;
+    <div class="scc-chips">${d.chips.map((c,i)=>{const n0=parseInt(c.t,10);const n=isNaN(n0)?c.t.split(' ')[0]:Math.max(0,n0-chipDone(role,i));return `<span class="scc-chip ${c.cls} ${n===0?'is-zero':''}"><b>${esc(String(n))}</b> ${esc(c.t.split(' ').slice(1).join(' '))}</span>`;}).join('')}</div></section>`;
 }
 function animateGreetCount(){
   document.querySelectorAll('.scc-count').forEach(el=>{
-    const to=parseInt(el.dataset.to,10)||0; if(el._done)return; el._done=true;
+    const to=parseInt(el.dataset.to,10)||0, from=parseInt(el.dataset.from,10)||0; if(el._done)return; el._done=true;
+    if(from===to){el.textContent=to;return;}
     const t0=performance.now(),dur=900;
-    const step=now=>{const p=Math.min(1,(now-t0)/dur);el.textContent=Math.round((1-Math.pow(1-p,3))*to);if(p<1)requestAnimationFrame(step);};
+    const step=now=>{const p=Math.min(1,(now-t0)/dur);el.textContent=Math.round(from+(1-Math.pow(1-p,3))*(to-from));if(p<1)requestAnimationFrame(step);};
     requestAnimationFrame(step);
   });
 }
 function queue(d){
-  let items=d.actions.filter(a=>activeTier==="all"||a.tier===activeTier);
+  const open=openActs(role);
+  let items=open.filter(a=>activeTier==="all"||a.tier===activeTier);
   const crit=items.filter(a=>a.tier==='critical');
   let shown=items;
   if(!queueExpanded && items.length>5){shown=items.slice(0,5);crit.forEach(c=>{if(!shown.includes(c))shown.push(c);});}
-  const tb=(id,l)=>`<button class="scc-fchip" aria-pressed="${activeTier===id}" onclick="setTier('${id}')">${l}</button>`;
+  const cnt=t=>open.filter(a=>t==='all'||a.tier===t).length;
+  const tb=(id,l)=>`<button class="scc-fchip" aria-pressed="${activeTier===id}" onclick="setTier('${id}')">${l}<span class="scc-fchip__n">${cnt(id)}</span></button>`;
   const board=role==='ae'?`<button class="scc-btn-primary" onclick="openKanban()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="6" height="18"/><rect x="9.5" y="3" width="6" height="12"/><rect x="16" y="3" width="6" height="9"/></svg> Pipeline Board</button>`:'';
-  return `<section class="scc-card scc-card--pad scc-queue-hero scc-reveal">
+  const h=QS[role].h, ids=Object.keys(h), nA=ids.filter(k=>h[k].st==='approved').length, nS=ids.filter(k=>h[k].st==='skipped').length, nW=ids.length-nA-nS;
+  let list;
+  if(!open.length) list=queueClearHTML(ids.length,nA,nS,nW);
+  else if(!items.length) list=`<div class="scc-qempty">No ${esc(activeTier)} actions left. ${open.length} ${open.length===1?'remains':'remain'} in other tiers. <button class="scc-linkbtn" onclick="setTier('all')">Show all</button></div>`;
+  else list=`<div class="scc-queue">${shown.map(action).join('')}</div>`;
+  const foot=(ids.length&&open.length)?`<div class="scc-qfoot"><span><b>${ids.length}</b> handled today · ${nA} approved · ${nS} skipped${nW?` · ${nW} closed on the board`:''}</span><span class="scc-grow"></span><button class="scc-linkbtn" onclick="showAgent()">View agent activity</button><button class="scc-linkbtn" onclick="restartQueue()">Start again</button></div>`:'';
+  return `<section class="scc-card scc-card--pad scc-queue-hero scc-reveal" id="sccQueue">
     <div class="scc-card__head"><div class="scc-card__title">My Next Actions</div><span class="scc-queue__badge">${items.length}</span><div class="scc-card__sub">ranked by priority — start at the top</div><div class="scc-grow"></div>${board}</div>
     <div class="scc-filterbar"><div class="scc-filtergroup">${tb('all','All')}${tb('critical','Critical')}${tb('medium','Medium')}${tb('low','Low')}</div></div>
-    <div class="scc-queue">${shown.map(action).join('')}</div>
-    ${(!queueExpanded&&items.length>shown.length)?`<div class="scc-more"><button onclick="expandQueue()">Show ${items.length-shown.length} more</button></div>`:''}</section>`;
+    ${explainLine('Priority score')}
+    ${list}
+    ${(open.length&&!queueExpanded&&items.length>shown.length)?`<div class="scc-more"><button onclick="expandQueue()">Show ${items.length-shown.length} more</button></div>`:''}
+    ${foot}</section>`;
 }
 function action(a){
-  return `<div class="scc-action scc-action--${a.tier}"><div class="scc-action__icon">${ICONS[a.icon]}</div>
+  const st=QS[role], isOpen=st.open===a.id;
+  return `<div class="scc-action scc-action--${a.tier} ${isOpen?'is-open':''}" id="qa-${a.id}" data-id="${a.id}"><div class="scc-action__icon">${ICONS[a.icon]}</div>
     <div class="scc-action__body"><div class="scc-action__top"><span class="scc-action__name">${esc(a.name)}</span><span class="scc-tag">${esc(a.type)}</span><span class="scc-tier scc-tier--${a.tier}">${a.tier[0].toUpperCase()+a.tier.slice(1)}</span></div>
-    <div class="scc-action__reason">${esc(a.reason)}</div></div>
-    <div class="scc-action__right"><div class="scc-score scc-score--${a.tier}" title="Priority score">${a.score}</div><button class="scc-cta">${esc(a.cta)}</button></div></div>`;
+    <div class="scc-action__reason">${esc(a.reason)}</div>
+    <button class="scc-why-t" onclick="toggleItem('${a.id}')" aria-expanded="${isOpen}" aria-controls="qd-${a.id}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>${isOpen?'Hide details':'Why it is ranked here · agent proposal'}</button></div>
+    <div class="scc-action__right"><button class="scc-score scc-score--${a.tier}" title="Priority score · show why" aria-label="Priority score ${a.score}. Show why." onclick="toggleItem('${a.id}')">${a.score}</button><button class="scc-cta" onclick="openItem('${a.id}',true)">${esc(a.cta)}</button></div>
+    ${isOpen?detailHTML(a):''}</div>`;
 }
 function pipelineHealth(d){
-  return `<section class="scc-card scc-card--pad scc-reveal"><div class="scc-card__head"><div class="scc-card__title">Pipeline Health</div><div class="scc-grow"></div><button class="scc-cta" onclick="openKanban()">Open board →</button></div>
-    <div class="scc-tiles">${d.pipeline.map(t=>`<button class="scc-tile ${t.cls}"><div class="scc-tile__n">${t.n}</div><div class="scc-tile__l">${esc(t.l)}</div></button>`).join('')}</div></section>`;
+  return `<section class="scc-card scc-card--pad scc-reveal" id="sccPipe"><div class="scc-card__head"><div class="scc-card__title">Pipeline Health</div><div class="scc-grow"></div><button class="scc-cta" onclick="openKanban()">Open board →</button></div>
+    <div class="scc-tiles">${d.pipeline.map(t=>`<button class="scc-tile ${t.cls}" onclick="openKanban()" title="Open the Pipeline Board"><div class="scc-tile__n">${t.n}</div><div class="scc-tile__l">${esc(t.l)}</div></button>`).join('')}</div></section>`;
 }
 function customerHealth(d){
   const tierClass=t=>'scc-tier-'+t.toLowerCase();
@@ -791,7 +1125,7 @@ function customerHealth(d){
   const mv=(c)=>muspView==='total'?c.musp.total:(muspView==='core'?c.musp.core:c.musp.expansion);
   const statusPill=c=>{const m={below:['scc-status-below','Below Pace'],on:['scc-status-on','On Pace'],above:['scc-status-above','Above Pace'],limited:['scc-status-limited','Limited data']}[c.status];return `<span class="scc-statuspill ${m[0]}">${m[1]}</span>`;};
   const visit=c=>{const over=c.days>c.window;const warn=!over&&c.days>c.window*0.8;const cls=over?'scc-visit--over':(warn?'scc-visit--warn':'scc-visit--ok');return `<div class="scc-visit ${cls}">${c.days}d / ${c.window}d</div><div class="scc-micro" style="margin-top:3px">since visit</div>`;};
-  return `<section class="scc-card scc-card--pad scc-reveal">
+  return `<section class="scc-card scc-card--pad scc-reveal" id="sccCust">
     <div class="scc-card__head"><div><div class="scc-card__title">Customer Health & Visit Cadence</div><div class="scc-card__sub">MAU vs pace · unvisited by tier window (E1/E2 90d · E3/E4 180d · else year)</div></div><div class="scc-grow"></div>
       <div class="scc-musp-toggle" role="group" aria-label="MAU split">
         <button aria-pressed="${muspView==='total'}" onclick="setMusp('total')">Total</button>
@@ -806,7 +1140,7 @@ function customerHealth(d){
       <button class="scc-segtile" aria-pressed="${activeSeg==='all'}" onclick="setSeg('all')"><div class="scc-segtile__name">All</div><div class="scc-segtile__n">${d.customers.length}</div><div class="scc-segtile__sub">shown</div></button>
       ${d.segments.map(s=>`<button class="scc-segtile" aria-pressed="${activeSeg===s.tier}" onclick="setSeg('${s.tier}')"><div class="scc-segtile__name"><span class="scc-tierbadge ${tierClass(s.tier)}">${s.tier}</span></div><div class="scc-segtile__n">${s.n}</div><div class="scc-segtile__sub">${s.needVisit} need visit · ${esc(s.note)}</div></button>`).join('')}
     </div>
-    ${custs.map(c=>`<div class="scc-crow">
+    ${custs.map(c=>`<div class="scc-crow" data-name="${esc(c.name)}">
       <div><div class="scc-crow__name"><span class="scc-tierbadge ${tierClass(c.tier)}">${c.tier}</span> ${esc(c.name)} ${statusPill(c)}</div>
         <div class="scc-crow__meta">MAU ${muspView}: <b class="scc-crow__musp">${mv(c).toLocaleString()}</b>${c.status!=='limited'?` · ${c.pct}% of 6-mo avg`:` · <span style="color:var(--scc-text-muted)">new customer, &lt;6 mo data</span>`}</div></div>
       <div>${visit(c)}</div></div>`).join('')}
@@ -818,7 +1152,7 @@ function qbrHTML(d){
   const pct=Math.round(q.covered/q.total*100);
   const tone=pct>=80?"green":(pct>=50?"amber":"red");
   const rows=q.uncovered.map(a=>`<div class="scc-qbr__row"><span class="scc-qbr__acct"><span class="scc-tierbadge scc-tier-${a.tier.toLowerCase()}">${esc(a.tier)}</span> ${esc(a.name)}</span><span class="scc-qbr__last">${esc(a.last)}</span></div>`).join("");
-  return `<section class="scc-card scc-card--pad scc-qbr scc-reveal">
+  return `<section class="scc-card scc-card--pad scc-qbr scc-reveal" id="sccQbr">
     <div class="scc-card__head"><div><div class="scc-card__title">QBR Coverage <span class="scc-card__sub" style="font-weight:600">· Quarter</span> ${infoTip("QBR Coverage")}</div><div class="scc-card__sub">Cluster E1/E2 accounts (AE__c / ISP__c) with a QBR done or planned this quarter</div></div><div class="scc-grow"></div><div class="scc-qbr__days">${q.daysLeft} days left</div></div>
     <div class="scc-qbr__metric"><div class="scc-qbr__pct scc-qbr--${tone}">${pct}%</div><div class="scc-qbr__frac"><b>${q.covered} of ${q.total}</b> E1/E2 accounts covered<div class="scc-card__sub">${q.done} done · ${q.planned} planned · ${q.total-q.covered} still need one — each uncovered account is a queue action</div></div></div>
     <div class="scc-bar" role="progressbar" aria-valuenow="${pct}"><div class="scc-bar__fill" data-w="${pct}" style="width:0"></div></div>
@@ -830,7 +1164,7 @@ function leaderboard(d){
   const data=LB[role][lbTab][lbScope]||[];
   const rows=data.filter(r=>!r.rank).slice(0,5);
   const meOutside=data.find(r=>r.me&&r.rank);
-  return `<section class="scc-card scc-card--pad scc-reveal"><div class="scc-card__head"><div class="scc-card__title">Leaderboard</div></div>
+  return `<section class="scc-card scc-card--pad scc-reveal" id="sccLb"><div class="scc-card__head"><div class="scc-card__title">Leaderboard</div></div>
     <div class="scc-scope"><button aria-pressed="${lbScope==='area'}" onclick="setScope('area')">${esc(d.area)} (Area)</button><button aria-pressed="${lbScope==='region'}" onclick="setScope('region')">${esc(d.region)} (Region)</button></div>
     <div class="scc-tabs" role="tablist">${LB_TABS.map(t=>`<button class="scc-tab" aria-pressed="${lbTab===t}" onclick="setTab('${esc(t)}')">${esc(t)}</button>`).join('')}</div>
     ${rows.map((r,i)=>lrow(r,i+1)).join('')}
@@ -843,8 +1177,9 @@ function lrow(r,rank,beat){
 function targets(d){
   const rt=d.revenueTarget; const rpct=Math.round(rt.actual/rt.val*100);
   const cur=d.cur; const m=v=>cur+(v>=1000000?(v/1000000).toFixed(2)+'M':(v/1000).toFixed(0)+'K');
-  return `<section class="scc-card scc-card--pad scc-reveal"><div class="scc-card__head"><div class="scc-card__title">Personal Targets</div></div>
+  return `<section class="scc-card scc-card--pad scc-reveal" id="sccTargets"><div class="scc-card__head"><div class="scc-card__title">Personal Targets</div></div>
     ${d.targets.map(t=>{
+      if(role==='ae'&&t.lbl==='Closed Won vs Goal'){const w=aeWon();if(w.n){const v=612+w.amt;t={lbl:t.lbl,frac:`${kEur(v)} / €700K`,pct:Math.round(v/700*100)};}}
       if(t.edit==='upsell'){const u=d.upsellTarget;const built=u.open+u.closed;const p=Math.round(built/u.val*100);return `<div class="scc-target"><div class="scc-target__top"><span class="scc-target__lbl">Upsell Pipeline vs Goal <button class="scc-edit" onclick="setUpsell()">set my target</button></span><span class="scc-target__frac">${m(built)} / ${m(u.val)} · ${p}%${p>=100?" ✓":""}</span></div><div class="scc-bar" role="progressbar" aria-valuenow="${p}"><div class="scc-bar__fill ${p>=100?'scc-bar__fill--over':''}" data-w="${Math.min(p,100)}" style="width:0"></div></div></div>`;}
       return `<div class="scc-target"><div class="scc-target__top"><span class="scc-target__lbl">${esc(t.lbl)}</span><span class="scc-target__frac">${esc(t.frac)} · ${t.pct}%${t.pct>=100?" ✓":""}</span></div><div class="scc-bar" role="progressbar" aria-valuenow="${t.pct}"><div class="scc-bar__fill ${t.pct>=100?'scc-bar__fill--over':''}" data-w="${Math.min(t.pct,100)}" style="width:0"></div></div></div>`;
     }).join('')}
@@ -852,23 +1187,24 @@ function targets(d){
     </section>`;
 }
 function upcoming(d){
-  return `<section class="scc-card scc-card--pad scc-reveal"><div class="scc-card__head"><div class="scc-card__title">Upcoming</div></div>
+  return `<section class="scc-card scc-card--pad scc-reveal" id="sccUp"><div class="scc-card__head"><div class="scc-card__title">Upcoming</div></div>
     ${d.upcoming.map(g=>`<div class="scc-up__label">${esc(g.sec)}</div>${g.items.map(it=>`<div class="scc-up"><span class="scc-up__time">${esc(it.time)}</span><div><div class="scc-up__t">${esc(it.t)}</div><div class="scc-up__m">${esc(it.m)}</div></div></div>`).join('')}`).join('')}</section>`;
 }
 function infoTip(key){if(!DEFS[key])return'';return `<button class="scc-i" data-key="${esc(key)}" aria-label="What is ${esc(key)}?">i</button>`;}
 function showTip(btn){const d=DEFS[btn.dataset.key];if(!d)return;const el=document.getElementById('sccTipEl');el.innerHTML=`<b>${esc(btn.dataset.key)}</b><span class="scc-tip__r"><b>What:</b> ${esc(d.what)}</span><span class="scc-tip__r"><b>Rule:</b> ${esc(d.rule)}</span><span class="scc-tip__r"><b>Target:</b> ${esc(d.target)}</span>`;el.style.display='flex';el.style.visibility='hidden';const r=btn.getBoundingClientRect();const tw=el.offsetWidth,th=el.offsetHeight;let left=Math.max(8,Math.min(r.left+r.width/2-tw/2,window.innerWidth-tw-8));let top=r.top-th-10;if(top<8)top=r.bottom+10;el.style.left=left+'px';el.style.top=top+'px';el.style.visibility='visible';}
 function hideTip(){const el=document.getElementById('sccTipEl');if(el)el.style.display='none';}
 function explainLine(key){if(!explainMode)return'';const d=DEFS[key];if(!d)return'';return `<div class="scc-explain">${esc(d.what)} <b>Rule:</b> ${esc(d.rule)} <b>Target:</b> ${esc(d.target)}</div>`;}
-function toggleExplain(){explainMode=!explainMode;const b=document.getElementById('sccHelp');b.classList.toggle('is-active',explainMode);b.setAttribute('aria-pressed',explainMode);render();}
+function toggleExplain(){explainMode=!explainMode;const b=document.getElementById('sccHelp');b.classList.toggle('is-active',explainMode);b.setAttribute('aria-pressed',explainMode);render(true);}
 let explainMode=false;
 function heroes(d){
   return `<section class="scc-heroes">${d.heroes.map(h=>{
     const hit=h.hit||(demoWinRole===role&&h.lbl==='Eng. Interaction Goal');
-    const cap=h.edit==='musp'?`next 6 months \u00b7 vs ${d.muspTarget} target`:h.cap;
+    let cap=h.edit==='musp'?`next 6 months \u00b7 vs ${d.muspTarget} target`:h.cap, val=h.val;
+    if(role==='ae'&&h.lbl==='Closed Won (Month)'){const w=aeWon();if(w.n){val=kEur(612+w.amt);cap=`${7+w.n} deals \u00b7 ${w.n} won on the board today`;}}
     const ed=h.edit==='musp'?` <button class="scc-edit" onclick="setMuspTarget()">set my target</button>`:'';
     const met=hit?` <span class="scc-hero__met">\u2713 Goal met</span>`:'';
     const clk=hit?` onclick="celebrate()" role="button" tabindex="0" title="Goal met — tap to celebrate"`:'';
-    return `<div class="scc-hero scc-hero--${h.accent} ${hit?'scc-hero--hit':''} scc-reveal"${clk}><div class="scc-micro">${esc(h.lbl)} ${infoTip(h.lbl)}${met}</div><div class="scc-hero__val">${esc(h.val)}</div><div class="scc-hero__cap">${esc(cap)}${ed}</div>${explainLine(h.lbl)}</div>`;
+    return `<div class="scc-hero scc-hero--${h.accent} ${hit?'scc-hero--hit':''} scc-reveal"${clk}><div class="scc-micro">${esc(h.lbl)} ${infoTip(h.lbl)}${met}</div><div class="scc-hero__val">${esc(val)}</div><div class="scc-hero__cap">${esc(cap)}${ed}</div>${explainLine(h.lbl)}</div>`;
   }).join('')}</section>`;
 }
 function statBand(d){
@@ -884,7 +1220,7 @@ let secOpen=true;
 function toggleSec(){secOpen=!secOpen;const b=document.getElementById('sccSecBody'),c=document.getElementById('sccSecCaret');if(b)b.classList.toggle('hidden',!secOpen);if(c)c.classList.toggle('open',secOpen);}
 function secondaryHTML(d){
   const sec=d.secondary;
-  return `<section class="scc-card scc-card--pad scc-reveal">
+  return `<section class="scc-card scc-card--pad scc-reveal" id="sccSec">
     <button class="scc-section__toggle" onclick="toggleSec()" aria-expanded="${secOpen}">
       <span class="scc-caret ${secOpen?'open':''}" id="sccSecCaret"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
       <span class="scc-card__title">${esc(sec.title)}</span>
@@ -892,7 +1228,7 @@ function secondaryHTML(d){
       <span class="scc-grow"></span><span class="scc-card__sub">${d===DATA.ae?'your secondary workspace':'expansion deals'}</span>
     </button>
     <div class="scc-secbody ${secOpen?'':'hidden'}" id="sccSecBody"><div class="scc-queue" style="margin-top:0">
-      ${sec.rows.map(r=>`<div class="scc-action scc-action--${r.tier}"><div class="scc-action__icon">${ICONS[sec.icon]}</div><div class="scc-action__body"><div class="scc-action__top"><span class="scc-action__name">${esc(r.name)}</span><span class="scc-tier ${r.bcls}">${esc(r.badge)}</span></div><div class="scc-action__reason">${esc(r.meta)}</div></div><div class="scc-action__right"><button class="scc-cta">Open</button></div></div>`).join('')}
+      ${sec.rows.map(r=>`<div class="scc-action scc-action--${r.tier}" data-name="${esc(r.name)}"><div class="scc-action__icon">${ICONS[sec.icon]}</div><div class="scc-action__body"><div class="scc-action__top"><span class="scc-action__name">${esc(r.name)}</span><span class="scc-tier ${r.bcls}">${esc(r.badge)}</span></div><div class="scc-action__reason">${esc(r.meta)}</div></div><div class="scc-action__right"><button class="scc-cta" onclick="openSecondary(this.closest('[data-name]').dataset.name)">Open</button></div></div>`).join('')}
     </div></div>
   </section>`;
 }
@@ -914,10 +1250,11 @@ function vpsHTML(d){
 function vpsAdd(){
   const v=DATA[role].vps; const wasWon=v.monthSold>=v.targetMonth;
   v.monthSold++; v.quarterSold=Math.min(v.quarterSold+1,v.targetQuarter+2);
-  render();
+  render(true);
   if(!wasWon && v.monthSold>=v.targetMonth) celebrate();
 }
 function celebrate(){
+  if(reducedMotion()) return;
   const c=document.createElement('div'); c.className='scc-confetti';
   const cols=['#4f46e5','#8b5cf6','#16a34a','#f59e0b','#ef4444','#6366f1'];
   for(let i=0;i<90;i++){const p=document.createElement('div');p.className='scc-conf';p.style.left=Math.random()*100+'vw';p.style.background=cols[i%cols.length];p.style.animationDuration=(2+Math.random()*1.6)+'s';p.style.animationDelay=(Math.random()*0.4)+'s';c.appendChild(p);}
@@ -928,7 +1265,7 @@ let demoWinRole=null;
 function demoWin(){demoWinRole=role;render();celebrate();}
 function focusHTML(d){
   const a=d.salesAssessment; const pct=a.score; const r=22, circ=2*Math.PI*r, off=circ*(1-pct/100);
-  return `<section class="scc-card scc-card--pad scc-reveal">
+  return `<section class="scc-card scc-card--pad scc-reveal" id="sccFocus">
     <div class="scc-card__head"><div class="scc-card__title">Your Focus</div><div class="scc-grow"></div><div class="scc-card__sub">Latest assessment · ${esc(a.date)}</div></div>
     <div class="scc-focus__top">
       <svg class="scc-ring" viewBox="0 0 56 56"><circle cx="28" cy="28" r="${r}" fill="none" stroke="var(--scc-input-bg)" stroke-width="6"/><circle cx="28" cy="28" r="${r}" fill="none" stroke="var(--scc-accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 28 28)"/><text x="28" y="32" text-anchor="middle" font-size="15" font-weight="800" fill="var(--scc-text-primary)">${pct}</text></svg>
@@ -939,7 +1276,7 @@ function focusHTML(d){
   </section>`;
 }
 function campaignsHTML(d){
-  return `<section class="scc-card scc-card--pad scc-reveal">
+  return `<section class="scc-card scc-card--pad scc-reveal" id="sccCamp">
     <div class="scc-card__head"><div class="scc-card__title">Campaigns · ${esc(d.region)}</div><div class="scc-grow"></div><div class="scc-card__sub">next 3 months · recruitment</div></div>
     ${d.campaigns.map(c=>`<div class="scc-camp"><span class="scc-camp__date">${esc(c.date)}</span><div class="scc-grow"><div class="scc-camp__n">${esc(c.n)}</div><div class="scc-camp__resp">Event Campaign</div></div><span class="scc-camp__badge">${c.resp} responded</span></div>`).join('')}
   </section>`;
@@ -963,16 +1300,29 @@ function selectVoice(id){voiceSel=VOICE_CONTACTS.find(c=>c.id===id);recStop(true
 let recOn=false,recTimer=null,recSecs=0;
 function fmtSecs(s){const m=Math.floor(s/60),x=s%60;return (m<10?'0':'')+m+':'+(x<10?'0':'')+x;}
 function recToggle(){const rec=document.getElementById('sccRec');if(!rec)return;if(!recOn){recOn=true;recSecs=0;document.getElementById('recTime').textContent='00:00';document.getElementById('recBtnLabel').textContent='Stop';document.getElementById('recBtn').classList.add('is-rec');rec.classList.add('is-rec');document.getElementById('recDone').hidden=true;recTimer=setInterval(()=>{recSecs++;const t=document.getElementById('recTime');if(t)t.textContent=fmtSecs(recSecs);},1000);}else{recStop(false);}}
-function recStop(silent){recOn=false;if(recTimer){clearInterval(recTimer);recTimer=null;}const rec=document.getElementById('sccRec');if(rec)rec.classList.remove('is-rec');const btn=document.getElementById('recBtn');if(btn)btn.classList.remove('is-rec');const lbl=document.getElementById('recBtnLabel');if(lbl)lbl.textContent='Record';if(silent)return;const done=document.getElementById('recDone');if(!done)return;const dur=fmtSecs(recSecs||23);done.hidden=false;done.innerHTML=`<div class="scc-rec__saved"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Recording saved · ${dur}</div><div class="scc-rec__think" id="recThink"><span class="scc-spinner2"></span> Transcribing &amp; summarising…</div>`;setTimeout(()=>{const th=document.getElementById('recThink');if(th)th.outerHTML=`<div class="scc-rec__summary"><div class="scc-micro" style="margin-bottom:6px">AI summary</div><ul class="scc-ai__list" style="margin-top:0"><li>Discussed renewal timing and expansion interest.</li><li>Agreed next step: send proposal by Friday.</li><li>Risk flag: budget sign-off pending with finance.</li></ul><button class="scc-btn-primary" style="margin-top:12px" onclick="recLogged()">Log to ${esc(voiceSel?voiceSel.acct:'account')}</button></div>`;},1400);}
-function recLogged(){const d=document.getElementById('recDone');if(d)d.innerHTML=`<div class="scc-rec__saved"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Logged to ${esc(voiceSel?voiceSel.acct:'the account')} as an Engagement Interaction.</div>`;}
+function recStop(silent){recOn=false;if(recTimer){clearInterval(recTimer);recTimer=null;}const rec=document.getElementById('sccRec');if(rec)rec.classList.remove('is-rec');const btn=document.getElementById('recBtn');if(btn)btn.classList.remove('is-rec');const lbl=document.getElementById('recBtnLabel');if(lbl)lbl.textContent='Record';if(silent)return;const done=document.getElementById('recDone');if(!done)return;const dur=fmtSecs(recSecs||23);done.hidden=false;done.innerHTML=`<div class="scc-rec__saved"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Recording saved · ${dur}</div><div class="scc-rec__think" id="recThink"><span class="scc-spinner2"></span> Transcribing &amp; summarising…</div>`;voiceRunStart(dur);setTimeout(()=>{const th=document.getElementById('recThink');if(th)th.outerHTML=`<div class="scc-rec__summary"><div class="scc-micro" style="margin-bottom:6px">AI summary</div><ul class="scc-ai__list" style="margin-top:0"><li>Discussed renewal timing and expansion interest.</li><li>Agreed next step: send proposal by Friday.</li><li>Risk flag: budget sign-off pending with finance.</li></ul><button class="scc-btn-primary" style="margin-top:12px" onclick="recLogged()">Log to ${esc(voiceSel?voiceSel.acct:'account')}</button></div>`;},1400);}
+function recLogged(){voiceRunDone();const d=document.getElementById('recDone');if(d)d.innerHTML=`<div class="scc-rec__saved"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Logged to ${esc(voiceSel?voiceSel.acct:'the account')} as an Engagement Interaction.</div>`;}
 function openMaps(){document.getElementById('sccMaps').classList.add('is-open');}
 function closeMaps(){document.getElementById('sccMaps').classList.remove('is-open');}
+/* target setters: in-page dialog instead of the blocked browser prompt() */
 function setRevenue(){
-  const t=DATA[role].revenueTarget; const v=prompt('Set my Revenue Target ('+DATA[role].cur+'):', t.val);
-  if(v!==null && !isNaN(+v)){t.val=+v; render();}
+  const r=role, t=DATA[r].revenueTarget, cur=DATA[r].cur;
+  openDlg({title:'Set my revenue target',sub:'Your yearly revenue goal. Pipeline Coverage and the target bar recalculate as soon as you save.',label:'Revenue target ('+cur+')',pre:cur,value:t.val,hint:'Whole amount, for example '+t.val+'.',
+    check:v=>v===''?'Enter an amount.':isNaN(+v)?'Use digits only.':+v<=0?'The target must be above zero.':'',
+    save:v=>{const old=t.val;t.val=+v;render(true);logTarget(r,'Revenue target',cur,old,+v);toast('Revenue target set to '+money(cur,+v)+'.',{undo:()=>{t.val=old;render(true);toast('Revenue target restored.');}});}});
 }
-function setMuspTarget(){const cur=DATA.ic.muspTarget.replace(/[+%]/g,'');const v=prompt('Set my 6-month MAU Growth Target (%):',cur);if(v!==null&&v.trim()!==''){const n=parseFloat(v);if(!isNaN(n)){DATA.ic.muspTarget=(n>=0?'+':'')+n+'%';render();}}}
-function setUpsell(){const t=DATA.ic.upsellTarget;const v=prompt('Set my Upsell Pipeline Target ('+DATA.ic.cur+'):',t.val);if(v!==null&&v.trim()!==''&&!isNaN(+v)){t.val=+v;render();}}
+function setMuspTarget(){
+  const cur=DATA.ic.muspTarget.replace(/[+%]/g,'');
+  openDlg({title:'Set my MAU growth target',sub:'Your 6-month MAU growth goal. The MAU Growth card compares against it.',label:'6-month MAU growth',suf:'%',value:cur,hint:'Percent, for example 5 or 6.5.',
+    check:v=>v===''?'Enter a percentage.':isNaN(parseFloat(v))||isNaN(+v)?'Use a number such as 5 or 6.5.':Math.abs(+v)>100?'Keep it between -100 and 100.':'',
+    save:v=>{const old=DATA.ic.muspTarget;const n=parseFloat(v);DATA.ic.muspTarget=(n>=0?'+':'')+n+'%';render(true);logTarget('ic','MAU growth target','',old,DATA.ic.muspTarget);toast('MAU growth target set to '+DATA.ic.muspTarget+'.',{undo:()=>{DATA.ic.muspTarget=old;render(true);toast('MAU growth target restored.');}});}});
+}
+function setUpsell(){
+  const t=DATA.ic.upsellTarget, cur=DATA.ic.cur;
+  openDlg({title:'Set my upsell target',sub:'Open plus won upsell counts toward it. The Upsell Pipeline cell and target bar update when you save.',label:'Upsell pipeline target ('+cur+')',pre:cur,value:t.val,hint:'Whole amount, for example '+t.val+'.',
+    check:v=>v===''?'Enter an amount.':isNaN(+v)?'Use digits only.':+v<=0?'The target must be above zero.':'',
+    save:v=>{const old=t.val;t.val=+v;render(true);logTarget('ic','Upsell target',cur,old,+v);toast('Upsell target set to '+money(cur,+v)+'.',{undo:()=>{t.val=old;render(true);toast('Upsell target restored.');}});}});
+}
 function stagger(){document.querySelectorAll('.scc-reveal').forEach((el,i)=>{el.style.animation='none';void el.offsetWidth;el.style.animation='scc-in .5s ease forwards';el.style.animationDelay=(i*0.045)+'s';});}
 
 /* controls */
@@ -990,28 +1340,37 @@ function setDemo(x){
 function setRole(r){role=r;document.getElementById('sccApp').dataset.role=r;resetState();syncRoleToggle();render();}
 function syncRoleToggle(){document.getElementById('sccRoleAE').setAttribute('aria-pressed',role==='ae');document.getElementById('sccRoleIC').setAttribute('aria-pressed',role==='ic');}
 function resetState(){activeTier="all";activeSeg="all";muspView="total";queueExpanded=false;lbScope="area";lbTab=DATA[role].leaderboard.defaultTab;}
-function setTier(t){activeTier=t;render();}
-function setSeg(s){activeSeg=s;render();}
-function setMusp(m){muspView=m;render();}
-function expandQueue(){queueExpanded=true;render();}
-function setTab(t){lbTab=t;render();}
-function setScope(s){lbScope=s;render();}
+function setTier(t){activeTier=t;render(true);}
+function setSeg(s){activeSeg=s;render(true);}
+function setMusp(m){muspView=m;render(true);}
+function expandQueue(){queueExpanded=true;render(true);}
+function setTab(t){lbTab=t;render(true);}
+function setScope(s){lbScope=s;render(true);}
 function toggleTheme(){const a=document.getElementById('sccApp');const dk=a.classList.toggle('scc--dark');document.getElementById('sccThemeIcon').innerHTML=dk?'<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>':'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';}
 function refresh(){const b=document.getElementById('sccRefresh');b.classList.add('is-spinning');showSkel();setTimeout(()=>{render();b.classList.remove('is-spinning');},900);}
 function showSkel(){const sk=h=>`<div class="scc-skel" style="height:${h}px"></div>`;document.getElementById('sccPage').innerHTML=`<section class="scc-card scc-briefing">${sk(46)}</section><section class="scc-kpis">${[1,2,3,4].map(()=>`<div class="scc-card" style="padding:14px">${sk(60)}</div>`).join('')}</section><div class="scc-main"><div class="scc-col"><div class="scc-card scc-card--pad">${[0,1,2,3,4].map(()=>`<div style="margin-bottom:8px">${sk(54)}</div>`).join('')}</div></div><div class="scc-col"><div class="scc-card scc-card--pad">${sk(180)}</div></div></div>`;}
 
 /* kanban */
+function kanCardHTML(it,ci){
+  const K=DATA.ae.kanban, next=K[ci+1];
+  return `<div class="scc-kancard scc-kancard--${it.type}" draggable="true" id="kc-${it.id}" data-k="${it.id}" ondragstart="kanStart(event)" ondragend="kanEnd(event)" onpointerdown="kanPDown(event)"><div class="scc-kancard__top"><div class="scc-kancard__name">${esc(it.name)}</div><span class="scc-kangrip" title="Drag to another stage" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg></span></div><div class="scc-kancard__meta">${esc(it.meta)}</div><div class="scc-kancard__foot"><span class="scc-typchip">${it.type==='new'?'New Account':it.type==='up'?'Up-Selling':'Reactivate'}</span>${next?`<button class="scc-kanadv" onclick="kanAdvance('${it.id}')" aria-label="Move ${esc(it.name)} to ${esc(next.name)}" title="Move to ${esc(next.name)}">${esc(next.name)} →</button>`:''}</div></div>`;
+}
+function renderKan(){
+  kanInit();
+  const K=DATA.ae.kanban, last=K.length-1;
+  document.getElementById('sccKan').innerHTML=K.map((col,ci)=>`<div class="scc-kancol ${col.late?'is-late':''} ${ci===last?'is-won':''}" data-col="${ci}" ondragover="kanOver(event)" ondragleave="kanLeave(event)" ondrop="kanDrop(event)"><div class="scc-kancol__head"><span class="scc-kancol__name">${esc(col.name)}</span><span class="scc-kancol__count">${col.items.length}</span></div><div class="scc-kancol__body">${col.items.map(it=>kanCardHTML(it,ci)).join('')||'<div class="scc-kancol__empty">Drop a deal here</div>'}</div></div>`).join('');
+}
 function openKanban(){
-  document.getElementById('sccKan').innerHTML=DATA.ae.kanban.map((col,ci)=>`<div class="scc-kancol ${col.late?'is-late':''}" data-col="${ci}" ondragover="kanOver(event)" ondragleave="kanLeave(event)" ondrop="kanDrop(event)"><div class="scc-kancol__head"><span class="scc-kancol__name">${esc(col.name)}</span><span class="scc-kancol__count">${col.items.length}</span></div><div class="scc-kancol__body">${col.items.map((it,ii)=>`<div class="scc-kancard scc-kancard--${it.type}" draggable="true" id="kc-${ci}-${ii}" ondragstart="kanStart(event)" ondragend="kanEnd(event)"><div class="scc-kancard__name">${esc(it.name)}</div><div class="scc-kancard__meta">${esc(it.meta)}</div><span class="scc-typchip">${it.type==='new'?'New Account':it.type==='up'?'Up-Selling':'Reactivate'}</span></div>`).join('')}</div></div>`).join('');
+  renderKan();
   document.getElementById('sccKanban').classList.add('is-open');
 }
-function closeKanban(){document.getElementById('sccKanban').classList.remove('is-open');}
+function closeKanban(){kanPEnd();document.getElementById('sccKanban').classList.remove('is-open');}
 let dragId=null;
 function kanStart(e){dragId=e.target.id;e.target.classList.add('is-drag');}
 function kanEnd(e){e.target.classList.remove('is-drag');}
 function kanOver(e){e.preventDefault();e.currentTarget.classList.add('is-over');}
 function kanLeave(e){e.currentTarget.classList.remove('is-over');}
-function kanDrop(e){e.preventDefault();e.currentTarget.classList.remove('is-over');const c=document.getElementById(dragId);if(c)e.currentTarget.querySelector('.scc-kancol__body').appendChild(c);document.querySelectorAll('.scc-kancol').forEach(col=>col.querySelector('.scc-kancol__count').textContent=col.querySelectorAll('.scc-kancard').length);}
+function kanDrop(e){e.preventDefault();e.currentTarget.classList.remove('is-over');const c=document.getElementById(dragId);if(c)moveDeal(c.dataset.k,+e.currentTarget.dataset.col);}
 
 /* trend */
 function fmtT(v,t){if(t==="eur")return"€"+v.toFixed(2)+"M";if(t==="gbp")return"£"+v.toFixed(2)+"M";if(t==="pct")return v.toFixed(0)+"%";return Math.round(v).toLocaleString();}
@@ -1052,8 +1411,13 @@ function drawTrend(m){
   const wrap=document.querySelector('#sccTrendBody .scc-chartwrap'),tip=document.getElementById('sccTip');
   const reset=()=>wrap.querySelectorAll('circle[id^="td-"]').forEach((d,i)=>{d.setAttribute('r','4');d.setAttribute('fill','#0f172a');d.setAttribute('stroke',i===n-1?'#475569':'#818cf8');});
   wrap.querySelectorAll('.scc-hit').forEach(h=>{const i=+h.dataset.i;const show=()=>{reset();const dot=document.getElementById('td-'+i);dot.setAttribute('r','6');dot.setAttribute('fill','#6366f1');dot.setAttribute('stroke','#fff');const dr=dot.getBoundingClientRect(),wr=wrap.getBoundingClientRect();tip.style.left=(dr.left+dr.width/2-wr.left)+'px';tip.style.top=(dr.top+dr.height/2-wr.top)+'px';tip.innerHTML=`${TMONTHS[i]}${i===n-1?' (in progress)':''} · <b>${fmtT(vals[i],m.fmt)}</b>`;tip.style.opacity='1';};h.addEventListener('mouseenter',show);h.addEventListener('click',show);h.addEventListener('mouseleave',()=>{tip.style.opacity='0';reset();});});
+  /* upgrade: a tap anywhere on the chart picks the nearest month (touch friendly) */
+  wrap.addEventListener('click',e=>{if(e.target.classList&&e.target.classList.contains('scc-hit'))return;const sv=wrap.querySelector('svg'),r=sv.getBoundingClientRect(),sc=Math.min(r.width/vw,r.height/vh),ox=(r.width-vw*sc)/2,x=(e.clientX-r.left-ox)/sc;let bi=0,bd=1e9;pts.forEach((p,i)=>{const dd=Math.abs(p[0]-x);if(dd<bd){bd=dd;bi=i;}});const hh=wrap.querySelector('.scc-hit[data-i="'+bi+'"]');if(hh)hh.dispatchEvent(new MouseEvent('click'));});
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeKanban();closeTrend();closeMaps();closeVoice();}});
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&!e.altKey&&(e.key==='k'||e.key==='K')){e.preventDefault();if(palOpen)closePalette();else openPalette();return;}
+  if(e.key==='Escape'){if(palOpen){closePalette();return;}if(dlg){closeDlg();return;}closeKanban();closeTrend();closeMaps();closeVoice();}
+});
 document.addEventListener('mouseover',e=>{const b=e.target.closest&&e.target.closest('.scc-i');if(b)showTip(b);});
 document.addEventListener('mouseout',e=>{const b=e.target.closest&&e.target.closest('.scc-i');if(b)hideTip();});
 document.addEventListener('focusin',e=>{const b=e.target.closest&&e.target.closest('.scc-i');if(b)showTip(b);});
@@ -1062,7 +1426,7 @@ window.addEventListener('scroll',hideTip,true);
 
 /* ===== AI Assistant — commands for the day (mock) ===== */
 const AE_CMDS=[
-  {label:"Plan my day",prompt:"What are my top priorities today, ranked, and why?",resp:()=>{const t=DATA.ae.actions.slice(0,3);return `<div class="scc-ai__ans"><b>Your top 3 for today:</b><ol class="scc-ai__list">${t.map(a=>`<li><b>${esc(a.name)}</b> — ${esc(a.reason)} <em>(${esc(a.cta)})</em></li>`).join('')}</ol><div class="scc-ai__note">After that, clear the 6 open opps with no next activity. Want me to draft those next steps?</div></div>`;}},
+  {label:"Plan my day",prompt:"What are my top priorities today, ranked, and why?",resp:()=>{const t=openActs('ae').slice(0,3);if(!t.length)return '<div class="scc-ai__ans"><b>Your queue is clear.</b> Nothing is ranked for the rest of today.</div>';return `<div class="scc-ai__ans"><b>Your top 3 for today:</b><ol class="scc-ai__list">${t.map(a=>`<li><b>${esc(a.name)}</b> — ${esc(a.reason)} <em>(${esc(a.cta)})</em></li>`).join('')}</ol><div class="scc-ai__note">After that, clear the 6 open opps with no next activity. Want me to draft those next steps?</div></div>`;}},
   {label:"Draft follow-ups",prompt:"Draft follow-up emails for my stale opportunities.",resp:`<div class="scc-ai__ans"><b>3 follow-ups drafted</b> for your stale deals:<ul class="scc-ai__list"><li>Lefèvre — Core expansion (34d stale): propose a concrete next step + date.</li><li>Systems Antwerpen: re-confirm timeline after 3 pushes.</li><li>Smile Studio Brussels: recap the demo + send the order form.</li></ul><div class="scc-ai__note">Review &amp; send, or tell me to personalise each.</div></div>`},
   {label:"Prep a meeting",prompt:"Brief me on Smile Studio Brussels before my demo.",resp:`<div class="scc-ai__ans"><b>Brief — Smile Studio Brussels</b><ul class="scc-ai__list"><li>Stage: Close · €120K · 12 days open</li><li>Last touch: demo last week — positive signal</li><li>Risk: no next activity booked</li><li>Recommended: send order form + book a signature call</li></ul></div>`},
   {label:"Spot risk",prompt:"Which open deals are slipping or past close date?",resp:`<div class="scc-ai__ans"><b>6 deals need attention:</b><ul class="scc-ai__list"><li>2 past close date — update or close out</li><li>4 pushed 2+ times — slipping</li><li>6 missing a next activity</li></ul><div class="scc-ai__note">Want me to set next activities on all 6?</div></div>`},
@@ -1079,17 +1443,625 @@ const IC_CMDS=[
 ];
 function aiHTML(d){
   const cmds=role==='ae'?AE_CMDS:IC_CMDS;
-  return `<section class="scc-card scc-card--pad scc-ai scc-reveal">
+  return `<section class="scc-card scc-card--pad scc-ai scc-reveal" id="sccAi">
     <div class="scc-card__head"><div class="scc-ai__badge">AI</div><div><div class="scc-card__title">AI Assistant</div><div class="scc-card__sub">Ask in plain language — or run a command to get moving</div></div></div>
     <div class="scc-ai__bar"><input id="sccAiInput" class="scc-ai__input" placeholder="Ask about your book, pipeline, or day…" onkeydown="if(event.key==='Enter')runAi()" /><button class="scc-btn-primary" onclick="runAi()">Ask</button></div>
     <div class="scc-ai__cmds">${cmds.map((c,i)=>`<button class="scc-ai__cmd" onclick="runAiCmd(${i})"><span class="scc-ai__cmd-l">${esc(c.label)}</span><span class="scc-ai__cmd-p">${esc(c.prompt)}</span></button>`).join('')}</div>
-    <div id="sccAiOut" class="scc-ai__out" hidden></div>
+    <div id="sccAiOut" class="scc-ai__out" ${aiLast[role]?'':'hidden'}>${aiLast[role]?aiLast[role].html:''}</div>
     <div class="scc-ai__foot scc-micro">Demo · responses are illustrative. In production this runs on your CRM data with guardrails.</div>
   </section>`;
 }
 function showAi(html){const o=document.getElementById('sccAiOut');if(!o)return;o.hidden=false;o.innerHTML=`<div class="scc-ai__think"><span class="scc-spinner2"></span> Thinking…</div>`;setTimeout(()=>{o.innerHTML=html;},480);}
-function runAiCmd(i){const cmds=role==='ae'?AE_CMDS:IC_CMDS;const c=cmds[i];if(!c)return;const inp=document.getElementById('sccAiInput');if(inp)inp.value=c.prompt;showAi(typeof c.resp==='function'?c.resp():c.resp);}
-function runAi(){const inp=document.getElementById('sccAiInput');const q=(inp&&inp.value||'').trim();if(!q){showAi('<div class="scc-ai__ans">Try a command below — or ask things like “which deals are at risk?” or “draft my follow-ups.”</div>');return;}showAi(`<div class="scc-ai__ans"><b>On it.</b> Drafting from your current book…<div class="scc-ai__note">“${esc(q)}” — demo response; wired to your CRM with guardrails in production.</div></div>`);}
+function runAiCmd(i){const cmds=role==='ae'?AE_CMDS:IC_CMDS;const c=cmds[i];if(!c)return;const inp=document.getElementById('sccAiInput');if(inp)inp.value=c.prompt;aiRun(c.label,typeof c.resp==='function'?c.resp():c.resp,CMD_META[role][i]);}
+function runAi(){const inp=document.getElementById('sccAiInput');const q=(inp&&inp.value||'').trim();if(!q){showAi('<div class="scc-ai__ans">Try a command below — or ask things like “which deals are at risk?” or “draft my follow-ups.”</div>');return;}const fa=answerFree(q);aiRun('“'+q+'”',fa.html,fa.meta);}
+
+/* =====================================================================
+   UPGRADE (additive): explainable queue, agent proposals with approval,
+   agent activity log, cited assistant answers, command palette,
+   pointer drag on the board, in-page dialogs and toasts.
+   ===================================================================== */
+function reducedMotion(){try{return !!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);}catch(_){return false;}}
+function smooth(){return reducedMotion()?'auto':'smooth';}
+
+/* ---- dates relative to today, so the demo always reads current ---- */
+const T0=(()=>{const d=new Date();d.setHours(12,0,0,0);return d;})();
+function dOff(n){const d=new Date(T0);d.setDate(d.getDate()+n);return d;}
+function isoOf(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function isoD(n){return isoOf(dOff(n));}
+function fmtD(n){return n===0?'today':n===1?'tomorrow':dOff(n).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}
+function fmtIso(iso){if(!iso)return '';const p=iso.split('-').map(Number);const dt=new Date(p[0],p[1]-1,p[2],12);return fmtD(Math.round((dt-T0)/864e5));}
+function wdOff(n){if(n<=1)return n;let k=n;while(dOff(k).getDay()===0||dOff(k).getDay()===6)k++;return k;}
+function fill(str,v){return String(str||'').replace(/\{d(-?\d+)\}/g,(m,n)=>fmtD(wdOff(+n))).replace(/\{date\}/g,v&&v.date?fmtIso(v.date):'');}
+function clock(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function userName(r){return DATA[r].persona.split(' · ')[0];}
+function kEur(k){return k>=1000?'€'+(k/1000).toFixed(2)+'M':'€'+k+'K';}
+function money(cur,v){return cur+(v>=1e6?(v/1e6).toFixed(2)+'M':(v/1e3).toFixed(0)+'K');}
+function norm(s){return String(s).toLowerCase().normalize('NFD').replace(/\p{M}/gu,'');}
+
+/* ---- per-item signals, evidence and agent proposals (merged into DATA.*.actions) ---- */
+const ENRICH={
+ ae:[
+  {id:'ae1',deal:'Atlas Lyon',obj:'Opportunity',rec:'OPP-1042',chip:-1,
+   sig:[{l:'Close date passed 4 days ago',p:38},{l:'Amount €140K, top 10% of open pipeline',p:22},{l:'No activity logged in 12 days',p:20},{l:'Late stage: Negotiation',p:15}],
+   src:[{t:'Opportunity',f:'Close date {d-4} · Negotiation · €140K',id:'OPP-1042'},{t:'Event',f:'Contract review today 10:30 with Dr. Petit',id:'EVT-5531'}],
+   p:{kind:'date',from:-4,to:14,conf:86,reason:'The contract review with Dr. Petit is today at 10:30. Legal redlines at this deal size take about two weeks, so {date} is the earliest date the buyer can sign.',also:'Also sets Next Step to "Legal redlines, then signature call".'}},
+  {id:'ae2',deal:'Lefèvre',obj:'Opportunity',rec:'OPP-1037',chip:2,
+   sig:[{l:'34 days in Consult, stage average is 14',p:30},{l:'No next activity scheduled',p:25},{l:'Expansion on an existing customer',p:18},{l:'Amount €90K',p:15}],
+   src:[{t:'Opportunity',f:'Consult for 34 days · €90K · no next activity',id:'OPP-1037'},{t:'Email',f:'Last reply from Lucas Lefèvre, 34 days ago',id:'EML-2210'}],
+   p:{kind:'email',to:'Lucas Lefèvre',addr:'l.lefevre@lefevre-group.example',conf:78,subj:'Core expansion: a date for next steps',body:'Hi Lucas,\n\nWhen we last spoke you wanted to see how the Core expansion would roll out at your second site. I have put together a short plan with a phased start in January.\n\nCould we take 30 minutes on {d3} to walk through it? I will bring pricing for both phases.\n\nBest,\nSarah',also:'Approving also sets the next activity: follow-up call on {d3}.'}},
+  {id:'ae3',obj:'Lead',rec:'LEAD-3318',chip:0,short:'Dr. Moreau',
+   sig:[{l:'Assigned 3 days ago, never contacted',p:35},{l:'48-hour response window missed',p:25},{l:'Source: demo request form',p:14},{l:'Fits the ideal customer profile',p:10}],
+   src:[{t:'Lead',f:'Status New · assigned 3 days ago',id:'LEAD-3318'},{t:'Web form',f:'Demo request, 3 days ago',id:'FORM-771'}],
+   p:{kind:'task',subj:'Call Dr. Moreau',due:0,time:'11:15',conf:82,note:'Thank them for the demo request, confirm team size and timeline, then offer tomorrow 09:00 for discovery.'}},
+  {id:'ae4',deal:'Smile Studio Brussels',obj:'Opportunity',rec:'OPP-1051',chip:1,
+   sig:[{l:'No next activity scheduled',p:25},{l:'Amount €120K',p:20},{l:'Late stage: Close',p:15},{l:'Demo today at 14:00',p:6}],
+   src:[{t:'Opportunity',f:'Close · €120K · 12 days open',id:'OPP-1051'},{t:'Event',f:'Demo today 14:00, virtual',id:'EVT-5534'}],
+   p:{kind:'task',subj:'Signature call with Smile Studio Brussels',due:2,time:'10:00',conf:74,note:'Book it at the end of today\'s demo and send the order form with the recap.'}},
+  {id:'ae5',deal:'Systems Antwerpen',obj:'Opportunity',rec:'OPP-1029',chip:-1,
+   sig:[{l:'Close date pushed 3 times',p:24},{l:'No reply to the last 2 emails',p:14},{l:'Amount €70K',p:13},{l:'Reactivation of a lapsed customer',p:10}],
+   src:[{t:'Opportunity',f:'Close date {d16} · pushed 3 times · €70K',id:'OPP-1029'},{t:'Call note',f:'Budget opens after the December board meeting',id:'NOTE-904'}],
+   p:{kind:'date',from:16,to:34,conf:71,reason:'It has been pushed 3 times. Last week\'s call notes say budget opens after the December board meeting, so {date} is a date the buyer can keep.'}},
+  {id:'ae6',obj:'Lead',rec:'LEAD-3290',chip:0,short:'Dr. Janssens',
+   sig:[{l:'Engagement score up 40 points this week',p:28},{l:'Visited the pricing page twice',p:15},{l:'No touch from you yet',p:14}],
+   src:[{t:'Lead',f:'Engagement score 100 · hot',id:'LEAD-3290'},{t:'Web activity',f:'Pricing page, 2 visits this week',id:'WEB-118'}],
+   p:{kind:'email',to:'Emma Janssens',addr:'e.janssens@gent-digital.example',conf:69,subj:'Your questions on Core pricing',body:'Hi Dr. Janssens,\n\nI saw your team has been reading about the Core plan. I am happy to answer pricing questions directly, or to set up a 20-minute walkthrough for your team leads.\n\nWould {d5} morning work?\n\nBest,\nSarah'}},
+  {id:'ae7',deal:'Logistics Namur',obj:'Opportunity',rec:'OPP-1047',chip:-1,
+   sig:[{l:'Close date in 5 days',p:22},{l:'Order form sent 8 days ago, not signed',p:18},{l:'Amount €85K',p:13}],
+   src:[{t:'Opportunity',f:'Order Form Sent · closes {d5} · €85K',id:'OPP-1047'},{t:'Document',f:'Order form sent 8 days ago',id:'DOC-662'}],
+   p:{kind:'email',to:'Claire Dumont',addr:'c.dumont@logistics-namur.example',conf:80,subj:'Order form: anything blocking signature?',body:'Hi Claire,\n\nThe order form went over last week. Before our walkthrough tomorrow at 11:30, is there anything your finance team wants changed?\n\nI can take you through it line by line if that helps.\n\nBest,\nSarah'}},
+  {id:'ae8',obj:'Task',rec:'TSK-8812',chip:3,short:'Apex Liège quote',
+   sig:[{l:'Task due today',p:20},{l:'Linked deal in Discover, €55K',p:14}],
+   src:[{t:'Task',f:'Send quote · due today',id:'TSK-8812'},{t:'Quote',f:'Q-2291 · €55K · draft',id:'Q-2291'}],
+   p:{kind:'email',to:'Marc Willems',addr:'m.willems@apex-liege.example',conf:88,att:'Quote Q-2291.pdf',subj:'Your quote for Apex Liège',body:'Hi Marc,\n\nAttached is the quote we discussed, valid for 30 days. It covers the Core plan for 12 seats with onboarding included.\n\nI will follow up on {d3}.\n\nBest,\nSarah',also:'Approving also marks the task complete.'}},
+  {id:'ae9',obj:'Opportunity',rec:'OPP-1012',chip:-1,cta:'Explore upsell',short:'Dubois add-on',
+   sig:[{l:'Healthy usage, no add-on yet',p:16},{l:'Closed Won last month, champion engaged',p:13}],
+   src:[{t:'Opportunity',f:'Dubois · Closed Won · €60K',id:'OPP-1012'},{t:'Usage report',f:'MAU above pace',id:'RPT-73'}],
+   p:{kind:'task',subj:'Whitespace review with Dubois',due:10,time:'14:00',conf:62,note:'Use the usage report to show where the add-on fits. 30 minutes.'}}
+ ],
+ ic:[
+  {id:'ic1',obj:'Account',rec:'ACC-201',chip:0,cust:'Bright Systems',
+   sig:[{l:'E1, 96 days since engagement, window is 90',p:40},{l:'MAU at 81% of 6-month average',p:20},{l:'No QBR done or planned this quarter',p:18},{l:'Top-tier account, 412 MAU',p:15}],
+   src:[{t:'Account',f:'E1 · last engagement 96 days ago',id:'ACC-201'},{t:'MAU snapshot',f:'412 MAU · 81% of 6-month average',id:'SNAP-201'}],
+   p:{kind:'task',subj:'QBR visit at Bright Systems',due:3,time:'10:00',conf:90,note:'One visit resets the 90-day window and closes the QBR gap for this E1 account.'}},
+  {id:'ic2',obj:'Account',rec:'ACC-214',chip:1,cust:'Pearl Logistics',
+   sig:[{l:'MAU below pace, 72% of 6-month average',p:34},{l:'Activations down 3 months running',p:22},{l:'E2 account',p:16},{l:'54 days since last visit',p:15}],
+   src:[{t:'Account',f:'E2 · Below Pace',id:'ACC-214'},{t:'MAU snapshot',f:'288 MAU · 72% of 6-month average',id:'SNAP-214'}],
+   p:{kind:'email',to:'James Pearl',addr:'j.pearl@pearl-logistics.example',conf:81,subj:'A 30-minute adoption review',body:'Hi James,\n\nMonthly active users at Pearl Logistics have dipped over the last quarter. I would like to walk through which features your team uses most and where we can help.\n\nDoes {d4} at 13:30 work for a 30-minute review?\n\nBest,\nMarcus',also:'Approving also sets the next activity: adoption review on {d4}.'}},
+  {id:'ic3',obj:'Opportunity',rec:'OPP-2207',chip:2,short:'Camden expansion',
+   sig:[{l:'No next activity scheduled',p:25},{l:'28 days in stage',p:20},{l:'Parent account above pace (112%)',p:19}],
+   src:[{t:'Opportunity',f:'Core expansion · 28 days in stage',id:'OPP-2207'},{t:'Account',f:'Camden Industries · 112% of pace',id:'ACC-219'}],
+   p:{kind:'task',subj:'Scope call: Camden Core expansion',due:1,time:'09:30',conf:76,note:'Confirm seat count and start date. Camden runs at 112% of pace, so lead with growth.'}},
+  {id:'ic4',obj:'Account',rec:'ACC-233',chip:0,cust:'Riverside Systems',
+   sig:[{l:'E3, 191 days since engagement, window is 180',p:30},{l:'Visit window overdue by 11 days',p:20},{l:'MAU on pace (95%)',p:8}],
+   src:[{t:'Account',f:'E3 · last engagement 191 days ago',id:'ACC-233'},{t:'Event',f:'Visit planned tomorrow 11:00',id:'EVT-7712'}],
+   p:{kind:'task',subj:'Visit Riverside Systems',due:1,time:'11:00',conf:84,note:'Already on tomorrow\'s plan. Approving logs it as the next activity.'}},
+  {id:'ic5',obj:'Account',rec:'ACC-228',chip:-1,cust:'Kensington Systems',
+   sig:[{l:'Activations down 8% vs last 3 months',p:26},{l:'E2 account',p:16},{l:'40 days since last visit',p:10}],
+   src:[{t:'Account',f:'E2 · On Pace',id:'ACC-228'},{t:'MAU snapshot',f:'Activations down 8% vs prior 3 months',id:'SNAP-228'}],
+   p:{kind:'email',to:'Priya Shah',addr:'p.shah@kensington.example',conf:73,subj:'Quick check-in on new user activations',body:'Hi Priya,\n\nNew activations at Kensington are down about 8% over the last three months. Is anything changing on your side, such as staffing or rollout plans?\n\nI have a call slot tomorrow at 15:00 if that suits.\n\nBest,\nMarcus'}},
+  {id:'ic6',obj:'Account',rec:'ACC-240',chip:2,cust:'Thames Digital',alt:'Thames Digital — Platform upgrade',
+   sig:[{l:'No add-on on the account',p:13},{l:'MAU on pace, 93%',p:10},{l:'E4, low visit pressure',p:8}],
+   src:[{t:'Account',f:'E4 · 144 MAU · On Pace',id:'ACC-240'},{t:'Opportunity',f:'Platform upgrade · £45K · no next activity',id:'OPP-2212'}],
+   p:{kind:'task',subj:'Discovery call: Thames Digital platform upgrade',due:7,time:'14:00',conf:64,note:'£45K estimate from 144 MAU. Sets the missing next activity on OPP-2212.'}},
+  {id:'ic7',obj:'Task',rec:'TSK-9120',chip:-1,short:'Whitfield MAU report',
+   sig:[{l:'Task due tomorrow',p:14},{l:'Expansion add-on closing, £90K',p:12}],
+   src:[{t:'Task',f:'Send MAU report · due tomorrow',id:'TSK-9120'},{t:'MAU snapshot',f:'265 MAU · 108% of 6-month average',id:'SNAP-236'}],
+   p:{kind:'email',to:'Tom Whitfield',addr:'t.whitfield@whitfield.example',conf:91,att:'Whitfield MAU report.pdf',subj:'Your monthly MAU report',body:'Hi Tom,\n\nAttached is your MAU report for last month. Usage is at 108% of your 6-month average, led by the expansion users.\n\nHappy to talk it through alongside the add-on order form.\n\nBest,\nMarcus',also:'Approving also marks the task complete.'}}
+ ]
+};
+['ae','ic'].forEach(r=>DATA[r].actions.forEach((a,i)=>Object.assign(a,ENRICH[r][i])));
+Object.assign(DEFS,{
+ "Priority score":{what:"How urgent a queue item is, out of 100.",rule:"Each signal adds points (close date passed, days without activity, amount, stage, visit window, engagement). The points add up to the score shown on the item.",target:"Work from the top. 80 and above is Critical."},
+ "Agent proposal":{what:"A concrete next step the assistant drafted for this item: an email, a new close date or a task.",rule:"Built only from the records listed as evidence. Nothing is written to the CRM until you approve it.",target:"Approve, edit or skip each one."},
+ "Agent activity":{what:"Every step the assistant took, in tool-call form.",rule:"Each run lists its CRM queries, scoring, drafting, your approval and the CRM write. Undo adds a revert step.",target:"Every write has a matching approval."}
+});
+
+/* ---- queue state per role ---- */
+const QS={};
+['ae','ic'].forEach(r=>{QS[r]={h:{},open:DATA[r].actions[0].id,edit:null,draft:{},final:{},busy:{},runs:{},seen:{}};});
+const briefShown={};
+function act(r,id){return DATA[r].actions.find(a=>a.id===id);}
+function openActs(r){return DATA[r].actions.filter(a=>!QS[r].h[a.id]);}
+function handledCount(r){return Object.keys(QS[r].h).length;}
+function chipDone(r,i){return DATA[r].actions.filter(a=>a.chip===i&&QS[r].h[a.id]).length;}
+function shortName(a){return a.short||a.deal||a.cust||a.name.split(' — ')[0];}
+
+/* ---- agent activity runs ---- */
+const RUNS={ae:[],ic:[]}; let runSeq=0; const runOpen={}; let agentAll=false;
+function mkStep(s){return Array.isArray(s)?{tool:s[0],arg:s[1]||'',res:s[2]||'',st:s[3]||'ok'}:s;}
+function newRun(r,title,steps,extra){const run=Object.assign({id:'r'+(++runSeq),title,t:clock(),steps:(steps||[]).map(mkStep)},extra||{});RUNS[r].unshift(run);return run;}
+function findRun(id){return RUNS.ae.concat(RUNS.ic).find(x=>x.id===id);}
+function bumpRun(r,run){if(!run)return;const i=RUNS[r].indexOf(run);if(i>0){RUNS[r].splice(i,1);RUNS[r].unshift(run);}runOpen[run.id]=true;}
+function runStatus(run){const S=run.steps.map(x=>x.st);if(S.includes('run'))return ['Running','st-run'];if(S.includes('wait'))return ['Waiting for you','st-wait'];if(run.reverted)return ['Reverted','st-skip'];if(run.restored)return ['Restored','st-skip'];if(S.includes('skip'))return ['Skipped','st-skip'];return ['Done','st-done'];}
+const SVG_OK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const SVG_WAIT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+const SVG_SKIP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12"/></svg>';
+const SVG_CHECK14='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const SVG_CLIP='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 11-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg>';
+function stIcon(st){return st==='ok'?SVG_OK:st==='wait'?SVG_WAIT:st==='skip'?SVG_SKIP:'<span class="scc-spinner2"></span>';}
+function stepHTML(x){return `<div class="scc-rs scc-rs--${x.st}"><span class="scc-rs__i scc-rs__i--${x.st}">${stIcon(x.st)}</span><span class="scc-rs__c"><span class="scc-rs__tool">${esc(x.tool)}</span><span class="scc-rs__arg">(${esc(x.arg)})</span> <span class="scc-rs__res">→ ${esc(x.res)}</span></span></div>`;}
+function runHTML(run,i){
+  const s=runStatus(run),open=runOpen[run.id]!=null?runOpen[run.id]:(i===0||s[1]==='st-wait'||s[1]==='st-run');
+  return `<div class="scc-run" id="run-${run.id}"><button class="scc-run__h" onclick="toggleRun('${run.id}')" aria-expanded="${open}"><span class="scc-caret ${open?'open':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span><span class="scc-run__t">${esc(run.title)}</span><span class="scc-run__st ${s[1]}">${s[0]}</span><span class="scc-run__time">${esc(run.t)}</span></button>${open?`<div class="scc-run__steps">${run.steps.map(stepHTML).join('')}</div>`:''}</div>`;
+}
+function agentHTML(){
+  const runs=RUNS[role], shown=agentAll?runs:runs.slice(0,6);
+  const nSteps=runs.reduce((n,x)=>n+x.steps.length,0), writes=runs.reduce((n,x)=>n+x.steps.filter(z=>z.tool==='crm.write'&&z.st==='ok').length,0);
+  const sub=runs.length?`${runs.length} ${runs.length===1?'run':'runs'} · ${nSteps} steps · ${writes} CRM ${writes===1?'write':'writes'}, each one approved by you`:'Every step the assistant takes, in order';
+  return `<section class="scc-card scc-card--pad scc-agent scc-reveal" id="sccAgent">
+    <div class="scc-card__head"><div class="scc-agent__badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="scc-grow" style="min-width:0"><div class="scc-card__title">Agent activity ${infoTip('Agent activity')}</div><div class="scc-card__sub" id="sccAgentSub">${sub}</div></div></div>
+    ${explainLine('Agent activity')}
+    ${runs.length?`<div class="scc-agent__list">${shown.map(runHTML).join('')}</div>${runs.length>6?`<div class="scc-agent__more"><button class="scc-linkbtn" onclick="agentAll=!agentAll;renderAgent()">${agentAll?'Show fewer':'Show all '+runs.length+' runs'}</button></div>`:''}`:`<div class="scc-agent__empty">Nothing has run yet. Approve a proposal in the queue or ask the assistant, and each step shows here.</div>`}
+  </section>`;
+}
+function toggleRun(id){const el=document.getElementById('run-'+id);const cur=!!(el&&el.querySelector('.scc-run__h').getAttribute('aria-expanded')==='true');runOpen[id]=!cur;renderAgent();}
+function showRun(id){runOpen[id]=true;if(!agentAll&&RUNS[role].findIndex(x=>x.id===id)>=6)agentAll=true;renderAgent();const el=document.getElementById('run-'+id);if(el){el.scrollIntoView({behavior:smooth(),block:'center'});flash(el);}}
+function patch(id,html){const el=document.getElementById(id);if(!el)return null;const t=document.createElement('template');t.innerHTML=html.trim();const n=t.content.firstElementChild;n.classList.remove('scc-reveal');el.replaceWith(n);return n;}
+function renderAgent(){const l=document.querySelector('#sccAgent .scc-agent__list'),top=l?l.scrollTop:0;patch('sccAgent',agentHTML());const l2=document.querySelector('#sccAgent .scc-agent__list');if(l2)l2.scrollTop=top;}
+function renderQueue(){patch('sccQueue',queue(DATA[role]));}
+function renderBrief(){patch('sccBrief',briefing(DATA[role]));animateGreetCount();}
+function showAgent(){const el=document.getElementById('sccAgent');if(!el)return;el.scrollIntoView({behavior:smooth(),block:'start'});flash(el);}
+function flash(el){if(!el)return;el.classList.remove('is-flash');void el.offsetWidth;el.classList.add('is-flash');setTimeout(()=>el.classList.remove('is-flash'),2100);}
+function playSteps(r,run,steps,ms,onTick,onDone){
+  let i=0;
+  const tick=()=>{if(onTick)onTick();if(r===role)renderAgent();};
+  const next=()=>{
+    if(i>0){const prev=run.steps[run.steps.length-1];prev.st=prev._final||'ok';delete prev._final;}
+    if(i>=steps.length){tick();if(onDone)onDone();return;}
+    const x=mkStep(steps[i++]);x._final=x.st;x.st='run';run.steps.push(x);tick();setTimeout(next,ms);
+  };
+  next();
+}
+
+/* ---- proposals ---- */
+function getRun(r,id){const rid=QS[r].runs[id];return rid?findRun(rid):null;}
+function draftTool(p){return p.kind==='email'?'draft.email':p.kind==='date'?'draft.close_date':'draft.task';}
+function propVals(r,a){const f=QS[r].final[a.id];if(f)return f;const p=a.p;
+  if(p.kind==='email')return {subj:p.subj,body:fill(p.body)};
+  if(p.kind==='date')return {date:isoD(wdOff(p.to)),reason:p.reason};
+  return {subj:p.subj,due:isoD(wdOff(p.due)),note:fill(p.note)};}
+function prepSteps(r,a){const p=a.p,v=propVals(r,a);
+  return [['crm.query',a.obj+' '+a.rec,'1 record'],['score.explain',a.sig.length+' signals',a.sig.map(x=>x.p).join(' + ')+' = '+a.score],
+    [draftTool(p),p.kind==='email'?'to '+p.to:p.kind==='date'?fmtD(p.from)+' to '+fmtIso(v.date):v.subj,'ready'],['approval',userName(r),'waiting for you','wait']];}
+function ensurePrepared(r,id){if(!id)return;const a=act(r,id);if(!a||QS[r].h[id]||getRun(r,id))return;const run=newRun(r,'Proposal · '+shortName(a),prepSteps(r,a),{item:id});QS[r].runs[id]=run.id;}
+function validateProp(a,v){const p=a.p,today=isoD(0);
+  if(p.kind==='email'){if(!v.subj||!v.subj.trim())return 'Add a subject line to approve.';if(!v.body||!v.body.trim())return 'The message is empty.';return '';}
+  if(p.kind==='date'){if(!v.date)return 'Pick a close date to approve.';if(v.date<=today)return 'Pick a date after today.';return '';}
+  if(!v.subj||!v.subj.trim())return 'Give the task a subject to approve.';if(!v.due)return 'Pick a due date.';if(v.due<today)return 'Pick today or a later date.';return '';}
+function writeSteps(r,a,v){const p=a.p;
+  if(p.kind==='email')return [['email.send','to '+p.addr+' · "'+v.subj+'"','queued'],['crm.write','Activity.log on '+a.rec+(p.also?' · next activity':''),'ok']];
+  if(p.kind==='date')return [['crm.write',a.obj+'.CloseDate = '+v.date+' on '+a.rec,'ok']];
+  return [['crm.write','Task.insert "'+v.subj+'" · due '+v.due+(p.time?' '+p.time:''),'ok']];}
+function summary(a,v){const p=a.p;
+  if(p.kind==='email')return 'Email to '+p.to+' queued to send';
+  if(p.kind==='date')return 'Close date for '+shortName(a)+' moved to '+fmtIso(v.date);
+  return 'Task created: '+v.subj+', '+fmtIso(v.due)+(p.time?' '+p.time:'');}
+function propLine(r,a){const v=propVals(r,a),p=a.p;return p.kind==='email'?'an email to '+p.to+', "'+v.subj+'"':p.kind==='date'?'move the close date to '+fmtIso(v.date):v.subj+', '+fmtIso(v.due);}
+const KIND={
+ email:['Drafted email','<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>'],
+ date:['Proposed close date','<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'],
+ task:['Proposed task','<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>']
+};
+function detailHTML(a){
+  const st=QS[role],anim=!st.seen[a.id];st.seen[a.id]=true;
+  const sig=a.sig.map(x=>`<div class="scc-sig"><div class="scc-sig__top"><span class="scc-sig__l">${esc(x.l)}</span><span class="scc-sig__p">+${x.p}</span></div><div class="scc-sig__bar" role="img" aria-label="${esc(x.l)}, plus ${x.p} points"><div class="scc-sig__fill" style="width:${Math.round(x.p/40*100)}%"></div></div></div>`).join('');
+  const ev=a.src.map(x=>`<div class="scc-evrow"><span class="scc-evrow__t">${esc(x.t)}</span><span>${esc(fill(x.f))}</span><span class="scc-evrow__id">${esc(x.id)}</span></div>`).join('');
+  return `<div class="scc-action__detail ${anim?'is-anim':''}" id="qd-${a.id}">
+    <div class="scc-why"><div class="scc-dh"><span class="scc-micro">Why it is ranked here</span>${infoTip('Priority score')}</div>${sig}
+      <div class="scc-sig__sum"><span>${a.sig.map(x=>x.p).join(' + ')}</span><b>= ${a.score} priority</b></div>
+      <div class="scc-ev"><div class="scc-micro">Evidence</div>${ev}</div></div>
+    ${propHTML(a)}</div>`;
+}
+function propHTML(a){
+  const r=role,st=QS[r],p=a.p,ed=st.edit===a.id,busy=!!st.busy[a.id],v=ed?st.draft[a.id]:propVals(r,a),run=getRun(r,a.id);
+  const err=ed?validateProp(a,v):'',k=KIND[p.kind];
+  let body='';
+  if(p.kind==='email'){
+    body=ed?`<div class="scc-field"><label>To</label><div class="scc-in" style="background:var(--scc-input-bg)">${esc(p.to)} · ${esc(p.addr)}</div></div>
+      <div class="scc-field"><label for="pe-s-${a.id}">Subject</label><input class="scc-in" id="pe-s-${a.id}" value="${esc(v.subj)}" oninput="draftSet('${a.id}','subj',this.value)"></div>
+      <div class="scc-field"><label for="pe-b-${a.id}">Message</label><textarea class="scc-in" id="pe-b-${a.id}" oninput="draftSet('${a.id}','body',this.value)">${esc(v.body)}</textarea></div>`
+     :`<div class="scc-mail"><div class="scc-mail__row"><span class="scc-mail__k">To</span><span class="scc-mail__v">${esc(p.to)} <small>${esc(p.addr)}</small></span></div><div class="scc-mail__row"><span class="scc-mail__k">Subject</span><span class="scc-mail__v">${esc(v.subj)}</span></div><div class="scc-mail__body">${esc(v.body)}</div>${p.att?`<span class="scc-attach">${SVG_CLIP} ${esc(p.att)}</span>`:''}</div>`;
+  }else if(p.kind==='date'){
+    body=ed?`<div class="scc-field"><label for="pe-d-${a.id}">New close date</label><input type="date" class="scc-in" id="pe-d-${a.id}" min="${isoD(1)}" value="${esc(v.date)}" oninput="draftSet('${a.id}','date',this.value)"></div>
+      <div class="scc-field"><label for="pe-r-${a.id}">Reason logged with the change</label><textarea class="scc-in" style="min-height:96px" id="pe-r-${a.id}" oninput="draftSet('${a.id}','reason',this.value)">${esc(fill(v.reason,v))}</textarea></div>`
+     :`<div class="scc-datechg"><div class="scc-datechg__old"><span class="scc-datechg__lab">Now</span>${esc(fmtD(p.from))}</div><span class="scc-datechg__arrow" aria-hidden="true">→</span><div class="scc-datechg__new"><span class="scc-datechg__lab">Proposed</span>${esc(fmtIso(v.date))}</div></div><div class="scc-prop__reason"><b>Why this date:</b> ${esc(fill(v.reason,v))}</div>`;
+  }else{
+    body=ed?`<div class="scc-field"><label for="pe-s-${a.id}">Task</label><input class="scc-in" id="pe-s-${a.id}" value="${esc(v.subj)}" oninput="draftSet('${a.id}','subj',this.value)"></div>
+      <div class="scc-field"><label for="pe-u-${a.id}">Due</label><input type="date" class="scc-in" id="pe-u-${a.id}" min="${isoD(0)}" value="${esc(v.due)}" oninput="draftSet('${a.id}','due',this.value)"></div>
+      <div class="scc-field"><label for="pe-n-${a.id}">Notes</label><textarea class="scc-in" style="min-height:96px" id="pe-n-${a.id}" oninput="draftSet('${a.id}','note',this.value)">${esc(v.note)}</textarea></div>`
+     :`<div class="scc-task"><div class="scc-task__s">${esc(v.subj)}</div><div class="scc-task__d">Due ${esc(fmtIso(v.due))}${p.time?' · '+esc(p.time):''} · related to ${esc(a.rec)}</div><div class="scc-task__n">${esc(v.note)}</div></div>`;
+  }
+  const strip=run?run.steps.map(x=>`<span class="scc-stp ${x.st}">${stIcon(x.st)}${esc(x.tool)}${x.tool==='approval'&&x.st==='wait'?' · waiting for you':''}</span>`).join(''):'';
+  let btns;
+  if(busy)btns=`<button class="scc-btn-primary" disabled><span class="scc-spinner2" style="border-color:rgba(255,255,255,.35);border-top-color:#fff"></span> Writing to CRM…</button><span class="scc-prop__note" style="margin:0">Approved. Writing the change now.</span>`;
+  else if(ed)btns=`<button class="scc-btn-primary" id="pa-${a.id}" onclick="approveItem('${a.id}')" ${err?'disabled':''}>${SVG_CHECK14} Approve edited</button><button class="scc-btn-ghost" onclick="cancelEdit('${a.id}')">Cancel</button><span class="scc-err" id="pr-${a.id}" role="status">${esc(err)}</span>`;
+  else btns=`<button class="scc-btn-primary" id="pa-${a.id}" onclick="approveItem('${a.id}')">${SVG_CHECK14} Approve</button><button class="scc-btn-sec" onclick="editItem('${a.id}')">Edit</button><button class="scc-btn-ghost" onclick="skipItem('${a.id}')">Skip</button>`;
+  return `<div class="scc-prop"><div class="scc-prop__head"><span class="scc-micro">Agent proposal</span>${infoTip('Agent proposal')}<span class="scc-prop__conf" title="How sure the agent is, given the evidence it found">Confidence ${p.conf}%</span></div>
+    <div class="scc-prop__kind">${k[1]} ${k[0]}</div>
+    ${body}
+    ${p.also&&!ed?`<div class="scc-prop__also">${esc(fill(p.also,v))}</div>`:''}
+    <div class="scc-steps" aria-label="Agent steps for this proposal">${strip}</div>
+    <div class="scc-prop__btns">${btns}</div>
+    <div class="scc-prop__note">Nothing is written to the CRM until you approve.</div></div>`;
+}
+function queueClearHTML(n,nA,nS,nW){
+  return `<div class="scc-qclear"><div class="scc-qclear__ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><div class="scc-qclear__t">Queue clear</div><div class="scc-qclear__s">${n} actions handled today: ${nA} approved, ${nS} skipped${nW?`, ${nW} closed on the board`:''}. Every CRM write and the approval behind it is in Agent activity.</div><div class="scc-qclear__btns"><button class="scc-btn-primary" onclick="restartQueue()">Start again</button><button class="scc-btn-sec" onclick="showAgent()">View agent activity</button></div></div>`;
+}
+
+/* ---- queue interactions ---- */
+function scrollToItem(id,block){const el=document.getElementById('qa-'+id);if(el)el.scrollIntoView({behavior:smooth(),block:block||'center'});}
+function toggleItem(id){const st=QS[role];st.open=st.open===id?null:id;if(st.open){ensurePrepared(role,id);renderAgent();}renderQueue();if(st.open)scrollToItem(id,'nearest');}
+function openItem(id,focusBtn){const st=QS[role];if(st.open!==id){st.open=id;ensurePrepared(role,id);renderAgent();renderQueue();}scrollToItem(id,'nearest');if(focusBtn){const b=document.getElementById('pa-'+id);if(b)b.focus({preventScroll:true});}}
+function editItem(id){const r=role,st=QS[r],a=act(r,id);st.edit=id;st.draft[id]=Object.assign({},propVals(r,a));renderQueue();const f=document.querySelector('#qd-'+id+' input.scc-in,#qd-'+id+' textarea.scc-in');if(f)f.focus({preventScroll:true});}
+function cancelEdit(id){const st=QS[role];st.edit=null;delete st.draft[id];renderQueue();}
+function draftSet(id,key,val){const r=role,st=QS[r],a=act(r,id);if(!st.draft[id])return;st.draft[id][key]=val;const err=validateProp(a,st.draft[id]);const b=document.getElementById('pa-'+id),e=document.getElementById('pr-'+id);if(b){b.disabled=!!err;b.title=err;}if(e)e.textContent=err;}
+function approveItem(id){
+  const r=role,st=QS[r],a=act(r,id);if(!a||st.busy[id]||st.h[id])return;
+  let v=propVals(r,a),edited=false;
+  if(st.edit===id){v=st.draft[id];const err=validateProp(a,v);if(err){toast(err,{warn:true});return;}st.final[id]=Object.assign({},v);v=st.final[id];edited=true;st.edit=null;delete st.draft[id];}
+  ensurePrepared(r,id);const run=getRun(r,id);
+  const ap=run.steps.find(x=>x.tool==='approval');if(ap){ap.st='ok';ap.res=edited?'approved after your edits':'approved';}
+  bumpRun(r,run);st.busy[id]=true;renderQueue();renderAgent();
+  playSteps(r,run,writeSteps(r,a,v),reducedMotion()?40:380,()=>{if(r===role)renderQueue();},()=>{
+    st.busy[id]=false;st.h[id]={st:'approved',sum:summary(a,v),t:clock(),run:run.id};
+    finishItem(r,id,summary(a,v)+'. Logged in Agent activity.');
+  });
+}
+function skipItem(id){
+  const r=role,st=QS[r],a=act(r,id);if(!a||st.busy[id]||st.h[id])return;
+  ensurePrepared(r,id);const run=getRun(r,id);
+  const ap=run.steps.find(x=>x.tool==='approval');if(ap){ap.st='skip';ap.res='skipped by you';}
+  bumpRun(r,run);
+  run.steps.push(mkStep(['crm.write','none','nothing written','skip']));
+  st.edit=null;delete st.draft[id];st.h[id]={st:'skipped',sum:'skipped, nothing written',t:clock(),run:run.id};
+  finishItem(r,id,'Skipped '+shortName(a)+'. Nothing was written.');
+}
+function finishItem(r,id,msg){
+  const st=QS[r];
+  const done=()=>{
+    if(st.open===id||!st.open||st.h[st.open]){const n=openActs(r)[0];st.open=n?n.id:null;if(n)ensurePrepared(r,n.id);}
+    if(!openActs(r).length){const h=st.h,ids=Object.keys(h);newRun(r,'Queue clear',[['queue.summary',ids.length+' actions',ids.filter(k=>h[k].st==='approved').length+' approved · '+ids.filter(k=>h[k].st==='skipped').length+' skipped']]);if(r===role)celebrate();}
+    if(r===role){renderQueue();renderBrief();renderAgent();}
+    toast(msg,{undo:()=>undoItem(r,id)});
+  };
+  const el=r===role&&document.getElementById('qa-'+id);
+  if(el&&!reducedMotion()){el.classList.add('is-leaving');setTimeout(done,320);}else done();
+}
+function undoItem(r,id){
+  const st=QS[r],h=st.h[id],a=act(r,id);if(!h)return;
+  delete st.h[id];
+  const run=h.run&&findRun(h.run);
+  if(run){if(h.st==='approved'){run.steps.push(mkStep(['crm.write','revert '+a.rec+' to its previous values','ok']));run.reverted=true;}else run.restored=true;bumpRun(r,run);}
+  delete st.runs[id];delete st.final[id];st.seen[id]=false;
+  st.open=id;ensurePrepared(r,id);
+  if(r===role){
+    if(activeTier!=='all'&&activeTier!==a.tier)activeTier='all';
+    const idx=openActs(r).filter(x=>activeTier==='all'||x.tier===activeTier).indexOf(a);if(idx>=5&&a.tier!=='critical')queueExpanded=true;
+    renderQueue();renderBrief();renderAgent();scrollToItem(id,'center');
+  }
+  toast(shortName(a)+' is back in your queue.'+(h.st==='approved'?' The CRM change was reverted.':''));
+}
+function restartQueue(){
+  const r=role,st=QS[r],n=handledCount(r);
+  Object.assign(st,{h:{},runs:{},final:{},draft:{},edit:null,seen:{},busy:{},open:DATA[r].actions[0].id});
+  if(r==='ae'&&KAN0){DATA.ae.kanban=JSON.parse(KAN0);}
+  activeTier='all';queueExpanded=false;
+  newRun(r,'Queue reset',[['queue.reset',n+' handled '+(n===1?'item':'items'),'back in the queue']]);
+  render();toast('Queue restored. Start at the top.');
+  const q=document.getElementById('sccQueue');if(q)q.scrollIntoView({behavior:smooth(),block:'start'});
+}
+function openTopProposal(){const a=openActs(role)[0];if(!a){toast('Your queue is clear.');goSection('sccQueue');return;}jumpTo({r:role,a:a.id});}
+function openSecondary(name){
+  const r=role,n=norm(name);
+  const a=DATA[r].actions.find(x=>norm(x.name)===n||(x.alt&&norm(x.alt)===n));
+  if(a&&!QS[r].h[a.id]){jumpTo({r,a:a.id});return;}
+  const k=r==='ae'&&kanItemByName(name.split(' — ')[0]);if(k){jumpTo({r:'ae',k:k.id});return;}
+  toast('In production this opens the '+(r==='ae'?'lead':'opportunity')+' record. It is stubbed in this demo.');
+}
+
+/* ---- pipeline board: state, moves, wins, pointer drag ---- */
+const KAN_IDS={"Bordeaux Systems":"OPP-1055","Apex Liège":"OPP-1058","Lefèvre":"OPP-1037","Smile Studio Brussels":"OPP-1051","Systems Antwerpen":"OPP-1029","Logistics Namur":"OPP-1047","Atlas Lyon":"OPP-1042","Dubois":"OPP-1012"};
+let KAN0=null;
+function kanInit(){if(KAN0)return;let n=0;const K=DATA.ae.kanban,last=K.length-1;K.forEach((col,ci)=>col.items.forEach(it=>{it.id='k'+(++n);it.won0=ci===last;it.rec=KAN_IDS[it.name]||('OPP-'+(1100+n));}));KAN0=JSON.stringify(K);}
+function kanFind(kid){const K=DATA.ae.kanban;for(let ci=0;ci<K.length;ci++){const ii=K[ci].items.findIndex(x=>x.id===kid);if(ii>=0)return {ci,ii,it:K[ci].items[ii]};}return null;}
+function kanItemByName(name){kanInit();const n=norm(name);let f=null;DATA.ae.kanban.forEach(c=>c.items.forEach(it=>{if(!f&&norm(it.name)===n)f=it;}));return f;}
+function kanStage(kid){const f=kanFind(kid);return f?DATA.ae.kanban[f.ci].name:'';}
+function aeWon(){kanInit();const K=DATA.ae.kanban,last=K[K.length-1];let amt=0,n=0;last.items.forEach(it=>{if(!it.won0){const m=/€(\d+)K/.exec(it.meta);amt+=m?+m[1]:0;n++;}});return {amt,n};}
+function kanAdvance(kid){const f=kanFind(kid);if(f)moveDeal(kid,f.ci+1);}
+function moveDeal(kid,to,undoOf){
+  const K=DATA.ae.kanban,f=kanFind(kid);if(!f||to==null||isNaN(to)||!K[to]||f.ci===to)return;
+  const from=f.ci,it=K[from].items.splice(f.ii,1)[0];K[to].items.push(it);
+  const last=K.length-1,won=to===last&&from!==last;
+  const kb=document.getElementById('sccKanban'),body=kb.querySelector('.scc-modal__body'),sl=body.scrollLeft,stp=body.scrollTop;
+  if(kb.classList.contains('is-open')){renderKan();body.scrollLeft=sl;body.scrollTop=stp;const c=document.getElementById('kc-'+kid);if(c)c.classList.add('is-moved');}
+  const steps=[['ui.drag',K[from].name+' → '+K[to].name,undoOf?'undo by you':'by you'],['crm.write','Opportunity.StageName = "'+K[to].name+'" on '+it.rec,'ok']];
+  let resolved=null;
+  if(won){const a=DATA.ae.actions.find(x=>x.deal===it.name&&!QS.ae.h[x.id]);if(a){QS.ae.h[a.id]={st:'won',sum:it.name+' closed won on the board',t:clock()};resolved=a.id;steps.push(['queue.resolve',a.name,'removed from queue']);if(QS.ae.open===a.id){const nx=openActs('ae')[0];QS.ae.open=nx?nx.id:null;}}}
+  if(undoOf&&undoOf.resolved&&QS.ae.h[undoOf.resolved]){delete QS.ae.h[undoOf.resolved];steps.push(['queue.restore',act('ae',undoOf.resolved).name,'back in queue']);}
+  newRun('ae',(won?'Closed Won · ':'Stage change · ')+it.name,steps);
+  if(role==='ae')render(true);
+  if(undoOf){toast(it.name+' moved back to '+K[to].name+'.');return;}
+  const info={resolved};
+  if(won){celebrate();toast(it.name+' is Closed Won. '+((/€\d+K/.exec(it.meta)||[''])[0])+' added to this month.',{undo:()=>moveDeal(kid,from,info)});}
+  else toast(it.name+' moved to '+K[to].name+'.',{undo:()=>moveDeal(kid,from,info)});
+}
+let pd=null;
+function kanPDown(e){
+  if(e.pointerType==='mouse'||pd)return;
+  const card=e.target.closest('.scc-kancard');if(!card||e.target.closest('.scc-kanadv'))return;
+  card.setAttribute('draggable','false');
+  pd={card,id:card.dataset.k,pid:e.pointerId,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,active:false,t:0,over:null,g:null,raf:0};
+  if(e.target.closest('.scc-kangrip')){e.preventDefault();kanPStart();}
+  else pd.t=setTimeout(()=>{if(pd&&!pd.active)kanPStart();},280);
+}
+function kanPStart(){
+  const r=pd.card.getBoundingClientRect();pd.ox=pd.x-r.left;pd.oy=pd.y-r.top;pd.active=true;
+  const g=pd.card.cloneNode(true);['id','onpointerdown','ondragstart','ondragend','draggable'].forEach(x=>g.removeAttribute(x));
+  g.classList.add('scc-kanghost');g.style.width=r.width+'px';g.style.left=r.left+'px';g.style.top=r.top+'px';
+  document.getElementById('sccApp').appendChild(g);pd.g=g;pd.card.classList.add('is-lift');
+  try{if(navigator.vibrate)navigator.vibrate(10);}catch(_){}
+  kanHit();pd.raf=requestAnimationFrame(kanAuto);
+}
+function kanHit(){const el=document.elementFromPoint(pd.x,pd.y);const col=el&&el.closest?el.closest('#sccKan .scc-kancol'):null;if(col!==pd.over){if(pd.over)pd.over.classList.remove('is-over');pd.over=col;if(col)col.classList.add('is-over');}}
+function kanPMove(e){
+  if(!pd||e.pointerId!==pd.pid)return;
+  pd.x=e.clientX;pd.y=e.clientY;
+  if(!pd.active){if(Math.hypot(pd.x-pd.x0,pd.y-pd.y0)>10)kanPEnd();return;}
+  pd.g.style.left=(pd.x-pd.ox)+'px';pd.g.style.top=(pd.y-pd.oy)+'px';kanHit();
+}
+function kanPUp(e){if(!pd||e.pointerId!==pd.pid)return;const id=pd.id,active=pd.active,to=pd.over?+pd.over.dataset.col:null;kanPEnd();if(active&&to!=null)moveDeal(id,to);}
+function kanPEnd(){if(!pd)return;clearTimeout(pd.t);cancelAnimationFrame(pd.raf);if(pd.g)pd.g.remove();if(pd.over)pd.over.classList.remove('is-over');pd.card.classList.remove('is-lift');pd.card.setAttribute('draggable','true');pd=null;}
+function kanAuto(){if(!pd||!pd.active)return;const b=document.querySelector('#sccKanban .scc-modal__body');if(b){const r=b.getBoundingClientRect(),E=56;let dx=0,dy=0;if(pd.x<r.left+E)dx=-12;else if(pd.x>r.right-E)dx=12;if(pd.y<r.top+E)dy=-10;else if(pd.y>r.bottom-E)dy=10;if(dx||dy){b.scrollLeft+=dx;b.scrollTop+=dy;kanHit();}}pd.raf=requestAnimationFrame(kanAuto);}
+document.addEventListener('pointermove',kanPMove);
+document.addEventListener('pointerup',kanPUp);
+document.addEventListener('pointercancel',e=>{if(pd&&e.pointerId===pd.pid)kanPEnd();});
+document.addEventListener('contextmenu',e=>{if(pd)e.preventDefault();});
+document.getElementById('sccKanban').addEventListener('touchmove',e=>{if(pd&&pd.active&&e.cancelable)e.preventDefault();},{passive:false});
+
+/* ---- assistant: cited answers + run log ---- */
+const aiLast={};
+const CUST_IDS={"Bright Systems":"ACC-201","Pearl Logistics":"ACC-214","Camden Industries":"ACC-219","Riverside Systems":"ACC-233","Kensington Systems":"ACC-228","Whitfield Systems":"ACC-236","Thames Digital":"ACC-240","H+B Systems":"ACC-245"};
+function srcAct(r,id){const a=act(r,id);return {t:a.obj,n:a.name,id:a.rec,f:a.reason,go:{r,a:id}};}
+function srcEv(r,a,i){const s=a.src[i]||a.src[0];return {t:s.t,n:a.name,id:s.id,f:fill(s.f),go:{r,a:a.id}};}
+function srcCust(name){const c=DATA.ic.customers.find(x=>x.name===name);return {t:'Account',n:name,id:CUST_IDS[name]||'',f:c?`${c.tier} · MAU ${c.musp.total} · ${c.days}d since visit, window ${c.window}d`:'',go:{r:'ic',c:name}};}
+function srcSec(t,n,id,f,sec){return {t,n,id,f,go:{sec}};}
+function srcKan(name){const k=kanItemByName(name);return {t:'Opportunity',n:name,id:k?k.rec:'',f:k?kanStage(k.id)+' · '+k.meta:'',go:{r:'ae',k:k&&k.id}};}
+const CMD_META={
+ ae:[
+  {li:[[1],[2],[3]],src:()=>openActs('ae').slice(0,3).map(a=>srcAct('ae',a.id)),steps:()=>[['crm.query','Opportunity, Lead, Task · owner Sarah Chen','21 opps · 6 leads · 4 tasks'],['score.rank','priority model · '+openActs('ae').length+' open actions','top '+Math.min(3,openActs('ae').length)]],next:{l:'Open the first proposal',f:'openTopProposal()'}},
+  {li:[[1],[2],[3]],src:()=>[srcAct('ae','ae2'),srcAct('ae','ae5'),srcAct('ae','ae4')],steps:[['crm.query','Opportunity · stale or no next activity','3 records'],['email.history','last thread per contact','3 threads'],['draft.email','3 follow-ups','3 drafts'],['approval','drafts wait in your queue','waiting for you','wait']],next:{l:'Review the Lefèvre draft',f:"jumpTo({r:'ae',a:'ae2'})"}},
+  {li:[[1],[2],[1],[1]],src:()=>[srcAct('ae','ae4'),srcSec('Event','Smile Studio Brussels demo','EVT-5534','Today 14:00 · virtual','sccUp')],steps:[['crm.query','Opportunity OPP-1051','1 record'],['calendar.get','today 14:00','1 event'],['activity.history','last 30 days','4 activities']],next:{l:'Open the Smile Studio proposal',f:"jumpTo({r:'ae',a:'ae4'})"}},
+  {li:[[1],[2],[3]],src:()=>[srcAct('ae','ae1'),srcAct('ae','ae5'),srcSec('Report','Pipeline Health','RPT-PH','6 open opps with no next activity','sccPipe')],steps:[['crm.query','open Opportunity · owner Sarah Chen','21 records'],['risk.flags','past close · pushed 2+ · no next activity','2 · 4 · 6']],next:{l:'Show Critical actions',f:"setTier('critical');goSection('sccQueue')"}},
+  {li:{b:[1,2,3]},src:()=>[srcSec('Event','Atlas Lyon contract review','EVT-5531','Today 10:30 · with Dr. Petit','sccUp'),srcSec('Event','Smile Studio Brussels demo','EVT-5534','Today 14:00','sccUp'),srcKan('Logistics Namur')],steps:[['calendar.list','today','2 events'],['crm.query','open opps along the route','2 records'],['route.optimize','4 stops','~38 km']],next:{l:'Open Territory Map',f:'openMaps()'}},
+  {li:{b:[1,2]},src:()=>[srcSec('Target','Engagement Interaction Goal','TGT-EI','56 / 65 this month · 86%','sccTargets'),srcSec('Report','Pipeline Health','RPT-PH','6 open opps with no next activity','sccPipe')],steps:[['metrics.get','Engagement Interactions · month to date','56 / 65'],['gap.analyze','pace to month end','9 short']],next:{l:'Open the first proposal',f:'openTopProposal()'}}
+ ],
+ ic:[
+  {li:[[1,2],[3],[1]],src:()=>[srcCust('Bright Systems'),srcCust('Riverside Systems'),srcCust('Pearl Logistics')],steps:[['crm.query','Account · CSM Marcus Webb','84 accounts'],['visit.window','E1/E2 90d · E3/E4 180d','5 overdue'],['mau.pace','vs 6-month average','4 below pace']],next:{l:'Show customer health',f:"goSection('sccCust')"}},
+  {li:[[2],[1],[1],[3]],src:()=>[srcCust('Bright Systems'),{t:'MAU snapshot',n:'Bright Systems',id:'SNAP-201',f:'412 MAU · core 280 · expansion 160',go:{r:'ic',c:'Bright Systems'}},srcSec('Report','QBR Coverage','RPT-QBR','17 of 21 covered this quarter','sccQbr')],steps:[['crm.query','Account ACC-201','1 record'],['mau.history','6 months · core and expansion','6 points'],['draft.outline','QBR · Bright Systems','4 sections']],next:{l:'Open the Bright Systems proposal',f:"jumpTo({r:'ic',a:'ic1'})"}},
+  {li:[[1,2],[1,2]],src:()=>[srcAct('ic','ic2'),srcAct('ic','ic5')],steps:[['crm.query','Account · Below Pace or activations down','4 records'],['mau.trend','new activations · 3 months','down 7%']],next:{l:'Open the Pearl Logistics draft',f:"jumpTo({r:'ic',a:'ic2'})"}},
+  {li:{b:[1,2]},src:()=>[srcAct('ic','ic2'),srcAct('ic','ic5')],steps:[['crm.query','below-pace accounts','4 records'],['draft.email','4 check-ins','4 drafts'],['approval','drafts wait in your queue','waiting for you','wait']],next:{l:'Review the Pearl Logistics draft',f:"jumpTo({r:'ic',a:'ic2'})"}},
+  {li:[[1],[2,3]],src:()=>[srcAct('ic','ic6'),srcCust('Camden Industries'),srcCust('Whitfield Systems')],steps:[['crm.query','Account · MAU on or above pace','5 records'],['product.gap','owned vs available','3 gaps']],next:{l:'Open the Thames Digital proposal',f:"jumpTo({r:'ic',a:'ic6'})"}},
+  {li:{b:[1,2]},src:()=>[srcCust('Bright Systems'),srcCust('Riverside Systems')],steps:[['crm.query','overdue accounts','5 records'],['calendar.free','next 3 days','9 slots'],['route.batch','by area','3 days']],next:{l:'Open Territory Map',f:'openMaps()'}}
+ ]
+};
+function injectCites(html,map,rid){
+  const chip=n=>`<button class="scc-cite" onclick="jumpCite('${rid}',${n})" aria-label="Source ${n}" title="Source ${n}">${n}</button>`;
+  if(Array.isArray(map)){let k=0;return html.replace(/<\/li>/g,m=>(map[k++]||[]).map(chip).join('')+m);}
+  if(map&&map.b)return html.replace(/<\/b>/,m=>m+map.b.map(chip).join(''));
+  return html;
+}
+function sourcesHTML(src,rid){
+  if(!src.length)return '';
+  return `<div class="scc-src"><div class="scc-micro">Sources · records this answer used</div><div class="scc-src__list">${src.map((x,i)=>`<button class="scc-src__item" onclick="jumpCite('${rid}',${i+1})"><span class="scc-src__n">${i+1}</span><span class="scc-src__txt"><span class="scc-src__name">${esc(x.t)} · ${esc(x.n)}</span><span class="scc-src__f">${esc(fill(x.f))}</span></span><span class="scc-src__id">${esc(x.id)}</span></button>`).join('')}</div></div>`;
+}
+function jumpCite(rid,n){const run=findRun(rid);const s=run&&run.cites&&run.cites[n-1];if(s)jumpTo(s.go);}
+function aiRun(title,html,meta){
+  const r=role;meta=meta||{};
+  const src=typeof meta.src==='function'?meta.src():(meta.src||[]);
+  const base=typeof meta.steps==='function'?meta.steps():(meta.steps||[]);
+  const steps=base.concat([['answer.compose',src.length+' '+(src.length===1?'source':'sources')+' cited',src.length?'done':'no sources, no claims']]);
+  const run=newRun(r,'Assistant · '+title,[],{cites:src});
+  const think=x=>`<div class="scc-ai__think"><span class="scc-spinner2"></span> Thinking… <span class="scc-mono">${esc(x||'')}</span></div>`;
+  aiLast[r]={html:think('')};
+  const o=document.getElementById('sccAiOut');if(o){o.hidden=false;o.innerHTML=think('');}
+  playSteps(r,run,steps,reducedMotion()?40:190,()=>{const cur=run.steps[run.steps.length-1];const t=think(cur?cur.tool+'('+cur.arg+')':'');aiLast[r].html=t;const o2=document.getElementById('sccAiOut');if(o2&&r===role)o2.innerHTML=t;},()=>{
+    const out=injectCites(html,meta.li,run.id)+sourcesHTML(src,run.id)+`<div class="scc-ai__meta">${meta.next?`<button class="scc-btn-sec" onclick="${meta.next.f}">${esc(meta.next.l)} →</button>`:''}<span class="scc-ai__runline">${run.steps.length} steps · ${src.length} sources · read only, nothing written</span><button class="scc-linkbtn" onclick="showRun('${run.id}')">View in Agent activity</button></div>`;
+    aiLast[r]={html:out};const o3=document.getElementById('sccAiOut');if(o3&&r===role){o3.hidden=false;o3.innerHTML=out;}
+  });
+}
+/* free text: match records first, then intents, with the same data and rules as the commands */
+function answerFree(q){
+  const r=role,n=norm(q);
+  const STOP=new Set(['systems','digital','group','account','core','expansion','reactivate','send','quote','report','platform','upgrade','industries','logistics','addon','trial','with','from','lead','task','studio']);
+  const keyOf=name=>norm(name).split(/[^a-z0-9+]+/).filter(w=>w.length>=4&&!STOP.has(w));
+  const cands=[];
+  DATA[r].actions.forEach(a=>cands.push({kind:'act',name:a.name,keys:keyOf(a.name),a}));
+  if(r==='ae'){kanInit();DATA.ae.kanban.forEach(col=>col.items.forEach(it=>cands.push({kind:'kan',name:it.name,keys:keyOf(it.name),it,col})));DATA.ae.secondary.rows.forEach(x=>cands.push({kind:'sec',name:x.name,keys:keyOf(x.name),x}));}
+  else{DATA.ic.customers.forEach(c=>cands.push({kind:'cust',name:c.name,keys:keyOf(c.name),c}));DATA.ic.secondary.rows.forEach(x=>cands.push({kind:'sec',name:x.name,keys:keyOf(x.name),x}));}
+  let hit=cands.find(x=>n.includes(norm(x.name)))||cands.find(x=>x.keys.some(k=>n.includes(k)));
+  if(hit&&hit.kind==='kan'){const qa=DATA.ae.actions.find(a=>a.deal===hit.name&&!QS.ae.h[a.id]);if(qa)hit=cands.find(x=>x.kind==='act'&&x.a===qa)||hit;}
+  const base=[['crm.search','"'+q+'"',hit?'match: '+hit.name:'no record match']];
+  const ans=(h,meta)=>({html:`<div class="scc-ai__ans">${h}</div>`,meta:Object.assign({steps:base,src:[]},meta)});
+  if(hit){
+    if(hit.kind==='act'){const a=hit.a,h=QS[r].h[a.id];
+      if(h)return ans(`<b>${esc(a.name)}</b> is already handled today: ${esc(h.sum)}.`,{li:{b:[1]},src:[srcAct(r,a.id)],steps:base.concat([['crm.query',a.obj+' '+a.rec,'1 record']])});
+      const rank=openActs(r).indexOf(a)+1;
+      return ans(`<b>${esc(a.name)}</b> is #${rank} in your queue with a priority score of ${a.score}.<ul class="scc-ai__list">${a.sig.slice(0,2).map(x=>`<li>${esc(x.l)} (+${x.p})</li>`).join('')}<li>Proposal ready: ${esc(propLine(r,a))}</li></ul><div class="scc-ai__note">Nothing changes until you approve it in the queue.</div>`,
+        {li:[[1],[2],[1]],src:[srcAct(r,a.id),srcEv(r,a,1)],steps:base.concat([['crm.query',a.obj+' '+a.rec,'1 record'],['score.explain',a.sig.length+' signals','= '+a.score]]),next:{l:'Open the proposal',f:`jumpTo({r:'${r}',a:'${a.id}'})`}});
+    }
+    if(hit.kind==='kan'){const it=hit.it;return ans(`<b>${esc(it.name)}</b> is in <b>${esc(hit.col.name)}</b> on your Pipeline Board · ${esc(it.meta)}.`,{li:{b:[1]},src:[srcKan(it.name)],steps:base.concat([['crm.query','Opportunity '+it.rec,'1 record']]),next:{l:'Show it on the board',f:`jumpTo({r:'ae',k:'${it.id}'})`}});}
+    if(hit.kind==='cust'){const c=hit.c,over=c.days>c.window,sl={below:'Below Pace',on:'On Pace',above:'Above Pace',limited:'limited data'}[c.status];
+      return ans(`<b>${esc(c.name)}</b> is ${esc(c.tier)} and ${esc(sl)}, with ${c.musp.total} MAU${c.status!=='limited'?` (${c.pct}% of its 6-month average)`:''}. Last visit ${c.days} days ago against a ${c.window}-day window${over?', so a visit is overdue':''}.`,{li:{b:[1]},src:[srcCust(c.name)],steps:base.concat([['crm.query','Account '+(CUST_IDS[c.name]||''),'1 record'],['mau.pace','vs 6-month average',c.pct+'%']]),next:{l:'Show in customer health',f:`jumpTo({r:'ic',c:'${c.name.replace(/'/g,'')}'})`}});}
+    const x=hit.x;return ans(`<b>${esc(x.name)}</b>: ${esc(x.meta)}. Status: ${esc(x.badge)}.`,{li:{b:[1]},src:[{t:r==='ae'?'Lead':'Opportunity',n:x.name,id:'',f:x.meta,go:{r,s2:x.name}}],steps:base.concat([['crm.query',(r==='ae'?'Lead':'Opportunity')+' · '+x.name,'1 record']])});
+  }
+  const I=re=>re.test(n);
+  if(I(/risk|slip|past|late|stuck|stale|overdue|behind|danger|churn/)){
+    if(r==='ae'){const L=openActs('ae').filter(a=>a.obj==='Opportunity'&&a.tier!=='low').slice(0,4);
+      if(!L.length)return ans('<b>No open deal in your queue carries a risk flag right now.</b>',{steps:base.concat([['risk.flags','open queue','0 flagged']])});
+      return ans(`<b>${L.length} deals carry risk signals:</b><ul class="scc-ai__list">${L.map(a=>`<li><b>${esc(shortName(a))}</b>: ${esc(a.sig[0].l)} (+${a.sig[0].p})</li>`).join('')}</ul><div class="scc-ai__note">Each one has a proposal waiting in your queue.</div>`,{li:L.map((_,i)=>[i+1]),src:L.map(a=>srcAct('ae',a.id)),steps:base.concat([['crm.query','open Opportunity · risk flags',L.length+' records'],['score.rank','by priority','sorted']]),next:{l:'Open the riskiest deal',f:`jumpTo({r:'ae',a:'${L[0].id}'})`}});}
+    const L=DATA.ic.customers.filter(c=>c.status==='below'||c.days>c.window);
+    return ans(`<b>${L.length} customers are at risk:</b><ul class="scc-ai__list">${L.map(c=>`<li><b>${esc(c.name)}</b>: ${c.status==='below'?'MAU '+c.pct+'% of average':''}${c.status==='below'&&c.days>c.window?', ':''}${c.days>c.window?c.days+'d since visit, window '+c.window+'d':''}</li>`).join('')}</ul>`,{li:L.map((_,i)=>[i+1]),src:L.map(c=>srcCust(c.name)),steps:base.concat([['crm.query','Account · Below Pace or past visit window',L.length+' records']]),next:{l:'Show customer health',f:"goSection('sccCust')"}});
+  }
+  if(I(/email|draft|follow|write|message|reply|check.?in/)){const L=openActs(r).filter(a=>a.p.kind==='email');
+    if(!L.length)return ans('<b>No drafted emails are waiting.</b> You have approved or skipped them all.',{steps:base.concat([['queue.scan','email proposals','0 waiting']])});
+    return ans(`<b>${L.length} ${L.length===1?'email is':'emails are'} drafted and waiting for your approval:</b><ul class="scc-ai__list">${L.map(a=>`<li><b>${esc(a.p.to)}</b>, ${esc(propVals(r,a).subj)}</li>`).join('')}</ul>`,{li:L.map((_,i)=>[i+1]),src:L.map(a=>srcAct(r,a.id)),steps:base.concat([['queue.scan','email proposals',L.length+' waiting']]),next:{l:'Review the first draft',f:`jumpTo({r:'${r}',a:'${L[0].id}'})`}});
+  }
+  if(r==='ae'&&I(/lead|prospect|inbound/)){const L=openActs('ae').filter(a=>a.obj==='Lead'),S=DATA.ae.secondary.rows.filter(x=>!L.some(a=>a.name===x.name));
+    return ans(`<b>${L.length+S.length} active leads:</b><ul class="scc-ai__list">${L.map(a=>`<li><b>${esc(a.name)}</b>: ${esc(a.reason)}, score ${a.score}</li>`).join('')}${S.map(x=>`<li><b>${esc(x.name)}</b>: ${esc(x.meta)}</li>`).join('')}</ul>`,{li:L.map((_,i)=>[i+1]).concat(S.map((_,i)=>[L.length+i+1])),src:L.map(a=>srcAct('ae',a.id)).concat(S.map(x=>({t:'Lead',n:x.name,id:'',f:x.meta,go:{r:'ae',s2:x.name}}))),steps:base.concat([['crm.query','Lead · owner Sarah Chen · active',(L.length+S.length)+' records']]),next:{l:'Show the Leads list',f:"goSection('sccSec')"}});
+  }
+  if(I(/visit|qbr|window|cadence/)){
+    if(r==='ic'){const L=DATA.ic.customers.filter(c=>c.days>c.window);return ans(`<b>${L.length} customers are past their visit window:</b><ul class="scc-ai__list">${L.map(c=>`<li><b>${esc(c.name)}</b> (${c.tier}): ${c.days}d since visit, window ${c.window}d</li>`).join('')}</ul>`,{li:L.map((_,i)=>[i+1]),src:L.map(c=>srcCust(c.name)),steps:base.concat([['visit.window','E1/E2 90d · E3/E4 180d',L.length+' overdue']]),next:{l:'Open the top proposal',f:'openTopProposal()'}});}
+    const U=DATA.ae.qbr.uncovered;return ans(`<b>${U.length} E1/E2 accounts still need a QBR this quarter:</b><ul class="scc-ai__list">${U.map(u=>`<li><b>${esc(u.name)}</b> (${u.tier}): ${esc(u.last)}</li>`).join('')}</ul>`,{li:U.map(()=>[1]),src:[srcSec('Report','QBR Coverage','RPT-QBR',DATA.ae.qbr.covered+' of '+DATA.ae.qbr.total+' covered','sccQbr')],steps:base.concat([['crm.query','E1/E2 accounts · QBR this quarter',U.length+' uncovered']]),next:{l:'Show QBR Coverage',f:"goSection('sccQbr')"}});
+  }
+  if(I(/pipeline|coverage|forecast|quota|target|revenue|won|number|upsell/)){
+    const d=DATA[r];
+    if(r==='ae'){const qq=d.revenueTarget.val/4,gap=Math.max(qq-d.qtdClosed,1),cov=d.openPipeline/gap,w=aeWon();
+      return ans(`<b>Open pipeline is ${money('€',d.openPipeline)}</b>, ${cov.toFixed(1)}× the ${money('€',gap)} still needed this quarter. Closed Won this month is ${kEur(612+w.amt)} against a €700K goal.`,{li:{b:[1,2,3]},src:[srcSec('Metric','Open Pipeline Value','KPI-OPV','21 open · Mid-Market','sccScore'),srcSec('Metric','Pipeline Coverage','KPI-COV','target '+money('€',d.revenueTarget.val)+' a year','sccScore'),srcSec('Target','Closed Won vs Goal','TGT-CW',kEur(612+w.amt)+' / €700K','sccTargets')],steps:base.concat([['metrics.get','pipeline, coverage, closed won','3 values']]),next:{l:'Open Pipeline Board',f:'openKanban()'}});}
+    const u=d.upsellTarget,built=u.open+u.closed;
+    return ans(`<b>Upsell pipeline is ${money('£',built)}</b>, ${Math.round(built/u.val*100)}% of your ${money('£',u.val)} goal, with ${money('£',u.closed)} already won.`,{li:{b:[1]},src:[srcSec('Target','Upsell Pipeline vs Goal','TGT-UP',money('£',built)+' / '+money('£',u.val),'sccTargets')],steps:base.concat([['metrics.get','upsell open + won','2 values']]),next:{l:'Show Personal Targets',f:"goSection('sccTargets')"}});
+  }
+  if(I(/today|meeting|calendar|schedule|agenda|tomorrow|day/)){const g=DATA[r].upcoming.slice(0,2),items=g.flatMap(x=>x.items.map(it=>Object.assign({sec:x.sec},it)));
+    return ans(`<b>${items.length} things on your calendar today and tomorrow:</b><ul class="scc-ai__list">${items.map(it=>`<li>${esc(it.sec==='TODAY'?'Today':'Tomorrow')} ${esc(it.time)}: <b>${esc(it.t)}</b> · ${esc(it.m)}</li>`).join('')}</ul>`,{li:items.map(()=>[1]),src:[srcSec('Calendar','Upcoming','CAL',items.length+' events','sccUp')],steps:base.concat([['calendar.list','today and tomorrow',items.length+' events']]),next:{l:'Show Upcoming',f:"goSection('sccUp')"}});
+  }
+  return ans(`<b>No match in your book.</b> I could not tie “${esc(q)}” to a record or a metric, so I did not guess.<ul class="scc-ai__list"><li>Try a name, such as ${r==='ae'?'Atlas Lyon or Namur':'Bright Systems or Pearl'}</li><li>Or ask about risk, follow-ups, ${r==='ae'?'leads':'visits'}, pipeline or today</li></ul><div class="scc-ai__note">Demo · in production this searches your full CRM with guardrails.</div>`,{steps:base});
+}
+
+/* ---- command palette (Ctrl/Cmd K) ---- */
+let palOpen=false,palItems=[],palSel=0,palRet=null;
+const PAL_IC={
+ sec:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+ cmd:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 4 4-4 4M12 16h7"/></svg>',
+ ask:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>'
+};
+function palRecords(){
+  const out=[],seen=new Set();const add=x=>{const k=(x.r||'')+'|'+norm(x.l);if(seen.has(k))return;seen.add(k);out.push(x);};
+  ['ae','ic'].forEach(r=>DATA[r].actions.forEach(a=>{const h=QS[r].h[a.id];add({g:'Deals and records',r,l:a.name,s:h?'Handled · '+h.sum:a.type+' · score '+a.score+' · '+a.reason,ic:a.icon,hint:h?'Done':'Queue',go:{r,a:a.id},kw:a.type+' '+a.rec});}));
+  kanInit();DATA.ae.kanban.forEach(col=>col.items.forEach(it=>add({g:'Deals and records',r:'ae',l:it.name,s:'Opportunity · '+col.name+' · '+it.meta,ic:'opp',hint:'Board',go:{r:'ae',k:it.id},kw:it.rec})));
+  DATA.ae.secondary.rows.forEach(x=>add({g:'Deals and records',r:'ae',l:x.name,s:'Lead · '+x.meta,ic:'lead',hint:'Leads',go:{r:'ae',s2:x.name}}));
+  DATA.ic.customers.forEach(c=>add({g:'Deals and records',r:'ic',l:c.name,s:'Customer · '+c.tier+' · '+c.days+'d since visit (window '+c.window+'d)',ic:'acct',hint:'Customers',go:{r:'ic',c:c.name}}));
+  DATA.ic.secondary.rows.forEach(x=>add({g:'Deals and records',r:'ic',l:x.name,s:'Upsell · '+x.meta,ic:'opp',hint:'Upsell',go:{r:'ic',s2:x.name}}));
+  VOICE_CONTACTS.forEach(c=>add({g:'Deals and records',r:null,l:c.name,s:'Contact · '+c.acct+' · record a voice note',ic:'lead',hint:'Voice',go:{v:c.id}}));
+  return out;
+}
+function palSections(){return [['My Next Actions','sccQueue'],['AI Assistant','sccAi'],['Agent activity','sccAgent'],['Scorecard','sccScore'],role==='ae'?['Expansion Incentive','sccVps']:null,role==='ae'?['Pipeline Health','sccPipe']:['Customer Health & Visit Cadence','sccCust'],['QBR Coverage','sccQbr'],[DATA[role].secondary.title,'sccSec'],['Leaderboard','sccLb'],['Personal Targets','sccTargets'],['Your Focus','sccFocus'],['Campaigns','sccCamp'],['Upcoming','sccUp']]
+  .filter(Boolean).map(x=>({g:'Sections',l:x[0],s:'Jump to this section',ic:'sec',hint:'Section',go:{sec:x[1]}}));}
+function palCommands(){
+  const dk=document.getElementById('sccApp').classList.contains('scc--dark'),top=openActs(role)[0];
+  const c=[
+   {l:'Open the top proposal',s:top?top.name:'Your queue is clear',f:openTopProposal,kw:'approve next action'},
+   {l:'Open Pipeline Board',s:'Drag deals between stages',f:()=>{ensureRole('ae');openKanban();},kw:'kanban stages drag board'},
+   {l:'Open Trends',s:'6-month charts',f:openTrend,kw:'chart history'},
+   {l:'Open Territory Map',s:'Planning, visualization and routing',f:openMaps,kw:'route map'},
+   {l:'Record a voice note',s:'Pick a contact, record, log it',f:openVoice,kw:'voice recorder audio'},
+   {l:dk?'Switch to light mode':'Switch to dark mode',s:'Theme',f:toggleTheme,kw:'theme dark light'},
+   {l:explainMode?'Hide metric explanations':'Show metric explanations',s:'Help tips',f:toggleExplain,kw:'help tips explain'},
+   {l:'Refresh data',s:'Reload scores',f:refresh,kw:'reload'},
+   {l:'Demo as AE',s:'Sarah Chen · Account Executive',f:()=>setDemo('ae'),kw:'role switch'},
+   {l:'Demo as CSM',s:'Marcus Webb · CSM',f:()=>setDemo('ic'),kw:'role switch customer success'},
+   {l:'Demo as Dual role',s:'Switch between AE and CSM views',f:()=>setDemo('dual'),kw:'role switch'},
+   {l:'Set my revenue target',s:'Personal Targets',f:setRevenue,kw:'goal'},
+   role==='ic'?{l:'Set my MAU growth target',s:'MAU Growth',f:setMuspTarget,kw:'goal'}:null,
+   role==='ic'?{l:'Set my upsell target',s:'Personal Targets',f:setUpsell,kw:'goal'}:null,
+   {l:'Show Critical actions',s:'Filter the queue',f:()=>{setTier('critical');goSection('sccQueue');},kw:'filter priority'},
+   handledCount(role)?{l:'Start the queue again',s:handledCount(role)+' handled items come back',f:restartQueue,kw:'reset restart'}:null
+  ].filter(Boolean).map(x=>Object.assign({g:'Commands',ic:'cmd',hint:'Command'},x));
+  (role==='ae'?AE_CMDS:IC_CMDS).forEach((m,i)=>c.push({g:'Ask the assistant',l:'Ask: '+m.label,s:m.prompt,ic:'ask',hint:'Assistant',f:()=>{goSection('sccAi');runAiCmd(i);}}));
+  return c;
+}
+function palScore(q,x){
+  const t=norm(x.l),s=norm((x.s||'')+' '+(x.kw||''));
+  if(t.startsWith(q))return 100;
+  const i=t.indexOf(q);if(i>=0)return 80-Math.min(i,30)/3+(i>0&&/\W/.test(t[i-1])?8:0);
+  const ws=q.split(/\s+/).filter(Boolean);
+  if(ws.every(w=>t.includes(w)))return 60;
+  if(ws.every(w=>t.includes(w)||s.includes(w)))return 40;
+  let j=0;for(const ch of t){if(ch===q[j])j++;if(j===q.length)return 15;}
+  return 0;
+}
+function palBuild(raw){
+  const q=norm(raw.trim());const recs=palRecords();
+  if(!q){const top=openActs(role).slice(0,4).map(a=>recs.find(x=>x.go.a===a.id&&x.r===role)).filter(Boolean).map(x=>Object.assign({},x,{g:'Up next in your queue'}));
+    return top.concat(palCommands().filter(x=>x.g==='Commands').slice(0,6),palSections());}
+  const all=recs.concat(palSections(),palCommands()).map(x=>({x,sc:palScore(q,x)+((!x.r||x.r===role)?3:0)})).filter(o=>o.sc>3).sort((a,b)=>b.sc-a.sc).slice(0,24).map(o=>o.x);
+  const order=[];all.forEach(x=>{if(!order.includes(x.g))order.push(x.g);});
+  return order.flatMap(g=>all.filter(x=>x.g===g));
+}
+function palRender(){
+  const L=document.getElementById('sccPalList'),inp=document.getElementById('sccPalIn');
+  if(!palItems.length){L.innerHTML=`<div class="scc-pal__empty">Nothing matches “${esc(inp.value)}”.<br>Try an account such as Atlas or Bright, or a command such as board or theme.</div>`;inp.removeAttribute('aria-activedescendant');return;}
+  let html='',g=null;
+  palItems.forEach((x,i)=>{
+    if(x.g!==g){g=x.g;html+=`<div class="scc-pal__grp" role="presentation">${esc(g)}</div>`;}
+    const other=x.r&&x.r!==role;
+    html+=`<button class="scc-pal__item" role="option" id="pal-${i}" aria-selected="${i===palSel}" onmousemove="palHover(${i})" onclick="palRun(${i})"><span class="scc-pal__ic">${PAL_IC[x.ic]||ICONS[x.ic]||PAL_IC.cmd}</span><span class="scc-pal__txt"><span class="scc-pal__l">${esc(x.l)}</span><span class="scc-pal__s">${esc(x.s||'')}</span></span><span class="scc-pal__hint">${esc(other?(x.r==='ae'?'AE view':'CSM view'):x.hint)}</span></button>`;
+  });
+  L.innerHTML=html;inp.setAttribute('aria-activedescendant','pal-'+palSel);
+}
+function palQuery(){palItems=palBuild(document.getElementById('sccPalIn').value);palSel=0;palRender();document.getElementById('sccPalList').scrollTop=0;}
+function palHover(i){if(i===palSel)return;palSel=i;document.querySelectorAll('#sccPalList .scc-pal__item').forEach((b,k)=>b.setAttribute('aria-selected',k===i));document.getElementById('sccPalIn').setAttribute('aria-activedescendant','pal-'+i);}
+function palMove(d){if(!palItems.length)return;palSel=(palSel+d+palItems.length)%palItems.length;palHover(palSel);document.querySelectorAll('#sccPalList .scc-pal__item').forEach((b,k)=>b.setAttribute('aria-selected',k===palSel));const el=document.getElementById('pal-'+palSel);if(el)el.scrollIntoView({block:'nearest'});}
+function palKey(e){if(e.key==='ArrowDown'){e.preventDefault();palMove(1);}else if(e.key==='ArrowUp'){e.preventDefault();palMove(-1);}else if(e.key==='Enter'){e.preventDefault();palRun(palSel);}}
+function palRun(i){const x=palItems[i];if(!x)return;closePalette(false);if(x.f)x.f();else jumpTo(x.go);}
+function openPalette(){if(palOpen)return;hideTip();palOpen=true;palRet=document.activeElement;const el=document.getElementById('sccPal'),inp=document.getElementById('sccPalIn');el.hidden=false;inp.value='';palQuery();setTimeout(()=>inp.focus(),10);}
+function closePalette(restore){if(!palOpen)return;palOpen=false;document.getElementById('sccPal').hidden=true;if(restore!==false&&palRet&&palRet.focus&&document.contains(palRet))palRet.focus({preventScroll:true});}
+
+/* ---- jumping to deals, rows and sections ---- */
+function closeOverlays(){closeKanban();closeTrend();closeMaps();if(document.getElementById('sccVoice').classList.contains('is-open'))closeVoice();}
+function ensureRole(r){if(!r||r===role)return;if(demo==='dual')setRole(r);else setDemo(r);}
+function cssEsc(s){return (window.CSS&&CSS.escape)?CSS.escape(s):String(s).replace(/["\\]/g,'');}
+function goSection(id){closeOverlays();if(id==='sccSec'&&!secOpen)toggleSec();const el=document.getElementById(id);if(!el)return;el.scrollIntoView({behavior:smooth(),block:'start'});flash(el);}
+function jumpTo(go){
+  if(!go)return;
+  if(go.v){closeOverlays();openVoice();selectVoice(go.v);return;}
+  ensureRole(go.r);
+  if(go.sec){goSection(go.sec);return;}
+  if(go.a){
+    const a=act(role,go.a);if(!a)return;const h=QS[role].h[go.a];
+    if(h){if(h.st==='won'&&a.deal){const k=kanItemByName(a.deal);if(k){jumpTo({r:'ae',k:k.id});toast(a.name+' was closed won on the board.');return;}}closeOverlays();toast(shortName(a)+' is already handled: '+h.sum+'.');if(h.run)showRun(h.run);else showAgent();return;}
+    closeOverlays();activeTier='all';
+    const idx=openActs(role).indexOf(a);if(idx>=5&&a.tier!=='critical')queueExpanded=true;
+    QS[role].open=a.id;ensurePrepared(role,a.id);renderQueue();renderAgent();
+    const el=document.getElementById('qa-'+a.id);if(el){el.scrollIntoView({behavior:smooth(),block:'start'});flash(el);}
+    return;
+  }
+  if(go.k){closeTrend();closeMaps();if(document.getElementById('sccVoice').classList.contains('is-open'))closeVoice();openKanban();const c=document.getElementById('kc-'+go.k);if(c){c.scrollIntoView({behavior:smooth(),block:'nearest',inline:'center'});c.classList.remove('is-moved');void c.offsetWidth;c.classList.add('is-moved');}return;}
+  if(go.c){closeOverlays();if(activeSeg!=='all'){activeSeg='all';render(true);}const row=document.querySelector('#sccCust .scc-crow[data-name="'+cssEsc(go.c)+'"]');if(row){row.scrollIntoView({behavior:smooth(),block:'center'});flash(row);}return;}
+  if(go.s2){closeOverlays();if(!secOpen)toggleSec();const row=document.querySelector('#sccSec [data-name="'+cssEsc(go.s2)+'"]');if(row){row.scrollIntoView({behavior:smooth(),block:'center'});flash(row);}return;}
+}
+
+/* ---- in-page dialog + toasts ---- */
+let dlg=null;
+function openDlg(o){dlg=o;dlg.ret=document.activeElement;const $=id=>document.getElementById(id);
+  $('sccDlgT').textContent=o.title;$('sccDlgS').textContent=o.sub||'';$('sccDlgL').textContent=o.label;$('sccDlgPre').textContent=o.pre||'';$('sccDlgSuf').textContent=o.suf||'';
+  const inp=$('sccDlgIn');inp.value=o.value;$('sccDlg').hidden=false;validateDlg();setTimeout(()=>{inp.focus();inp.select();},30);}
+function closeDlg(){const el=document.getElementById('sccDlg');if(el)el.hidden=true;const r=dlg&&dlg.ret;dlg=null;if(r&&r.focus&&document.contains(r))r.focus({preventScroll:true});}
+function validateDlg(){if(!dlg)return false;const v=document.getElementById('sccDlgIn').value.trim(),err=dlg.check(v),h=document.getElementById('sccDlgHint'),ok=document.getElementById('sccDlgOk');h.textContent=err||dlg.hint||'';h.classList.toggle('is-err',!!err);ok.disabled=!!err;ok.title=err||'';return !err;}
+function saveDlg(e){if(e)e.preventDefault();if(!dlg||!validateDlg())return false;const v=document.getElementById('sccDlgIn').value.trim(),o=dlg;closeDlg();o.save(v);return false;}
+function logTarget(r,lbl,cur,oldV,newV){const f=x=>typeof x==='number'?money(cur,x):x;newRun(r,'Target · '+lbl,[['ui.input',lbl+' '+f(oldV)+' → '+f(newV),'by you'],['crm.write','User_Target__c · '+lbl,'ok']]);if(r===role)renderAgent();}
+const SVG_OK16='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const SVG_WARN16='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>';
+function toast(msg,o){
+  o=o||{};const box=document.getElementById('sccToasts');if(!box)return;
+  while(box.children.length>=3)box.firstChild.remove();
+  const t=document.createElement('div');t.className='scc-toast'+(o.warn?' scc-toast--warn':'');t.setAttribute('role','status');
+  t.innerHTML=`<span class="scc-toast__ic">${o.warn?SVG_WARN16:SVG_OK16}</span><span class="scc-toast__m">${esc(msg)}</span>`;
+  let gone=false;const kill=()=>{if(gone)return;gone=true;t.classList.add('is-out');setTimeout(()=>t.remove(),220);};
+  if(o.undo){const b=document.createElement('button');b.className='scc-toast__b';b.textContent='Undo';b.onclick=()=>{kill();o.undo();};t.appendChild(b);}
+  const x=document.createElement('button');x.className='scc-toast__b';x.setAttribute('aria-label','Dismiss');x.textContent='✕';x.onclick=kill;t.appendChild(x);
+  box.appendChild(t);setTimeout(kill,o.undo?7000:4200);
+}
+
+/* ---- voice recorder steps in the log ---- */
+let voiceRun=null;
+function voiceRunStart(dur){const r=role,c=voiceSel;const run=newRun(r,'Voice note · '+(c?c.name:'contact'),[]);voiceRun={r,run};
+  playSteps(r,run,[['audio.save',dur+' · '+(c?c.acct:''),'saved'],['speech.transcribe','auto language','1 transcript'],['summarize','visit notes','3 bullets'],['approval','log to '+(c?c.acct:'the account'),'waiting for you','wait']],reducedMotion()?40:320);}
+function voiceRunDone(){if(!voiceRun)return;const v=voiceRun;voiceRun=null;bumpRun(v.r,v.run);const ap=v.run.steps.find(x=>x.tool==='approval');if(ap){ap.st='ok';ap.res='approved';}v.run.steps.push(mkStep(['crm.write','Task (Engagement Interaction) on '+(voiceSel?voiceSel.acct:'the account'),'ok']));if(v.r===role)renderAgent();}
+
+/* ---- touch: tap an info button to see its tip ---- */
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.scc-i');if(b)showTip(b);else hideTip();});
+try{document.getElementById('sccKbd').textContent=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'')?'⌘ K':'Ctrl K';}catch(_){}
+kanInit();
+
 
 (function init(){if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)toggleTheme();render();setTimeout(celebrate,650);})();
 </script>

@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Org Health Auditor — interactive demo</title>
+<title>Org Health Auditor · interactive demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* =======================================================================
-   Org Health Auditor — simulated Salesforce org governance / technical-debt
+   Org Health Auditor: simulated Salesforce org governance / technical-debt
    audit. Synthetic data, invented business-unit names, no real org.
-   Scorecard → object heat → conflict detail → dependency-ordered
-   remediation plan (the deliverable) → duplicate contacts.
+   Scan → scorecard → object heat → conflict detail and save simulator →
+   dependency-ordered remediation plan (the deliverable) → duplicate
+   contacts → automation inventory. Agent activity runs alongside.
    ======================================================================= */
 :root{
   --bg:#0b0d12; --panel:#13161f; --panel2:#191d29; --line:#272d3c; --line2:#333a4d;
@@ -24,15 +25,17 @@
   --radius:16px;
 }
 *{box-sizing:border-box;}
-html,body{margin:0;min-height:100%;overflow-x:clip;}
+[hidden]{display:none!important;}
+html,body{margin:0;height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--ink);font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-size:14px;line-height:1.5;}
 .mono{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
 .num{font-variant-numeric:tabular-nums;}
 button{font-family:inherit;cursor:pointer;}
 h1,h2,h3{margin:0;}
-.app{max-width:1120px;margin:0 auto;padding:20px 20px 90px;}
+.app{max-width:1080px;margin:0 auto;padding:22px 26px 80px;container-type:inline-size;}
 .muted{color:var(--muted);} .faint{color:var(--faint);}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px;}
 
 /* top bar */
 .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
@@ -40,15 +43,19 @@ h1,h2,h3{margin:0;}
 .top__eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
 .top__title{font-size:19px;font-weight:800;letter-spacing:-.02em;}
 .top__spacer{flex:1;}
-.pill{font-size:11.5px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;display:inline-flex;align-items:center;gap:6px;}
+.pill{font-size:11.5px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
 .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);}
+.dot--idle{background:var(--faint)!important;box-shadow:none!important;}
+.dot--run{background:var(--lime)!important;box-shadow:0 0 8px var(--lime)!important;animation:pulse 1s ease-in-out infinite;}
+.dot--ok{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
+@keyframes pulse{50%{opacity:.35}}
 
 .note{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(242,200,121,.3);border-radius:10px;padding:9px 13px;margin-bottom:18px;}
 
-/* section nav */
+/* section nav (phone tabs) */
 .snav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .snav a{font-size:12.5px;font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:6px 13px;transition:.13s;text-decoration:none;}
-.snav a:hover{color:var(--lime);border-color:var(--lime-line);}
+@media(hover:hover){ .snav a:hover{color:var(--lime);border-color:var(--lime-line);} }
 
 .sec{margin-bottom:30px;}
 .sec__h{display:flex;align-items:baseline;gap:11px;margin-bottom:14px;flex-wrap:wrap;}
@@ -62,7 +69,7 @@ h1,h2,h3{margin:0;}
 /* AI summary */
 .aibanner{background:linear-gradient(120deg,rgba(217,247,123,.08),rgba(217,247,123,.02));border:1px solid var(--lime-line);border-radius:var(--radius);padding:16px 18px;display:flex;gap:13px;margin-bottom:22px;}
 .aibanner__ic{width:36px;height:36px;border-radius:11px;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center;flex-shrink:0;}
-.aibanner__tag{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--lime);border:1px solid var(--lime-line);border-radius:999px;padding:2px 8px;}
+.aibanner__tag{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--lime);border:1px solid var(--lime-line);border-radius:999px;padding:2px 8px;white-space:nowrap;}
 
 /* scorecard */
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
@@ -75,7 +82,7 @@ h1,h2,h3{margin:0;}
 
 /* object heat */
 .obj{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:9px;background:var(--panel);}
-.obj__row{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:center;padding:12px 15px;cursor:pointer;transition:background .12s;}
+.obj__row{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:center;padding:12px 15px;cursor:pointer;transition:background .12s;min-height:48px;}
 .obj__row:hover{background:var(--panel2);}
 .obj__name{font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:8px;}
 .obj__name .chev{color:var(--faint);transition:transform .2s;font-size:11px;}
@@ -104,18 +111,18 @@ h1,h2,h3{margin:0;}
 
 /* conflict detail */
 .conflict{border:1px solid rgba(242,119,140,.4);border-radius:var(--radius);background:linear-gradient(120deg,rgba(242,119,140,.06),transparent);padding:18px;}
-.conflict__field{display:inline-flex;align-items:center;gap:8px;font-family:"Geist Mono",monospace;font-size:13px;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:6px 11px;margin-bottom:14px;}
+.conflict__field{display:inline-flex;align-items:center;gap:8px;font-family:"Geist Mono",monospace;font-size:13px;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:6px 11px;margin-bottom:14px;max-width:100%;flex-wrap:wrap;}
 .flow{display:flex;flex-direction:column;gap:0;margin:6px 0 4px;}
 .fstep{display:flex;gap:13px;align-items:flex-start;padding:9px 0;}
 .fstep__dot{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--panel2);border:1px solid var(--line2);color:var(--muted);}
 .fstep.write .fstep__dot{background:var(--rose-soft);border-color:var(--rose);color:var(--rose);}
-.fstep__body{flex:1;font-size:13px;}
+.fstep__body{flex:1;font-size:13px;min-width:0;}
 .fstep__who{font-weight:700;}
 .fstep__who .atag{margin-left:6px;}
 .fstep__line{width:2px;background:var(--line2);margin-left:12px;height:10px;}
 .verdict{margin-top:14px;display:flex;gap:11px;align-items:flex-start;background:var(--rose-soft);border:1px solid rgba(242,119,140,.35);border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.55;}
 
-/* remediation — the deliverable */
+/* remediation: the deliverable */
 .rem{position:relative;}
 .rem__item{display:flex;gap:15px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:11px;align-items:flex-start;transition:.15s;}
 .rem__item:hover{border-color:var(--line2);transform:translateX(2px);}
@@ -138,7 +145,7 @@ h1,h2,h3{margin:0;}
 .dupcard__v{font-size:23px;font-weight:800;}
 .dupcard__s{font-size:11.5px;color:var(--muted);margin-top:2px;}
 
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--lime);color:var(--lime-ink);padding:11px 18px;border-radius:11px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:90;box-shadow:0 14px 36px rgba(0,0,0,.5);}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--lime);color:var(--lime-ink);padding:11px 18px;border-radius:11px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:90;box-shadow:0 14px 36px rgba(0,0,0,.5);max-width:calc(100vw - 32px);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 @media(max-width:820px){ .kpis{grid-template-columns:repeat(2,1fr);} .dup{grid-template-columns:1fr;} }
@@ -148,79 +155,556 @@ h1,h2,h3{margin:0;}
   .atbl{font-size:11.5px;} .atbl th:nth-child(4),.atbl td:nth-child(4){display:none;}
   .rem__item{flex-wrap:wrap;} .rem__meta{flex-direction:row;align-items:center;}
 }
+
+/* =======================================================================
+   Upgrade: app shell, scan, simulator, checklist, inventory, agent panel.
+   Same tokens, type and shapes as the report above.
+   ======================================================================= */
+.shell{height:100vh;height:100dvh;display:grid;grid-template-columns:236px minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr);}
+.shell>.top{grid-column:1/-1;grid-row:1;margin:0;padding:11px 18px;border-bottom:1px solid var(--line);flex-wrap:nowrap;min-width:0;}
+.top__id{min-width:0;overflow:hidden;}
+.top__title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.side{grid-column:1;grid-row:2;border-right:1px solid var(--line);padding:16px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;min-height:0;}
+.side__label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);padding:2px 11px 8px;}
+.nav__i{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:8px 11px;border-radius:10px;border:1px solid transparent;background:none;color:var(--muted);font-size:13px;font-weight:600;text-align:left;transition:.13s;}
+.nav__i:hover{color:var(--ink);background:var(--panel);}
+.nav__i[aria-current="page"]{color:var(--ink);background:var(--panel);border-color:var(--line2);}
+.nav__n{font-family:"Geist Mono",monospace;font-size:11px;color:var(--lime);width:18px;}
+.nav__b{margin-left:auto;font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 7px;background:var(--panel2);border:1px solid var(--line2);color:var(--ink2);}
+.nav__b--bad{background:var(--rose-soft);border-color:rgba(242,119,140,.4);color:var(--rose);}
+.nav__b--ok{background:var(--green-soft);border-color:rgba(91,208,138,.35);color:var(--green);}
+.side__foot{margin-top:auto;padding-top:16px;display:flex;flex-direction:column;gap:10px;}
+.orgcard{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--panel);font-size:12px;color:var(--ink2);}
+.orgcard b{display:block;color:var(--ink);font-size:12.5px;}
+.main{grid-column:2;grid-row:2;overflow-y:auto;overflow-x:hidden;min-width:0;min-height:0;}
+.agent{grid-column:3;grid-row:2;width:340px;border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0;}
+.shell:not(.agent-open) .agent{display:none;}
+.agent-scrim{display:none;}
+
+/* buttons and inputs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 15px;border-radius:10px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);font-size:13px;font-weight:700;white-space:nowrap;transition:.13s;}
+.btn:hover:not(:disabled){border-color:var(--lime-line);color:var(--lime);}
+.btn--primary{background:var(--lime);color:var(--lime-ink);border-color:var(--lime);box-shadow:0 8px 22px -12px var(--lime);}
+.btn--primary:hover:not(:disabled){color:var(--lime-ink);filter:brightness(1.06);}
+.btn--ghost{background:none;}
+.btn--danger{background:var(--rose);border-color:var(--rose);color:#16070a;}
+.btn--danger:hover:not(:disabled){color:#16070a;filter:brightness(1.06);}
+.btn--lg{min-height:46px;padding:0 22px;font-size:14px;}
+.btn--icon{width:40px;padding:0;}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
+.btn .cnt{font-size:10.5px;font-weight:700;border-radius:999px;padding:0 6px;background:var(--panel);border:1px solid var(--line2);color:var(--ink2);}
+.linkbtn{background:none;border:none;color:var(--lime);font-weight:600;font-size:12.5px;padding:0;min-height:40px;display:inline-flex;align-items:center;gap:5px;text-align:left;}
+.linkbtn:hover{text-decoration:underline;}
+.inp{min-height:40px;background:var(--panel);border:1px solid var(--line2);border-radius:10px;color:var(--ink);padding:0 12px;font:inherit;font-size:13px;min-width:0;}
+.inp:focus{outline:none;border-color:var(--lime-line);box-shadow:0 0 0 3px rgba(217,247,123,.1);}
+select.inp{cursor:pointer;}
+.why{font-size:11px;color:var(--faint);}
+
+/* scan hero */
+.hero{border:1px solid var(--lime-line);border-radius:var(--radius);background:linear-gradient(120deg,rgba(217,247,123,.07),rgba(217,247,123,.015));padding:20px;margin-bottom:22px;}
+.hero__row{display:flex;gap:16px 22px;align-items:center;flex-wrap:wrap;}
+.hero__org{flex:1;min-width:230px;}
+.hero__k{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.hero__t{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:4px 0 7px;}
+.hero__facts{display:flex;flex-wrap:wrap;gap:5px 16px;font-size:12.5px;color:var(--ink2);}
+.hero__facts span{display:inline-flex;align-items:center;gap:7px;}
+.hero__cta{display:flex;flex-direction:column;align-items:flex-start;gap:7px;}
+.hero__fine{font-size:11.5px;color:var(--muted);}
+.hero__status{display:flex;justify-content:space-between;gap:10px;margin-top:18px;font-size:12.5px;color:var(--ink2);}
+.hero__status b{color:var(--lime);}
+.prog{height:8px;border-radius:99px;background:var(--panel2);overflow:hidden;margin:8px 0 12px;}
+.prog__f{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--lime));transition:width .3s ease;}
+.mtypes{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:6px;}
+.mt{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--muted);min-width:0;}
+.mt__n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mt b{margin-left:auto;font-weight:700;color:var(--ink2);}
+.mt__i{width:12px;flex-shrink:0;text-align:center;}
+.mt.is-now{border-color:var(--lime-line);color:var(--ink);}
+.mt.is-now .mt__i{color:var(--lime);animation:pulse 1s infinite;}
+.mt.is-done{color:var(--ink2);} .mt.is-done .mt__i{color:var(--green);}
+.ana{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px;margin-top:10px;}
+.ana__i{font-size:12px;color:var(--muted);padding:6px 10px;border-radius:9px;border:1px dashed var(--line2);}
+.ana__i.is-now{color:var(--ink);border-color:var(--lime-line);border-style:solid;}
+.ana__i.is-done{color:var(--ink2);border-style:solid;border-color:rgba(91,208,138,.3);}
+.hero--done{display:flex;align-items:center;gap:12px;padding:12px 16px;border-color:rgba(91,208,138,.35);background:var(--green-soft);font-size:13px;flex-wrap:wrap;}
+.hero--done > div{flex:1;min-width:200px;}
+.hero__ok{width:28px;height:28px;border-radius:50%;background:var(--green);color:#06150c;display:grid;place-items:center;font-weight:800;flex-shrink:0;}
+
+/* empty states */
+.empty{border:1px dashed var(--line2);border-radius:var(--radius);padding:36px 20px;text-align:center;color:var(--muted);font-size:13px;}
+.empty__ic{width:44px;height:44px;border-radius:13px;margin:0 auto;display:grid;place-items:center;background:var(--panel2);border:1px solid var(--line2);color:var(--lime);font-size:18px;}
+.empty__t{font-size:15px;font-weight:700;color:var(--ink);margin:12px 0 4px;}
+.empty .btn{margin-top:14px;}
+.shell:not(.is-scanned) .post{display:none;}
+.shell.is-scanned .pre{display:none;}
+
+/* scorecard additions */
+button.kpi{font:inherit;color:inherit;text-align:left;width:100%;cursor:pointer;transition:border-color .13s,transform .13s;}
+button.kpi:hover{border-color:var(--lime-line);transform:translateY(-1px);}
+.kpi__go{display:block;margin-top:9px;font-size:11.5px;font-weight:600;color:var(--faint);}
+button.kpi .kpi__l,button.kpi .kpi__v,button.kpi .kpi__s{display:block;}
+button.kpi:hover .kpi__go{color:var(--lime);}
+.nexts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+.nx{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px 15px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);font:inherit;min-height:44px;transition:.13s;}
+.nx:hover{border-color:var(--lime-line);}
+.nx b{font-size:13.5px;}
+.nx span{font-size:12px;color:var(--muted);}
+.nx .nx__n{font-family:"Geist Mono",monospace;font-size:11px;color:var(--lime);}
+.restart-row{display:flex;justify-content:flex-end;margin-top:18px;}
+
+/* heat additions */
+.obj__foot{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;padding:6px 15px;font-size:11.5px;color:var(--faint);border-top:1px solid var(--line);}
+.obj__foot .linkbtn{margin-left:auto;}
+.obj__scroll{overflow-x:auto;}
+.obj--other .obj__row{cursor:pointer;}
+.obj--other .obj__name{color:var(--ink2);}
+
+/* simulator */
+.sub-h{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;margin:26px 0 12px;}
+.sub-h b{font-size:15px;font-weight:800;}
+.sub-h span{font-size:12.5px;color:var(--muted);}
+.evid{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:11.5px;color:var(--muted);}
+.evid b{color:var(--ink2);font-weight:600;}
+.conf{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:2px 8px;background:var(--green-soft);color:var(--green);border:1px solid rgba(91,208,138,.3);}
+.sim{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:14px;align-items:start;}
+.simctl{padding:16px;}
+.simrec{border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:12px;}
+.simrec__k{font-size:10.5px;color:var(--faint);}
+.simrec__t{font-weight:700;font-size:13.5px;margin:2px 0 10px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.fv{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:6px 10px;min-width:0;}
+.fv--wide{grid-column:1/-1;border-color:rgba(242,119,140,.35);}
+.fv__l{font-size:10.5px;color:var(--faint);font-family:"Geist Mono",monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fv__v{font-size:13.5px;font-weight:700;}
+.simlbl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px;}
+.edits{display:flex;flex-direction:column;gap:7px;}
+.edit{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:var(--panel);cursor:pointer;min-height:44px;transition:.13s;}
+.edit:hover{border-color:var(--line2);}
+.edit input{accent-color:var(--lime);margin:3px 0 0;flex-shrink:0;}
+.edit b{display:block;font-size:13px;}
+.edit small,.sw small{display:block;font-size:11.5px;color:var(--muted);}
+.edit.is-on{border-color:var(--lime-line);background:rgba(217,247,123,.05);}
+.custom{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--muted);min-width:0;}
+.fld .inp{width:100%;}
+.fld__err{grid-column:1/-1;font-size:11.5px;color:var(--rose);min-height:0;}
+.sw{display:flex;align-items:center;gap:11px;min-height:44px;cursor:pointer;font-size:13px;}
+.sw input{appearance:none;-webkit-appearance:none;width:36px;height:20px;border-radius:99px;background:var(--line2);position:relative;flex-shrink:0;cursor:pointer;transition:.15s;margin:0;}
+.sw input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--ink);transition:.15s;}
+.sw input:checked{background:var(--lime);}
+.sw input:checked::after{left:18px;background:var(--lime-ink);}
+.sw input:disabled{opacity:.5;cursor:not-allowed;}
+.fixdiff{font-family:"Geist Mono",monospace;font-size:11px;line-height:1.6;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:2px 0 6px;overflow-x:auto;white-space:pre;}
+.fixdiff .del{color:var(--rose);} .fixdiff .add{color:var(--green);}
+.simbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.simbtns .btn--primary{flex:1;min-width:110px;}
+.simrun{overflow:visible;}
+.track{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:1px solid var(--line);border-radius:var(--radius) var(--radius) 0 0;padding:12px 16px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;}
+.track__f{font-family:"Geist Mono",monospace;font-size:12px;color:var(--muted);}
+.track__v{font-size:22px;font-weight:800;letter-spacing:-.02em;}
+.track__v.flash{animation:flash .7s ease;}
+@keyframes flash{0%{color:var(--lime);transform:scale(1.06)}100%{transform:none}}
+.wchips{display:flex;flex-wrap:wrap;gap:5px;flex-basis:100%;}
+.track__a{margin-left:auto;display:flex;gap:6px;}
+.wchip{font-size:10.5px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--panel2);border:1px solid var(--line2);font-family:"Geist Mono",monospace;color:var(--muted);white-space:nowrap;}
+.wchip--flow{color:var(--teal);border-color:rgba(61,198,206,.4);background:var(--teal-soft);}
+.wchip--trig{color:var(--lime);border-color:var(--lime-line);background:rgba(217,247,123,.1);}
+.wchip.is-void{text-decoration:line-through;opacity:.55;}
+.ooe{list-style:none;margin:0;padding:10px 16px 6px;}
+.ooe__s{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:2px 12px;padding:6px 0;position:relative;}
+.ooe__s:not(:last-child)::before{content:"";position:absolute;left:12px;top:32px;bottom:-6px;width:2px;background:var(--line);}
+.ooe__dot{grid-row:span 2;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:10.5px;font-weight:800;background:var(--panel2);border:1px solid var(--line2);color:var(--faint);position:relative;z-index:1;transition:.2s;}
+.ooe__t{font-size:13px;font-weight:700;color:var(--faint);align-self:center;}
+.ooe__st{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;align-self:center;color:var(--faint);}
+.ooe__lines{grid-column:2/-1;font-size:12.5px;color:var(--ink2);display:flex;flex-direction:column;gap:3px;line-height:1.5;}
+.ooe__h{color:var(--faint);font-size:11.5px;}
+.ooe__sub{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+.ooe__s.is-on .ooe__t{color:var(--ink);}
+.ooe__s.is-on .ooe__dot{color:var(--ink2);border-color:var(--muted);}
+.ooe__s.is-on .ooe__st{color:var(--green);}
+.ooe__s.is-write .ooe__dot{background:var(--rose-soft);border-color:var(--rose);color:var(--rose);}
+.ooe__s.is-write .ooe__st{color:var(--rose);}
+.ooe__s.is-write.is-single .ooe__dot{background:var(--teal-soft);border-color:var(--teal);color:var(--teal);}
+.ooe__s.is-write.is-single .ooe__st{color:var(--teal);}
+.ooe__s.is-skip .ooe__t{color:var(--muted);font-weight:600;}
+.ooe__s.is-skip .ooe__st{color:var(--faint);}
+.ooe__s.is-fail .ooe__dot{background:var(--rose);border-color:var(--rose);color:#16070a;}
+.ooe__s.is-fail .ooe__st{color:var(--rose);}
+.ooe__s.is-none{opacity:.45;}
+.ooe__s.is-now .ooe__dot{box-shadow:0 0 0 4px rgba(217,247,123,.16);border-color:var(--lime);}
+.ooe__s.is-new .ooe__lines{animation:fadein .35s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.c-flow{color:var(--teal);} .c-trig{color:var(--lime);}
+.nest{border-left:2px dashed var(--line2);padding:3px 0 3px 11px;margin:4px 0 2px;display:flex;flex-direction:column;gap:3px;}
+.nest__t{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--violet);}
+.res{margin:4px 16px 16px;border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.55;display:flex;gap:11px;align-items:flex-start;}
+.res--bad{background:var(--rose-soft);border:1px solid rgba(242,119,140,.35);}
+.res--ok{background:var(--green-soft);border:1px solid rgba(91,208,138,.35);}
+.res__ic{font-size:16px;line-height:1.3;}
+.res .btn{margin-top:10px;}
+.simhint{margin:4px 16px 16px;font-size:12.5px;color:var(--muted);}
+.hist{margin-top:14px;}
+.hist__h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:13px 15px 4px;}
+.hist__h b{font-size:13.5px;}
+.tblwrap{overflow-x:auto;}
+.drift-bad{color:var(--rose);font-weight:700;} .drift-ok{color:var(--green);font-weight:700;}
+
+/* plan additions */
+.planbar{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;padding:14px 16px;margin-bottom:12px;}
+.planbar__s{display:flex;align-items:center;gap:10px;flex:1;min-width:220px;}
+.planbar__m{font-size:12.5px;color:var(--muted);}
+.planbar__p{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink2);}
+.pbar{display:block;height:6px;width:120px;background:var(--panel2);border-radius:99px;overflow:hidden;}
+.pbar i{display:block;height:100%;background:var(--lime);border-radius:99px;transition:width .3s;}
+.planbar__a{display:flex;gap:8px;flex-wrap:wrap;}
+.planbar .why{flex-basis:100%;}
+.stchip{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 10px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap;}
+.stchip--approved{color:var(--lime);border-color:var(--lime-line);background:rgba(217,247,123,.08);}
+.stchip--backlog{color:var(--green);border-color:rgba(91,208,138,.35);background:var(--green-soft);}
+.rem__item.is-done{border-color:rgba(91,208,138,.35);}
+.rem__item.is-done .rem__num{background:var(--green);color:#06150c;}
+.rem__item.is-blocked .rem__num{background:var(--panel2);color:var(--muted);border:1px solid var(--line2);}
+.rem__item.is-flash{border-color:var(--lime-line);}
+.rem__deps{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:var(--faint);}
+.depchip{font-size:10.5px;font-weight:700;border-radius:6px;padding:2px 7px;border:1px solid var(--line2);color:var(--muted);}
+.depchip.ok{color:var(--green);border-color:rgba(91,208,138,.35);background:var(--green-soft);}
+.keychip{font-family:"Geist Mono",monospace;font-size:10.5px;font-weight:700;color:var(--teal);border:1px solid rgba(61,198,206,.35);background:var(--teal-soft);border-radius:6px;padding:2px 7px;}
+.mark{min-width:118px;}
+.mark.is-on{background:var(--green-soft);border-color:rgba(91,208,138,.4);color:var(--green);}
+.rem__meta .why{max-width:130px;text-align:right;}
+.donecard{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:var(--radius);border:1px solid rgba(91,208,138,.4);background:linear-gradient(120deg,rgba(91,208,138,.1),rgba(91,208,138,.02));margin-top:14px;}
+.donecard__ic{width:36px;height:36px;border-radius:11px;background:var(--green);color:#06150c;display:grid;place-items:center;font-weight:800;flex-shrink:0;}
+.donecard b{font-size:15px;}
+.donecard p{margin:4px 0 0;font-size:13px;color:var(--ink2);}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.blist{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px;}
+.blist li{display:flex;gap:9px;align-items:baseline;font-size:12.5px;}
+
+/* duplicates additions */
+.thr{padding:16px 18px;margin-bottom:13px;}
+.thr__top{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.thr__v{font-size:23px;font-weight:800;margin-top:3px;}
+.thr__v.is-risk{color:var(--amber);} .thr__v.is-bad{color:var(--rose);}
+.range{width:100%;margin:14px 0 2px;accent-color:var(--lime);height:40px;cursor:pointer;}
+.thr__scale{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);gap:8px;}
+.thr__hint{font-size:12.5px;color:var(--ink2);margin-top:10px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;}
+.merge{margin-top:16px;padding:16px 18px;}
+.merge__h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.merge__h b{font-size:14.5px;}
+.merge__h .btn{margin-left:auto;}
+.mrecs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.mrec{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--panel2);font-size:12.5px;min-width:0;transition:opacity .2s;}
+.mrec.is-in{border-color:rgba(61,198,206,.4);}
+.mrec.is-out{opacity:.55;border-style:dashed;}
+.mrec__top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px;}
+.bu{font-size:10.5px;font-weight:700;border-radius:5px;padding:2px 6px;background:var(--panel);border:1px solid var(--line2);color:var(--ink2);}
+.score{font-size:11px;font-weight:700;color:var(--muted);}
+.score.ok{color:var(--teal);}
+.mrec__st{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);}
+.mrec.is-in .mrec__st{color:var(--teal);}
+.mrec__n{font-weight:700;font-size:13px;}
+.mrec__d{color:var(--muted);overflow-wrap:anywhere;}
+.mrec__why{margin-top:6px;font-size:11.5px;color:var(--faint);}
+.surv{margin-top:12px;table-layout:fixed;}
+.surv td,.surv th{overflow-wrap:anywhere;}
+.surv th:first-child,.surv td:first-child{color:var(--faint);width:150px;}
+.surv th:last-child{width:32%;}
+.mnote{font-size:12px;color:var(--muted);margin-top:10px;}
+
+/* inventory */
+.invbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.invbar .inp--q{flex:1 1 240px;}
+.chipbtn{min-height:40px;border-radius:999px;border:1px solid var(--line2);background:none;color:var(--muted);font-size:12.5px;font-weight:600;padding:0 13px;transition:.13s;}
+.chipbtn:hover{color:var(--ink);}
+.chipbtn[aria-pressed="true"]{color:var(--lime);border-color:var(--lime-line);background:rgba(217,247,123,.08);}
+.invsum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:12.5px;color:var(--muted);margin:2px 0 10px;min-height:40px;}
+.invsum b{color:var(--ink);}
+.invsum .linkbtn{margin-left:auto;}
+.inv{overflow:hidden;}
+.inv__head,.inv__row{display:grid;grid-template-columns:58px minmax(0,2.3fr) minmax(0,1.1fr) minmax(0,1.05fr) 88px minmax(0,1.3fr);gap:12px;align-items:center;padding:9px 15px;}
+.inv__head{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);font-weight:700;border-bottom:1px solid var(--line);}
+.inv__row{border-bottom:1px solid var(--line);cursor:pointer;font-size:12.5px;min-height:46px;transition:background .12s;}
+.inv__row:last-child{border-bottom:none;}
+.inv__row:hover{background:var(--panel2);}
+.inv__row.is-dead .inv__name,.inv__row.is-dead .inv__obj,.inv__row.is-dead .inv__date{opacity:.6;}
+.inv__name{min-width:0;}
+.inv__name b{font-weight:600;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.inv__name .faint{font-size:11px;}
+.inv__obj,.inv__f{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.inv__m{display:none;}
+.inv .empty{border:none;}
+
+/* agent panel */
+.agent__h{display:flex;align-items:center;gap:9px;padding:10px 10px 10px 16px;border-bottom:1px solid var(--line);}
+.agent__h b{font-size:13.5px;}
+.agent__h .btn{margin-left:auto;}
+.agent__scope{font-size:11.5px;color:var(--muted);padding:9px 16px;border-bottom:1px solid var(--line);}
+.agent__log{flex:1;overflow-y:auto;padding:6px 12px 24px;font-size:12px;min-height:0;}
+.lg{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:1px 8px;padding:6px 4px;border-bottom:1px solid rgba(39,45,60,.7);}
+.lg__k{font-family:"Geist Mono",monospace;color:var(--faint);font-weight:700;}
+.lg__t{font-family:"Geist Mono",ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--ink);overflow-wrap:anywhere;}
+.lg__d{grid-column:2/-1;color:var(--muted);font-size:11.5px;}
+.lg__ms{font-family:"Geist Mono",monospace;font-size:10.5px;color:var(--faint);}
+.lg--ok .lg__k{color:var(--green);} .lg--warn .lg__k{color:var(--amber);} .lg--bad .lg__k{color:var(--rose);}
+.lg--human .lg__k,.lg--human .lg__t{color:var(--lime);} .lg--write .lg__k{color:var(--violet);} .lg--tool .lg__k{color:var(--teal);}
+.lg-g{font-family:"Geist Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);padding:14px 4px 4px;}
+.lg.is-new{animation:fadein .3s ease;}
+
+/* drawer and dialog */
+.scrim{position:fixed;inset:0;background:rgba(5,6,10,.62);z-index:70;}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--panel);border-left:1px solid var(--line2);z-index:71;display:flex;flex-direction:column;box-shadow:-20px 0 50px rgba(0,0,0,.45);}
+.drawer__h{display:flex;align-items:flex-start;gap:10px;padding:14px 12px 14px 18px;border-bottom:1px solid var(--line);}
+.drawer__h > div{flex:1;min-width:0;}
+.drawer__t{font-size:16px;font-weight:800;overflow-wrap:anywhere;}
+.drawer__b{padding:16px 18px 28px;overflow-y:auto;flex:1;font-size:13px;}
+.dl{display:grid;grid-template-columns:128px minmax(0,1fr);gap:8px 12px;font-size:12.5px;margin:0;}
+.dl dt{color:var(--faint);} .dl dd{margin:0;overflow-wrap:anywhere;}
+.dsec{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;}
+.finding{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);margin-bottom:7px;}
+.finding--bad{border-color:rgba(242,119,140,.35);background:var(--rose-soft);}
+.finding--warn{border-color:rgba(242,200,121,.3);background:var(--amber-soft);}
+.finding--ok{border-color:rgba(91,208,138,.3);background:var(--green-soft);}
+.modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:16px;background:rgba(5,6,10,.62);}
+.modal__box{width:min(540px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.55);}
+.modal__t{font-size:17px;font-weight:800;letter-spacing:-.01em;}
+.modal__b{font-size:13px;color:var(--ink2);margin:8px 0 18px;}
+.modal__b p{margin:0 0 8px;}
+.modal__a{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
+.toast.has-act{pointer-events:auto;display:flex;align-items:center;gap:12px;padding:6px 6px 6px 16px;}
+.toast__btn{background:var(--lime-ink);color:var(--lime);border:none;border-radius:8px;padding:0 13px;min-height:40px;font-weight:700;font-size:12.5px;}
+
+/* responsive shell */
+@media(min-width:860px){ .snav{display:none;} }
+@media(max-width:1279px){
+  .agent{position:fixed;top:0;right:0;bottom:0;width:min(380px,92vw);z-index:66;box-shadow:-20px 0 50px rgba(0,0,0,.45);}
+  .shell.agent-open .agent-scrim{display:block;position:fixed;inset:0;background:rgba(5,6,10,.5);z-index:65;}
+}
+@media(max-width:1180px){ .top__org{display:none;} }
+@container (max-width:760px){ .sim{grid-template-columns:minmax(0,1fr);} .nexts{grid-template-columns:1fr;} .mrecs{grid-template-columns:1fr;} .thr__top{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media(max-width:859px){
+  .shell{grid-template-columns:minmax(0,1fr);}
+  .side{display:none;}
+  .main{grid-column:1;}
+  .shell>.top{padding:10px 16px;gap:10px;}
+  .top__eyebrow{display:none;}
+  .top__title{font-size:16px;}
+  .top__scan{display:none;}
+  .hide-sm{display:none;}
+  .app{padding:16px 16px 70px;}
+  .snav{position:sticky;top:0;z-index:5;flex-wrap:nowrap;overflow-x:auto;margin:0;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:none;}
+  .snav::-webkit-scrollbar{display:none;}
+  .snav a{flex-shrink:0;min-height:40px;display:inline-flex;align-items:center;gap:6px;}
+  .snav a[aria-current="page"]{color:var(--lime-ink);background:var(--lime);border-color:var(--lime);}
+  .track{top:61px;}
+  .agent{top:auto;left:0;right:0;width:auto;height:min(74dvh,640px);border-left:none;border-top:1px solid var(--line2);border-radius:16px 16px 0 0;}
+  .drawer{top:auto;left:0;width:auto;height:84dvh;border-left:none;border-top:1px solid var(--line2);border-radius:16px 16px 0 0;}
+}
+@container (max-width:640px){
+  .inv__head{display:none;}
+  .inv__row{grid-template-columns:52px minmax(0,1fr);gap:4px 10px;padding:10px 14px;}
+  .inv__obj,.inv__st,.inv__date,.inv__f{display:none;}
+  .inv__m{display:block;grid-column:2;font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .inv__row .atag{grid-row:span 2;align-self:start;margin-top:2px;text-align:center;}
+  .invbar select.inp{flex:1 1 calc(50% - 4px);}
+  .custom{grid-template-columns:1fr 1fr;}
+  .rem__meta{width:100%;justify-content:flex-start;flex-wrap:wrap;}
+  .rem__meta .why{text-align:left;max-width:none;}
+  .planbar__a{width:100%;} .planbar__a .btn{flex:1;}
+  .thr__top{gap:10px;} .thr__v{font-size:20px;}
+  .dl{grid-template-columns:112px minmax(0,1fr);}
+  .surv th:first-child,.surv td:first-child{width:96px;}
+  .surv td,.surv th{padding:8px 10px;}
+}
+@media(max-width:520px){ #scanBtn{display:none;} }
+@media(max-width:420px){ .top__title{font-size:15px;} .shell>.top .btn{padding:0 12px;} .top__mark{width:36px;height:36px;border-radius:11px;} }
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}
+}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="top">
+<div class="shell" id="shell">
+  <header class="top">
     <div class="top__mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 8v5M12 16v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-    <div>
+    <div class="top__id">
       <div class="top__eyebrow mono">Salesforce · platform governance</div>
       <div class="top__title">Org Health Auditor</div>
     </div>
     <div class="top__spacer"></div>
-    <span class="pill"><span class="dot"></span> Metadata scan · 2,140 components</span>
-  </div>
+    <span class="pill top__org"><span class="dot dot--ok" style="background:var(--green);box-shadow:0 0 8px var(--green)"></span> NorthBrand Group · Production</span>
+    <span class="pill top__scan" id="scanPill"><span class="dot" id="scanDot"></span> <span id="scanPillT">Metadata scan · 2,140 components</span></span>
+    <button class="btn btn--primary" id="scanBtn" data-a="scan">Run scan</button>
+    <button class="btn" id="agentBtn" data-a="agent" aria-controls="agent" aria-expanded="false" aria-label="Agent activity"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z" fill="currentColor"/></svg><span class="hide-sm">Agent activity</span><span class="cnt num" id="agentCnt">0</span></button>
+  </header>
 
-  <div class="note">⚠ Illustrative audit — synthetic data and invented business units (no real org, company, or logos). Numbers reflect a plausible mid-market Salesforce org.</div>
+  <nav class="side" aria-label="Audit sections">
+    <div class="side__label mono">Audit</div>
+    <button class="nav__i" data-go="scorecard"><span class="nav__n">01</span>Scorecard</button>
+    <button class="nav__i" data-go="heat"><span class="nav__n">02</span>Object heat<span class="nav__b" id="nb-heat" hidden></span></button>
+    <button class="nav__i" data-go="conflict"><span class="nav__n">03</span>Conflict<span class="nav__b nav__b--bad" id="nb-conflict" hidden></span></button>
+    <button class="nav__i" data-go="plan"><span class="nav__n">04</span>Remediation plan<span class="nav__b" id="nb-plan" hidden></span></button>
+    <button class="nav__i" data-go="dupes"><span class="nav__n">05</span>Duplicate contacts<span class="nav__b" id="nb-dupes" hidden></span></button>
+    <button class="nav__i" data-go="inventory"><span class="nav__n">06</span>Inventory<span class="nav__b" id="nb-inventory" hidden></span></button>
+    <div class="side__foot">
+      <div class="orgcard"><b>NorthBrand Group</b>Production · read-only access<br><span class="faint">Writes need your approval</span></div>
+      <button class="btn btn--ghost" data-a="restart">Start again</button>
+    </div>
+  </nav>
 
-  <div class="aibanner">
-    <div class="aibanner__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg></div>
-    <div><div style="display:flex;align-items:center;gap:9px;margin-bottom:3px"><b>Audit summary — NorthBrand Group</b><span class="aibanner__tag">AI generated</span></div>
-    <div style="font-size:13.5px;line-height:1.6">After consolidating three business units (<b>Meridian</b>, <b>Halcyon</b>, <b>Vantage</b>), the org carries <b>202 automations</b> across overlapping lineages — <b style="color:var(--amber)">31 inactive or orphaned</b>, <b style="color:var(--rose)">9 objects with 3+ automations</b>, and <b>65 Workflow Rules &amp; Process Builders</b> Salesforce is retiring. One live <b style="color:var(--rose)">execution-order conflict</b> on Opportunity produces a nondeterministic value on every save. Below: the dependency-ordered plan to unwind it safely.</div></div>
-  </div>
+  <main class="main" id="main">
+    <div class="snav" id="snav" aria-label="Audit sections">
+      <a href="#scorecard" data-go="scorecard">Scorecard</a><a href="#heat" data-go="heat">Object heat</a><a href="#conflict" data-go="conflict">Conflict</a><a href="#plan" data-go="plan">Remediation plan</a><a href="#dupes" data-go="dupes">Duplicate contacts</a><a href="#inventory" data-go="inventory">Inventory</a>
+    </div>
+    <div class="app">
 
-  <div class="snav">
-    <a href="#scorecard">Scorecard</a><a href="#heat">Object heat</a><a href="#conflict">Conflict</a><a href="#plan">Remediation plan</a><a href="#dupes">Duplicate contacts</a>
-  </div>
+      <!-- SCORECARD -->
+      <div class="sec screen" id="scorecard">
+        <div class="note">⚠ Illustrative audit: synthetic data and invented business units (no real org, company, or logos). Numbers reflect a plausible mid-market Salesforce org.</div>
+        <div id="hero"></div>
+        <div class="post">
+          <div class="aibanner">
+            <div class="aibanner__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9z" fill="currentColor"/></svg></div>
+            <div><div style="display:flex;align-items:center;gap:9px;margin-bottom:3px;flex-wrap:wrap"><b>Audit summary: NorthBrand Group</b><span class="aibanner__tag">AI generated</span></div>
+            <div style="font-size:13.5px;line-height:1.6">After consolidating three business units (<b>Meridian</b>, <b>Halcyon</b>, <b>Vantage</b>), the org carries <b>202 automations</b> across overlapping lineages: <b style="color:var(--amber)">31 inactive or orphaned</b>, <b style="color:var(--rose)">9 objects with 3+ automations</b>, and <b>65 Workflow Rules &amp; Process Builders</b> Salesforce is retiring. One live <b style="color:var(--rose)">execution-order conflict</b> on Opportunity produces a nondeterministic value on every save. Next: the dependency-ordered plan to unwind it safely.</div>
+            <div style="margin-top:4px"><button class="linkbtn" data-a="agent-open">See how the agent got here</button></div></div>
+          </div>
+          <div class="sec__h"><span class="sec__n">01</span><span class="sec__t">Scorecard</span><span class="sec__d">the shape of the debt</span></div>
+          <div class="kpis" id="kpis"></div>
+          <div class="nexts">
+            <button class="nx" data-go="conflict" data-focus="sim"><span class="nx__n">03</span><b>Watch the conflict happen</b><span>Run one Opportunity save through the order of execution.</span></button>
+            <button class="nx" data-go="plan"><span class="nx__n">04</span><b>Approve the remediation plan</b><span>Six steps, ordered by dependency, then into the backlog.</span></button>
+            <button class="nx" data-go="inventory"><span class="nx__n">06</span><b>Browse all 202 automations</b><span>Search, filter and open any row.</span></button>
+          </div>
+        </div>
+      </div>
 
-  <!-- SCORECARD -->
-  <div class="sec" id="scorecard">
-    <div class="sec__h"><span class="sec__n">01</span><span class="sec__t">Scorecard</span><span class="sec__d">the shape of the debt</span></div>
-    <div class="kpis" id="kpis"></div>
-  </div>
+      <!-- OBJECT HEAT -->
+      <div class="sec screen" id="heat" hidden>
+        <div class="sec__h"><span class="sec__n">02</span><span class="sec__t">Object heat</span><span class="sec__d">automation density by object, click to expand</span></div>
+        <div class="pre" data-empty="heat"></div>
+        <div class="post"><div id="objs"></div></div>
+      </div>
 
-  <!-- OBJECT HEAT -->
-  <div class="sec" id="heat">
-    <div class="sec__h"><span class="sec__n">02</span><span class="sec__t">Object heat</span><span class="sec__d">automation density by object — click to expand</span></div>
-    <div id="objs"></div>
-  </div>
+      <!-- CONFLICT -->
+      <div class="sec screen" id="conflict" hidden>
+        <div class="sec__h"><span class="sec__n">03</span><span class="sec__t">Execution-order conflict</span><span class="sec__d">why the value is nondeterministic</span></div>
+        <div class="pre" data-empty="conflict"></div>
+        <div class="post">
+          <div id="conflictBox"></div>
+          <div class="sub-h" id="simAnchor"><b>Save simulator</b><span>one Opportunity save, run through Salesforce's order of execution</span></div>
+          <div class="sim">
+            <div class="card simctl" id="simCtl"></div>
+            <div class="card simrun">
+              <div class="track" id="simTrack"></div>
+              <ol class="ooe" id="ooe"></ol>
+              <div id="simResult"></div>
+            </div>
+          </div>
+          <div class="card hist" id="simHist"></div>
+        </div>
+      </div>
 
-  <!-- CONFLICT -->
-  <div class="sec" id="conflict">
-    <div class="sec__h"><span class="sec__n">03</span><span class="sec__t">Execution-order conflict</span><span class="sec__d">why the value is nondeterministic</span></div>
-    <div id="conflictBox"></div>
-  </div>
+      <!-- REMEDIATION -->
+      <div class="sec screen" id="plan" hidden>
+        <div class="sec__h"><span class="sec__n">04</span><span class="sec__t">Remediation plan</span><span class="sec__d">ordered by dependency: what must be retired first</span></div>
+        <div class="pre" data-empty="plan"></div>
+        <div class="post">
+          <div id="planBar"></div>
+          <div class="rem" id="rem"></div>
+          <div id="planDone"></div>
+        </div>
+      </div>
 
-  <!-- REMEDIATION -->
-  <div class="sec" id="plan">
-    <div class="sec__h"><span class="sec__n">04</span><span class="sec__t">Remediation plan</span><span class="sec__d">ordered by dependency — what must be retired first</span></div>
-    <div class="rem" id="rem"></div>
-  </div>
+      <!-- DUPES -->
+      <div class="sec screen" id="dupes" hidden>
+        <div class="sec__h"><span class="sec__n">05</span><span class="sec__t">Duplicate contacts</span><span class="sec__d">by matching rule, legacy of the merge</span></div>
+        <div class="pre" data-empty="dupes"></div>
+        <div class="post">
+          <div class="card thr">
+            <div class="thr__top">
+              <div><div class="kpi__l">Matching threshold</div><div class="thr__v num"><span id="thrV">85</span>%</div></div>
+              <div><div class="kpi__l">Duplicate records</div><div class="thr__v num" id="thrDup">~1,900</div></div>
+              <div><div class="kpi__l">Duplicate sets</div><div class="thr__v num" id="thrSets">2,030</div></div>
+              <div><div class="kpi__l">Est. false merges</div><div class="thr__v num" id="thrRisk">0.6%</div></div>
+            </div>
+            <input class="range" type="range" min="70" max="100" step="1" value="85" id="thr" aria-label="Matching threshold, percent">
+            <div class="thr__scale"><span>70% · looser</span><span>85% · recommended</span><span>100% · exact only</span></div>
+            <div class="thr__hint"><span id="thrHint"></span><button class="linkbtn" data-a="thr-reset" id="thrReset" hidden>Back to 85%</button></div>
+          </div>
+          <div class="dup" id="dup"></div>
+          <div class="muted" style="font-size:12.5px;margin-top:12px">Each business unit kept its own Contact for the same person: <span id="dupNote">~1,900</span> duplicate records across the three books. Safe to merge once Contact automation is consolidated (step 6).</div>
+          <div class="card merge" id="merge"></div>
+        </div>
+      </div>
 
-  <!-- DUPES -->
-  <div class="sec" id="dupes">
-    <div class="sec__h"><span class="sec__n">05</span><span class="sec__t">Duplicate contacts</span><span class="sec__d">by matching rule — legacy of the merge</span></div>
-    <div class="dup" id="dup"></div>
-    <div class="muted" style="font-size:12.5px;margin-top:12px">Each business unit kept its own Contact for the same person — ~1,900 duplicate records across the three books. Safe to merge once Contact automation is consolidated (step 6).</div>
-  </div>
+      <!-- INVENTORY -->
+      <div class="sec screen" id="inventory" hidden>
+        <div class="sec__h"><span class="sec__n">06</span><span class="sec__t">Automation inventory</span><span class="sec__d">all 202 automations, search and filter</span></div>
+        <div class="pre" data-empty="inventory"></div>
+        <div class="post">
+          <div class="invbar">
+            <input class="inp inp--q" id="invQ" type="search" placeholder="Search name, API name, object or field" aria-label="Search automations">
+            <select class="inp" id="invType" aria-label="Type"></select>
+            <select class="inp" id="invObj" aria-label="Object"></select>
+            <select class="inp" id="invStatus" aria-label="Status"></select>
+            <select class="inp" id="invSort" aria-label="Sort"></select>
+            <button class="chipbtn" id="invOverlap" aria-pressed="false" data-a="inv-chip" data-k="overlap">Field-write overlaps</button>
+            <button class="chipbtn" id="invLegacy" aria-pressed="false" data-a="inv-chip" data-k="legacy">Not migrated to Flow</button>
+          </div>
+          <div class="invsum" id="invSum" aria-live="polite"></div>
+          <div class="card inv">
+            <div class="inv__head"><span>Type</span><span>Automation</span><span>Object</span><span>Status</span><span>Modified</span><span>Writes field</span></div>
+            <div id="invRows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="agent" id="agent" aria-label="Agent activity">
+    <div class="agent__h"><b>Agent activity</b><span class="aibanner__tag">read-only</span><button class="btn btn--icon btn--ghost" data-a="agent" aria-label="Close agent activity">✕</button></div>
+    <div class="agent__scope">Scope: read metadata and debug logs. Anything written, such as backlog items, waits for your approval.</div>
+    <div class="agent__log" id="agentLog" aria-live="polite"></div>
+  </aside>
+  <div class="agent-scrim" data-a="agent"></div>
 </div>
-<div class="toast" id="toast"></div>
+<div class="scrim" id="scrim" hidden data-a="drawer-close"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerT" hidden></aside>
+<div class="modal" id="modal" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
+'use strict';
 const $=id=>document.getElementById(id);
-function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200);}
+const qsa=(s,r)=>[...(r||document).querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtN=n=>Math.round(n).toLocaleString('en-US');
+const fmt$=n=>(n<0?'−$':'$')+fmtN(Math.abs(n));
+const sign$=n=>n===0?'$0':(n>0?'+$':'−$')+fmtN(Math.abs(n));
+const pct=d=>(Math.round(d*1000)/10)+'%';
+const rm=()=>!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const wait=ms=>new Promise(r=>setTimeout(r,rm()?Math.min(ms,30):ms));
+const now=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
+let EPOCH=0, SIMRUN=0;
+
+function toast(m,act){
+  const t=$('toast'); t.innerHTML=''; const s=document.createElement('span'); s.textContent=m; t.appendChild(s);
+  t.classList.toggle('has-act',!!act);
+  if(act){const b=document.createElement('button');b.type='button';b.className='toast__btn';b.textContent=act.label;b.onclick=()=>{t.classList.remove('show');act.fn();};t.appendChild(b);}
+  t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),act?5200:2400);
+}
 
 /* ---------- scorecard ---------- */
 const KPIS=[
   {l:'Total automations',v:'202',s:'Flows, Workflow Rules, Process Builders, triggers',cls:''},
-  {l:'Inactive / orphaned',v:'31',s:'15% — active in metadata, never fire',cls:'warn'},
+  {l:'Inactive / orphaned',v:'31',s:'15%: active in metadata, never fire',cls:'warn'},
   {l:'Objects with 3+ automations',v:'9',s:'Opportunity, Account, Contact worst',cls:'bad'},
   {l:'Not yet migrated to Flow',v:'65',s:'44 Workflow Rules + 21 Process Builders',cls:'warn'},
   {l:'Permission sets',v:'147',s:'vs 6 permission set groups',cls:'bad'},
   {l:'Field-write overlaps',v:'7',s:'2+ automations writing one field',cls:'bad'}
 ];
-$('kpis').innerHTML=KPIS.map(k=>`<div class="kpi ${k.cls}"><div class="kpi__l">${k.l}</div><div class="kpi__v num">${k.v}</div><div class="kpi__s">${k.s}</div></div>`).join('');
+const KPI_GO=['Open inventory','Show the 31','Open object heat','Show the 65','Open plan step 5','Show the overlaps'];
+$('kpis').innerHTML=KPIS.map((k,i)=>`<button class="kpi ${k.cls}" data-a="kpi" data-i="${i}" aria-label="${k.l}: ${k.v}. ${KPI_GO[i]}"><span class="kpi__l">${k.l}</span><span class="kpi__v num" data-v="${k.v}">${k.v}</span><span class="kpi__s">${k.s}</span><span class="kpi__go">${KPI_GO[i]} →</span></button>`).join('');
 
 /* ---------- object heat ---------- */
 const OBJECTS=[
@@ -260,28 +744,138 @@ const OBJECTS=[
 const MAXC=Math.max(...OBJECTS.map(o=>o.count));
 function typeTag(t){return {flow:'atag atag--flow',wfr:'atag atag--wfr',pb:'atag atag--pb',trig:'atag atag--trig'}[t];}
 function typeShort(t){return {flow:'Flow',wfr:'WFR',pb:'PB',trig:'Trigger'}[t];}
-$('objs').innerHTML=OBJECTS.map((o,i)=>{
-  const rows=o.auto?o.auto.map(a=>`<tr class="${a.dead?'deadrow':''}">
+const TYPE_LONG={flow:'Flow',wfr:'Workflow Rule',pb:'Process Builder',trig:'Apex Trigger'};
+
+/* ---------- inventory: all 202 automations, generated deterministically ----------
+   Named rows above + per-object specs below. Totals are fixed by the specs:
+   112 Flows, 25 triggers, 44 Workflow Rules, 21 Process Builders; 31 inactive or
+   orphaned (* prefix); 7 fields with two or more active writers. */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const SPEC={
+  Opportunity:{p:'OPP',g:['f|Renewal Date Default|Renewal_Date__c','f|Forecast Category Sync|ForecastCategoryName','f|Next Step Reminder|—','f|Partner Attach|Partner_Account__c','f|Region Code|Region__c','f|Competitor Alert|—','f|Primary Contact Check|Primary_Contact__c','f|Deal Desk Routing|Deal_Desk_Queue__c','f|Champion Change Alert|—','f|Multi-Year Flag|Multi_Year__c','f|Product Family Rollup|Product_Families__c','f|Handoff to CS|—','f|Booking Date Stamp|Booked_Date__c','f|Legal Review Request|Legal_Status__c','f|Slack Win Post|—','f|Renewal Risk Score|Renewal_Risk__c',
+    'w|Stage Age Stamp (Halcyon)|Stage_Changed_Date__c','w|Owner Email Copy (Vantage)|Owner_Email__c','w|Lead Source Lock (Meridian)|Original_Lead_Source__c','w|Big Deal Alert (Halcyon)|—','*w|Fiscal Quarter (Vantage)|Fiscal_Quarter__c','*w|Probability Override (Meridian)|Probability_Override__c',
+    '*p|Renewal Opp Clone (Vantage)|—','p|Partner Commission (Halcyon)|Partner_Commission__c','p|Onboarding Request (Meridian)|—']},
+  Account:{p:'ACC',g:['f|Industry Normalize|Industry','f|Parent Rollup Flag|Has_Parent__c','f|Customer Since Stamp|Customer_Since__c','f|Churn Risk Alert|—','f|Billing Country ISO|BillingCountryCode','f|CSM Assignment|CSM__c','f|Credit Check Request|Credit_Status__c','f|Key Account Flag|Key_Account__c','f|Renewal Owner Sync|Renewal_Owner__c','f|NPS Survey Send|—','f|Hierarchy Depth|Hierarchy_Level__c','f|DUNS Enrichment|DUNS__c','*f|Logo Retention Task|—',
+    'w|Rating Stamp (Meridian)|Rating','w|Type Default (Halcyon)|Type','w|Revenue Band (Vantage)|Revenue_Band__c','*w|Inactive Alert (Meridian)|—','w|Region Sync (Halcyon)|Sales_Region__c','w|Website Format (Vantage)|Website',
+    'p|Partner Tier (Meridian)|Partner_Tier__c','*p|Strategic Review (Vantage)|—','p|Billing Hold (Halcyon)|Billing_Hold__c','p|Upsell Signal (Meridian)|Upsell_Score__c']},
+  Contact:{p:'CON',g:['f|Mailing Country ISO|MailingCountryCode','f|Title Normalize|Title_Normalized__c','f|Champion Flag|Champion__c','f|Left Company Check|Left_Company__c','f|Persona Assignment|Persona__c','f|Consent Date Stamp|Consent_Date__c','*f|Welcome Journey Enroll|—','f|Primary Contact Sync|Is_Primary__c','f|Bounce Handler|Email_Bounced__c','f|Executive Sponsor Alert|—','f|Language Default|Preferred_Language__c',
+    't|ContactTrigger|—','w|Phone Format (Vantage)|Phone','w|Owner Match Account (Meridian)|OwnerId','w|Lead Source Copy (Halcyon)|LeadSource','*w|Birthday Reminder (Vantage)|—',
+    '*p|Event Invite (Halcyon)|—','p|Score Decay (Vantage)|Engagement_Score__c','p|Account Role Sync (Meridian)|Account_Role__c']},
+  Case:{p:'CASE',g:['f|SLA Priority|Priority','f|Entitlement Lookup|EntitlementId','f|Auto Close Resolved|Status','f|Survey on Close|—','f|Escalation Notify|—','f|Product Area Default|Product_Area__c','f|First Response Stamp|First_Response__c','f|Language Routing|Language__c','f|Reopen Counter|Reopen_Count__c',
+    't|CaseTrigger|—','w|Priority Matrix (Vantage)|Priority','w|Origin Default (Halcyon)|Origin','*w|VIP Alert (Meridian)|—','w|Age Bucket (Vantage)|Age_Bucket__c','*w|Owner Notify (Halcyon)|—',
+    'p|Escalate to Tier 2 (Vantage)|Tier__c','*p|Account Health Ping (Meridian)|—']},
+  Lead:{p:'LEAD',g:['f|Round Robin (Halcyon)|OwnerId','f|Country Normalize|CountryCode','f|MQL Threshold|Status_Detail__c','f|Company Match|Matched_Account__c','f|Nurture Enroll|—','*f|Convert Notify|—','f|Duplicate Flag|Possible_Duplicate__c','f|Source Detail|Lead_Source_Detail__c',
+    't|LeadTrigger|OwnerId','w|Rating Hot (Meridian)|Rating','*w|Stale Lead Alert (Halcyon)|—','w|Industry Copy (Vantage)|Industry','w|Status Date (Meridian)|Status_Date__c',
+    '*p|Partner Lead Share (Halcyon)|—','p|Event Lead Route (Vantage)|Event_Code__c']},
+  Quote:{p:'QUOTE',g:['f|Expiry Default|ExpirationDate','f|Approval Route|Approval_Route__c','f|Sync to Opportunity|—','f|Discount Guardrail|Guardrail_Status__c','f|Terms Default|Payment_Terms__c','*f|PDF Ready Notify|—','f|Currency Lock|Currency_Locked__c',
+    't|QuoteTrigger|—','*w|Expired Alert (Halcyon)|—','w|Status Stamp (Vantage)|Status_Date__c','p|Expiry (Meridian)|ExpirationDate']},
+  Order:{p:'ORD',g:['f|Activation Stamp|Activated_Date__c','f|Provisioning Request|—','f|Billing Sync|Billing_Status__c','f|Contract Link|ContractId','f|Fulfillment Alert|—','t|OrderTrigger|—','w|PO Required (Meridian)|PO_Status__c','*p|Order Ack (Vantage)|—']},
+  Onboarding__c:{p:'ONB',g:['f|Kickoff Date|Kickoff_Date__c','f|Milestone Plan|—','f|Health Stamp|Onboarding_Health__c','f|Go-Live Alert|—','f|CSM Handoff|CSM__c','f|Stuck Onboarding Alert|—','t|OnboardingTrigger|—','*w|Status Age (Halcyon)|Status_Age__c','p|Training Request (Meridian)|—']},
+  Product2:{p:'PROD',g:['f|Family Default|Family','f|Price Book Entry Create|—','f|Retire Notify|—','f|SKU Format|StockKeepingUnit','t|Product2Trigger|—','*w|Active Flag Sync (Vantage)|IsActive']}
+};
+const OTHER_SPEC=[
+  ['Task','TASK',['t|TaskTrigger|—','f|Overdue Escalation|Escalated__c']],
+  ['Event','EVT',['t|EventTrigger|—','f|Meeting Outcome Prompt|Outcome__c']],
+  ['Campaign','CAMP',['t|CampaignTrigger|—','f|Budget Rollup|Budget_Used__c']],
+  ['CampaignMember','CMEM',['t|CampaignMemberTrigger|—','*w|Responded Stamp (Halcyon)|Responded_Date__c']],
+  ['Asset','ASSET',['t|AssetTrigger|—','f|Warranty End|Warranty_End__c']],
+  ['Contract','CTR',['t|ContractTrigger|—','*w|Renewal Notice (Meridian)|—']],
+  ['OpportunityLineItem','OLI',['t|OpportunityLineItemTrigger|—','f|ARR Split|Line_ARR__c']],
+  ['QuoteLineItem','QLI',['t|QuoteLineItemTrigger|—','f|Floor Price Check|Below_Floor__c']],
+  ['OrderItem','OI',['t|OrderItemTrigger|—','f|Provision Status|Provision_Status__c']],
+  ['User','USER',['t|UserTrigger|—','f|Deactivation Handoff|—']],
+  ['Invoice__c','INV',['t|InvoiceTrigger|—','f|Overdue Flag|Overdue__c']],
+  ['Subscription__c','SUB',['t|SubscriptionTrigger|—','f|Term End|Term_End__c']],
+  ['Renewal__c','REN',['t|RenewalTrigger|—','*w|Uplift Default (Vantage)|Uplift__c']],
+  ['Partner__c','PRT',['t|PartnerTrigger|—','f|Tier Review|Tier_Review_Date__c']],
+  ['Project__c','PRJ',['t|ProjectTrigger|—','f|Budget Burn Alert|—']],
+  ['Commission__c','COMM',['t|CommissionTrigger|—','*w|Payout Stamp (Halcyon)|Payout_Date__c']],
+  ['EmailMessage','EMSG',['f|Case Reopen on Reply|—','f|Thread Owner Stamp|Thread_Owner__c']],
+  ['Entitlement','ENT',['f|Expiry Alert|—','w|Status Sync (Vantage)|Status__c']],
+  ['ServiceContract','SVC',['f|Renewal Task|—','f|Line Count|Line_Count__c']],
+  ['Survey__c','SURV',['f|Detractor Alert|—','*f|Score Bucket|Score_Bucket__c']],
+  ['Milestone__c','MILE',['f|Completion Stamp|Completed_Date__c','*w|Late Alert (Meridian)|—']],
+  ['Expense__c','EXP',['f|Approval Route|Approver__c','*f|Receipt Reminder|—']],
+  ['Territory_Assignment__c','TERR',['f|Effective Date|Effective_Date__c','w|Region Copy (Halcyon)|Region__c']],
+  ['Lead_Score__c','LSC',['f|Grade Calc|Grade__c','f|Decay Schedule|Decay_Date__c']],
+  ['Individual','INDV',['f|Consent Sync|Consent_Status__c']]
+];
+const HOT=OBJECTS.map(o=>o.name);
+function buildInventory(){
+  const R=rng(20261114), inv=[];
+  const date=(y0,y1)=>{const y=y0+Math.floor(R()*(y1-y0+1));const m=1+Math.floor(R()*(y===2026?10:12));const d=1+Math.floor(R()*28);return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');};
+  const bu=n=>{const m=n.match(/\((Meridian|Halcyon|Vantage)\)/);return m?m[1]:'NorthBrand';};
+  const api=n=>n.replace(/ – /g,'_').replace(/[()→]/g,' ').replace(/[^A-Za-z0-9_ ]/g,'').trim().replace(/\s+/g,'_');
+  const add=(a,obj)=>{a.obj=obj;a.id='a'+inv.length;a.api=a.api||api(a.n);a.bu=bu(a.n);a.type=TYPE_LONG[a.t];inv.push(a);};
+  OBJECTS.forEach(o=>(o.auto||[]).forEach(a=>add({n:a.n,t:a.t,tl:a.tl,s:a.s,m:a.m,f:a.f,dead:!!a.dead,named:true},o.name)));
+  const gen=(obj,prefix,line)=>{
+    let dead=line[0]==='*'; if(dead) line=line.slice(1);
+    const [k,stem,f]=line.split('|'); const t={f:'flow',w:'wfr',p:'pb',t:'trig'}[k];
+    const n=t==='trig'?stem:prefix+' – '+stem;
+    let tl={wfr:'Workflow Rule',pb:'Process Builder'}[t];
+    if(t==='flow') tl=(f!=='—'&&R()<.34)?'Flow · before-save':'Flow · record-triggered';
+    if(t==='trig') tl='Apex Trigger · '+(f!=='—'?'before insert, before update':pickT(R));
+    const m=dead?date(2018,2022):t==='wfr'?date(2018,2023):t==='pb'?date(2019,2023):t==='trig'?date(2020,2026):date(2023,2026);
+    let s='Active'; if(dead) s=(t==='flow'&&R()<.6)?'Active':'Inactive';
+    add({n,t,tl,s,m,f,dead},obj);
+  };
+  function pickT(r){return ['before update, after update','after insert, after update','before insert, after update','after update'][Math.floor(r()*4)];}
+  Object.keys(SPEC).forEach(o=>SPEC[o].g.forEach(l=>gen(o,SPEC[o].p,l)));
+  OTHER_SPEC.forEach(([o,p,g])=>g.forEach(l=>gen(o,p,l)));
+  // runs in the last 30 days, and field-write overlaps across active automations
+  const heat={Opportunity:9000,Account:5200,Contact:6400,Case:4100,Lead:3800,Quote:1500,Order:900};
+  inv.forEach(a=>{a.runs=a.dead?0:Math.round((40+R()*(heat[a.obj]||700))*(a.t==='trig'?2.2:1));});
+  const by={}; inv.forEach(a=>{if(!a.dead&&a.f!=='—'){const k=a.obj+'.'+a.f;(by[k]=by[k]||[]).push(a);}});
+  inv.forEach(a=>{const g=!a.dead&&a.f!=='—'?by[a.obj+'.'+a.f]:null;a.conflict=!!(g&&g.length>1);a.peers=a.conflict?g.filter(x=>x!==a).map(x=>x.id):[];});
+  inv.overlapFields=Object.keys(by).filter(k=>by[k].length>1);
+  return inv;
+}
+const INV=buildInventory();
+const INV_BY={}; INV.forEach(a=>INV_BY[a.id]=a);
+const byName=n=>INV.find(a=>a.n===n);
+const INV_STATS={total:INV.length,dead:INV.filter(a=>a.dead).length,legacy:INV.filter(a=>a.t==='wfr'||a.t==='pb').length,
+  overlapFields:INV.overlapFields.length,overlapAutos:INV.filter(a=>a.conflict).length,objects:new Set(INV.map(a=>a.obj)).size,
+  type:{flow:0,wfr:0,pb:0,trig:0}};
+INV.forEach(a=>INV_STATS.type[a.t]++);
+const OPP_WFR=INV.filter(a=>a.obj==='Opportunity'&&a.t==='wfr');
+const ACTIVE_OPP_WFR=OPP_WFR.filter(a=>!a.dead).length, DEAD_OPP_WFR=OPP_WFR.length-ACTIVE_OPP_WFR;
+const OTHER_BS=INV.filter(a=>a.obj==='Opportunity'&&a.tl==='Flow · before-save'&&!a.dead).length-1;
+const OTHER_AS=INV.filter(a=>a.obj==='Opportunity'&&a.tl==='Flow · record-triggered'&&!a.dead).length-2;
+function statusText(a){return a.s+(a.dead?' · orphaned':'');}
+function fieldHTML(a){return a.conflict?`<span class="fieldflag">⚠ ${esc(a.f)}</span>`:`<span class="fieldok">${esc(a.f)}</span>`;}
+
+/* heat rows: the original three samples, plus the top rows for every other object */
+const rankRow=a=>(a.conflict?0:a.dead?1:(a.t==='wfr'||a.t==='pb')?2:3);
+function heatRows(o){
+  const list=o.auto?o.auto.map(x=>byName(x.n)):INV.filter(a=>a.obj===o.name).sort((a,b)=>rankRow(a)-rankRow(b)||b.runs-a.runs).slice(0,6);
+  return list.map(a=>`<tr class="${a.dead?'deadrow':''}">
       <td><span class="${typeTag(a.t)}">${typeShort(a.t)}</span></td>
-      <td><b style="font-weight:600">${a.n}</b><div class="faint" style="font-size:11px">${a.tl}</div></td>
-      <td><span class="st st--${a.s.toLowerCase()}">${a.s}${a.dead?' · orphaned':''}</span></td>
+      <td><b style="font-weight:600">${esc(a.n)}</b><div class="faint" style="font-size:11px">${esc(a.tl)}</div></td>
+      <td><span class="st st--${a.s.toLowerCase()}">${statusText(a)}</span></td>
       <td class="num faint">${a.m}</td>
-      <td>${a.conflict?`<span class="fieldflag">⚠ ${a.f}</span>`:`<span class="fieldok">${a.f}</span>`}</td>
-    </tr>`).join(''):'';
-  const panel=o.auto?`<div class="obj__panel"><table class="atbl">
+      <td>${fieldHTML(a)}</td>
+    </tr>`).join('');
+}
+const OTHER_OBJS=INV.filter(a=>!HOT.includes(a.obj));
+$('objs').innerHTML=OBJECTS.map((o,i)=>{
+  const shown=o.auto?o.auto.length:Math.min(6,o.count);
+  const panel=`<div class="obj__panel"><div class="obj__scroll"><table class="atbl">
       <thead><tr><th>Type</th><th>Automation</th><th>Status</th><th>Last modified</th><th>Writes field</th></tr></thead>
-      <tbody>${rows}</tbody></table>
-      <div style="padding:10px 15px;font-size:11.5px;color:var(--faint);border-top:1px solid var(--line)">⚠ = two or more automations write this field — see the conflict below.</div></div>`:'';
+      <tbody>${heatRows(o)}</tbody></table></div>
+      <div class="obj__foot"><span>⚠ = two or more automations write this field. See the Conflict screen.</span><button class="linkbtn" data-a="inv-obj" data-obj="${o.name}">Showing ${shown} of ${o.count}. View all in inventory →</button></div></div>`;
   return `<div class="obj ${o.worst?'worst':''}" id="obj${i}">
-    <div class="obj__row" ${o.auto?`onclick="toggleObj(${i})"`:''} style="${o.auto?'':'cursor:default'}">
-      <div class="obj__name">${o.auto?'<span class="chev">▶</span>':'<span style="width:11px;display:inline-block"></span>'}${o.name}</div>
+    <div class="obj__row" data-a="obj" data-i="${i}" role="button" tabindex="0" aria-expanded="false">
+      <div class="obj__name"><span class="chev">▶</span>${o.name}</div>
       <div class="obj__bar"><div class="obj__fill" style="width:${Math.round(o.count/MAXC*100)}%"></div></div>
       <div class="obj__count num">${o.count} <small>automations</small></div>
     </div>${panel}</div>`;
-}).join('');
-function toggleObj(i){ $('obj'+i).classList.toggle('open'); }
+}).join('')+`<div class="obj obj--other"><div class="obj__row" data-a="inv-obj" data-obj="__other" role="button" tabindex="0">
+  <div class="obj__name"><span style="width:11px;display:inline-block"></span>${new Set(OTHER_OBJS.map(a=>a.obj)).size} other objects</div>
+  <div class="faint" style="font-size:12px">2 or fewer automations each</div>
+  <div class="obj__count num">${OTHER_OBJS.length} <small>automations →</small></div></div></div>`;
+function toggleObj(i){ const el=$('obj'+i); el.classList.toggle('open'); el.querySelector('.obj__row').setAttribute('aria-expanded',el.classList.contains('open')); }
 // open the worst object by default so the flags are visible
-document.querySelector('#obj0').classList.add('open');
+document.querySelector('#obj0').classList.add('open'); document.querySelector('#obj0 .obj__row').setAttribute('aria-expanded','true');
 
 /* ---------- conflict ---------- */
 $('conflictBox').innerHTML=`
@@ -296,31 +890,22 @@ $('conflictBox').innerHTML=`
       <div class="fstep__line"></div>
       <div class="fstep"><div class="fstep__dot">?</div><div class="fstep__body"><span class="fstep__who" style="color:var(--rose)">Which value survives?</span><div class="faint" style="font-size:12px">Both target the same field in the same save.</div></div></div>
     </div>
-    <div class="verdict"><span style="font-size:18px">🔴</span><div><b>Nondeterministic outcome.</b> Salesforce doesn't guarantee the execution order between a before-save Flow and Apex triggers will stay fixed across releases — so the final <span class="mono">Net_ARR__c</span> can flip after an upgrade, and no test covers it. Forecasts quietly drift. <b>One automation must own this field</b> before anything else on Opportunity is touched (step 2 of the plan).</div></div>
+    <div class="verdict"><span style="font-size:18px">🔴</span><div><b>Nondeterministic outcome.</b> On a plain save the trigger runs after the before-save Flow and its value wins. When a process or after-save flow updates the same record, the nested save runs the Flow again while the trigger's recursion guard skips, so the Flow's value wins. Which formula lands in <span class="mono">Net_ARR__c</span> depends on what the rep edited, and no test covers it. Forecasts quietly drift. <b>One automation must own this field</b> before anything else on Opportunity is touched (step 2 of the plan).</div></div>
+    <div class="evid"><span class="conf">Confidence high</span><span><b>Flow</b> OPP_Set_Net_ARR assigns $Record.Net_ARR__c</span><span><b>Apex</b> OpportunityTriggerHandler.cls, line 88</span><span><b>Debug logs</b> 40 of 40 sampled saves write it twice</span></div>
+    <button class="linkbtn" data-a="to-sim">Run it in the save simulator ↓</button>
   </div>`;
 
 /* ---------- remediation ---------- */
 const REM=[
-  {t:'Retire the 31 inactive / orphaned automations', eff:'S', rk:'low', why:'Dead weight — active in metadata but never firing. Confirm via debug logs, then delete to shrink the surface before touching anything live.', dep:'Do first — nothing depends on them'},
-  {t:'Resolve the Net_ARR__c ownership conflict', eff:'M', rk:'high', why:'Two automations write it nondeterministically. Pick the Flow, remove the trigger’s write, and add a test — the value feeds forecasting.', dep:'Blocks all further Opportunity work'},
+  {t:'Retire the 31 inactive / orphaned automations', eff:'S', rk:'low', why:'Dead weight: active in metadata but never firing. Confirm via debug logs, then delete to shrink the surface before touching anything live.', dep:'Do first. Depends on nothing', link:{a:'inv-dead',l:'Show the 31 in the inventory'}},
+  {t:'Resolve the Net_ARR__c ownership conflict', eff:'M', rk:'high', why:'Two automations write it nondeterministically. Pick the Flow, remove the trigger’s write, and add a test. The value feeds forecasting.', dep:'Blocks all further Opportunity work', link:{a:'to-sim',l:'Try the fix in the save simulator'}},
   {t:'Consolidate Opportunity’s 9 Workflow Rules into one record-triggered Flow', eff:'L', rk:'med', why:'Worst-density object. Migrate here first to establish the entry-condition + run-order pattern you’ll reuse everywhere.', dep:'After the conflict is resolved'},
-  {t:'Migrate the remaining 65 Workflow Rules & Process Builders to Flow', eff:'L', rk:'med', why:'Salesforce is retiring both. Sequence Account → Contact → Case using the Opportunity pattern so each object is done once.', dep:'After the Opportunity pattern is proven'},
+  {t:'Migrate the remaining 65 Workflow Rules & Process Builders to Flow', eff:'L', rk:'med', why:'Salesforce is retiring both. Sequence Account → Contact → Case using the Opportunity pattern so each object is done once.', dep:'After the Opportunity pattern is proven', link:{a:'inv-legacy',l:'Show the 65 in the inventory'}},
   {t:'Collapse 147 permission sets into groups by role', eff:'M', rk:'med', why:'Access reviews are impossible at this sprawl. Group only after automation is stable, so you’re not re-mapping moving parts.', dep:'After automation is consolidated'},
-  {t:'Merge ~1,900 duplicate Contacts from the BU overlap', eff:'M', rk:'low', why:'Safe once Contact automation is consolidated. Run email-exact first, then fuzzy name+account.', dep:'Last — depends on Contact automation being settled'}
+  {t:'Merge ~1,900 duplicate Contacts from the BU overlap', eff:'M', rk:'low', why:'Safe once Contact automation is consolidated. Run email-exact first, then fuzzy name+account.', dep:'Last. Depends on Contact automation being settled', link:{go:'dupes',l:'Preview merges and the threshold'}}
 ];
-$('rem').innerHTML=REM.map((r,i)=>`
-  <div class="rem__item">
-    <div class="rem__num">${i+1}</div>
-    <div class="rem__main">
-      <div class="rem__title">${r.t}</div>
-      <div class="rem__why">${r.why}</div>
-      <div class="rem__dep">↳ ${r.dep}</div>
-    </div>
-    <div class="rem__meta">
-      <span class="chip2 eff-${r.eff.toLowerCase()}">Effort ${r.eff}</span>
-      <span class="chip2 rk-${r.rk}">${r.rk==='high'?'High':r.rk==='med'?'Medium':'Low'} risk</span>
-    </div>
-  </div>`).join('')+`<div style="margin-top:6px;font-size:12.5px;color:var(--faint);display:flex;align-items:center;gap:8px">↳ This ordered plan is the deliverable of a <b style="color:var(--lime);font-weight:700">Systems Assessment</b>.</div>`;
+const DEPS=[[],[0],[1],[2],[3],[3]];
+const KEY=i=>'NBP-'+(241+i);
 
 /* ---------- duplicate contacts ---------- */
 const DUP=[
@@ -328,10 +913,670 @@ const DUP=[
   {rule:'Name + Account — fuzzy', sets:'610', recs:'1,190 records'},
   {rule:'Phone — standardized', sets:'180', recs:'360 records'}
 ];
-$('dup').innerHTML=DUP.map(d=>`<div class="dupcard"><div class="dupcard__rule">${d.rule}</div><div class="dupcard__v num">${d.sets}</div><div class="dupcard__s">duplicate sets · ${d.recs}</div></div>`).join('');
+// threshold → fuzzy sets, phone sets, estimated false-merge rate. 85% reproduces the audit's numbers.
+const THR=[[70,1150,230,.075],[75,950,215,.042],[80,770,196,.019],[85,610,180,.006],[90,420,160,.002],[95,210,140,.001],[100,0,120,0]];
+function dupAt(t){
+  let i=0; while(i<THR.length-2&&t>THR[i+1][0]) i++;
+  const a=THR[i], b=THR[i+1], k=(t-a[0])/(b[0]-a[0]), L=(x,y)=>x+(y-x)*k;
+  const F=Math.round(L(a[1],b[1])), P=Math.round(L(a[2],b[2])), risk=L(a[3],b[3]);
+  const E=1240, Er=2760, Fr=Math.round(F*1190/610), Pr=P*2;
+  const surplus=Math.round(((Er-E)+(Fr-F)+(Pr-P))*1900/2280/10)*10;
+  return {E,Er,F,Fr,P,Pr,risk,surplus,sets:E+F+P};
+}
+const SAMPLES=[
+  {recs:[
+    {bu:'Meridian',name:'Priya Raman',email:'priya.raman@ashbyfreight.example',phone:'+1 415 555 0142',acct:'Ashby Freight',owner:'Lena Ortiz',act:'2026-09-12',opt:'Yes',acts:9,opps:1},
+    {bu:'Halcyon',name:'Priya Raman',email:'p.raman@ashbyfreight.example',phone:'(415) 555-0142',acct:'Ashby Freight Inc.',owner:'Tom Becker',act:'2026-03-02',opt:'Yes',acts:4,opps:1,score:93,why:'Name exact, phone matches once formatted, account name 0.91 similar.'},
+    {bu:'Vantage',name:'P. Raman',email:'praman@ashby-freight.example',phone:'415.555.0199',acct:'Ashby Freight Logistics',owner:'Ana Silva',act:'2025-11-20',opt:'No',acts:2,opps:0,score:81,why:'Initial and surname match, account 0.84 similar, phone differs.'}]},
+  {recs:[
+    {bu:'Halcyon',name:'Daniel Okafor',email:'daniel.okafor@corvel.example',phone:'+1 312 555 0187',acct:'Corvel Systems',owner:'Tom Becker',act:'2026-10-02',opt:'Yes',acts:12,opps:2},
+    {bu:'Vantage',name:'Daniel Okafor',email:'daniel.okafor@corvel.example',phone:'+1 312 555 0187',acct:'Corvel Systems',owner:'Ana Silva',act:'2026-06-18',opt:'Yes',acts:3,opps:0,score:100,why:'Email exact.'},
+    {bu:'Meridian',name:'Dan Okafor',email:'dokafor@corvelsys.example',phone:'(312) 555-0110',acct:'Corvel',owner:'Lena Ortiz',act:'2025-08-09',opt:'Yes',acts:1,opps:0,score:88,why:'Nickname match Dan and Daniel, account 0.88 similar.'}]},
+  {recs:[
+    {bu:'Vantage',name:'Mara Lindqvist',email:'mara.lindqvist@holtwerk.example',phone:'+46 8 555 012 34',acct:'Holtwerk AB',owner:'Ana Silva',act:'2026-08-21',opt:'Yes',acts:6,opps:1},
+    {bu:'Meridian',name:'Mara Lindqvist',email:'m.lindqvist@holtwerk.example',phone:'+46 8 555 012 34',acct:'Holtwerk',owner:'Lena Ortiz',act:'2026-01-14',opt:'Yes',acts:5,opps:0,score:96,why:'Name exact, phone exact, account 0.95 similar.'},
+    {bu:'Halcyon',name:'Mara Lindquist',email:'mara.l@holtwerk-group.example',phone:'+46 8 555 019 90',acct:'Holtwerk Group',owner:'Tom Becker',act:'2025-04-30',opt:'No',acts:2,opps:1,score:74,why:'Surname spelling differs, account 0.80 similar.'}]}
+];
 
-/* smooth-scroll section nav */
-document.querySelectorAll('.snav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const el=document.querySelector(a.getAttribute('href'));if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}));
+/* ---------- scan ---------- */
+const META=[
+  {t:'CustomObject',n:64},{t:'CustomField',n:1021},{t:'ValidationRule',n:186},{t:'Flow',n:112},
+  {t:'Process Builder',n:21},{t:'WorkflowRule',n:44},{t:'ApexTrigger',n:25},{t:'ApexClass',n:318},
+  {t:'Layout',n:112},{t:'ApprovalProcess',n:14},{t:'Assignment, escalation, auto-response rules',n:8},{t:'DuplicateRule, MatchingRule',n:9},
+  {t:'EmailTemplate',n:15},{t:'PermissionSet',n:147},{t:'PermissionSetGroup',n:6},{t:'Profile',n:38}
+];
+const META_TOTAL=META.reduce((s,m)=>s+m.n,0);
+const ANALYSIS=[
+  {l:'Map automations to objects',k:'tool',t:'tooling.query("automations by object")',d:`${INV_STATS.total} automations on ${INV_STATS.objects} objects`,ms:380},
+  {l:'Check 90 days of executions',k:'warn',t:'logs.executions(window: "90d")',d:`${INV_STATS.dead} automations never fired: inactive or orphaned`,ms:640},
+  {l:'Measure density by object',k:'tool',t:'analyze.density(by: "object")',d:'9 objects carry 3 or more automations',ms:120},
+  {l:'Find fields with two writers',k:'warn',t:'analyze.field_writes()',d:`${INV_STATS.overlapFields} fields written by 2+ active automations. Confidence high: Flow assignments and Apex DML parsed.`,ms:910},
+  {l:'Trace the order of execution',k:'bad',t:'analyze.order_of_execution("Opportunity.Net_ARR__c")',d:'Before-save Flow and before-update trigger both write it. 40 of 40 sampled saves show two writes.',ms:1240},
+  {l:'Match duplicate Contacts',k:'tool',t:'duplicates.match(rules: 3, threshold: 0.85)',d:'2,030 duplicate sets, about 1,900 surplus records',ms:870},
+  {l:'Order the fixes by dependency',k:'tool',t:'plan.order_by_dependency(steps: 6)',d:'1 → 2 → 3 → 4, then 5 and 6 in parallel',ms:160},
+  {l:'Draft the audit summary',k:'ok',t:'summary.draft()',d:'Ready for your review. Nothing written to the org.',ms:420}
+];
+
+/* ---------- save simulator ---------- */
+const OPP={id:'006Qx00000AbF3K',name:'Ashby Freight · Fleet Platform Renewal'};
+const SIM_BASE={Amount:120000,Discount:0.10,Fees:8000,Stage:'Proposal',Net:108000};
+const ACCT_OTHER=246000;
+const SIM_EDITS=[
+  {id:'stage',label:'Move Stage to Negotiation',sub:'No money changes',ch:{Stage:'Negotiation'}},
+  {id:'amount',label:'Raise Amount to $150,000',sub:'Crosses the 15% discount tier',ch:{Amount:150000}},
+  {id:'discount',label:'Give a 12% discount',sub:'The rep edits Discount__c',ch:{Discount:0.12}},
+  {id:'custom',label:'Your own values',sub:'Amount, discount, fees and stage',ch:null}
+];
+const tier=a=>a>=150000?.15:a>=100000?.10:.05;
+const OOE=[
+  ['Load the record and apply edits','Original record loaded, new values applied, UI system checks'],
+  ['Before-save record-triggered flows','Fast field updates on the same record'],
+  ['Before triggers','Apex before update'],
+  ['System and custom validation','Required fields, validation rules'],
+  ['Duplicate rules','Block or alert on duplicates'],
+  ['Save to the database, not committed','Row written inside the transaction'],
+  ['After triggers','Apex after update'],
+  ['Assignment rules','Leads and Cases only'],
+  ['Auto-response rules','Leads and Cases only'],
+  ['Workflow rules','A field update re-runs update triggers once more'],
+  ['Escalation rules','Cases only'],
+  ['Processes and after-save flows','Process Builder, then after-save record-triggered flows'],
+  ['Entitlement rules','Cases and work orders only'],
+  ['Roll-up summaries and cross-object workflow','Parent, then grandparent, recalculate'],
+  ['Criteria-based sharing','Sharing rules re-evaluate'],
+  ['Commit','All DML commits'],
+  ['Post-commit logic','Email sends, async jobs start']
+];
+
+function simulate(ch,fix){
+  const base={...SIM_BASE}, rec={...base,...ch};
+  rec.Discount=Math.round(rec.Discount*1000)/1000;
+  const steps=OOE.map((o,i)=>({i,state:'idle',lines:[],w:[]}));
+  const writes=[]; let guard=false;
+  const W=(si,who,type,formula,val,nested)=>{rec.Net=val;writes.push({who,type,formula,val,nested,si});};
+  const flowW=(si,nested)=>{const v=Math.round(rec.Amount*(1-rec.Discount));W(si,'OPP – Set Net ARR','flow','Amount × (1 − Discount__c)',v,nested);
+    return `<b>OPP – Set Net ARR</b> writes Net_ARR__c = ${fmt$(rec.Amount)} × (1 − ${pct(rec.Discount)}) = <b class="c-flow">${fmt$(v)}</b>.`;};
+  const trigW=(si,nested)=>{
+    if(guard) return `<b>OpportunityTrigger</b> before update: the recursion guard is already set, so the handler skips.`;
+    guard=true;
+    if(fix) return `<b>OpportunityTrigger</b> before update runs. The fix removed its Net_ARR__c write. Recursion guard set.`;
+    const v=rec.Amount-rec.Fees; W(si,'OpportunityTrigger','trig','Amount − Fixed_Fees__c',v,nested);
+    return `<b>OpportunityTrigger</b> before update writes Net_ARR__c = ${fmt$(rec.Amount)} − ${fmt$(rec.Fees)} = <b class="c-trig">${fmt$(v)}</b>. Recursion guard set.`;};
+  const vfails=()=>{const f=[];
+    if(!(rec.Amount>0)) f.push('<b>Amount_Positive</b> fails: Amount must be greater than 0.');
+    if(rec.Discount>.40) f.push('<b>Discount_Max_40</b> fails: Discount__c must be 40% or less.');
+    if(rec.Fees>rec.Amount) f.push('<b>Fees_Within_Amount</b> fails: Fixed_Fees__c can’t exceed Amount.');
+    return f;};
+  const nested=(si,why)=>({nest:'Nested save · '+why,lines:[flowW(si,true),trigW(si,true),'System and custom validation pass. No duplicate rules on Opportunity.','Saved, not committed. OpportunityTrigger after update: no writes to this record.','Workflow rules, processes and flows find no newly met criteria, so nothing fires again.']});
+  const diffs=[];
+  if(rec.Amount!==base.Amount) diffs.push(`Amount ${fmt$(base.Amount)} → ${fmt$(rec.Amount)}`);
+  if(rec.Discount!==base.Discount) diffs.push(`Discount__c ${pct(base.Discount)} → ${pct(rec.Discount)}`);
+  if(rec.Fees!==base.Fees) diffs.push(`Fixed_Fees__c ${fmt$(base.Fees)} → ${fmt$(rec.Fees)}`);
+  if(rec.Stage!==base.Stage) diffs.push(`StageName ${base.Stage} → ${rec.Stage}`);
+  const S_=steps;
+  S_[0].state='ran'; S_[0].lines=[diffs.length?`Loads the saved Opportunity and applies your edit: ${esc(diffs.join(', '))}.`:'Loads the saved Opportunity. No field changed, and the full save still runs.','Standard UI save: layout-required fields, field formats and lengths are checked.'];
+  S_[1].state='write'; S_[1].lines=[flowW(1,false),`${OTHER_BS} other before-save flows on Opportunity run. None touch Net_ARR__c.`];
+  S_[2].state=fix?'ran':'write'; S_[2].lines=[trigW(2,false)];
+  const f=vfails();
+  if(f.length){
+    S_[3].state='fail'; S_[3].lines=[...f,'The save stops here. The transaction rolls back, so both writes above are discarded.'];
+    for(let i=4;i<S_.length;i++) S_[i].state='none';
+    return done(true);
+  }
+  S_[3].state='ran'; S_[3].lines=['Required fields have values. Amount_Positive, Discount_Max_40 and Fees_Within_Amount pass.','Layout-specific rules don’t run a second time.'];
+  S_[4].state='skip'; S_[4].lines=['No active duplicate rules on Opportunity.'];
+  S_[5].state='ran'; S_[5].lines=[`Row saved inside the transaction with Net_ARR__c = <b>${fmt$(rec.Net)}</b>. Nothing is committed yet.`];
+  S_[6].state='ran'; S_[6].lines=['<b>OpportunityTrigger</b> after update: no writes to this record. Queues a forecast snapshot job.'];
+  S_[7].state='skip'; S_[7].lines=['Assignment rules apply to Leads and Cases only.'];
+  S_[8].state='skip'; S_[8].lines=['Auto-response rules apply to Leads and Cases only.'];
+  // workflow rules
+  const stageCh=rec.Stage!==base.Stage, amtCh=rec.Amount!==base.Amount, L9=[]; let fu=0, mails=[];
+  if(stageCh&&rec.Stage==='Negotiation'){L9.push('<b>OPP – Stage Sync (Meridian)</b> matches: StageName changed to Negotiation. Field update sets StageName = Negotiation/Review.');rec.Stage='Negotiation/Review';fu++;}
+  if(stageCh){L9.push('<b>OPP – Stage Age Stamp (Halcyon)</b> matches: StageName changed. Field update sets Stage_Changed_Date__c = today.');fu++;}
+  if(amtCh&&rec.Amount>=250000){L9.push('<b>OPP – Big Deal Alert (Halcyon)</b> matches: its email alert waits for the commit.');mails.push('Big Deal Alert');}
+  L9.push(`${ACTIVE_OPP_WFR} active rules evaluated${L9.length?'':', none match this edit'}. ${DEAD_OPP_WFR} inactive rules don’t run.`);
+  if(fu) L9.push({nest:`${fu} field update${fu>1?'s':''} · update triggers run once more, and only once`,lines:['System validation runs again.',trigW(9,true),'OpportunityTrigger after update: no writes to this record.','Custom validation rules, flows, duplicate rules, processes and escalation rules don’t run again.']});
+  S_[9].state='ran'; S_[9].lines=L9;
+  S_[10].state='skip'; S_[10].lines=['Escalation rules apply to Cases only.'];
+  // processes, then after-save flows
+  const L11=['<span class="ooe__sub">Processes · no guaranteed order between them</span>'], w0=writes.length;
+  if(amtCh&&tier(rec.Amount)!==rec.Discount){const was=rec.Discount;rec.Discount=tier(rec.Amount);
+    L11.push(`<b>OPP – Discount Calc (Meridian)</b> matches: Amount changed. Sets Discount__c to the ${pct(rec.Discount)} tier (was ${pct(was)}). Updating this record starts a nested save.`);
+    L11.push(nested(11,'from OPP – Discount Calc (Meridian)'));}
+  else L11.push(`<b>OPP – Discount Calc (Meridian)</b>: ${amtCh?'Discount__c already matches the tier':'Amount didn’t change'}. No action.`);
+  const won=stageCh&&rec.Stage==='Closed Won';
+  if(won){L11.push('<b>OPP – Notify AE on Win</b> matches: its email alert waits for the commit.');mails.push('Notify AE on Win');
+    L11.push('<b>OPP – Onboarding Request (Meridian)</b> matches: creates an Onboarding__c record, which runs its own save.');}
+  else L11.push('<b>OPP – Notify AE on Win</b>, Partner Commission and Onboarding Request: no match.');
+  L11.push('<span class="ooe__sub">After-save record-triggered flows</span>');
+  if(rec.Discount>.20){const was=rec.Discount;rec.Discount=.20;
+    L11.push(`<b>OPP – Discount Approval</b> matches: Discount__c ${pct(was)} is over 20%. Caps it at 20% and sets Approval_Status__c = Pending. Updating this record starts a nested save.`);
+    L11.push(nested(11,'from OPP – Discount Approval'));}
+  else L11.push(`<b>OPP – Discount Approval</b>: Discount__c ${pct(rec.Discount)} is within 20%. No action.`);
+  if(won){L11.push('<b>OPP – Close Plan Date</b> matches: Stage moved to Closed Won. Sets Close_Plan_Date__c = today. Nested save.');L11.push(nested(11,'from OPP – Close Plan Date'));}
+  L11.push(`${won?'':'<b>OPP – Close Plan Date</b> and '}${OTHER_AS} other after-save flows: entry conditions not met.`);
+  S_[11].state=writes.length>w0?'write':'ran'; S_[11].lines=L11;
+  S_[12].state='skip'; S_[12].lines=['Entitlement rules apply to Cases and work orders only.'];
+  S_[13].state='ran'; S_[13].lines=[`Account <b>Ashby Freight</b>: Open_Net_ARR__c (roll-up summary) recalculates to <b>${fmt$(ACCT_OTHER+rec.Net)}</b>. The Account goes through its own save.`,'No grandparent roll-up and no cross-object workflow on this path.'];
+  S_[14].state='ran'; S_[14].lines=['Criteria-based sharing rules re-evaluate for this Opportunity.'];
+  S_[15].state='ran'; S_[15].lines=[`All DML commits. Net_ARR__c = <b>${fmt$(rec.Net)}</b> is now stored.`];
+  S_[16].state='ran'; S_[16].lines=[(mails.length?`Email alerts send: ${mails.join(', ')}. `:'')+'The queued forecast snapshot job starts.'];
+  return done(false);
+  function done(failed){
+    writes.forEach((w,i)=>steps[w.si].w.push(i));
+    const expected=failed?null:Math.round(rec.Amount*(1-rec.Discount));
+    return {steps,writes,failed,fix,saved:failed?base.Net:rec.Net,expected,last:writes[writes.length-1],rec,
+      writers:[...new Set(writes.map(w=>w.who))]};
+  }
+}
+
+/* ---------- state ---------- */
+const S0=()=>({scanned:false,scanning:false,phase:'',scanIdx:-1,anaIdx:-1,scanDone:0,scanAt:'',screen:'scorecard',
+  plan:{done:[false,false,false,false,false,false],approved:false,approvedAt:'',backlog:null,creating:0},
+  dup:{t:85,sample:0},
+  sim:{edit:'amount',fix:false,step:false,running:false,done:false,res:null,pos:-1,skip:false,history:[],custom:{A:'135000',D:'18',F:'8000',S:'Closed Won'}},
+  inv:{q:'',type:'',obj:'',status:'',overlap:false,legacy:false,sort:'obj'}});
+let S=S0();
+
+/* ---------- agent activity ---------- */
+let LOG=[];
+const LGK={tool:'›',ok:'✓',warn:'!',bad:'×',human:'◆',write:'✎',info:'·'};
+function lgHTML(x,isNew){
+  if(x.g) return `<div class="lg-g">${esc(x.g)}</div>`;
+  return `<div class="lg lg--${x.k}${isNew?' is-new':''}"><span class="lg__k">${LGK[x.k]||'›'}</span><span class="lg__t">${esc(x.t)}</span><span class="lg__ms">${x.ms?x.ms+'ms':''}</span>${x.d?`<span class="lg__d">${esc(x.d)}</span>`:''}</div>`;
+}
+function renderLog(){ $('agentLog').innerHTML=LOG.map(x=>lgHTML(x)).join(''); $('agentCnt').textContent=LOG.filter(x=>!x.g).length; }
+function pushLog(x){ LOG.push(x); const el=$('agentLog'); el.insertAdjacentHTML('beforeend',lgHTML(x,true)); el.scrollTop=el.scrollHeight; $('agentCnt').textContent=LOG.filter(y=>!y.g).length; }
+const log=(k,t,d,ms)=>pushLog({k,t,d,ms});
+const logGroup=g=>pushLog({g});
+function seedLog(){ LOG=[]; renderLog(); logGroup('Session · '+now()); log('tool','org.connect("NorthBrand Group · Production")','Connected. Scope: read metadata and debug logs.',140); log('info','waiting_for(you)','No scan yet this session. Press Run scan.'); }
+function setAgent(open){ $('shell').classList.toggle('agent-open',open); $('agentBtn').setAttribute('aria-expanded',open); if(open){const el=$('agentLog');el.scrollTop=el.scrollHeight;} }
+
+/* ---------- scrolling inside the main column (cancelled by navigation) ---------- */
+let SCROLL_TOK=0;
+function coverTop(el){ let c=0; const sn=$('snav'); if(getComputedStyle(sn).display!=='none') c+=sn.offsetHeight; if(el.closest('.simrun')&&el!==$('simTrack')&&!el.classList.contains('simrun')) c+=$('simTrack').offsetHeight; return c; }
+function scrollMain(el,block){
+  if(!el||!el.isConnected) return;
+  const main=$('main'), tok=++SCROLL_TOK, m=main.getBoundingClientRect(), r=el.getBoundingClientRect(), top=m.top+coverTop(el), gap=12;
+  let d;
+  if(block==='start') d=r.top-top-gap;
+  else if(block==='center') d=r.top-(top+(m.bottom-top-r.height)/2);
+  else { if(r.top<top+gap) d=r.top-top-gap; else if(r.bottom>m.bottom-gap) d=Math.min(r.bottom-m.bottom+gap,r.top-top-gap); else return; }
+  const from=main.scrollTop, to=Math.max(0,Math.min(from+d,main.scrollHeight-main.clientHeight));
+  if(rm()||Math.abs(to-from)<2){ main.scrollTop=to; return; }
+  const t0=performance.now(), dur=Math.min(520,220+Math.abs(to-from)*.25);
+  const step=t=>{ if(tok!==SCROLL_TOK) return; const k=Math.min(1,(t-t0)/dur); main.scrollTop=from+(to-from)*(1-Math.pow(1-k,3)); if(k<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+/* ---------- navigation ---------- */
+const SCREENS=['scorecard','heat','conflict','plan','dupes','inventory'];
+function go(id){
+  if(!SCREENS.includes(id)) return;
+  S.screen=id;
+  SCREENS.forEach(s=>{$(s).hidden=s!==id;});
+  qsa('[data-go]').forEach(n=>{ if(n.closest('.side')||n.closest('.snav')){ if(n.dataset.go===id) n.setAttribute('aria-current','page'); else n.removeAttribute('aria-current'); }});
+  SCROLL_TOK++; $('main').scrollTop=0;
+  const tab=document.querySelector('.snav [aria-current="page"]'); if(tab){const sn=$('snav');sn.scrollLeft=Math.max(0,tab.offsetLeft-sn.clientWidth/2+tab.offsetWidth/2);}
+  if(innerWidth<1280&&$('shell').classList.contains('agent-open')) setAgent(false);
+}
+
+/* ---------- scan ---------- */
+function renderTop(){
+  const pt=$('scanPillT'), dot=$('scanDot'), b=$('scanBtn');
+  dot.className='dot'+(S.scanning?' dot--run':S.scanned?'':' dot--idle');
+  pt.textContent=S.scanning?`Scanning · ${Math.round(S.scanDone/META_TOTAL*100)}%`:S.scanned?`Metadata scan · ${fmtN(META_TOTAL)} components`:'Not scanned this session';
+  b.disabled=S.scanning; b.textContent=S.scanning?'Scanning…':S.scanned?'Rescan':'Run scan';
+}
+function heroHTML(){
+  if(S.scanned&&!S.scanning) return `<div class="hero hero--done"><span class="hero__ok">✓</span><div><b>Scan complete.</b> ${fmtN(META_TOTAL)} components in ${META.length} metadata types, read at ${S.scanAt}. Nothing in the org changed.</div><button class="btn btn--ghost" data-a="scan">Rescan</button></div>`;
+  return `<div class="hero">
+    <div class="hero__row">
+      <div class="hero__org"><div class="hero__k mono">Connected org</div><div class="hero__t">NorthBrand Group · Production</div>
+        <div class="hero__facts"><span><span class="dot--ok"></span>Connected, read-only</span><span>Enterprise Edition</span><span>Merged from Meridian, Halcyon and Vantage</span><span>Last full scan 9 Oct 2026</span></div></div>
+      <div class="hero__cta" ${S.scanning?'hidden':''}><button class="btn btn--primary btn--lg" data-a="scan" id="heroScan">Run scan</button><div class="hero__fine">Reads metadata only. Nothing in the org changes.</div></div>
+    </div>
+    <div class="hero__status"><span id="heroSt"></span><b class="num" id="heroPct"></b></div>
+    <div class="prog"><div class="prog__f" id="heroBar" style="width:0%"></div></div>
+    <div class="mtypes">${META.map((m,i)=>`<div class="mt" id="mt${i}"><span class="mt__i">·</span><span class="mt__n">${m.t}</span><b class="num">${fmtN(m.n)}</b></div>`).join('')}</div>
+    <div class="ana" id="ana" ${S.phase==='analyze'?'':'hidden'}>${ANALYSIS.map((a,i)=>`<div class="ana__i" id="ana${i}">${a.l}</div>`).join('')}</div>
+  </div>`;
+}
+function renderHero(){ $('hero').innerHTML=heroHTML(); tickHero(); }
+function tickHero(){
+  if(!$('heroSt')) return;
+  const p=Math.round(S.scanDone/META_TOTAL*100);
+  $('heroSt').textContent=!S.scanning?`Not scanned this session · ${META.length} metadata types, ${fmtN(META_TOTAL)} components`:S.phase==='analyze'?`Analyzing · ${(ANALYSIS[S.anaIdx]||ANALYSIS[ANALYSIS.length-1]).l}`:`Reading ${META[S.scanIdx].t} · ${fmtN(S.scanDone)} of ${fmtN(META_TOTAL)} components`;
+  $('heroPct').textContent=S.scanning?p+'%':'';
+  $('heroBar').style.width=p+'%';
+  META.forEach((m,i)=>{const el=$('mt'+i);const st=!S.scanning?'':(i<S.scanIdx||S.phase==='analyze')?'is-done':i===S.scanIdx?'is-now':'';el.className='mt '+st;el.querySelector('.mt__i').textContent=st==='is-done'?'✓':st==='is-now'?'◌':'·';});
+  $('ana').hidden=S.phase!=='analyze';
+  ANALYSIS.forEach((a,i)=>{const el=$('ana'+i);el.className='ana__i '+(i<S.anaIdx?'is-done':i===S.anaIdx?'is-now':'');el.textContent=(i<S.anaIdx?'✓ ':i===S.anaIdx?'◌ ':'· ')+a.l;});
+  renderTop();
+}
+function emptyHTML(key){
+  const what={heat:'automation density for each object',conflict:'the execution-order conflict and the save simulator',plan:'the remediation plan',dupes:'duplicate Contacts by matching rule',inventory:'all 202 automations'}[key];
+  if(S.scanning) return `<div class="empty"><div class="empty__ic">◌</div><div class="empty__t">Scan in progress</div><div>Results for ${what} appear here when the scan finishes.</div><button class="btn" data-go="scorecard">Watch progress</button></div>`;
+  return `<div class="empty"><div class="empty__ic">⌕</div><div class="empty__t">No scan results yet</div><div>Run the metadata scan to see ${what}.</div><button class="btn btn--primary" data-a="scan">Run scan</button></div>`;
+}
+function renderEmpties(){ qsa('[data-empty]').forEach(el=>el.innerHTML=emptyHTML(el.dataset.empty)); }
+function renderBadges(){
+  const set=(id,txt,cls)=>{const el=$(id);el.hidden=!S.scanned;el.textContent=txt;el.className='nav__b'+(cls?' '+cls:'');};
+  set('nb-heat','9','');
+  set('nb-conflict','1','nav__b--bad');
+  const n=S.plan.done.filter(Boolean).length;
+  set('nb-plan',S.plan.backlog?'✓':n+'/6',S.plan.backlog?'nav__b--ok':'');
+  set('nb-inventory',String(INV_STATS.total),'');
+}
+function applyScanState(){ $('shell').classList.toggle('is-scanned',S.scanned); renderHero(); renderEmpties(); renderBadges(); renderTop(); }
+async function runScan(){
+  if(S.scanning) return;
+  const my=EPOCH; S.scanning=true; S.phase='read'; S.scanDone=0; S.scanIdx=0; S.anaIdx=-1;
+  go('scorecard'); applyScanState();
+  logGroup('Scan · '+now());
+  log('tool','metadata.describe()',`${META.length} metadata types, ${fmtN(META_TOTAL)} components to read`,210);
+  for(let i=0;i<META.length;i++){
+    S.scanIdx=i; tickHero();
+    const ms=Math.round(140+META[i].n*.32); await wait(ms); if(my!==EPOCH) return;
+    S.scanDone+=META[i].n; log('tool',`metadata.read("${META[i].t}")`,`${fmtN(META[i].n)} components`,ms);
+  }
+  S.phase='analyze'; S.scanIdx=META.length;
+  for(let i=0;i<ANALYSIS.length;i++){ S.anaIdx=i; tickHero(); await wait(330); if(my!==EPOCH) return; const a=ANALYSIS[i]; log(a.k,a.t,a.d,a.ms); }
+  S.scanning=false; S.scanned=true; S.phase=''; S.scanAt=now();
+  applyScanState(); renderAllResults(); countUp();
+  toast(`Scan complete: ${fmtN(META_TOTAL)} components, ${INV_STATS.total} automations`);
+}
+function countUp(){
+  if(rm()) return;
+  qsa('.kpi__v').forEach(el=>{const v=+el.dataset.v; const t0=performance.now(); const step=t=>{const k=Math.min(1,(t-t0)/700); el.textContent=fmtN(v*(1-Math.pow(1-k,3))); if(k<1) requestAnimationFrame(step); else el.textContent=el.dataset.v;}; requestAnimationFrame(step);});
+}
+
+/* ---------- simulator UI ---------- */
+function simCtlHTML(){
+  const c=S.sim.custom, run=S.sim.running;
+  return `<div class="simrec"><div class="simrec__k mono">Opportunity · ${OPP.id}</div><div class="simrec__t">${OPP.name}</div>
+    <div class="fgrid">
+      <div class="fv"><div class="fv__l">Amount</div><div class="fv__v num">${fmt$(SIM_BASE.Amount)}</div></div>
+      <div class="fv"><div class="fv__l">Discount__c</div><div class="fv__v num">${pct(SIM_BASE.Discount)}</div></div>
+      <div class="fv"><div class="fv__l">Fixed_Fees__c</div><div class="fv__v num">${fmt$(SIM_BASE.Fees)}</div></div>
+      <div class="fv"><div class="fv__l">StageName</div><div class="fv__v">${SIM_BASE.Stage}</div></div>
+      <div class="fv fv--wide"><div class="fv__l">Net_ARR__c, as stored</div><div class="fv__v num">${fmt$(SIM_BASE.Net)}</div></div>
+    </div></div>
+    <div class="simlbl">1 · Choose an edit</div>
+    <div class="edits" role="radiogroup" aria-label="Opportunity edit">${SIM_EDITS.map(e=>`<label class="edit ${S.sim.edit===e.id?'is-on':''}"><input type="radio" name="simedit" value="${e.id}" ${S.sim.edit===e.id?'checked':''} ${run?'disabled':''}><span><b>${e.label}</b><small>${e.sub}</small></span></label>`).join('')}</div>
+    <div class="custom" id="simCustom" ${S.sim.edit==='custom'?'':'hidden'}>
+      <label class="fld">Amount ($)<input class="inp" id="simA" inputmode="numeric" value="${esc(c.A)}" ${run?'disabled':''}></label>
+      <label class="fld">Discount (%)<input class="inp" id="simD" inputmode="decimal" value="${esc(c.D)}" ${run?'disabled':''}></label>
+      <label class="fld">Fixed fees ($)<input class="inp" id="simF" inputmode="numeric" value="${esc(c.F)}" ${run?'disabled':''}></label>
+      <label class="fld">Stage<select class="inp" id="simS" ${run?'disabled':''}>${['Proposal','Negotiation','Closed Won'].map(s=>`<option ${c.S===s?'selected':''}>${s}</option>`).join('')}</select></label>
+      <div class="fld__err" id="simErr"></div>
+    </div>
+    <div class="simlbl">2 · Options</div>
+    <label class="sw"><input type="checkbox" id="simFix" ${S.sim.fix?'checked':''} ${run?'disabled':''}><span><b>Proposed fix</b><small>The Flow owns Net_ARR__c. The trigger’s write is removed and a test added.</small></span></label>
+    <div class="fixdiff" ${S.sim.fix?'':'hidden'}><span class="faint">OpportunityTriggerHandler.cls</span>
+<span class="del">- opp.Net_ARR__c = opp.Amount - opp.Fixed_Fees__c;</span>
+<span class="add">+ // Net_ARR__c is owned by Flow OPP_Set_Net_ARR</span>
+<span class="faint">NetArrOwnershipTest.cls</span>
+<span class="add">+ assert one writer, value = Amount × (1 − Discount__c)</span></div>
+    <label class="sw"><input type="checkbox" id="simStep" ${S.sim.step?'checked':''} ${run?'disabled':''}><span><b>Step by step</b><small>Advance one step at a time with Next step.</small></span></label>
+    <div class="simbtns">
+      <button class="btn btn--primary" id="simSave" data-a="sim-save" ${run?'disabled':''}>${run?'Saving…':'Save'}</button>
+      <button class="btn" id="simNext" data-a="sim-next" ${run&&S.sim.step?'':'hidden'}>Next step</button>
+      <button class="btn btn--ghost" id="simSkip" data-a="sim-skip" ${run?'':'hidden'}>Skip to result</button>
+    </div>
+    <div class="why" id="simWhy" style="margin-top:6px"></div>`;
+}
+function renderSimCtl(){ $('simCtl').innerHTML=simCtlHTML(); validateCustom(); }
+function customError(){
+  const c=S.sim.custom, n=v=>v.trim()!==''&&isFinite(+v);
+  if(!n(c.A)||+c.A<0||+c.A>99999999) return 'Amount must be a number from 0 to 99,999,999.';
+  if(!n(c.D)||+c.D<0||+c.D>100) return 'Discount must be a number from 0 to 100.';
+  if(!n(c.F)||+c.F<0||+c.F>99999999) return 'Fixed fees must be 0 or more.';
+  return '';
+}
+function validateCustom(){
+  const err=S.sim.edit==='custom'?customError():'';
+  if($('simErr')) $('simErr').textContent=err;
+  const b=$('simSave'); if(b&&!S.sim.running) b.disabled=!!err;
+  if($('simWhy')) $('simWhy').textContent=S.sim.running?'Saving. Use Skip to result to jump to the end.':err?'Save is off until the values are valid.':'';
+}
+function simChanges(){ const e=SIM_EDITS.find(x=>x.id===S.sim.edit); if(e.ch) return e.ch; const c=S.sim.custom; return {Amount:+c.A,Discount:+c.D/100,Fees:+c.F,Stage:c.S}; }
+function editLabel(){ const e=SIM_EDITS.find(x=>x.id===S.sim.edit); if(e.ch) return e.label; const c=S.sim.custom; return `Custom: ${fmt$(+c.A)}, ${+c.D}%, fees ${fmt$(+c.F)}, ${c.S}`; }
+function linesHTML(lines){ return lines.map(l=>typeof l==='string'?`<span>${l}</span>`:`<div class="nest"><span class="nest__t">${esc(l.nest)}</span>${l.lines.map(x=>`<span>${x}</span>`).join('')}</div>`).join(''); }
+function renderOoe(){
+  const r=S.sim.res, pos=S.sim.pos;
+  $('ooe').innerHTML=OOE.map((o,i)=>{
+    const st=r&&i<=pos?r.steps[i]:null; let cls='ooe__s', label='';
+    if(st){ cls+=' is-on is-'+st.state; if(st.state==='write'&&r.writers.length===1) cls+=' is-single'; if(i===pos&&S.sim.running) cls+=' is-now'; if(i===pos) cls+=' is-new';
+      label={ran:'Ran',write:'Wrote',skip:'Skipped',fail:'Failed',none:'Not reached'}[st.state]; }
+    return `<li class="${cls}" id="ooe${i}"><span class="ooe__dot">${st&&st.state==='fail'?'✕':i+1}</span><span class="ooe__t">${o[0]}</span><span class="ooe__st">${label}</span><div class="ooe__lines">${st?(st.state==='none'?'<span class="ooe__h">Not reached: the save stopped at validation.</span>':linesHTML(st.lines)):`<span class="ooe__h">${o[1]}</span>`}</div></li>`;
+  }).join('');
+}
+function renderTrack(){
+  const r=S.sim.res, pos=S.sim.pos;
+  const shown=r?r.writes.filter(w=>w.si<=pos):[];
+  const voided=r&&r.failed&&pos>=3;
+  const val=voided||!shown.length?SIM_BASE.Net:shown[shown.length-1].val;
+  const el=$('simTrack'), prev=el.dataset.v;
+  el.innerHTML=`<span class="track__f">Opportunity.Net_ARR__c</span><span class="track__v num" id="simVal">${fmt$(val)}</span><span class="faint" style="font-size:12px">${!r?'as stored':S.sim.running?'during the save':voided?'rolled back, unchanged':'saved'}</span>
+    ${S.sim.running?`<span class="track__a">${S.sim.step?'<button class="btn btn--primary" data-a="sim-next">Next step</button>':''}<button class="btn btn--ghost" data-a="sim-skip">Skip</button></span>`:''}<div class="wchips"><span class="wchip">stored ${fmt$(SIM_BASE.Net)}</span>${shown.map(w=>`<span class="wchip wchip--${w.type}${voided?' is-void':''}">${w.type==='flow'?'Flow':'Trigger'}${w.nested?' · nested':''} → ${fmt$(w.val)}</span>`).join('')}</div>`;
+  if(prev&&prev!==String(val)){const v=$('simVal');v.classList.add('flash');}
+  el.dataset.v=String(val);
+}
+function resultHTML(r){
+  if(!r) return `<div class="simhint">Choose an edit and press Save. Each run starts from the stored record above.</div>`;
+  if(!S.sim.done) return '';
+  if(r.failed) return `<div class="res res--bad"><span class="res__ic">⛔</span><div><b>Not saved.</b> A validation rule stopped the save after ${r.writes.length} write${r.writes.length===1?'':'s'} to Net_ARR__c. The rollback discards them, so Net_ARR__c stays ${fmt$(SIM_BASE.Net)}. Change the values and save again.</div></div>`;
+  const drift=r.saved-r.expected, again=`<button class="btn" data-a="sim-again">${r.fix?'Turn off the fix and save again':'Turn on the fix and save again'}</button>`;
+  if(r.writers.length===1) return `<div class="res res--ok"><span class="res__ic">✓</span><div><b>Saved ${fmt$(r.saved)}. One writer: ${r.writers[0]}.</b> ${r.writes.length>1?`It wrote ${r.writes.length} times, each with the same formula. `:''}The value matches the forecast definition, Amount × (1 − Discount__c) = ${fmt$(r.expected)}. Every edit follows the same rule.<br>${again}</div></div>`;
+  const last=r.last;
+  return `<div class="res res--bad"><span class="res__ic">⚠</span><div><b>Saved ${fmt$(r.saved)}. Two automations wrote Net_ARR__c ${r.writes.length} times.</b> ${last.who} wrote last${last.nested?' in a nested save':''}, so the stored value uses <span class="mono">${last.formula}</span>. ${drift?`The forecast definition gives ${fmt$(r.expected)}, so this save is off by <b>${sign$(drift)}</b>.`:`This time it matches the forecast definition, only because the trigger’s recursion guard skipped the nested save.`}<br>${again}</div></div>`;
+}
+function renderHist(){
+  const h=S.sim.history;
+  $('simHist').innerHTML=`<div class="hist__h"><b>Saves this session</b><span class="muted" style="font-size:12px">${h.length?'Compare the formula that won with and without the fix. * = nested save.':'Each save you run is listed here.'}</span></div>
+  ${h.length?`<div class="tblwrap"><table class="atbl"><thead><tr><th>#</th><th>Edit</th><th>Fix</th><th>Writes</th><th>Saved</th><th>Formula that won</th><th>Drift</th></tr></thead><tbody>${h.map(x=>`<tr><td class="num faint">${x.n}</td><td>${esc(x.edit)}</td><td>${x.fix?'<span class="st st--active">On</span>':'<span class="st st--inactive">Off</span>'}</td><td class="mono" style="font-size:11px">${x.writes||'none'}</td><td class="num"><b>${x.saved}</b></td><td class="mono" style="font-size:11px">${x.formula}</td><td class="num ${x.drift==='$0'?'drift-ok':x.drift==='n/a'?'faint':'drift-bad'}">${x.drift}</td></tr>`).join('')}</tbody></table></div>`:'<div style="padding:0 15px 14px" class="faint">No saves yet.</div>'}`;
+}
+function renderSimRun(){ renderTrack(); renderOoe(); $('simResult').innerHTML=resultHTML(S.sim.res); }
+function renderSim(){ renderSimCtl(); renderSimRun(); renderHist(); }
+function revealStep(){
+  renderSimRun();
+  const el=$('ooe'+S.sim.pos), main=$('main');
+  if(el&&!S.sim.skip) scrollMain(el,'nearest');
+}
+function simAdvance(){
+  const r=S.sim.res; if(!r||!S.sim.running) return;
+  S.sim.pos++;
+  if(r.failed&&S.sim.pos>3) S.sim.pos=r.steps.length-1;
+  if(S.sim.pos>=r.steps.length-1){ S.sim.pos=r.steps.length-1; simFinish(); return; }
+  revealStep();
+}
+async function simSave(){
+  if(S.sim.running) return;
+  if(S.sim.edit==='custom'&&customError()){validateCustom();return;}
+  const my=EPOCH, run=++SIMRUN, ch=simChanges();
+  S.sim.res=simulate(ch,S.sim.fix); S.sim.pos=-1; S.sim.running=true; S.sim.done=false; S.sim.skip=false;
+  renderSimCtl(); renderSimRun();
+  { const tr=$('simTrack'), mn=$('main'), r=tr.getBoundingClientRect(), m=mn.getBoundingClientRect();
+    if(r.top>m.top+m.height*.55) scrollMain(tr.parentElement,'start'); }
+  logGroup('Save simulation · '+now());
+  log('tool',`simulate.save("Opportunity", {${Object.keys(ch).map(k=>k+': '+JSON.stringify(ch[k])).join(', ')}}, fix: ${S.sim.fix?'on':'off'})`,`Walking ${OOE.length} steps of the order of execution`,90);
+  if(S.sim.step){ simAdvance(); return; }
+  while(S.sim.running){
+    const nx=S.sim.res.steps[S.sim.pos+1]; if(!nx) break;
+    await wait(S.sim.skip?0:nx.state==='write'?950:nx.state==='skip'||nx.state==='none'?260:560);
+    if(my!==EPOCH||run!==SIMRUN) return;
+    simAdvance();
+  }
+}
+function simSkip(){ if(!S.sim.running) return; S.sim.skip=true; if(S.sim.step){ while(S.sim.running) simAdvance(); } }
+function simFinish(){
+  const r=S.sim.res; S.sim.running=false; S.sim.done=true;
+  S.sim.history.unshift({n:S.sim.history.length+1,edit:editLabel(),fix:r.fix,writes:r.writes.map(w=>(w.type==='flow'?'Flow':'Trigger')+(w.nested?'*':'')).join(' → '),
+    saved:r.failed?'Not saved':fmt$(r.saved),formula:r.failed?'rolled back':r.last?r.last.formula:'none',drift:r.failed?'n/a':sign$(r.saved-r.expected)});
+  if(r.failed) log('bad','validation.failed()','Save rolled back. Net_ARR__c unchanged.');
+  else log(r.writers.length>1?'warn':'ok',`result: Net_ARR__c = ${fmt$(r.saved)}`,`${r.writes.length} write${r.writes.length===1?'':'s'} by ${r.writers.join(' and ')}. Forecast definition gives ${fmt$(r.expected)}.`);
+  renderSim();
+  const res=$('simResult'); if(res&&res.firstElementChild) scrollMain(res.firstElementChild,'nearest');
+}
+
+/* ---------- plan UI ---------- */
+function renderPlan(){
+  const p=S.plan, n=p.done.filter(Boolean).length;
+  const status=p.backlog?'In backlog':p.approved?'Approved':'Draft';
+  $('planBar').innerHTML=`<div class="card planbar">
+    <div class="planbar__s"><span class="stchip ${p.backlog?'stchip--backlog':p.approved?'stchip--approved':''}">${status}</span><span class="planbar__m">${p.approved?`Approved by you at ${p.approvedAt}`:'Waiting for your approval'}${p.backlog?` · ${p.backlog[0]} to ${p.backlog[5]}`:''}</span></div>
+    <div class="planbar__p"><span class="num">${n} of 6 done</span><span class="pbar"><i style="width:${Math.round(n/6*100)}%"></i></span></div>
+    <div class="planbar__a">
+      ${!p.approved?`<button class="btn btn--primary" data-a="approve" id="approveBtn">Approve plan</button>`:''}
+      ${p.approved&&!p.backlog&&!p.creating?`<button class="btn btn--ghost" data-a="unapprove">Withdraw approval</button>`:''}
+      <button class="btn ${p.approved&&!p.backlog?'btn--primary':''}" data-a="backlog" id="backlogBtn" ${!p.approved||p.backlog||p.creating?'disabled':''}>${p.creating?`Creating ${p.creating} of 6…`:p.backlog?'Backlog items created':'Create backlog items'}</button>
+    </div>
+    ${!p.approved?'<div class="why">Create backlog items unlocks after you approve the plan. Steps can be marked done in dependency order at any time.</div>':''}
+  </div>`;
+  $('rem').innerHTML=REM.map((r,i)=>{
+    const done=p.done[i], blockers=DEPS[i].filter(d=>!p.done[d]), blocked=!done&&blockers.length>0;
+    return `<div class="rem__item ${done?'is-done':''} ${blocked?'is-blocked':''}" id="rem${i}">
+    <div class="rem__num">${done?'✓':i+1}</div>
+    <div class="rem__main">
+      <div class="rem__title">${r.t}</div>
+      <div class="rem__why">${r.why}</div>
+      <div class="rem__dep">↳ ${r.dep}</div>
+      <div class="rem__deps">${DEPS[i].length?'Depends on '+DEPS[i].map(d=>`<span class="depchip ${p.done[d]?'ok':''}">${p.done[d]?'✓ ':''}Step ${d+1}</span>`).join(' '):'<span class="depchip ok">No dependencies</span>'}${p.backlog?`<span class="keychip">${p.backlog[i]}</span>`:''}</div>
+      ${r.link?`<button class="linkbtn" ${r.link.go?`data-go="${r.link.go}"`:`data-a="${r.link.a}"`}>${r.link.l} →</button>`:''}
+    </div>
+    <div class="rem__meta">
+      <span class="chip2 eff-${r.eff.toLowerCase()}">Effort ${r.eff}</span>
+      <span class="chip2 rk-${r.rk}">${r.rk==='high'?'High':r.rk==='med'?'Medium':'Low'} risk</span>
+      <button class="btn mark ${done?'is-on':''}" data-a="mark" data-i="${i}" aria-pressed="${done}" ${blocked?'disabled':''} aria-label="${done?'Reopen':'Mark done'}: step ${i+1}">${done?'✓ Done':'Mark done'}</button>
+      ${blocked?`<span class="why">Waits on step ${blockers.map(b=>b+1).join(' and ')}</span>`:''}
+    </div>
+  </div>`;}).join('')+`<div style="margin-top:6px;font-size:12.5px;color:var(--faint);display:flex;align-items:center;gap:8px;flex-wrap:wrap">↳ <span>This ordered plan is the deliverable of a <b style="color:var(--lime);font-weight:700">Systems Assessment</b>.</span></div>`;
+  $('planDone').innerHTML=p.backlog?`<div class="donecard" id="doneCard"><div class="donecard__ic">✓</div><div><b>Plan approved and in the backlog</b>
+    <p>6 items created in the Platform backlog, ${p.backlog[0]} to ${p.backlog[5]}, with 5 dependency links. Approved by you at ${p.approvedAt}. Nothing changed in the Salesforce org.${n===6?' All six steps are marked done.':''}</p>
+    <div class="btnrow"><button class="btn" data-a="to-sim">Replay the conflict</button><button class="btn btn--primary" data-a="restart">Start again</button></div></div></div>`:'';
+  renderBadges();
+}
+function markStep(i){
+  const p=S.plan, prev=p.done.slice();
+  const undo={label:'Undo',fn:()=>{S.plan.done=prev;renderPlan();log('human','you · undo()','Plan progress restored.');}};
+  if(p.done[i]){
+    const re=[i]; let ch=true;
+    while(ch){ch=false;DEPS.forEach((ds,j)=>{if(p.done[j]&&!re.includes(j)&&ds.some(d=>re.includes(d))){re.push(j);ch=true;}});}
+    re.forEach(j=>p.done[j]=false);
+    log('human',`you · reopen(step ${i+1})`,re.length>1?`Also reopened step ${re.slice(1).map(x=>x+1).join(', ')}, which depend${re.length>2?'':'s'} on it.`:'');
+    toast(re.length>1?`Reopened step ${i+1} and ${re.length-1} step${re.length>2?'s':''} that depend on it`:`Reopened step ${i+1}`,undo);
+  } else {
+    if(DEPS[i].some(d=>!p.done[d])) return;
+    p.done[i]=true; log('human',`you · mark_done(step ${i+1})`,REM[i].t);
+    const n=p.done.filter(Boolean).length;
+    toast(n===6?'All six steps done':`Step ${i+1} marked done`,undo);
+  }
+  renderPlan();
+}
+function dialog(o){
+  return new Promise(res=>{
+    const m=$('modal'), prev=document.activeElement;
+    m.innerHTML=`<div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="mT"><div class="modal__t" id="mT">${o.title}</div><div class="modal__b">${o.body}</div><div class="modal__a"><button class="btn btn--ghost" data-m="0">${o.cancel||'Cancel'}</button><button class="btn ${o.danger?'btn--danger':'btn--primary'}" data-m="1" id="mOk">${o.ok||'Confirm'}</button></div></div>`;
+    m.hidden=false;
+    const close=v=>{m.hidden=true;m.innerHTML='';m.onclick=null;document.removeEventListener('keydown',kd,true);if(prev&&prev.isConnected&&prev.focus)prev.focus();res(v);};
+    const kd=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close(false);}};
+    document.addEventListener('keydown',kd,true);
+    m.onclick=e=>{const b=e.target.closest('[data-m]');if(b)close(b.dataset.m==='1');else if(e.target===m)close(false);};
+    setTimeout(()=>{const b=$('mOk');if(b)b.focus();},20);
+  });
+}
+async function approvePlan(){
+  const ok=await dialog({title:'Approve the remediation plan?',body:'<p>You approve the order and scope of these 6 steps for NorthBrand Group. The approval is logged with the time.</p><p class="muted">Nothing changes in the Salesforce org.</p>',ok:'Approve plan'});
+  if(!ok) return;
+  S.plan.approved=true; S.plan.approvedAt=now();
+  logGroup('Plan · '+now()); log('human','you · approve(plan, steps: 6)','Approval recorded. No org changes.');
+  renderPlan(); toast('Plan approved. You can now create backlog items.');
+}
+function unapprove(){ S.plan.approved=false; log('human','you · withdraw(approval)','Plan back to draft.'); renderPlan(); toast('Approval withdrawn',{label:'Undo',fn:()=>{S.plan.approved=true;renderPlan();}}); }
+async function createBacklog(){
+  if(!S.plan.approved||S.plan.backlog||S.plan.creating) return;
+  const ok=await dialog({title:'Create 6 backlog items?',ok:'Create 6 items',body:`<p>Creates one item per step in the <b>Platform backlog (NBP)</b> and links each to the steps it depends on. Nothing changes in the Salesforce org.</p><ol class="blist">${REM.map((r,i)=>`<li><span class="keychip">${KEY(i)}</span><span>${r.t}${DEPS[i].length?` <span class="faint">· blocked by ${DEPS[i].map(d=>KEY(d)).join(', ')}</span>`:''}</span></li>`).join('')}</ol>`});
+  if(!ok) return;
+  const my=EPOCH;
+  log('human','you · confirm(create_items: 6)','Confirmed in the dialog.');
+  for(let i=0;i<6;i++){ S.plan.creating=i+1; renderPlan(); await wait(280); if(my!==EPOCH) return; log('write',`backlog.create_item("${KEY(i)}")`,REM[i].t,170+i*9); }
+  await wait(220); if(my!==EPOCH) return;
+  log('write','backlog.link(dependencies: 5)','NBP-242 ← 241, 243 ← 242, 244 ← 243, 245 ← 244, 246 ← 244',230);
+  S.plan.creating=0; S.plan.backlog=REM.map((_,i)=>KEY(i));
+  log('ok','done()','Plan approved and in the backlog. Nothing written to the org.');
+  renderPlan(); toast('6 backlog items created');
+  const d=$('doneCard'); if(d) scrollMain(d,'nearest');
+}
+
+/* ---------- duplicates UI ---------- */
+function renderDup(){
+  const t=S.dup.t, d=dupAt(t);
+  $('thrV').textContent=t; $('thrDup').textContent='~'+fmtN(d.surplus); $('thrSets').textContent=fmtN(d.sets);
+  $('thrRisk').textContent=pct(d.risk); $('thrRisk').className='thr__v num'+(d.risk>=.03?' is-bad':d.risk>=.01?' is-risk':'');
+  $('dupNote').textContent='~'+fmtN(d.surplus); $('thrReset').hidden=t===85;
+  $('thrHint').textContent=t<80?`At ${t}%, loose name matches start pulling in different people. Expect about ${fmtN(d.sets*d.risk)} wrong merges.`:t<85?`At ${t}%, more fuzzy matches qualify, with a higher false-merge rate.`:t===85?'At 85%, fuzzy name and account matches need strong agreement. The plan uses this setting.':t<100?`At ${t}%, fewer false merges, and more real duplicates stay unmerged.`:'At 100%, only exact matches merge. Fuzzy name and account matching is off.';
+  const rows=[
+    {rule:DUP[0].rule,sets:fmtN(d.E),recs:fmtN(d.Er)+' records',s:'Exact match, same at any threshold'},
+    {rule:DUP[1].rule,sets:fmtN(d.F),recs:fmtN(d.Fr)+' records',s:`Score ${t}% or higher`},
+    {rule:DUP[2].rule,sets:fmtN(d.P),recs:fmtN(d.Pr)+' records',s:`Score ${t}% or higher after formatting`}];
+  $('dup').innerHTML=rows.map(r=>`<div class="dupcard"><div class="dupcard__rule">${r.rule}</div><div class="dupcard__v num">${r.sets}</div><div class="dupcard__s">duplicate sets · ${r.recs}</div><div class="dupcard__s faint">${r.s}</div></div>`).join('');
+  renderMerge(); renderBadges();
+}
+function renderMerge(){
+  const s=SAMPLES[S.dup.sample], t=S.dup.t, recs=s.recs, inc=recs.map((r,i)=>i===0||r.score>=t), m=recs.filter((r,i)=>inc[i]);
+  const optNo=m.find(r=>r.opt==='No');
+  const surv=[['Name',recs[0].name,recs[0].bu],['Email',recs[0].email,recs[0].bu],['Phone',recs[0].phone,recs[0].bu+', standardized'],['Account',recs[0].acct,recs[0].bu],['Owner',recs[0].owner,'most recent activity'],
+    ['Marketing opt-in',optNo?'No':'Yes',optNo?optNo.bu+', most restrictive wins':'all agree'],['Activities',String(m.reduce((a,r)=>a+r.acts,0)),'re-parented'],['Opportunities',String(m.reduce((a,r)=>a+r.opps,0)),'contact roles moved']];
+  $('merge').innerHTML=`<div class="merge__h"><b>Merge preview</b><span class="muted" style="font-size:12px">Sample ${S.dup.sample+1} of ${SAMPLES.length} at ${t}%</span><button class="btn" data-a="dup-next">Next sample</button></div>
+    <div class="mrecs">${recs.map((r,i)=>`<div class="mrec ${i===0||inc[i]?'is-in':'is-out'}"><div class="mrec__top"><span class="bu">${r.bu}</span>${i===0?'<span class="chip2 rk-low">Survivor</span>':`<span class="score num ${inc[i]?'ok':''}">${r.score}% match</span>`}<span class="mrec__st">${i===0?'Most recent activity':inc[i]?'Merges':'Stays separate'}</span></div>
+      <div class="mrec__n">${esc(r.name)}</div><div class="mrec__d mono">${esc(r.email)}</div><div class="mrec__d">${esc(r.phone)} · ${esc(r.acct)}</div>${i?`<div class="mrec__why">${esc(r.why)}</div>`:`<div class="mrec__why">Last activity ${r.act}</div>`}</div>`).join('')}</div>
+    ${m.length>1?`<table class="atbl surv"><thead><tr><th>Surviving field</th><th>Value</th><th>From</th></tr></thead><tbody>${surv.map(x=>`<tr><td>${x[0]}</td><td><b style="font-weight:600">${esc(x[1])}</b></td><td class="faint">${esc(x[2])}</td></tr>`).join('')}</tbody></table>
+    <div class="mnote">${m.length} records become 1. ${m.length-1} removed. Preview only: nothing merges here. Merging runs in step 6 of the plan.</div>`
+    :`<div class="mnote">No other record meets ${t}% for this person, so nothing merges. Lower the threshold to see more matches.</div>`}`;
+}
+
+/* ---------- inventory UI ---------- */
+function fillInvSelects(){
+  const c=INV_STATS.type;
+  $('invType').innerHTML=`<option value="">All types · ${INV_STATS.total}</option><option value="flow">Flow · ${c.flow}</option><option value="wfr">Workflow Rule · ${c.wfr}</option><option value="pb">Process Builder · ${c.pb}</option><option value="trig">Apex Trigger · ${c.trig}</option>`;
+  $('invObj').innerHTML=`<option value="">All objects</option>${OBJECTS.map(o=>`<option value="${o.name}">${o.name} · ${o.count}</option>`).join('')}<option value="__other">Other objects · ${OTHER_OBJS.length}</option>`;
+  $('invStatus').innerHTML=`<option value="">Any status</option><option value="live">Active and firing · ${INV_STATS.total-INV_STATS.dead}</option><option value="dead">Inactive or orphaned · ${INV_STATS.dead}</option>`;
+  $('invSort').innerHTML=`<option value="obj">Sort by object</option><option value="name">Sort by name</option><option value="mod">Newest change first</option><option value="runs">Most runs first</option>`;
+}
+function invFiltered(){
+  const f=S.inv, q=f.q.trim().toLowerCase();
+  const list=INV.filter(a=>(!f.type||a.t===f.type)&&(!f.obj||(f.obj==='__other'?!HOT.includes(a.obj):a.obj===f.obj))&&(!f.status||(f.status==='dead'?a.dead:!a.dead))&&(!f.overlap||a.conflict)&&(!f.legacy||a.t==='wfr'||a.t==='pb')
+    &&(!q||(a.n+' '+a.api+' '+a.obj+' '+a.f+' '+a.bu+' '+a.type).toLowerCase().includes(q)));
+  const oi=o=>{const k=HOT.indexOf(o);return k<0?99:k;};
+  const sorts={obj:(a,b)=>oi(a.obj)-oi(b.obj)||a.obj.localeCompare(b.obj)||rankRow(a)-rankRow(b)||a.n.localeCompare(b.n),name:(a,b)=>a.n.localeCompare(b.n),mod:(a,b)=>b.m.localeCompare(a.m),runs:(a,b)=>b.runs-a.runs};
+  return list.sort(sorts[f.sort]||sorts.obj);
+}
+function renderInv(){
+  const f=S.inv, list=invFiltered(), active=f.q||f.type||f.obj||f.status||f.overlap||f.legacy;
+  $('invQ').value!==f.q&&($('invQ').value=f.q); $('invType').value=f.type; $('invObj').value=f.obj; $('invStatus').value=f.status; $('invSort').value=f.sort;
+  $('invOverlap').setAttribute('aria-pressed',f.overlap); $('invLegacy').setAttribute('aria-pressed',f.legacy);
+  const tc={flow:0,wfr:0,pb:0,trig:0}; list.forEach(a=>tc[a.t]++);
+  $('invSum').innerHTML=`<span>Showing <b class="num">${list.length}</b> of ${INV_STATS.total}</span><span class="num">${tc.flow} Flow · ${tc.wfr} WFR · ${tc.pb} PB · ${tc.trig} Trigger</span>${active?'<button class="linkbtn" data-a="inv-clear">Clear filters</button>':''}`;
+  $('invRows').innerHTML=list.length?list.map(a=>`<div class="inv__row ${a.dead?'is-dead':''}" role="button" tabindex="0" data-a="inv-row" data-id="${a.id}" aria-label="${esc(a.n)}, ${a.type} on ${a.obj}. Open details">
+      <span class="${typeTag(a.t)}">${typeShort(a.t)}</span>
+      <div class="inv__name"><b>${esc(a.n)}</b><span class="faint">${esc(a.tl)}</span></div>
+      <div class="inv__obj">${a.obj}</div>
+      <div class="inv__st"><span class="st st--${a.s.toLowerCase()}">${statusText(a)}</span></div>
+      <div class="inv__date num faint">${a.m}</div>
+      <div class="inv__f">${fieldHTML(a)}</div>
+      <div class="inv__m">${a.obj} · <span class="st st--${a.s.toLowerCase()}">${statusText(a)}</span> · ${a.conflict?`<span class="fieldflag">⚠ ${esc(a.f)}</span>`:esc(a.f)}</div>
+    </div>`).join(''):`<div class="empty"><div class="empty__ic">∅</div><div class="empty__t">No automations match</div><div>Try a shorter search or fewer filters.</div><button class="btn" data-a="inv-clear">Clear filters</button></div>`;
+}
+function openInvWith(f){ S.inv={q:'',type:'',obj:'',status:'',overlap:false,legacy:false,sort:'obj',...f}; go('inventory'); renderInv(); }
+function planStepFor(a){
+  if(a.dead) return {i:0,t:'Retire. Confirm zero runs in the debug logs, then delete.'};
+  if(a.f==='Net_ARR__c') return {i:1,t:a.t==='trig'?'Remove the Net_ARR__c write and add a test. The Flow keeps ownership.':'Keep as the single owner of Net_ARR__c.'};
+  if(a.obj==='Opportunity'&&a.t==='wfr') return {i:2,t:'Fold into the single Opportunity record-triggered Flow.'};
+  if(a.t==='wfr'||a.t==='pb') return {i:3,t:'Migrate to a record-triggered Flow using the Opportunity pattern.'};
+  if(a.conflict) return {i:a.obj==='Opportunity'?2:3,t:`Pick one owner for ${a.obj}.${a.f} while its legacy writer is migrated.`};
+  if(a.obj==='Contact') return {i:5,t:'Healthy. Recheck before the Contact merge in step 6.'};
+  return null;
+}
+function openDrawer(id){
+  const a=INV_BY[id]; if(!a) return;
+  const when=a.t==='flow'?(a.tl.includes('before')?'Before save, on create and update':'After save, on create and update'):a.t==='wfr'?'Created, and every time it’s edited':a.t==='pb'?'When a record is created or edited':a.tl.replace('Apex Trigger · ','');
+  const step=planStepFor(a), finds=[];
+  if(a.conflict) finds.push(`<div class="finding finding--bad">⚠<div><b>Field-write overlap.</b> ${esc(a.obj)}.${esc(a.f)} is also written by:<br>${a.peers.map(p=>`<button class="linkbtn" data-a="inv-row" data-id="${p}">${esc(INV_BY[p].n)} →</button>`).join('<br>')}</div></div>`);
+  if(a.dead) finds.push(`<div class="finding finding--warn">◌<div><b>${a.s==='Inactive'?'Inactive':'Never fires'}.</b> 0 executions in 90 days of debug logs.</div></div>`);
+  if(a.t==='wfr'||a.t==='pb') finds.push(`<div class="finding finding--warn">↻<div><b>Not migrated to Flow.</b> ${a.type}s are retired by Salesforce.</div></div>`);
+  if(!finds.length) finds.push(`<div class="finding finding--ok">✓<div>No findings. Fires normally and writes a field no other automation writes.</div></div>`);
+  const d=$('drawer');
+  d.innerHTML=`<div class="drawer__h"><div><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span class="${typeTag(a.t)}">${typeShort(a.t)}</span><span class="st st--${a.s.toLowerCase()}">${statusText(a)}</span></div><div class="drawer__t" id="drawerT">${esc(a.n)}</div></div><button class="btn btn--icon btn--ghost" data-a="drawer-close" aria-label="Close details">✕</button></div>
+    <div class="drawer__b">
+      <dl class="dl"><dt>API name</dt><dd class="mono">${esc(a.api)}</dd><dt>Object</dt><dd>${a.obj}</dd><dt>Type</dt><dd>${esc(a.tl)}</dd><dt>Runs when</dt><dd>${esc(when)}</dd>
+      <dt>Writes field</dt><dd>${fieldHTML(a)}</dd><dt>Lineage</dt><dd>${a.bu}${a.bu==='NorthBrand'?' (built after the merge)':' (business unit before the merge)'}</dd><dt>Last modified</dt><dd class="num">${a.m}</dd><dt>Runs, last 30 days</dt><dd class="num">${fmtN(a.runs)}</dd></dl>
+      <div class="dsec">Findings</div>${finds.join('')}
+      <div class="dsec">Recommendation</div>
+      ${step?`<div class="finding"><span class="keychip">Step ${step.i+1}</span><div>${esc(step.t)}<br><button class="linkbtn" data-a="to-step" data-i="${step.i}">Open step ${step.i+1} in the plan →</button></div></div>`:'<div class="finding finding--ok">✓<div>Keep. No action in this plan.</div></div>'}
+      ${a.f==='Net_ARR__c'?'<button class="btn" data-a="to-sim" style="margin-top:6px">See it in the save simulator</button>':''}
+    </div>`;
+  const opened=d.hidden; d.hidden=false; $('scrim').hidden=false;
+  if(opened) d._prev=document.activeElement;
+  const cb=d.querySelector('[data-a="drawer-close"]'); if(cb) cb.focus();
+}
+function closeDrawer(){ const d=$('drawer'); if(d.hidden) return; d.hidden=true; $('scrim').hidden=true; if(d._prev&&d._prev.isConnected) d._prev.focus(); }
+
+/* ---------- render all, reset ---------- */
+function renderAllResults(){ renderPlan(); renderDup(); renderInv(); renderSim(); }
+function renderAll(){ applyScanState(); renderAllResults(); $('thr').value=S.dup.t; }
+async function restart(){
+  const ok=await dialog({title:'Start again?',body:'<p>Clears this session: the scan results, simulator runs, plan progress, approval and backlog items. The org stays connected.</p>',ok:'Start again',danger:true});
+  if(!ok) return;
+  const snap=JSON.parse(JSON.stringify(S)), logSnap=LOG.slice();
+  EPOCH++; SIMRUN++; S=S0(); closeDrawer(); seedLog(); renderAll(); go('scorecard');
+  toast('Started again. The org is connected, not scanned.',{label:'Undo',fn:()=>{
+    S=snap; if(S.scanning){S.scanning=false;S.phase='';} if(S.sim.running){S.sim.running=false;S.sim.done=false;S.sim.res=null;S.sim.pos=-1;} if(S.plan.creating){S.plan.creating=0;}
+    LOG=logSnap; renderLog(); renderAll(); go(S.screen); }});
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');
+  if(g){ e.preventDefault(); closeDrawer(); go(g.dataset.go); if(g.dataset.focus==='sim') scrollToSim(); return; }
+  const el=e.target.closest('[data-a]'); if(!el) return;
+  const a=el.dataset.a;
+  if(el.disabled) return;
+  switch(a){
+    case 'scan': runScan(); break;
+    case 'agent': setAgent(!$('shell').classList.contains('agent-open')); break;
+    case 'agent-open': setAgent(true); break;
+    case 'restart': restart(); break;
+    case 'obj': toggleObj(+el.dataset.i); break;
+    case 'kpi': {const i=+el.dataset.i; if(i===0) openInvWith({}); else if(i===1) openInvWith({status:'dead'}); else if(i===2) go('heat'); else if(i===3) openInvWith({legacy:true}); else if(i===4) toStep(4); else openInvWith({overlap:true}); break;}
+    case 'inv-obj': openInvWith({obj:el.dataset.obj}); break;
+    case 'inv-dead': openInvWith({status:'dead'}); break;
+    case 'inv-legacy': openInvWith({legacy:true}); break;
+    case 'inv-chip': S.inv[el.dataset.k]=!S.inv[el.dataset.k]; renderInv(); break;
+    case 'inv-clear': S.inv={q:'',type:'',obj:'',status:'',overlap:false,legacy:false,sort:S.inv.sort}; renderInv(); break;
+    case 'inv-row': openDrawer(el.dataset.id); break;
+    case 'drawer-close': closeDrawer(); break;
+    case 'to-step': closeDrawer(); toStep(+el.dataset.i); break;
+    case 'to-sim': closeDrawer(); go('conflict'); scrollToSim(); break;
+    case 'sim-save': simSave(); break;
+    case 'sim-next': simAdvance(); break;
+    case 'sim-skip': simSkip(); break;
+    case 'sim-again': S.sim.fix=!S.sim.fix; renderSimCtl(); simSave(); break;
+    case 'mark': markStep(+el.dataset.i); break;
+    case 'approve': approvePlan(); break;
+    case 'unapprove': unapprove(); break;
+    case 'backlog': createBacklog(); break;
+    case 'dup-next': S.dup.sample=(S.dup.sample+1)%SAMPLES.length; renderMerge(); break;
+    case 'thr-reset': S.dup.t=85; $('thr').value=85; renderDup(); break;
+  }
+});
+function toStep(i){ go('plan'); const el=$('rem'+i); if(el){ scrollMain(el,'center'); el.classList.add('is-flash'); setTimeout(()=>el.classList.remove('is-flash'),1600);} }
+function scrollToSim(){ const el=$('simAnchor'); if(el) setTimeout(()=>scrollMain(el,'start'),30); }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ if(!$('drawer').hidden){closeDrawer();return;} if($('shell').classList.contains('agent-open')&&innerWidth<1280){setAgent(false);return;} }
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches('[role="button"][data-a]')){ e.preventDefault(); e.target.click(); }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.name==='simedit'){ S.sim.edit=t.value; qsa('.edit',$('simCtl')).forEach(l=>l.classList.toggle('is-on',l.querySelector('input').checked)); $('simCustom').hidden=S.sim.edit!=='custom'; validateCustom(); }
+  else if(t.id==='simFix'){ S.sim.fix=t.checked; const fd=$('simCtl').querySelector('.fixdiff'); if(fd) fd.hidden=!t.checked; log('human',`you · set_fix(${t.checked?'on':'off'})`,t.checked?'Trigger write removed in the simulation. Flow owns Net_ARR__c.':'Back to the current org.'); }
+  else if(t.id==='simStep'){ S.sim.step=t.checked; }
+  else if(t.id==='simS'){ S.sim.custom.S=t.value; }
+  else if(t.id==='invType'){ S.inv.type=t.value; renderInv(); }
+  else if(t.id==='invObj'){ S.inv.obj=t.value; renderInv(); }
+  else if(t.id==='invStatus'){ S.inv.status=t.value; renderInv(); }
+  else if(t.id==='invSort'){ S.inv.sort=t.value; renderInv(); }
+  else if(t.id==='thr'){ const d=dupAt(S.dup.t); log('tool',`duplicates.rematch(threshold: ${(S.dup.t/100).toFixed(2)})`,`${fmtN(d.sets)} sets, about ${fmtN(d.surplus)} surplus records, est. ${pct(d.risk)} false merges`,420); }
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='simA'||t.id==='simD'||t.id==='simF'){ S.sim.custom[t.id.slice(3)]=t.value; validateCustom(); }
+  else if(t.id==='invQ'){ S.inv.q=t.value; renderInv(); }
+  else if(t.id==='thr'){ S.dup.t=+t.value; renderDup(); }
+});
+
+/* ---------- boot ---------- */
+fillInvSelects(); seedLog(); renderAll(); go('scorecard'); setAgent(innerWidth>=1280);
 </script>
 </body>
 </html>

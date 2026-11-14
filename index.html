@@ -3,860 +3,288 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0A0A0A" />
+  <meta name="theme-color" content="#080D1A" />
 
-  <title>Cory Lawing | AI &amp; GTM Systems, RevOps, Custom Applications</title>
-
-  <meta name="description" content="I design and build AI-enabled GTM systems, intelligent automation, custom applications, and revenue operations infrastructure. Strategy through adoption, with deep Salesforce expertise when the platform fits." />
+  <title>Cory Lawing | Custom software, operational systems and AI</title>
+  <meta name="description" content="I architect and build custom software, operational systems and AI. A GTM and RevOps leader who writes the code, so what I build fits how your business runs and keeps working as it grows." />
   <meta name="author" content="Cory Lawing" />
+  <link rel="canonical" href="https://corylawing.github.io/cory-lawing/" />
 
-  <!-- Open Graph -->
+  <!-- Share card. Bump ?v= whenever og.png changes so LinkedIn and others fetch the new image. -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Cory Lawing | AI-enabled systems for revenue teams" />
-  <meta property="og:description" content="GTM strategy, AI applications, automation, and custom systems from an operator who can lead the work and build it." />
+  <meta property="og:url" content="https://corylawing.github.io/cory-lawing/" />
+  <meta property="og:title" content="Cory Lawing | Custom software, operational systems and AI" />
+  <meta property="og:description" content="I architect and build custom software, operational systems and AI. A GTM and RevOps leader who writes the code." />
   <meta property="og:locale" content="en_US" />
-  <!-- Share image. Absolute URL required by most scrapers — update the domain here if you move to corylawing.com -->
-  <meta property="og:image" content="https://corylawing.github.io/cory-lawing/assets/img/og.png?v=5" />
+  <meta property="og:image" content="https://corylawing.github.io/cory-lawing/assets/img/og.png?v=6" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Cory Lawing. AI-enabled GTM systems, RevOps, and custom applications." />
-
-  <!-- Twitter card -->
+  <meta property="og:image:alt" content="Cory Lawing. I architect and build custom software, operational systems and AI." />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Cory Lawing | AI-enabled systems for revenue teams" />
-  <meta name="twitter:description" content="GTM strategy, AI applications, automation, and custom systems from an operator who can lead the work and build it." />
-  <meta name="twitter:image" content="https://corylawing.github.io/cory-lawing/assets/img/og.png?v=5" />
+  <meta name="twitter:title" content="Cory Lawing | Custom software, operational systems and AI" />
+  <meta name="twitter:description" content="I architect and build custom software, operational systems and AI. A GTM and RevOps leader who writes the code." />
+  <meta name="twitter:image" content="https://corylawing.github.io/cory-lawing/assets/img/og.png?v=6" />
 
-  <!-- Favicon — the CL-in-hexagon mark (Georgia fallback; web fonts don't load in favicons) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230A0A0A'/><polygon points='32,13 46.72,21.5 46.72,38.5 32,47 17.28,38.5 17.28,21.5' fill='none' stroke='%23D9F77B' stroke-width='2.2' stroke-linejoin='round'/><g fill='%23D9F77B'><circle cx='32' cy='13' r='2'/><circle cx='46.72' cy='21.5' r='2'/><circle cx='46.72' cy='38.5' r='2'/><circle cx='32' cy='47' r='2'/><circle cx='17.28' cy='38.5' r='2'/><circle cx='17.28' cy='21.5' r='2'/></g><text x='32' y='35' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='16' fill='%23D9F77B'>CL</text></svg>" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23080D1A'/><polygon points='32,13 46.72,21.5 46.72,38.5 32,47 17.28,38.5 17.28,21.5' fill='none' stroke='%236C9EFF' stroke-width='2.2' stroke-linejoin='round'/><g fill='%236C9EFF'><circle cx='32' cy='13' r='2'/><circle cx='46.72' cy='21.5' r='2'/><circle cx='46.72' cy='38.5' r='2'/><circle cx='32' cy='47' r='2'/><circle cx='17.28' cy='38.5' r='2'/><circle cx='17.28' cy='21.5' r='2'/></g><text x='32' y='35.5' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='14' fill='%236C9EFF'>CL</text></svg>" />
 
-  <!-- Fonts: Fraunces (display serif), Geist (body), Geist Mono (accents) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="assets/css/site.css" />
 
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- Calendly pop-up for the booking buttons (site.js opens it; without it the links open Calendly in a new tab) -->
+  <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-  <!-- Calendly popup assets (loaded once; popup is triggered from the site's own CTAs in main.js) -->
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
-  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+  <script src="assets/js/site.js" defer></script>
+  <script src="assets/js/home.js" defer></script>
+  <script src="assets/js/hero-art.js" defer></script>
 </head>
 <body>
-  <div class="page" data-brand="Cory Lawing">
+<div class="h-progress" id="scroll-progress" aria-hidden="true"></div>
 
-    <!-- Scroll progress — accent line tracking read position -->
-    <div class="scroll-progress" aria-hidden="true"></div>
-
-    <!-- ================== NAV ================== -->
-    <header class="nav" role="banner">
-      <a class="nav__brand" href="#top" aria-label="Home">
-        <span class="nav__brand-mark" id="brand-mark">
-          <svg class="brand-logo" viewBox="0 0 64 64" aria-hidden="true">
-            <polygon points="32,9 51.92,20.5 51.92,43.5 32,55 12.08,43.5 12.08,20.5" fill="none" stroke="#D9F77B" stroke-width="2.4" stroke-linejoin="round"/>
-            <g fill="#D9F77B">
-              <circle cx="32" cy="9" r="2.6"/><circle cx="51.92" cy="20.5" r="2.6"/><circle cx="51.92" cy="43.5" r="2.6"/><circle cx="32" cy="55" r="2.6"/><circle cx="12.08" cy="43.5" r="2.6"/><circle cx="12.08" cy="20.5" r="2.6"/>
-            </g>
-            <text x="32" y="40" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-style="italic" font-weight="400" font-size="24" fill="#D9F77B" style="font-variation-settings:'opsz' 144,'SOFT' 50">CL</text>
-          </svg>
-        </span>
-        <span class="nav__brand-name">Cory Lawing</span>
-      </a>
-
-      <nav class="nav__links" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#offers">Offers</a>
-        <a href="#systems">Systems</a>
-        <a href="#impact">Results</a>
-        <a href="#process">Engagements</a>
-      </nav>
-
-      <a class="nav__cta" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">
-        <span>Book a free conversation</span>
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-
-      <button class="nav__menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
-        <span></span><span></span>
-      </button>
-    </header>
-
-    <!-- Mobile menu drawer -->
-    <div class="mobile-menu" id="mobile-menu">
-      <a href="#about">About</a>
-      <a href="#offers">Offers</a>
-      <a href="#systems">Systems</a>
-      <a href="#impact">Results</a>
-      <a href="#process">Engagements</a>
-      <a href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener" class="mobile-menu__cta">Book a free conversation →</a>
+<header class="top">
+  <div class="wrap top__in" id="top-home">
+    <a class="brand" href="#home" data-go="home" aria-label="Cory Lawing, home"><svg viewBox="0 0 64 64" aria-hidden="true"><polygon points="32,9 51.92,20.5 51.92,43.5 32,55 12.08,43.5 12.08,20.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><g fill="currentColor"><circle cx="32" cy="9" r="2.6"/><circle cx="51.92" cy="20.5" r="2.6"/><circle cx="51.92" cy="43.5" r="2.6"/><circle cx="32" cy="55" r="2.6"/><circle cx="12.08" cy="43.5" r="2.6"/><circle cx="12.08" cy="20.5" r="2.6"/></g><text x="32" y="39.5" text-anchor="middle" font-family="Bricolage Grotesque, Geist, system-ui, sans-serif" font-weight="700" font-size="20" letter-spacing="-1" fill="currentColor">CL</text></svg>Cory Lawing</a>
+    <nav class="nav" aria-label="Primary">
+      <button data-scroll="problems">What I fix</button>
+      <button data-scroll="demos">Demos</button>
+      <button data-scroll="about">About</button>
+      <button data-scroll="engage">Work with me</button>
+    </nav>
+    <a class="k-btn k-btn--primary top__cta" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">Book a free call</a>
+  </div>
+  <div class="wrap top__in" id="top-stage" hidden>
+    <a class="k-btn k-btn--sm stage__back" href="#home" data-go="home"><i data-i="arrow-left"></i><span class="stage__hide-sm">Portfolio</span></a>
+    <div class="stage__id"><span class="stage__title" id="stage-title"></span><span class="stage__kicker" id="stage-kicker"></span></div>
+    <div class="stage__right">
+      <button class="k-btn k-btn--sm" data-restart aria-label="Restart the demo"><i data-i="refresh"></i><span class="stage__hide-sm">Restart</span></button>
+      <span class="stage__count stage__hide-sm" id="stage-count"></span>
+      <button class="k-btn k-btn--sm k-btn--icon stage__hide-sm" id="stage-prev" aria-label="Previous demo"><i data-i="arrow-left"></i></button>
+      <button class="k-btn k-btn--sm k-btn--icon stage__hide-sm" id="stage-next" aria-label="Next demo"><i data-i="arrow-right"></i></button>
+      <a class="k-btn k-btn--sm k-btn--primary" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">Book a call</a>
     </div>
-
-    <main id="top">
-
-      <!-- ================== HERO ================== -->
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__grid"></div>
-        <div class="hero__noise"></div>
-
-        <div class="hero__inner">
-          <div class="hero__copy">
-            <p class="eyebrow reveal" data-reveal-delay="0">
-              <span class="eyebrow__dot"></span>
-              <span>GTM leadership · AI systems · hands-on delivery</span>
-            </p>
-
-            <h1 class="hero__title reveal" data-reveal-delay="80" id="hero-title">
-              <span class="hero__lead">I build the systems that</span> <em>run your revenue.</em>
-            </h1>
-
-            <p class="hero__sub reveal" data-reveal-delay="200">
-              AI-enabled GTM systems, intelligent automation, and custom applications that help teams move faster, see risk earlier, and scale with less friction.
-            </p>
-
-            <p class="hero__support reveal" data-reveal-delay="260">
-              I combine senior global RevOps leadership with hands-on product and engineering depth, taking ideas from operating model to working software.
-            </p>
-
-            <div class="hero__ctas reveal" data-reveal-delay="320">
-              <a class="btn btn--primary" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">
-                <span>Book a free conversation</span>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </a>
-              <a class="btn btn--ghost" href="#offers">
-                <span>See what you can hire me for</span>
-              </a>
-            </div>
-
-            <ul class="hero__arc reveal" data-reveal-delay="400" aria-label="End to end: strategy through build">
-              <li>GTM strategy</li>
-              <li>AI &amp; intelligence</li>
-              <li>Systems architecture</li>
-              <li>Working software</li>
-            </ul>
-          </div>
-
-          <!-- Signature element: animated commercial-systems diagram -->
-          <div class="hero__visual reveal" data-reveal-delay="160" aria-hidden="true">
-            <div class="diagram">
-              <div class="diagram__label diagram__label--top">
-                <span class="mono">/* connected commercial systems */</span>
-              </div>
-
-              <svg class="diagram__svg" viewBox="0 0 480 480" preserveAspectRatio="xMidYMid meet">
-                <g class="diagram__edges" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round">
-                  <path d="M 240 240 L 240 100" />
-                  <path d="M 240 240 L 361 170" />
-                  <path d="M 240 240 L 361 310" />
-                  <path d="M 240 240 L 240 380" />
-                  <path d="M 240 240 L 119 310" />
-                  <path d="M 240 240 L 119 170" />
-                  <path d="M 240 100 L 361 170 L 361 310 L 240 380 L 119 310 L 119 170 Z" opacity="0.5" />
-                </g>
-
-                <g class="diagram__pulses">
-                  <circle r="3"><animateMotion dur="3.2s" repeatCount="indefinite" path="M 240 240 L 240 100" /></circle>
-                  <circle r="3"><animateMotion dur="3.6s" begin="0.6s" repeatCount="indefinite" path="M 240 240 L 361 170" /></circle>
-                  <circle r="3"><animateMotion dur="3.4s" begin="1.2s" repeatCount="indefinite" path="M 240 240 L 361 310" /></circle>
-                  <circle r="3"><animateMotion dur="3.8s" begin="1.8s" repeatCount="indefinite" path="M 240 240 L 240 380" /></circle>
-                  <circle r="3"><animateMotion dur="3.5s" begin="2.4s" repeatCount="indefinite" path="M 240 240 L 119 310" /></circle>
-                  <circle r="3"><animateMotion dur="3.7s" begin="3.0s" repeatCount="indefinite" path="M 240 240 L 119 170" /></circle>
-                  <circle r="2.4" class="diagram__pulse--accent"><animateMotion dur="6s" repeatCount="indefinite" path="M 240 100 L 361 170 L 361 310 L 240 380 L 119 310 L 119 170 Z" /></circle>
-                </g>
-
-                <g class="diagram__hub" transform="translate(240,240)">
-                  <circle r="48" class="diagram__hub-bg" />
-                  <circle r="48" class="diagram__hub-ring" />
-                  <text y="-4" text-anchor="middle" class="diagram__hub-eyebrow">REVENUE</text>
-                  <text y="14" text-anchor="middle" class="diagram__hub-title">Core</text>
-                </g>
-
-                <g class="diagram__node" transform="translate(240,100)">
-                  <rect x="-58" y="-18" width="116" height="36" rx="18" />
-                  <text y="5" text-anchor="middle">Marketing</text>
-                </g>
-                <g class="diagram__node" transform="translate(361,170)">
-                  <rect x="-44" y="-18" width="88" height="36" rx="18" />
-                  <text y="5" text-anchor="middle">Sales</text>
-                </g>
-                <g class="diagram__node" transform="translate(361,310)">
-                  <rect x="-78" y="-18" width="156" height="36" rx="18" />
-                  <text y="5" text-anchor="middle">Customer&nbsp;Success</text>
-                </g>
-                <g class="diagram__node" transform="translate(240,380)">
-                  <rect x="-44" y="-18" width="88" height="36" rx="18" />
-                  <text y="5" text-anchor="middle">Finance</text>
-                </g>
-                <g class="diagram__node" transform="translate(119,310)">
-                  <rect x="-72" y="-18" width="144" height="36" rx="18" />
-                  <text y="5" text-anchor="middle">Data&nbsp;&amp;&nbsp;Analytics</text>
-                </g>
-                <g class="diagram__node" transform="translate(119,170)">
-                  <rect x="-58" y="-18" width="116" height="36" rx="18" />
-                  <text y="5" text-anchor="middle">Operations</text>
-                </g>
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <!-- Scroll cue -->
-        <div class="hero__scrollcue" aria-hidden="true">
-          <span class="mono">scroll</span>
-          <span class="hero__scrollcue-line"></span>
-        </div>
-      </section>
-
-
-      <!-- ================== DIFFERENTIATOR ================== -->
-      <section class="section section--why" id="why">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">The difference</p>
-            <h2 class="section__title">Strategy, intelligence, and the system that runs it.<br/><em>One accountable owner.</em></h2>
-          </header>
-
-          <div class="diff__grid">
-            <article class="diff-col reveal" data-reveal-delay="0">
-              <p class="diff-col__tag mono">Strategy consultants</p>
-              <p class="diff-col__copy">Hand you a deck and a roadmap, then leave the building to someone else.</p>
-            </article>
-            <article class="diff-col reveal" data-reveal-delay="80">
-              <p class="diff-col__tag mono">Dev shops</p>
-              <p class="diff-col__copy">Build the tickets you write without the commercial judgment to know if they're the right ones.</p>
-            </article>
-            <article class="diff-col diff-col--me reveal" data-reveal-delay="160">
-              <p class="diff-col__tag mono">Me</p>
-              <p class="diff-col__copy">I connect commercial strategy, AI, architecture, and delivery because I've carried a sales number, run a company, and built the software.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- ================== THE PROBLEM ================== -->
-      <section class="section section--problem" id="problem">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">01 / The challenge</p>
-            <h2 class="section__title">When growth creates<br/><em>operational&nbsp;chaos.</em></h2>
-            <p class="section__intro">
-              As companies scale, yesterday's processes become today's bottlenecks: manual work, disconnected tools, inconsistent data, unclear ownership, and systems that no longer match the business.
-            </p>
-          </header>
-
-          <div class="problem__grid">
-            <div class="problem-card reveal" data-reveal-delay="0"><p>Revenue systems that no longer fit the business</p></div>
-            <div class="problem-card reveal" data-reveal-delay="40"><p>Teams without clear priorities or next actions</p></div>
-            <div class="problem-card reveal" data-reveal-delay="80"><p>Marketing, Sales &amp; Customer teams in silos</p></div>
-            <div class="problem-card reveal" data-reveal-delay="120"><p>Reporting that explains the past but not what to do next</p></div>
-            <div class="problem-card reveal" data-reveal-delay="160"><p>AI pilots that never reach the daily workflow</p></div>
-            <div class="problem-card reveal" data-reveal-delay="200"><p>Leaders who don't fully trust the data</p></div>
-            <div class="problem-card reveal" data-reveal-delay="240"><p>Manual work slowing execution</p></div>
-            <div class="problem-card reveal" data-reveal-delay="280"><p>Processes that depend too much on individuals</p></div>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- ================== ABOUT ================== -->
-      <section class="section section--about" id="about">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">02 / About</p>
-            <h2 class="section__title">Why one set of hands<br/><em>can do all three.</em></h2>
-          </header>
-
-          <div class="about__grid">
-            <figure class="about__photo reveal">
-              <div class="about__photo-frame">
-                <img class="about__photo-img" src="assets/img/cory.jpg" alt="Cory Lawing" loading="lazy"
-                     onerror="this.parentNode.classList.add('is-empty');this.remove();" />
-                <span class="about__photo-fallback mono">Headshot — coming soon</span>
-                <span class="about__photo-grid" aria-hidden="true"></span>
-                <span class="about__photo-scan" aria-hidden="true"></span>
-                <span class="about__photo-corners" aria-hidden="true"></span>
-              </div>
-            </figure>
-
-            <div class="about__body reveal" data-reveal-delay="100">
-              <p class="about__lead">I've carried the quota, built the operating model, and shipped the applications, often on the same project.</p>
-              <p class="about__para">
-                For more than 12 years, I've led Sales and Customer Success across EMEA, Africa, and the US, co-founded a company from concept to funding, and built the systems behind global revenue teams. Today I lead global Revenue Operations and GTM Engineering for a SaaS company. My work spans AI applications, multilingual conversation intelligence, territory planning, voice-to-CRM, global CPQ, automation, and the governance needed to make new systems stick. One program grew adoption 400%.
-              </p>
-              <ul class="about__arc">
-                <li><span class="about__arc-role">Sales Director</span><span class="about__arc-note mono">carried the number, ran the team</span></li>
-                <li><span class="about__arc-role">Founder</span><span class="about__arc-note mono">took an idea from plan to product and funding</span></li>
-                <li><span class="about__arc-role">AI &amp; Systems Builder</span><span class="about__arc-note mono">agents, applications, automation, integrations</span></li>
-                <li><span class="about__arc-role">Global GTM Systems Leader</span><span class="about__arc-note mono">RevOps &amp; GTM Engineering Director</span></li>
-              </ul>
-              <p class="about__close">I work at the point where business strategy becomes a real product. I can identify the highest-value problem, design the operating model, build the solution, and help teams adopt it.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- ================== OFFERS (BUY SURFACE) ================== -->
-      <section class="section section--offers" id="offers">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">03 / Work with me</p>
-            <h2 class="section__title">What you can<br/><em>hire me for.</em></h2>
-            <p class="section__intro">
-              Three ways to start, each scoped to your situation rather than a fixed package.
-            </p>
-          </header>
-
-          <div class="offers__grid">
-            <article class="offer-card reveal" data-reveal-delay="0">
-              <p class="offer-card__tag mono">Diagnostic</p>
-              <h3 class="offer-card__title">GTM Systems Assessment</h3>
-              <p class="offer-card__copy">A focused 2–3 week diagnostic of your GTM stack, workflows, data, and AI opportunities. You leave with a clear, prioritized roadmap that is yours to run, with or without me.</p>
-              <a class="offer-card__cta" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">
-                <span>Start with a free conversation</span>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </a>
-            </article>
-
-            <article class="offer-card reveal" data-reveal-delay="80">
-              <p class="offer-card__tag mono">Fixed-scope build</p>
-              <h3 class="offer-card__title">Custom Build</h3>
-              <p class="offer-card__copy">A scoped, fixed-fee application or workflow built around a business outcome: AI intelligence, automation, CRM extensions, or an integrated operating tool. Shipped, documented, and handed over.</p>
-              <a class="offer-card__cta" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">
-                <span>Start with a free conversation</span>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </a>
-            </article>
-
-            <article class="offer-card reveal" data-reveal-delay="160">
-              <p class="offer-card__tag mono">Ongoing partnership</p>
-              <h3 class="offer-card__title">Fractional GTM Architect</h3>
-              <p class="offer-card__copy">Senior RevOps, AI, and GTM systems leadership on retainer for companies that need an experienced owner without another full-time executive hire.</p>
-              <a class="offer-card__cta" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">
-                <span>Start with a free conversation</span>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </a>
-            </article>
-          </div>
-
-          <p class="offers__reassure reveal">
-            No fixed packages. Every engagement is scoped to what you actually need and priced to the outcome. It starts with a free conversation: no pressure, just whether I can help.
-          </p>
-        </div>
-      </section>
-
-
-      <!-- ================== RANGE BEHIND THE OFFERS ================== -->
-      <section class="section section--services" id="services">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">04 / The range behind it</p>
-            <h2 class="section__title">From operating model<br/><em>to intelligent systems.</em></h2>
-            <p class="section__intro">
-              The range behind every engagement: commercial judgment, product thinking, architecture, and hands-on delivery.
-            </p>
-          </header>
-
-          <div class="services__grid">
-            <article class="service-card reveal" data-reveal-delay="0">
-              <h3 class="service-card__title">GTM Strategy &amp; Revenue Operations</h3>
-              <p class="service-card__copy">The operating model, workflows, ownership, reporting, and governance that help commercial teams scale with clarity.</p>
-            </article>
-
-            <article class="service-card reveal" data-reveal-delay="60">
-              <h3 class="service-card__title">AI Applications &amp; Intelligence</h3>
-              <p class="service-card__copy">Turn conversations, operational data, and repetitive work into useful decisions, recommended actions, and automated execution.</p>
-              <p class="service-card__tags mono">agents · copilots · multilingual analysis · orchestration · n8n</p>
-            </article>
-
-            <article class="service-card reveal" data-reveal-delay="120">
-              <h3 class="service-card__title">Custom Applications &amp; Integrations</h3>
-              <p class="service-card__copy">Build focused tools that fit the way your teams work, replace costly point solutions, and connect the systems you already own.</p>
-              <p class="service-card__tags mono">web apps · APIs · workflow · integrations · product design</p>
-            </article>
-
-            <article class="service-card reveal" data-reveal-delay="0">
-              <h3 class="service-card__title">CRM Architecture &amp; Engineering</h3>
-              <p class="service-card__copy">A dependable execution layer designed around the business, not the software. Salesforce is my deepest platform, from architecture through custom development.</p>
-              <p class="service-card__tags mono">Salesforce · Sales Cloud · Service Cloud · CPQ · Experience Cloud</p>
-            </article>
-
-            <article class="service-card reveal" data-reveal-delay="60">
-              <h3 class="service-card__title">Commercial Analytics &amp; Decision Support</h3>
-              <p class="service-card__copy">Dashboards, signals, and decision tools that show leaders how the business is performing and teams what to do next.</p>
-            </article>
-
-            <article class="service-card reveal" data-reveal-delay="120">
-              <h3 class="service-card__title">Marketing &amp; Customer Journey Systems</h3>
-              <p class="service-card__copy">Connect the platforms behind campaigns, customer engagement, lifecycle management, and revenue attribution.</p>
-              <p class="service-card__tags mono">Marketing Cloud · HubSpot · events · social · CRM</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- ================== FEATURED SYSTEMS ================== -->
-      <section class="section section--tools" id="systems">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">05 / Featured systems</p>
-            <h2 class="section__title">Examples of what<br/><em>I build.</em></h2>
-            <p class="section__intro">
-              Working applications, not concept slides. A sample of how I turn operational problems into products people can actually use.
-            </p>
-          </header>
-
-          <!-- TODO(cory): drop in live interactive demos / Looms when ready (replace .tool__coming with a <video>/<img>). -->
-          <div class="tools__grid">
-
-            <article class="tool reveal" data-reveal-delay="0">
-              <div class="tool__media tool__media--shot">
-                <img class="tool__shot" src="assets/img/voice.jpg" alt="Activity Voice Recorder demo — voice-to-CRM activity logging" loading="lazy" />
-                <button class="tool__launch" data-frame-demo data-src="assets/demos/voice-activity.html" data-title="Activity Voice Recorder — interactive demo" type="button" aria-haspopup="dialog">
-                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
-                </button>
-                <span class="tool__chip mono">ai · voice · automation</span>
-              </div>
-              <div class="tool__body">
-                <p class="tool__index mono">/ decision support</p>
-                <h3 class="tool__title">Activity Voice&nbsp;Recorder</h3>
-                <p class="tool__sub">Talk after the meeting — AI does the CRM work</p>
-                <p class="tool__copy">
-                  Reps record a quick voice debrief with live coaching; AI logs the activity, updates fields, advances the opportunity stage, and drafts the follow-up email. <button class="tool__try" data-frame-demo data-src="assets/demos/voice-activity.html" data-title="Activity Voice Recorder — interactive demo" type="button">Try the live demo →</button>
-                </p>
-              </div>
-            </article>
-
-            <article class="tool reveal" data-reveal-delay="80">
-              <div class="tool__media tool__media--shot">
-                <img class="tool__shot" src="assets/img/org-health.svg" alt="Org Health Auditor demo — Salesforce automation and technical-debt audit" loading="lazy" />
-                <button class="tool__launch" data-frame-demo data-src="assets/demos/org-health-auditor.html" data-title="Org Health Auditor — interactive demo" type="button" aria-haspopup="dialog">
-                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
-                </button>
-                <span class="tool__chip mono">salesforce · governance · technical debt</span>
-              </div>
-              <div class="tool__body">
-                <p class="tool__index mono">/ platform governance</p>
-                <h3 class="tool__title">Org Health&nbsp;Auditor</h3>
-                <p class="tool__sub">Find the automation nobody dares touch</p>
-                <p class="tool__copy">
-                  Maps every Flow, Workflow Rule, Process Builder and trigger against the objects they touch — surfacing overlap, dead automation, execution-order conflicts and permission sprawl as a dependency-ordered remediation plan. <button class="tool__try" data-frame-demo data-src="assets/demos/org-health-auditor.html" data-title="Org Health Auditor — interactive demo" type="button">Try the live demo →</button>
-                </p>
-              </div>
-            </article>
-
-            <article class="tool reveal" data-reveal-delay="160">
-              <div class="tool__media tool__media--shot">
-                <img class="tool__shot" src="assets/img/territory-card.jpg" alt="Territory Intelligence demo — accounts mapped across a region" loading="lazy" />
-                <button class="tool__launch" data-demo="territory" type="button" aria-haspopup="dialog">
-                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
-                </button>
-                <span class="tool__chip mono">mapping · geodata · crm</span>
-              </div>
-              <div class="tool__body">
-                <p class="tool__index mono">/ field execution</p>
-                <h3 class="tool__title">Territory&nbsp;Intelligence</h3>
-                <p class="tool__sub">Commercial coverage, mapped</p>
-                <p class="tool__copy">
-                  Mapping experiences that combine customer, prospect, activity, and geographic data so teams plan coverage around real opportunity. <button class="tool__try" data-demo="territory" type="button">Try the live demo →</button>
-                </p>
-              </div>
-            </article>
-
-            <article class="tool reveal" data-reveal-delay="240">
-              <div class="tool__media tool__media--shot">
-                <img class="tool__shot" src="https://corylawing.github.io/practice-hub-mockup/assets/home-brace-preview.png" alt="Home-Brace demo showing a connected multi-location operations hub" loading="lazy" />
-                <button class="tool__launch" data-frame-demo data-src="https://corylawing.github.io/practice-hub-mockup/" data-title="Home-Brace · interactive demo" type="button" aria-haspopup="dialog">
-                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
-                </button>
-                <span class="tool__chip mono">operations · workflow · multi-location</span>
-              </div>
-              <div class="tool__body">
-                <p class="tool__index mono">/ operations enablement</p>
-                <h3 class="tool__title">Home-Brace</h3>
-                <p class="tool__sub">One operating hub for every location</p>
-                <p class="tool__copy">
-                  A multi-location practice operations hub that brings schedules, scorecards, requests, documents, directories, and team workflows into one responsive experience. The public prototype uses fictional sample data. <button class="tool__try" data-frame-demo data-src="https://corylawing.github.io/practice-hub-mockup/" data-title="Home-Brace · interactive demo" type="button">Try the live demo →</button>
-                </p>
-              </div>
-            </article>
-
-            <article class="tool reveal" data-reveal-delay="320">
-              <div class="tool__media tool__media--shot">
-                <img class="tool__shot" src="assets/img/social.jpg" alt="Social Media Command Center demo — AI-native social platform dashboard" loading="lazy" />
-                <button class="tool__launch" data-frame-demo data-src="assets/demos/social-command-center.html" data-title="Social Media Command Center — interactive demo" type="button" aria-haspopup="dialog">
-                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
-                </button>
-                <span class="tool__chip mono">social · analytics · ai</span>
-              </div>
-              <div class="tool__body">
-                <p class="tool__index mono">/ marketing ops</p>
-                <h3 class="tool__title">Social Media<br/>Command&nbsp;Center</h3>
-                <p class="tool__sub">An AI-native social platform — 11 screens</p>
-                <p class="tool__copy">
-                  A full social media command center: dashboard, calendar, composer, analytics, competitor and listening intelligence, an AI copilot, and Salesforce revenue attribution — light/dark, all live. <button class="tool__try" data-frame-demo data-src="assets/demos/social-command-center.html" data-title="Social Media Command Center — interactive demo" type="button">Try the live demo →</button>
-                </p>
-              </div>
-            </article>
-
-            <article class="tool reveal" data-reveal-delay="400">
-              <div class="tool__media tool__media--shot">
-                <img class="tool__shot" src="assets/img/sales-command-center.jpg" alt="Sales Command Center demo — role-based operational dashboard" loading="lazy" />
-                <button class="tool__launch" data-frame-demo data-src="assets/demos/revenue-cockpit.html" data-title="Sales Command Center — interactive demo" type="button" aria-haspopup="dialog">
-                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
-                </button>
-                <span class="tool__chip mono">revenue · dashboards · workflow</span>
-              </div>
-              <div class="tool__body">
-                <p class="tool__index mono">/ revenue ops</p>
-                <h3 class="tool__title">Sales Command&nbsp;Center</h3>
-                <p class="tool__sub">Role-based operational focus</p>
-                <p class="tool__copy">
-                  Role-based dashboards that show teams their priorities, pipeline risks, activity expectations, and next actions — in one place they actually open. <button class="tool__try" data-frame-demo data-src="assets/demos/revenue-cockpit.html" data-title="Sales Command Center — interactive demo" type="button">Try the live demo →</button>
-                </p>
-              </div>
-            </article>
-
-            <article class="tool reveal" data-reveal-delay="480">
-              <div class="tool__media tool__media--shot">
-                <img class="tool__shot" src="assets/img/cpq.jpg" alt="Custom CPQ Engine demo — guided quoting with discount governance and e-signature" loading="lazy" />
-                <button class="tool__launch" data-frame-demo data-src="assets/demos/cpq.html" data-title="Custom CPQ Engine — interactive demo" type="button" aria-haspopup="dialog">
-                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
-                </button>
-                <span class="tool__chip mono">cpq · pricing · e-signature</span>
-              </div>
-              <div class="tool__body">
-                <p class="tool__index mono">/ deal execution</p>
-                <h3 class="tool__title">Custom CPQ&nbsp;Engine</h3>
-                <p class="tool__sub">Configure, price, quote — and sign</p>
-                <p class="tool__copy">
-                  Guided quoting with built-in discount governance and approval routing, that generates a clean order form and sends it for e-signature by email or text. <button class="tool__try" data-frame-demo data-src="assets/demos/cpq.html" data-title="Custom CPQ Engine — interactive demo" type="button">Try the live demo →</button>
-                </p>
-              </div>
-            </article>
-
-            <article class="tool reveal" data-reveal-delay="560">
-              <div class="tool__media tool__media--shot">
-                <img class="tool__shot" src="assets/img/expense.jpg" alt="Expense Guard demo — AI expense compliance with CRM activity cross-check" loading="lazy" />
-                <button class="tool__launch" data-frame-demo data-src="assets/demos/expense-guard.html" data-title="Expense Guard — interactive demo" type="button" aria-haspopup="dialog">
-                  <span class="mono"><span class="tool__launch-icon" aria-hidden="true">▶</span> Launch interactive demo</span>
-                </button>
-                <span class="tool__chip mono">finance · ai · compliance</span>
-              </div>
-              <div class="tool__body">
-                <p class="tool__index mono">/ finance ops</p>
-                <h3 class="tool__title">Expense&nbsp;Guard</h3>
-                <p class="tool__sub">AI expense compliance, tied to CRM activity</p>
-                <p class="tool__copy">
-                  Finance uploads expenses; AI checks each against policy thresholds and CRM activity, flagging over-limit spend, customer charges with no meeting that day, and anyone running above their own monthly average. <button class="tool__try" data-frame-demo data-src="assets/demos/expense-guard.html" data-title="Expense Guard — interactive demo" type="button">Try the live demo →</button>
-                </p>
-              </div>
-            </article>
-
-          </div>
-
-          <p class="tools__note reveal mono">
-            <span aria-hidden="true">↳</span> Representative systems · full implementations under NDA
-          </p>
-        </div>
-      </section>
-
-
-      <!-- ================== RESULTS ================== -->
-      <section class="section section--impact" id="impact">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">06 / Results</p>
-            <h2 class="section__title">Results that<br/><em>matter.</em></h2>
-            <p class="section__intro">
-              Measured by business outcomes, not activity. A sample of what the work has moved.
-            </p>
-          </header>
-
-          <!-- TODO(cory): add 1–2 named testimonials here — the single biggest trust lever for a solo consultant. -->
-          <div class="impact__grid">
-            <div class="impact-card reveal" data-reveal-delay="0">
-              <p class="impact-card__value">400<span class="impact-card__unit">%</span></p>
-              <p class="impact-card__label">platform adoption growth, through structured governance and enablement</p>
-            </div>
-            <div class="impact-card reveal" data-reveal-delay="60">
-              <p class="impact-card__value">&lt;20<span class="impact-card__unit">min</span></p>
-              <p class="impact-card__label">service response time, down from 24 hours</p>
-            </div>
-            <div class="impact-card reveal" data-reveal-delay="120">
-              <p class="impact-card__value">3<span class="impact-card__unit">regions</span></p>
-              <p class="impact-card__label">commercial systems live across EMEA, NA &amp; APAC</p>
-            </div>
-            <!-- TODO(cory): when you have a real, defensible scale number (deals processed / users /
-                 pipeline through systems you've built), replace this "5 functions" tile — it's the
-                 weakest of the four. Format: big number + short caption, e.g. "$__M" /
-                 "deals processed annually through systems I built". Don't ship a vague figure. -->
-            <div class="impact-card reveal" data-reveal-delay="180">
-              <p class="impact-card__value">5<span class="impact-card__unit">functions</span></p>
-              <p class="impact-card__label">Sales, Marketing, CS, Finance &amp; Ops on one connected system</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- ================== ENGAGEMENTS ================== -->
-      <section class="section section--process" id="process">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">07 / How it works</p>
-            <h2 class="section__title">How we can<br/><em>work together.</em></h2>
-            <p class="section__intro">
-              A simple path from understanding the problem to systems your teams actually adopt.
-            </p>
-          </header>
-
-          <ol class="process__steps">
-            <li class="process-step reveal" data-reveal-delay="0">
-              <div class="process-step__head">
-                <p class="process-step__number">01</p>
-                <p class="process-step__time mono">where we start</p>
-              </div>
-              <h3 class="process-step__title">Discover</h3>
-              <p class="process-step__copy">
-                Understand the business objective, the people doing the work, the data, the systems, and the friction before proposing a single change.
-              </p>
-            </li>
-
-            <li class="process-step reveal" data-reveal-delay="100">
-              <div class="process-step__head">
-                <p class="process-step__number">02</p>
-                <p class="process-step__time mono">the plan</p>
-              </div>
-              <h3 class="process-step__title">Design</h3>
-              <p class="process-step__copy">
-                Define the target state and highest-value interventions, including where AI is useful and where simpler automation is the better answer.
-              </p>
-            </li>
-
-            <li class="process-step reveal" data-reveal-delay="200">
-              <div class="process-step__head">
-                <p class="process-step__number">03</p>
-                <p class="process-step__time mono">the result</p>
-              </div>
-              <h3 class="process-step__title">Build &amp; Enable</h3>
-              <p class="process-step__copy">
-                Implement the solution and make sure teams actually adopt it. Documentation and enablement come with the build, not after it.
-              </p>
-            </li>
-          </ol>
-
-          <div class="eng-types reveal" data-reveal-delay="120">
-            <span class="eng-types__label mono">Ways to engage</span>
-            <ul>
-              <li>GTM Systems Assessment</li>
-              <li>Custom Build</li>
-              <li>Fractional GTM Architect</li>
-              <li>White-label for agencies</li>
-              <li>Not sure yet — let's talk</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- ================== TECHNOLOGY ECOSYSTEM ================== -->
-      <section class="section section--stack" id="stack">
-        <div class="container">
-          <header class="section__head reveal">
-            <p class="section__eyebrow mono">08 / Ecosystem</p>
-            <h2 class="section__title">Technology<br/><em>ecosystem.</em></h2>
-            <p class="section__intro">
-              The platforms and methods I work across, chosen for the outcome rather than the trend.
-            </p>
-          </header>
-
-          <div class="stack__grid stack__grid--4">
-            <div class="stack__group reveal">
-              <p class="stack__group-title mono">// AI &amp; Automation</p>
-              <ul class="stack__list">
-                <li>LLMs &amp; agents</li>
-                <li>Conversation intelligence</li>
-                <li>Claude</li>
-                <li>ChatGPT</li>
-                <li>n8n</li>
-                <li>Workflow orchestration</li>
-              </ul>
-            </div>
-
-            <div class="stack__group reveal" data-reveal-delay="60">
-              <p class="stack__group-title mono">// CRM &amp; Revenue Platforms</p>
-              <ul class="stack__list">
-                <li>Salesforce</li>
-                <li>Sales &amp; Service Cloud</li>
-                <li>Experience Cloud</li>
-                <li>Marketing &amp; Data Cloud</li>
-                <li>Agentforce</li>
-                <li>Revenue Cloud &amp; CPQ</li>
-                <li>HubSpot</li>
-              </ul>
-            </div>
-
-            <div class="stack__group reveal" data-reveal-delay="120">
-              <p class="stack__group-title mono">// Analytics &amp; Planning</p>
-              <ul class="stack__list">
-                <li>Pigment</li>
-                <li>QuickSight</li>
-                <li>Redshift</li>
-                <li>MuleSoft</li>
-                <li>BI platforms</li>
-              </ul>
-            </div>
-
-            <div class="stack__group reveal" data-reveal-delay="180">
-              <p class="stack__group-title mono">// Application Engineering</p>
-              <ul class="stack__list">
-                <li>JavaScript</li>
-                <li>Apex &amp; LWC</li>
-                <li>APIs &amp; integrations</li>
-                <li>Responsive web apps</li>
-                <li>Product prototyping</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- ================== CONTACT ================== -->
-      <section class="section section--contact" id="contact">
-        <div class="container container--narrow">
-          <header class="section__head section__head--center reveal">
-            <p class="section__eyebrow mono">09 / Contact</p>
-            <h2 class="section__title">Have a GTM problem<br/>worth <em>solving?</em></h2>
-            <p class="section__intro">
-              Tell me where the business is scaling, what is slowing people down, or where AI could create an advantage. We will figure out whether I am the right person to help.
-            </p>
-          </header>
-
-          <!-- Book-a-call CTA → Calendly free discovery call. -->
-          <div class="contact__book reveal">
-            <a class="btn btn--primary btn--lg" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">
-              <span>Book a free conversation</span>
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-            <p class="contact__book-or mono">or send a note below</p>
-          </div>
-
-          <!--
-            Contact form — Web3Forms. Submissions arrive at the email registered with
-            the access key below. No backend needed. Replace the key to point it elsewhere.
-          -->
-          <form class="contact-form reveal" id="contact-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
-            <input type="hidden" name="access_key" value="59ba68c1-4fa5-42d8-bdcb-5ec79796e2cb" />
-            <input type="hidden" name="subject" value="New enquiry from corylawing.com" />
-            <input type="hidden" name="from_name" value="corylawing.com contact form" />
-            <!-- Web3Forms honeypot anti-spam -->
-            <input type="checkbox" name="botcheck" class="contact-form__honeypot" style="display:none" tabindex="-1" autocomplete="off" />
-
-            <div class="contact-form__row">
-              <div class="contact-form__field">
-                <label for="cf-name">Name</label>
-                <input id="cf-name" name="name" type="text" required autocomplete="name" placeholder="Jane Doe" />
-              </div>
-              <div class="contact-form__field">
-                <label for="cf-email">Work email</label>
-                <input id="cf-email" name="email" type="email" required autocomplete="email" placeholder="jane@company.com" />
-              </div>
-            </div>
-
-            <div class="contact-form__row">
-              <div class="contact-form__field">
-                <label for="cf-company">Company</label>
-                <input id="cf-company" name="company" type="text" autocomplete="organization" placeholder="Company, Inc." />
-              </div>
-              <div class="contact-form__field">
-                <label for="cf-role">Your role</label>
-                <input id="cf-role" name="role" type="text" autocomplete="organization-title" placeholder="CEO · COO · CRO · Head of RevOps …" />
-              </div>
-            </div>
-
-            <div class="contact-form__field">
-              <label for="cf-engagement">What do you need help with?</label>
-              <select id="cf-engagement" name="engagement">
-                <option value="">— Select one —</option>
-                <option value="assessment">GTM Systems Assessment</option>
-                <option value="build">Custom Build</option>
-                <option value="fractional">Fractional GTM Architect</option>
-                <option value="other">Not sure yet</option>
-              </select>
-            </div>
-
-            <div class="contact-form__field">
-              <label for="cf-message">What are you trying to solve?</label>
-              <textarea id="cf-message" name="message" required rows="6" placeholder="A few lines on where the business is scaling, what's stuck, and what 'good' looks like in 90 days."></textarea>
-            </div>
-
-            <div class="contact-form__actions">
-              <button type="submit" class="btn btn--primary btn--lg">
-                <span>Send the note</span>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-              <p class="contact-form__hint mono">/ free first conversation · replies within two business days</p>
-            </div>
-
-            <div class="contact-form__status" id="contact-form-status" aria-live="polite"></div>
-          </form>
-
-          <div class="contact__alt reveal">
-            <p class="mono">Or reach out directly</p>
-            <ul>
-              <li><a href="mailto:corylawing@gmail.com">corylawing@gmail.com</a></li>
-              <li><a href="https://www.linkedin.com/in/corylawing" rel="noopener" target="_blank">linkedin.com/in/corylawing</a></li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-
-    <!-- ================== FOOTER ================== -->
-    <footer class="footer" role="contentinfo">
-      <div class="container footer__inner">
-        <div class="footer__brand">
-          <span class="footer__mark">
-            <svg class="brand-logo" viewBox="0 0 64 64" aria-hidden="true">
-              <polygon points="32,9 51.92,20.5 51.92,43.5 32,55 12.08,43.5 12.08,20.5" fill="none" stroke="#D9F77B" stroke-width="2.4" stroke-linejoin="round"/>
-              <g fill="#D9F77B">
-                <circle cx="32" cy="9" r="2.6"/><circle cx="51.92" cy="20.5" r="2.6"/><circle cx="51.92" cy="43.5" r="2.6"/><circle cx="32" cy="55" r="2.6"/><circle cx="12.08" cy="43.5" r="2.6"/><circle cx="12.08" cy="20.5" r="2.6"/>
-              </g>
-              <text x="32" y="40" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-style="italic" font-weight="400" font-size="24" fill="#D9F77B" style="font-variation-settings:'opsz' 144,'SOFT' 50">CL</text>
-            </svg>
-          </span>
-          <span class="footer__name">Cory Lawing</span>
-          <span class="footer__sub mono">AI-enabled GTM systems · RevOps · custom applications</span>
-        </div>
-
-        <nav class="footer__links" aria-label="Footer">
-          <a href="#offers">Offers</a>
-          <a href="#systems">Systems</a>
-          <a href="#impact">Results</a>
-          <a href="#about">About</a>
-          <a href="#process">Engagements</a>
-          <a href="#contact">Contact</a>
-        </nav>
-
-        <p class="footer__meta mono">
-          <span>Independent consultant</span>
-          <span class="footer__dot">·</span>
-          <span>Clients globally</span>
-          <span class="footer__dot">·</span>
-          <span>© <span id="footer-year">2026</span></span>
-        </p>
+  </div>
+</header>
+
+<main>
+  <div id="view-home">
+<!-- ============ HERO ============ -->
+<section class="h-hero">
+  <div class="h-hero__grid" aria-hidden="true"></div>
+  <div class="h-hero__halo" aria-hidden="true"></div>
+  <!-- Signature motion: points morph through Architect, Build, Ship, Scale (src/hero-art.js). Decorative. -->
+  <div class="h-art" aria-hidden="true"><canvas id="hero-art"></canvas></div>
+  <p class="h-say" id="hero-say" aria-hidden="true"><span class="h-say__n">01 · Architect</span><span class="h-say__t">I map your teams, tools and data into one blueprint.</span></p>
+  <div class="wrap h-hero__in">
+    <div class="h-hero__copy">
+      <p class="h-kicker"><span class="h-kicker__dot"></span>For growing companies that have outgrown their tools</p>
+      <h1 class="h-hero__title">I architect and build <span class="h-hl">custom software, operational systems and AI.</span></h1>
+      <p class="h-hero__sub">Years leading GTM and Revenue Operations taught me how a business really runs. I design the system, write the code and make sure it scales.</p>
+      <div class="h-hero__ctas">
+        <a class="h-btn h-btn--primary h-btn--lg" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">Book a free call <i data-i="arrow-right"></i></a>
+        <button class="h-btn h-btn--ghost h-btn--lg" data-scroll="demos">See the demos</button>
       </div>
+      <ol class="h-phases" aria-label="How I work">
+        <li><button data-phase="0" title="I map your teams, tools and data into one blueprint."><span>01</span>Architect</button></li>
+        <li><button data-phase="1" title="Then build it as modules that fit together."><span>02</span>Build</button></li>
+        <li><button data-phase="2" title="It ships: live in your teams' hands, and in use every day."><span>03</span>Ship</button></li>
+        <li><button data-phase="3" title="It scales: more teams, regions and data, all connected."><span>04</span>Scale</button></li>
+      </ol>
+    </div>
+  </div>
+  <div class="wrap h-scrollcue" aria-hidden="true"><span>scroll</span><i></i></div>
+</section>
 
-      <p class="footer__note mono">Agencies &amp; Salesforce SIs: I also take on white-label build work.</p>
-    </footer>
+<!-- ============ PROBLEMS I FIX ============ -->
+<section class="h-sec h-sec--alt" id="problems">
+  <div class="wrap">
+    <header class="h-head h-rise">
+      <p class="h-kicker">Sound familiar?</p>
+      <h2 class="h-h2">What I fix.</h2>
+      <p class="h-lede">Growth breaks the way work gets done. These are the problems companies bring me.</p>
+    </header>
+    <ul class="h-fix h-rise">
+      <li><b>Your team lives in spreadsheets and copy-paste.</b><span>I replace them with one system that does the work.</span><em>Custom software</em></li>
+      <li><b>Your tools don't talk to each other.</b><span>I connect them so data moves on its own.</span><em>Operational systems</em></li>
+      <li><b>Leaders don't trust the numbers.</b><span>One source of truth, and reporting people actually open.</span><em>Operational systems</em></li>
+      <li><b>You tried AI and it stalled at a demo.</b><span>I take it into daily use, with guardrails and approvals.</span><em>AI</em></li>
+      <li><b>Off-the-shelf software doesn't fit how you work.</b><span>I build exactly what your process needs.</span><em>Custom software</em></li>
+      <li><b>Key processes depend on a few people.</b><span>I turn them into systems that run without heroics.</span><em>AI and automation</em></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ THE BLEND (selling points) ============ -->
+<section class="h-sec h-blend" id="why-me">
+  <div class="wrap">
+    <header class="h-head h-rise">
+      <p class="h-kicker">Why me</p>
+      <h2 class="h-h2">I understand the business and I write the code.<br />Rarely the same person.</h2>
+    </header>
+    <div class="h-blend__grid h-rise">
+      <article class="h-blend__card">
+        <span class="h-blend__icon"><i data-i="trend"></i></span>
+        <h3>I understand the business</h3>
+        <ul>
+          <li>Lead global GTM and Revenue Operations today</li>
+          <li>Sales Director across EMEA, Africa and the US</li>
+          <li>Co-founded a company and took it to funding</li>
+        </ul>
+        <p>I know which problems are worth solving.</p>
+      </article>
+      <span class="h-blend__op" aria-hidden="true">+</span>
+      <article class="h-blend__card">
+        <span class="h-blend__icon"><i data-i="code"></i></span>
+        <h3>I write the code</h3>
+        <ul>
+          <li>System architecture, data and integrations</li>
+          <li>Web apps, APIs and workflow automation</li>
+          <li>AI agents and LLM workflows in production</li>
+        </ul>
+        <p>I build it myself, end to end.</p>
+      </article>
+      <span class="h-blend__op" aria-hidden="true">=</span>
+      <article class="h-blend__card h-blend__card--result">
+        <span class="h-blend__icon"><i data-i="layers"></i></span>
+        <h3>Systems that scale</h3>
+        <ul>
+          <li>Built around how your business works</li>
+          <li>Governance, permissions and audit from day one</li>
+          <li>Ready for more users, regions and volume</li>
+        </ul>
+        <p>One project alone: 8,667 hours a year given back to 120 sales reps.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEMOS ============ -->
+<section class="h-sec" id="demos">
+  <div class="wrap">
+    <header class="h-head h-rise">
+      <h2 class="h-h2">See the work.</h2>
+      <p class="h-lede">Working apps I designed and built, running on sample data. Open one and use it start to finish.</p>
+    </header>
+    <div class="h-demos" id="work-grid"></div>
+  </div>
+</section>
+
+<!-- ============ 80% vs 100% ============ -->
+<section class="h-sec h-sec--alt" id="why">
+  <div class="wrap">
+    <h2 class="h-h2 h-h2--xl h-rise">AI gets you 80% there.<br />I build the full <span class="h-accent">100%.</span></h2>
+    <div class="h-bars h-rise" role="img" aria-label="Two bars. With AI alone a build reaches 80 percent: a working prototype. With me it reaches 100 percent: a product in daily use.">
+      <div class="h-barrow">
+        <span class="h-barrow__label">With AI alone</span>
+        <div class="h-barrow__track"><i style="--v:80%"><em>A working prototype</em></i></div>
+        <b>80%</b>
+      </div>
+      <div class="h-barrow h-barrow--me">
+        <span class="h-barrow__label">With me</span>
+        <div class="h-barrow__track"><i style="--v:100%"><em>A product in daily use</em></i></div>
+        <b>100%</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="h-sec" id="about">
+  <div class="wrap h-about">
+    <figure class="h-photo h-rise">
+      <img src="assets/img/cory.jpg" alt="Cory Lawing" loading="lazy" width="680" height="850" />
+      <span class="h-photo__grid" aria-hidden="true"></span>
+      <span class="h-photo__scan" aria-hidden="true"></span>
+      <span class="h-photo__corners" aria-hidden="true"></span>
+    </figure>
+    <div class="h-about__body h-rise">
+      <h2 class="h-h2">An engineer who has carried the number.</h2>
+      <p>More than 12 years leading sales, customer success and revenue operations across EMEA, Africa and the US. I co-founded a company, and today I build the software and systems businesses run on.</p>
+      <ol class="h-path" aria-label="Career path">
+        <li>Sales Director</li><li>Founder</li><li>RevOps Director</li><li class="is-now">Software and AI Architect</li>
+      </ol>
+      <dl class="h-stats">
+        <div><dt>&lt;20 min</dt><dd>customer service response time, was 24 hours</dd></div>
+        <div><dt>8,667 hours</dt><dd>saved a year for 120 sales reps, on one project alone</dd></div>
+        <div><dt>3 regions</dt><dd>systems live across EMEA, NA and APAC</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WORK WITH ME ============ -->
+<section class="h-sec h-sec--alt" id="engage">
+  <div class="wrap">
+    <header class="h-head h-rise"><h2 class="h-h2">Three ways to start.</h2></header>
+    <div class="h-offers h-rise">
+      <article class="h-offer">
+        <p class="h-offer__tag">2 to 3 weeks</p>
+        <h3>Systems and AI Audit</h3>
+        <p>Where software, automation and AI pay off in your business, and a plan to build it.</p>
+      </article>
+      <article class="h-offer">
+        <p class="h-offer__tag">Fixed scope, fixed fee</p>
+        <h3>Custom Build</h3>
+        <p>One product, shipped to production and into daily use.</p>
+      </article>
+      <article class="h-offer">
+        <p class="h-offer__tag">Ongoing</p>
+        <h3>Fractional Systems and AI Lead</h3>
+        <p>A senior builder on your team, without the full-time hire.</p>
+      </article>
+    </div>
+    <ol class="h-next h-rise" aria-label="What happens next">
+      <li><span>1</span><div><b>A free 30-minute call</b><p>Your goal, what's in the way, and whether I'm the right fit.</p></div></li>
+      <li><span>2</span><div><b>A written scope</b><p>What I'll build, the timeline and a fixed price. No surprises.</p></div></li>
+      <li><span>3</span><div><b>Build, launch, adopt</b><p>Working software you see as it's built, shipped, documented and used.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="h-sec h-contact-sec" id="contact">
+  <div class="wrap h-contact h-rise">
+    <h2 class="h-h2 h-h2--xl">Tell me what's slowing you down.</h2>
+    <div class="h-contact__actions">
+      <a class="h-btn h-btn--primary h-btn--lg" href="https://calendly.com/corylawing/free-discovery-call-with-cory-lawing" target="_blank" rel="noopener">Book a free call <i data-i="arrow-right"></i></a>
+      <button class="h-btn h-btn--ghost h-btn--lg" id="note-toggle" aria-expanded="false" aria-controls="contact-form">Send a note instead</button>
+    </div>
+    <form class="h-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST" hidden novalidate>
+      <input type="hidden" name="access_key" value="59ba68c1-4fa5-42d8-bdcb-5ec79796e2cb" />
+      <input type="hidden" name="subject" value="New enquiry from corylawing.com" />
+      <input type="hidden" name="from_name" value="corylawing.com contact form" />
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <div class="h-form__row">
+        <div class="k-field"><label for="cf-name">Name</label><input class="k-input" id="cf-name" name="name" autocomplete="name" required /></div>
+        <div class="k-field"><label for="cf-email">Work email</label><input class="k-input" id="cf-email" name="email" type="email" autocomplete="email" required /></div>
+      </div>
+      <div class="k-field"><label for="cf-msg">What do you want to build?</label><textarea class="k-textarea" id="cf-msg" name="message" rows="4" required></textarea></div>
+      <div class="h-form__foot">
+        <button class="h-btn h-btn--primary" type="submit">Send <i data-i="send"></i></button>
+        <p class="h-form__status" id="contact-status" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+    <ul class="h-direct">
+      <li><b>corylawing@gmail.com</b></li>
+      <li><a href="https://www.linkedin.com/in/corylawing" target="_blank" rel="noopener"><b>linkedin.com/in/corylawing</b></a></li>
+    </ul>
+  </div>
+</section>
+
+<footer class="h-foot">
+  <div class="wrap h-foot__in">
+    <span class="brand"><svg viewBox="0 0 64 64" aria-hidden="true"><polygon points="32,9 51.92,20.5 51.92,43.5 32,55 12.08,43.5 12.08,20.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><g fill="currentColor"><circle cx="32" cy="9" r="2.6"/><circle cx="51.92" cy="20.5" r="2.6"/><circle cx="51.92" cy="43.5" r="2.6"/><circle cx="32" cy="55" r="2.6"/><circle cx="12.08" cy="43.5" r="2.6"/><circle cx="12.08" cy="20.5" r="2.6"/></g><text x="32" y="39.5" text-anchor="middle" font-family="Bricolage Grotesque, Geist, system-ui, sans-serif" font-weight="700" font-size="20" letter-spacing="-1" fill="currentColor">CL</text></svg>Cory Lawing</span>
+    <p>Agencies and system integrators: I also take white-label builds.</p>
+    <p>© 2026</p>
+  </div>
+</footer>
 
   </div>
-
-  <script src="assets/js/main.js" defer></script>
-  <script src="assets/js/territory-demo.js" defer></script>
+  <div id="view-demo" hidden>
+    <iframe id="demo-frame" title="Interactive demo" allow="clipboard-write; fullscreen"></iframe>
+    <p class="demo-loading" role="status">Loading the demo</p>
+  </div>
+</main>
 </body>
 </html>

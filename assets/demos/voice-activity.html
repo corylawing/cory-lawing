@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Activity Voice Recorder — interactive demo</title>
+<title>Activity Voice Recorder · interactive demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" />
 <style>
   :root{
     --bg:#0b0d12; --panel:#13161f; --panel2:#191d29; --line:#272d3c; --line2:#333a4d;
@@ -181,25 +184,419 @@
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
   @media(max-width:780px){ .grid2{grid-template-columns:1fr;} .rec__who{flex-wrap:wrap;} }
+  .email__row{min-height:44px;padding:0 14px;}
+  .email__row input{padding:12px 0;min-width:0;}
+
+  /* ===== upgrade: viewport shell ===== */
+  html,body{height:100%;overflow:hidden;}
+  .vp{height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+  .grid2 > .card + .card, .grid2 > div > .card + .card{margin-top:0;}
+  .col{display:flex;flex-direction:column;gap:16px;min-width:0;}
+  .grid2 > *{min-width:0;}
+  .btn{min-height:42px;}
+  .btn--sm{font-size:12.5px;padding:8px 13px;border-radius:10px;}
+  .btn:focus-visible,.citem:focus-visible,.tabbtn:focus-visible,.prop:focus-within{outline:2px solid var(--lime);outline-offset:2px;}
+  .topbtn{min-height:40px;font-size:12px;color:var(--ink2);border:1px solid var(--line2);background:transparent;border-radius:999px;padding:6px 13px;display:inline-flex;align-items:center;gap:7px;}
+  .topbtn:hover{border-color:var(--faint);color:var(--ink);}
+  .topbtn .cnt{font-family:"Geist Mono",monospace;font-size:11px;background:var(--panel2);border:1px solid var(--line2);border-radius:999px;padding:0 7px;color:var(--lime);}
+  .card__h .sp{margin-left:auto;}
+  .note{font-size:12.5px;color:var(--muted);line-height:1.5;}
+  .demo-note{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink2);background:rgba(61,198,206,.07);border:1px solid rgba(61,198,206,.28);border-radius:11px;padding:9px 12px;}
+  .demo-note b{color:var(--teal);font-weight:600;}
+  .empty{padding:18px 12px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed var(--line2);border-radius:12px;}
+
+  /* today's meetings */
+  .meets{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+  .meet{display:flex;flex-direction:column;gap:8px;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);min-width:0;}
+  .meet__time{font-family:"Geist Mono",monospace;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:7px;}
+  .meet__time .live{width:7px;height:7px;border-radius:50%;background:var(--green);}
+  .meet__time .soon{width:7px;height:7px;border-radius:50%;background:var(--amber);}
+  .meet__title{font-weight:600;font-size:13.5px;}
+  .meet__who{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted);min-width:0;}
+  .meet__who .ava{width:26px;height:26px;font-size:10.5px;}
+  .meet__who span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .meet .btn{justify-content:center;margin-top:auto;}
+  .meet.done{border-color:rgba(91,208,138,.35);}
+  .why{font-size:11.5px;color:var(--faint);}
+
+  /* history */
+  .hist{display:flex;flex-direction:column;gap:8px;}
+  .hitem{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);text-align:left;color:var(--ink);width:100%;min-height:52px;}
+  .hitem:hover{border-color:var(--line2);}
+  .hitem .ava{width:32px;height:32px;font-size:12px;}
+  .hitem__m{flex:1;min-width:0;}
+  .hitem__t{font-weight:600;font-size:13px;}
+  .hitem__s{font-size:11.5px;color:var(--muted);}
+  .st{font-size:10.5px;border-radius:999px;padding:2px 9px;white-space:nowrap;border:1px solid var(--line2);color:var(--ink2);}
+  .st--ok{color:var(--green);border-color:rgba(91,208,138,.4);background:rgba(91,208,138,.1);}
+  .st--wait{color:var(--amber);border-color:rgba(242,200,121,.35);background:rgba(242,200,121,.08);}
+  .drawer-bg{position:fixed;inset:0;background:rgba(5,6,9,.6);z-index:70;opacity:0;pointer-events:none;transition:.2s;}
+  .drawer-bg.show{opacity:1;pointer-events:auto;}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);background:var(--panel);border-left:1px solid var(--line);z-index:71;transform:translateX(102%);transition:transform .25s ease;display:flex;flex-direction:column;}
+  .drawer.show{transform:none;}
+  .drawer__h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);}
+  .drawer__h h3{font-size:15px;flex:1;}
+  .drawer__b{padding:16px;overflow:auto;flex:1;}
+  .xbtn{width:40px;height:40px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--ink2);font-size:18px;}
+
+  /* record mode tabs + typed debrief */
+  .tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);margin-bottom:18px;width:100%;}
+  .tabbtn{flex:1;min-height:40px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;}
+  .tabbtn.on{background:var(--bg);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line2);}
+  .typed{width:100%;text-align:left;}
+  .typed textarea{width:100%;min-height:220px;resize:vertical;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;color:var(--ink);padding:13px 14px;font-family:inherit;font-size:13.5px;line-height:1.6;outline:none;}
+  .typed textarea:focus{border-color:var(--lime-line);box-shadow:0 0 0 3px rgba(217,247,123,.08);}
+  .typed__bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px;}
+  .typed__count{font-size:11.5px;color:var(--faint);margin-left:auto;font-family:"Geist Mono",monospace;}
+  .found{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:24px;}
+  .found .tg2{font-weight:500;}
+  .tg2--risk{background:rgba(242,119,140,.12);color:var(--rose);border:1px solid rgba(242,119,140,.34);}
+  .tg2--amber{background:rgba(242,200,121,.1);color:var(--amber);border:1px solid rgba(242,200,121,.32);}
+  .disabled-why{font-size:12px;color:var(--faint);}
+
+  /* transcript with sources */
+  .transcript .s{border-radius:4px;transition:background .2s,box-shadow .2s;}
+  .transcript .s.src{background:rgba(217,247,123,.06);box-shadow:inset 0 -1px 0 var(--lime-line);}
+  .transcript .s.on{background:rgba(217,247,123,.2);box-shadow:0 0 0 2px rgba(217,247,123,.22);color:var(--ink);}
+  .transcript .notehd{display:block;margin-top:10px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+  mark{background:rgba(217,247,123,.22);color:var(--ink);border-radius:3px;padding:0 2px;}
+
+  /* proposed changes */
+  .grp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:14px 0 4px;}
+  .grp:first-child{margin-top:0;}
+  .prop{position:relative;display:flex;gap:12px;align-items:flex-start;padding:11px 10px;margin:0 -10px;border-radius:11px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;}
+  .prop:hover,.prop.hov{background:rgba(255,255,255,.025);}
+  .prop input{position:absolute;opacity:0;width:1px;height:1px;}
+  .prop .cbx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line2);flex-shrink:0;display:grid;place-items:center;margin-top:1px;transition:.15s;}
+  .prop.on .cbx{background:var(--lime);border-color:var(--lime);}
+  .prop.lock{cursor:not-allowed;opacity:.75;}
+  .prop.lock .cbx{border-style:dashed;}
+  .prop__m{flex:1;min-width:0;}
+  .prop__top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .prop__name{font-size:13.5px;font-weight:600;}
+  .obj{font-size:10.5px;color:var(--muted);border:1px solid var(--line2);border-radius:6px;padding:0 6px;}
+  .conf{margin-left:auto;font-family:"Geist Mono",monospace;font-size:11px;border-radius:999px;padding:1px 8px;white-space:nowrap;}
+  .conf--hi{color:var(--green);background:rgba(91,208,138,.1);border:1px solid rgba(91,208,138,.35);}
+  .conf--mid{color:var(--amber);background:rgba(242,200,121,.08);border:1px solid rgba(242,200,121,.3);}
+  .conf--lo{color:var(--rose);background:rgba(242,119,140,.08);border:1px solid rgba(242,119,140,.32);}
+  .prop__chg{font-size:12.5px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere;}
+  .prop__chg b{color:var(--ink2);}
+  .prop__q{font-size:12px;color:var(--muted);margin-top:6px;padding-left:10px;border-left:2px solid var(--line2);line-height:1.5;overflow-wrap:anywhere;}
+  .prop__why{font-size:11.5px;margin-top:5px;color:var(--rose);}
+  .prop__why.lockwhy{color:var(--amber);}
+  .approvebar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
+
+  /* record before / after */
+  .rec2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .rcol{background:var(--panel2);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0;}
+  .rcol__h{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .rcol--after .rcol__h{color:var(--lime);}
+  .rrow{display:flex;gap:10px;padding:7px 12px;font-size:12.5px;border-bottom:1px solid var(--line);}
+  .rrow:last-child{border-bottom:none;}
+  .rrow .k{color:var(--muted);width:118px;flex-shrink:0;}
+  .rrow .v{color:var(--ink2);min-width:0;overflow-wrap:anywhere;}
+  .rrow.chg{background:rgba(217,247,123,.08);box-shadow:inset 3px 0 0 var(--lime);}
+  .rrow.chg .v{color:var(--lime);font-weight:600;}
+  .rcol--before .rrow.chg{background:rgba(242,119,140,.06);box-shadow:inset 3px 0 0 rgba(242,119,140,.6);}
+  .rcol--before .rrow.chg .v{color:var(--muted);font-weight:400;text-decoration:line-through;text-decoration-color:rgba(242,119,140,.6);}
+  .rec2__ids{font-family:"Geist Mono",monospace;font-size:11px;color:var(--faint);margin-top:8px;}
+
+  /* agent activity */
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start;}
+  .layout > .main{min-width:0;}
+  .aside{position:sticky;top:12px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+  .agent .card__h{cursor:pointer;user-select:none;}
+  .agent__tog{margin-left:auto;width:40px;height:40px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--ink2);display:grid;place-items:center;transition:transform .2s;}
+  .agent.closed .agent__tog{transform:rotate(-90deg);}
+  .agent.closed .card__b{display:none;}
+  .agent__sum{font-size:11.5px;color:var(--muted);font-weight:400;}
+  .astep{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);}
+  .astep:last-child{border-bottom:none;}
+  .astep .d{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line2);flex-shrink:0;display:grid;place-items:center;margin-top:1px;}
+  .astep.done .d{background:var(--green);border-color:var(--green);}
+  .astep.run .d{border-color:var(--lime);border-top-color:transparent;animation:spin .8s linear infinite;}
+  .astep.wait .d{border-color:var(--amber);background:rgba(242,200,121,.15);}
+  .astep.skip .d{border-style:dashed;}
+  .astep__m{flex:1;min-width:0;}
+  .astep__t{font-size:13px;font-weight:600;display:flex;gap:8px;align-items:baseline;}
+  .astep__t .ms{margin-left:auto;font-family:"Geist Mono",monospace;font-size:10.5px;color:var(--faint);font-weight:400;}
+  .astep.todo .astep__t{color:var(--faint);}
+  .astep.wait .astep__t{color:var(--amber);}
+  .call{font-family:"Geist Mono",ui-monospace,monospace;font-size:11px;line-height:1.55;color:var(--muted);margin-top:3px;overflow-wrap:anywhere;}
+  .call .fn{color:var(--teal);}
+  .call .ok{color:var(--green);}
+  .call .warn{color:var(--amber);}
+  .call .ts{color:var(--faint);}
+  .proc__step .det{display:block;font-family:"Geist Mono",monospace;font-size:10.5px;color:var(--faint);margin-top:2px;}
+
+  .toast{display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);}
+  .toast.show{pointer-events:auto;}
+  .toast button{border:1px solid rgba(10,10,10,.35);background:transparent;color:var(--lime-ink);font-weight:700;border-radius:8px;padding:6px 11px;min-height:40px;min-width:56px;font-size:12.5px;}
+
+  @media(max-width:1080px){
+    .layout{grid-template-columns:1fr;}
+    .aside{position:static;order:-1;}
+  }
+  @media(max-width:780px){
+    .app{padding:16px 16px 64px;}
+    .rec2{grid-template-columns:1fr;}
+    .kv{flex-direction:column;gap:2px;}
+    .kv .k{min-width:0;}
+    .rline{width:18px;margin:0 6px;}
+    .rstep{font-size:12px;}
+    .pipe{gap:6px 0;}
+    .score{min-width:0;flex-basis:100%;}
+    .card__b{padding:16px;}
+    .card__h{padding:12px 16px;}
+    .meets{grid-template-columns:1fr;}
+    .card__h{flex-wrap:wrap;}
+    .card__h .sp{margin-left:38px;flex-basis:calc(100% - 38px);width:auto;}
+    .card__h .st.sp{flex-basis:auto;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}
+    .proc__ring{border-top-color:var(--lime);border-right-color:var(--lime);}
+  }
 </style>
 </head>
 <body>
+<div class="vp" id="vp">
 <div class="app">
   <div class="topbar">
     <div>
       <div class="eyebrow mono">Voice → CRM · activity intelligence</div>
       <div class="topbar__title">Activity Voice Recorder</div>
-      <div class="topbar__sub">Talk after a meeting — AI logs the activity, updates the record, and drafts the follow-up.</div>
+      <div class="topbar__sub">Talk or type after a meeting. AI logs the activity, proposes record updates for your approval, and drafts the follow-up.</div>
     </div>
     <div class="topbar__spacer"></div>
+    <button class="topbtn" id="histBtn" onclick="openHistory()" aria-haspopup="dialog">History <span class="cnt" id="histCnt">0</span></button>
     <span class="pill"><span class="dot"></span> AI assistant connected</span>
   </div>
 
   <div class="rail" id="rail"></div>
   <div id="stage"></div>
 </div>
-<div class="toast" id="toast"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="drawer-bg" id="drawerBg" onclick="closeHistory()"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true">
+  <div class="drawer__h"><span class="ic">🕘</span><h3 id="drawerTitle">Session history</h3><button class="xbtn" onclick="closeHistory()" aria-label="Close history">×</button></div>
+  <div class="drawer__b"><div class="hist" id="drawerList"></div></div>
+</aside>
 
+<script>
+/* =========================================================
+   Demo parser. Fixed rules stand in for the language model
+   used in production. It reads typed debriefs and written
+   notes, and returns findings tied to the sentence they
+   came from, each with a confidence score.
+   ========================================================= */
+const DOWS=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+const MONS=['january','february','march','april','may','june','july','august','september','october','november','december'];
+const NUMW={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,fifteen:15,twenty:20,thirty:30};
+const VAGUE=/^(a few|several|a couple of|a couple|some|multiple|many)$/;
+const COMP_KNOWN=['Pipewell','Northwind CRM','Clearpath','Vantage CRM','Orbitly','Stackline','Brightlane'];
+const STOPW=new Set('So I We They He She It The This That Their Our My Good Great Really Next Budget Just Also Then Right Today Tomorrow Monday Tuesday Wednesday Thursday Friday Saturday Sunday January February March April May June July August September October November December Q1 Q2 Q3 Q4 ROI CRM VP IT CEO CFO CTO CIO COO Head Chief Overall Pricing Legal Security Plus Need Agreed Action Written Note Met Had Spoke Quick Call Meeting Follow Both Everyone Nobody Not No Yes Thanks Sounds Big Main Key Excel After Before When If Once Pretty Very Positive Overall Everything Nothing Lots Most Some One Two Three Four Five'.split(' '));
+const TITLE_RE='(chief [a-z]+ officer|ceo|cfo|cto|cio|coo|cro|cmo|vp(?: of)? [a-z]+(?: [a-z]+)?|vice president(?: of)? [a-z]+|head of [a-z]+(?: [a-z]+)?|(?:it |finance |procurement |operations |sales |marketing |engineering )?director(?: of [a-z]+)?|(?:procurement|finance|it|ops|operations|project|program|product|security|engineering) (?:lead|manager)|controller|founder|owner|general counsel|legal counsel|champion|economic buyer|decision[- ]maker|exec(?:utive)? sponsor|sponsor|budget holder)';
+const TASKVERB=/^(send|share|book|schedule|set up|arrange|call|email|draft|prepare|introduce|loop in|invite|demo|review|check|chase|forward|organi[sz]e|plan|build|put together|pull together|provide|deliver|submit|run|host|line up|map|reply|reconvene|meet|present|walk|price|quote|follow up|get|write|confirm|update|create|ask|talk|speak|reach out|connect)\b/;
+
+function d0(d){const x=new Date(d);x.setHours(0,0,0,0);return x;}
+function addD(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function monthEnd(y,m){return new Date(y,m+1,0);}
+function fmtD(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+function cap1(s){s=String(s||'').trim();return s?s[0].toUpperCase()+s.slice(1):s;}
+function tidy(s){return String(s).replace(/\s+/g,' ').replace(/^[\s,;:.\-]+|[\s,;:.\-]+$/g,'');}
+function numOf(w){w=String(w).toLowerCase().replace(/,/g,'');if(/^\d+$/.test(w))return +w;return NUMW[w]||0;}
+function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function splitSentences(text){
+  const out=[];
+  String(text||'').split(/\n+/).forEach(par=>{
+    par.replace(/\s+/g,' ').trim().split(/(?<=[.!?])\s+(?=["'(]?[A-Z0-9])/).forEach(s=>{ s=s.trim(); if(s) out.push(s); });
+  });
+  return out;
+}
+
+/* every date phrase in a lower-cased sentence */
+function findDates(low,today){
+  const out=[];let m,re;
+  const add=(mm,date,soft)=>{ if(date) out.push({i:mm.index,len:mm[0].length,phrase:tidy(mm[0]),date:d0(date),soft:!!soft}); };
+  re=/\b(?:by |on |before )?(?:end of (?:the )?day|eod|today|tonight)\b/g; while((m=re.exec(low))) add(m,today);
+  re=/\b(?:by |on |before )?tomorrow\b/g; while((m=re.exec(low))) add(m,addD(today,1));
+  re=/\b(?:by |on |before |this |next |early next )*(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/g;
+  while((m=re.exec(low))){ let diff=(DOWS.indexOf(m[1])-today.getDay()+7)%7; if(diff===0) diff=7; if(/next /.test(m[0])&&diff<3) diff+=7; add(m,addD(today,diff)); }
+  re=/\b(?:by |before )?(?:the )?end of (?:the |this )?week\b|\beow\b/g; while((m=re.exec(low))){ let f=(5-today.getDay()+7)%7; if(f===0)f=7; add(m,addD(today,f)); }
+  re=/\b(?:early |late |sometime )?next week\b/g; while((m=re.exec(low))) add(m,addD(today,7),true);
+  re=/\b(?:later )?this week\b/g; while((m=re.exec(low))){ let f=(5-today.getDay()+7)%7; add(m,addD(today,f||1),true); }
+  re=/\b(?:in|within) (\d+|one|two|three|four|five|six|a couple of|a few) (days?|weeks?|months?)\b/g;
+  while((m=re.exec(low))){ const n=/couple/.test(m[1])?2:/few/.test(m[1])?3:numOf(m[1]); const d=new Date(today); if(/month/.test(m[2])) d.setMonth(d.getMonth()+n); else d.setDate(d.getDate()+n*(/week/.test(m[2])?7:1)); add(m,d,/few|couple/.test(m[1])); }
+  re=/\b(?:by |before )?(?:the )?end of (?:the |this )?month\b/g; while((m=re.exec(low))) add(m,monthEnd(today.getFullYear(),today.getMonth()));
+  re=/\bnext month\b/g; while((m=re.exec(low))) add(m,new Date(today.getFullYear(),today.getMonth()+1,15),true);
+  re=/\b(?:by |before )?(?:the )?(?:end of (?:the |this )?quarter|this quarter)\b/g;
+  while((m=re.exec(low))){ const q=Math.floor(today.getMonth()/3); add(m,monthEnd(today.getFullYear(),q*3+2),/this quarter/.test(m[0])&&!/end/.test(m[0])); }
+  re=/\bnext quarter\b/g; while((m=re.exec(low))){ const q=Math.floor(today.getMonth()/3)+1; add(m,monthEnd(today.getFullYear()+Math.floor(q/4),(q%4)*3+2),true); }
+  re=/\b(?:by |in |before )?q([1-4])\b/g; while((m=re.exec(low))){ const q=+m[1]-1; let d=monthEnd(today.getFullYear(),q*3+2); if(d<today) d=monthEnd(today.getFullYear()+1,q*3+2); add(m,d,true); }
+  const MON_RE='(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)';
+  re=new RegExp('\\b(?:by |on |before |in |until )?(?:(early|mid|late|the end of|end of) )?'+MON_RE+'\\b(?: (\\d{1,2})(?:st|nd|rd|th)?)?','g');
+  while((m=re.exec(low))){
+    if(m[2]==='may'&&!m[3]&&!/\b(?:in|by|before|until|early|mid|late|end of) may/.test(m[0])) continue;
+    const mi=MONS.findIndex(x=>x.slice(0,3)===m[2].slice(0,3)); const q=m[1]||'';
+    const day=m[3]?+m[3]:/mid/.test(q)?15:/early/.test(q)?5:/late/.test(q)?25:monthEnd(today.getFullYear(),mi).getDate();
+    let d=new Date(today.getFullYear(),mi,Math.min(day,monthEnd(today.getFullYear(),mi).getDate())); if(d<today) d=new Date(today.getFullYear()+1,mi,Math.min(day,monthEnd(today.getFullYear()+1,mi).getDate()));
+    add(m,d,!m[3]&&!/end/.test(q));
+  }
+  re=new RegExp('\\b(?:on |by |before )?(?:the )?(\\d{1,2})(?:st|nd|rd|th)? (?:of )?'+MON_RE+'\\b','g');
+  while((m=re.exec(low))){ const mi=MONS.findIndex(x=>x.slice(0,3)===m[2].slice(0,3)); let d=new Date(today.getFullYear(),mi,+m[1]); if(d<today) d=new Date(today.getFullYear()+1,mi,+m[1]); add(m,d); }
+  out.sort((a,b)=>a.i-b.i||b.len-a.len);
+  const kept=[];let end=-1; out.forEach(d=>{ if(d.i>=end){kept.push(d);end=d.i+d.len;} });
+  return kept;
+}
+
+function roleFor(t){
+  t=t.toLowerCase()+' ';
+  if(/ceo|cfo|coo|founder|owner|economic buyer|budget holder|chief (?:executive|financial|operating)/.test(t)) return 'Economic buyer';
+  if(/decision/.test(t)) return 'Decision maker';
+  if(/champion|sponsor/.test(t)) return 'Champion';
+  if(/cto|cio|it |security|engineering|technical/.test(t)) return 'Technical evaluator';
+  if(/procurement|counsel|legal/.test(t)) return 'Procurement';
+  return 'Influencer';
+}
+function titleCase(t){ return t.replace(/\b([a-z])/g,c=>c.toUpperCase()).replace(/\b(Ceo|Cfo|Cto|Cio|Coo|Cro|Cmo|Vp|It)\b/g,x=>x.toUpperCase()).replace(/\bOf\b/g,'of'); }
+const DM_T=/decision|economic buyer|budget holder|ceo|cfo|coo|founder|owner/;
+
+function parseDebrief(text,c,today){
+  today=d0(today||new Date());
+  const sents=splitSentences(text);
+  const R={sents,tasks:[],roles:[],comps:[],risks:[],pains:[],dates:[],cover:{},fields:{},budget:null,amount:null,signals:[],hold:null,mentions:[],words:(String(text).match(/\S+/g)||[]).length};
+  const first=c.name.split(' ')[0];
+  const cov=(k,s,phrase)=>{ if(!R.cover[k]) R.cover[k]={s,phrase:tidy(phrase)}; };
+  const fld=(key,to,s,phrase,conf,why)=>{ if(!R.fields[key]) R.fields[key]={to,s,phrase:tidy(phrase),conf,why:why||''}; };
+  const sig=(k,t,s,phrase)=>{ if(!R.signals.some(x=>x.k===k)) R.signals.push({k,t,s,phrase:tidy(phrase)}); };
+  CONTACTS.forEach(o=>{ if(o.id!==c.id && (text.includes(o.name)||text.includes(o.account))) R.mentions.push(o); });
+
+  sents.forEach((sent,si)=>{
+    const low=sent.toLowerCase(); let m;
+    const dates=findDates(low,today); dates.forEach(d=>R.dates.push(Object.assign({s:si},d))); if(dates.length) cov('time',si,dates[0].phrase);
+
+    /* sites and users */
+    if((m=low.match(/\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|twelve|twenty|a few|several|a couple of|a couple|multiple)\s+(?:more\s+|new\s+|additional\s+|other\s+|of (?:their|our) )?(sites|locations|offices|plants|warehouses|branches|stores|countries|regions|depots)\b/))){
+      const vague=VAGUE.test(m[1]); const n=vague?'3+':String(numOf(m[1]));
+      fld('Number of sites',n,si,m[0],vague?62:90,vague?'Vague wording ("'+m[1]+'"). Check the exact number.':'');
+    }
+    if((m=low.match(/\b(about |around |roughly |~|over |nearly |almost )?(\d[\d,]*)\s+(?:active\s+|named\s+|daily\s+|licensed\s+)?(users|seats|licen[cs]es|reps|agents)\b/))){
+      fld('Active users',m[2].replace(/,/g,''),si,m[0],m[1]?82:91,'');
+    }
+    /* tooling, incumbent, competitors */
+    if((m=sent.match(/\b(?:currently|right now|today|still)\b[^.]*?\b(?:on|using|use|running|in|with)\s+(?:a |an |the |their )?((?:legacy |old |homegrown |home-grown |in-house |custom |manual |shared )*(?:in-house tool|spreadsheets?|Excel|[A-Z][\w-]+(?: [A-Z][\w-]+)?))/))||(m=sent.match(/\b(?:moving|move|switching|migrating) (?:off|away from|from)\s+(?:a |an |the |their )?((?:legacy |old |homegrown |in-house )*(?:in-house tool|spreadsheets?|Excel|[A-Z][\w-]+(?: [A-Z][\w-]+)?))/))){
+      if(!STOPW.has(m[1].split(' ')[0]) && m[1]!==c.account){ fld('Current tooling',cap1(m[1]),si,m[0],86,''); cov('comp',si,m[0]); }
+    }
+    const compRe=/\b(?:also (?:looking at|talking to|evaluating|considering|speaking with)|evaluating|comparing (?:us )?(?:with|to|against)|competing (?:with|against)|up against|incumbent is|a (?:quote|bid|proposal|demo|pitch) from|leaning towards|shortlisted|went with|chose)\s+((?:[A-Z][\w&.-]*)(?: [A-Z][\w&.-]*)?)/g;
+    while((m=compRe.exec(sent))){ const nm=m[1].replace(/[.,]$/,''); if(!STOPW.has(nm.split(' ')[0]) && nm!==c.account && !R.comps.some(x=>x.name===nm)){ R.comps.push({name:nm,s:si,phrase:m[0],conf:/went with|chose|incumbent/.test(m[0])?88:80}); cov('comp',si,m[0]); } }
+    COMP_KNOWN.forEach(nm=>{ const short=nm.split(' ')[0]; if(sent.indexOf(short)>=0 && !R.comps.some(x=>x.name.split(' ')[0]===short)){ R.comps.push({name:nm,s:si,phrase:sent.indexOf(nm)>=0?nm:short,conf:84}); cov('comp',si,short); } });
+    if((m=low.match(/\b(?:went with|chose|signed with|not moving forward|lost (?:it|the deal)|no longer interested)\b/))) R.hold=R.hold||{t:'Buyer chose another option or stopped',s:si,phrase:m[0]};
+
+    /* people and roles */
+    const nameRe=/\b([A-Z][a-z]+(?:[ -][A-Z][a-z'’-]+)?)\b/g;
+    while((m=nameRe.exec(sent))){
+      let nm=m[1]; if(STOPW.has(nm.split(/[ -]/)[0])) continue;
+      if(CONTACTS.some(o=>o.account===nm||o.account.startsWith(nm+' ')) || c.account.includes(nm) || R.comps.some(x=>x.name.split(' ')[0]===nm.split(' ')[0]) || COMP_KNOWN.some(x=>x.startsWith(nm))) continue;
+      const st=m.index,en=st+nm.length;
+      const after=low.slice(en,en+60), before=low.slice(Math.max(0,st-45),st);
+      let t=null,ph='';
+      const a=after.match(new RegExp('^\\s*(?:\\(|,\\s*|\\s+is\\s+|\\s+who\\s+is\\s+|\\s+who\'s\\s+|\\s*-\\s*|\\s+as\\s+)(?:the |their |our |a |an |basically the |actually the |also the |clearly the |now the )?'+TITLE_RE+'\\b'));
+      if(a){t=a[1];ph=sent.slice(st,en+a[0].length);}
+      else { const b=before.match(new RegExp('\\b(?:the |their |our )?'+TITLE_RE+'(?:,\\s*|\\s+)$')); if(b){t=b[1];ph=sent.slice(st-b[0].length,en);} }
+      const so=after.match(/^\s+(?:signs off|has (?:the )?final say|holds the budget|owns the budget|makes the call)/);
+      if(!t && so){ t='decision maker'; ph=sent.slice(st,en)+so[0]; }
+      const isContact=(nm===c.name||nm===first||c.name.startsWith(nm+' '));
+      if(!t){ if(!isContact && /^[A-Z][a-z]+ [A-Z][a-z]+$/.test(nm) && !R.roles.some(r=>r.name===nm)) R.roles.push({name:nm,title:'',role:'Influencer',s:si,phrase:nm,conf:58}); continue; }
+      const role=roleFor(t), roleOnly=/champion|economic buyer|decision|sponsor|budget holder/.test(t);
+      if(DM_T.test(t)){ cov('dm',si,ph); sig('dm','Decision-maker engaged',si,ph); }
+      if(isContact){
+        if(!roleOnly) fld('Job title',titleCase(t),si,ph,90,'');
+        if(DM_T.test(t)) fld('Decision maker',c.name,si,ph,88,'');
+      } else {
+        const ex=R.roles.find(r=>r.name===nm||r.name.startsWith(nm+' ')||nm.startsWith(r.name+' '));
+        const rec={name:ex&&ex.name.length>nm.length?ex.name:nm,title:roleOnly?(ex&&ex.title||''):titleCase(t),role,s:si,phrase:ph,conf:roleOnly?78:86};
+        if(ex) Object.assign(ex,rec); else R.roles.push(rec);
+        if(role==='Economic buyer'||role==='Decision maker') fld('Decision maker',rec.name+(rec.title?' ('+rec.title+')':''),si,ph,role==='Decision maker'?84:76,'');
+      }
+    }
+    if((m=low.match(/\b(?:decision[- ]maker|economic buyer|signs? off|final say|budget holder|exec(?:utive)? sponsor)\b/))) cov('dm',si,m[0]);
+
+    /* budget and amount */
+    if((m=low.match(/budget(?:'s| is| has been| was| got)? (?:now )?(?:approved|signed off|confirmed|allocated|in place|secured|agreed)|(?:approved|signed off on|confirmed|secured|allocated) (?:the |a |their )?budget|(?:they |we )have (?:the )?budget/))){ R.budget={to:'Approved',s:si,phrase:m[0],conf:92}; sig('budget','Budget confirmed',si,m[0]); cov('time',si,m[0]); }
+    else if((m=low.match(/no budget|budget (?:isn't|is not|is not yet|not yet|hasn't been|has not been) (?:approved|confirmed|signed off|allocated)|budget (?:freeze|cut|is frozen)|need(?:s)? to find (?:the )?budget/))){ R.budget={to:'Not secured',s:si,phrase:m[0],conf:86}; cov('time',si,m[0]); }
+    else if((m=low.match(/budget (?:needs|is pending|pending|awaiting|waiting on|goes to) [a-z ]{0,20}(?:approval|sign[- ]off|board|committee)|waiting on budget/))){ R.budget={to:'Pending approval',s:si,phrase:m[0],conf:80}; cov('time',si,m[0]); }
+    if((!R.amount || R.amount.conf<80) && (m=sent.match(/(?:[$€£]\s?\d[\d,.]*\s?(?:k|m|million|thousand)?\b|\b\d[\d,.]*\s?(?:k|m|million|thousand)?\s?(?:dollars|euros|usd|eur|gbp)\b|\b\d[\d,.]*k\b)/i)) && /budget|price|pricing|deal|contract|quote|spend|amount|cost|worth|value|annual|per year|a year|[$€£]/i.test(sent)){
+      let raw=m[0].toLowerCase().replace(/[$€£,\s]|dollars|euros|usd|eur|gbp/g,''); let mult=1;
+      if(/(k|thousand)$/.test(raw)){mult=1000;raw=raw.replace(/(k|thousand)$/,'');} else if(/(m|million)$/.test(raw)){mult=1e6;raw=raw.replace(/(m|million)$/,'');}
+      const n=parseFloat(raw)*mult, ac=(/budget|contract|deal|annual|per year|a year/.test(low)?86:72)-(/anything (?:over|above)|threshold|limit|over \$/.test(low)?14:0);
+      if(n>=500 && (!R.amount||ac>R.amount.conf)){ R.amount={to:n,s:si,phrase:m[0],conf:ac}; cov('time',si,m[0]); }
+      if(n>=500 && !R.budget && /\bbudget\b/.test(low) && !/anything (?:over|above)/.test(low)) R.budget={to:'Identified',s:si,phrase:m[0],conf:74};
+    }
+    /* renewal and close dates */
+    if(/\brenew/.test(low) && dates.length){ const d=dates.find(x=>x.i>low.indexOf('renew'))||dates[0]; fld('Renewal date',fmtD(d.date),si,d.phrase,d.soft?66:82,d.soft?'Month only. The exact day is a guess.':''); }
+    if(/\b(?:sign|signature|signed|close|closing|decision|contract|go[- ]live|start date|kick ?off)\b/.test(low) && !/\brenew/.test(low) && dates.length){ const d=dates[dates.length-1]; fld('Close date',fmtD(d.date),si,sent.slice(Math.max(0,d.i-24),d.i+d.len),d.soft?64:78,d.soft?'Approximate date. Check it before writing.':''); }
+
+    /* pains and ROI */
+    if((m=low.match(/\b(pain|frustrat\w*|struggl\w*|manual(?:ly)?|spreadsheets?|problem|challenge|too slow|errors?|no (?:single )?(?:view|visibility)|takes? (?:hours|days|forever)|wast\w+|bottlenecks?|chasing|headache)\b/))){ cov('pain',si,m[0]); R.pains.push({s:si,phrase:m[0],t:sent}); }
+    if((m=sent.match(/\d+\s?%|\bROI\b|\bpayback\b|\bsav(?:e|es|ed|ing)\s+(?:about |around |over |roughly )?(?:\d|[$€£])|\bhours (?:a|per) (?:week|month)|\bcut [a-z ]{0,20}by (?:half|\d)/i))) cov('roi',si,m[0]);
+
+    /* risks */
+    const RISKS=[
+      [/\b(?:security review|infosec|security questionnaire|soc ?2|gdpr|dpa|pen ?test)\b/,'Security review'],
+      [/\b(?:legal review|legal|redlines?|contract review|msa)\b/,'Legal review'],
+      [/\b(?:too expensive|price is (?:too )?high|pricing (?:is )?(?:a )?(?:concern|issue|sticking point|problem)|over budget|cheaper|discount)\b/,'Price pushback'],
+      [/\b(?:budget freeze|budget cut|budget is frozen|no budget|budget (?:isn't|is not|not yet) (?:approved|confirmed))\b/,'Budget not secured'],
+      [/\b(?:on hold|paused|delay(?:ed|s)?|push(?:ed)? (?:it )?back|slip(?:ped|s)?|reorg|re-org|layoffs?|restructur\w*|hiring freeze)\b/,'Timeline risk'],
+      [/\b(?:churn|cancel\w*|not renew|won't renew|leaving)\b/,'Churn risk'],
+      [/\b(?:concern(?:ed|s)?|worried|worry|nervous|hesitant|skeptical|sceptical|pushback|unsure|not convinced)\b/,'Concern raised'],
+      [/\b(?:blocker|blocking|risk)\b/,'Risk flagged']
+    ];
+    if(!/\bno (?:real )?(?:risks?|concerns?|blockers?)\b/.test(low)) for(const [re,label] of RISKS){ const mm=low.match(re); if(mm){ R.risks.push({label,note:sent.length>110?sent.slice(0,107)+'…':sent,s:si,phrase:mm[0],conf:label==='Risk flagged'?66:76}); break; } }
+    if((m=low.match(/\b(?:on hold|paused|no longer|not moving forward)\b/))) R.hold=R.hold||{t:'Deal paused',s:si,phrase:m[0]};
+
+    /* stage signals */
+    if((m=low.match(/\b(?:proposal|quote|pricing|order form|sow|statement of work)\b/)) && /\b(?:send|share|prepare|put together|draft|want|asked for|requested|need)\b/.test(low)) sig('proposal','Proposal or pricing requested',si,m[0]);
+    if((m=low.match(/\b(?:redlines?|negotiat\w*|commercial terms|contract terms|procurement)\b/))) sig('terms','Commercial terms in discussion',si,m[0]);
+    if((m=low.match(/\b(?:verbal (?:yes|commit\w*)|green light|go ahead|ready to sign)\b/))) sig('commit','Verbal commitment',si,m[0]);
+    if((m=low.match(/\b(?:signed|countersigned)\b/)) && /\b(?:contract|order form|deal|agreement)\b/.test(low) && !/\bnot\b|n't/.test(low)) sig('signed','Contract signed',si,m[0]);
+
+    /* next steps */
+    const trig=low.match(/\b(?:i'll|i will|i'm going to|i am going to|i need to|i promised to|i owe (?:them|him|her)|we agreed (?:that )?(?:i'll |i will |i'd |to )?|the next step is (?:for me )?(?:to )?|next steps? (?:is|are|:)\s*(?:for me )?(?:to )?|action items?:?\s*|we'll|we will|let's|they'll|they will|she'll|she will|he'll|he will)\s*/);
+    if(trig){
+      const rest=sent.slice(trig.index+trig[0].length).replace(/^(?:for me to|to|then)\s+/i,'');
+      const parts=rest.split(/,\s*(?:and\s+)?then\s+|;\s*(?:and\s+)?(?:then\s+)?|\s+and then\s+|,\s+and\s+(?=(?:send|book|schedule|set up|share|loop in|introduce|get)\b)/i);
+      parts.forEach((p,pi)=>{
+        let t=tidy(p.replace(/\s+(?:so|because|since|as)\s.*$/i,'').replace(/[.!?]+$/,''));
+        const pd=findDates(t.toLowerCase(),today);
+        pd.slice().reverse().forEach(d=>{ t=tidy(t.slice(0,d.i)+t.slice(d.i+d.len)); });
+        t=t.replace(/\s+(?:by|on|for|before|in)$/i,'');
+        if(t.length<6) return;
+        const tl=t.toLowerCase(), verb=TASKVERB.test(tl), owner=/^(?:they|she|he)/.test(trig[0].trim())?'them':'you';
+        const d=pd[0]||(pi===parts.length-1?dates.find(x=>x.i>=trig.index):null)||null;
+        const meeting=(/^(?:book|schedule|set up|arrange|hold|host|run)\b/.test(tl)&&/\b(?:call|meeting|follow-?up|demo|session|workshop|review|catch[- ]up)\b/.test(tl))||/^(?:meet|reconvene)\b/.test(tl);
+        let conf=72+(verb?10:-8)+(d&&!d.soft?8:d?-6:-12)+(pi>0?-4:0)+(owner==='them'?-6:0); conf=Math.max(48,Math.min(95,conf));
+        R.tasks.push({title:cap1(t.length>70?t.slice(0,67)+'…':t),due:d?d.date:addD(today,7),s:si,phrase:t,conf,meeting,owner,
+          why:!d?'No date given. Due date set to 7 days out.':(d.soft?'Rough timing ("'+d.phrase+'"). Day picked for you.':'')});
+        cov('next',si,t);
+      });
+    }
+  });
+
+  /* stage recommendation */
+  const sc=R.signals.length;
+  let to=c.stage;
+  if(R.signals.some(x=>x.k==='signed')) to=4;
+  else if(sc>=2||(sc===1&&R.signals[0].k!=='dm'&&R.tasks.length)) to=Math.min(c.stage+1,STAGES.length-1);
+  if(R.signals.some(x=>x.k==='terms'||x.k==='commit')&&to<3&&c.stage>=1) to=Math.min(3,c.stage+2);
+  if(R.hold) to=c.stage;
+  R.stage={from:c.stage,to,conf:Math.min(94,58+sc*12),hold:R.hold};
+  return R;
+}
+</script>
 <script>
 /* =========================================================
    Activity Voice Recorder — standalone interactive demo.
@@ -211,7 +608,9 @@
    ========================================================= */
 
 const $ = id => document.getElementById(id);
-function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
+function toast(m,act,fn){ const t=$('toast'); t.innerHTML=''; const sp=document.createElement('span'); sp.textContent=m; t.appendChild(sp);
+  if(act){ const b=document.createElement('button'); b.textContent=act; b.onclick=()=>{ t.classList.remove('show'); fn(); }; t.appendChild(b); }
+  t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),act?6000:2400); }
 
 const AVA=['#d9f77b','#3dc6ce','#b79cff','#f2c879','#f2778c','#5bd08a'];
 const CONTACTS=[
@@ -223,7 +622,231 @@ const CONTACTS=[
 ];
 const STAGES=['Qualify','Discovery','Proposal','Negotiation','Closed Won'];
 
-let state={ phase:'pick', search:'', contact:null, recording:false, secs:0, timer:null, notes:'', accepted:false, sent:false };
+let state={ phase:'pick', search:'', contact:null, recording:false, secs:0, timer:null, notes:'', accepted:false, sent:false,
+  mode:'voice', typed:'', meeting:null, deb:null, history:[], agentOpen:null };
+
+/* ---------- upgrade: CRM records, calendar, debriefs ---------- */
+const REC_FIELDS=[['title','Contact','Job title'],['sites','Account','Number of sites'],['users','Account','Active users'],['tooling','Account','Current tooling'],['renewal','Account','Renewal date'],
+  ['stage','Opportunity','Stage'],['close','Opportunity','Close date'],['amount','Opportunity','Amount'],['budget','Opportunity','Budget status'],['dm','Opportunity','Decision maker'],
+  ['next','Opportunity','Next step'],['comp','Opportunity','Competitors'],['risks','Opportunity','Risks'],['roles','Opportunity','Contact roles'],['acts','Activity','Last activity'],['tasks','Activity','Open tasks']];
+const FIELD_RK={'Job title':'title','Number of sites':'sites','Active users':'users','Current tooling':'tooling','Renewal date':'renewal','Close date':'close','Decision maker':'dm'};
+const RK_OBJ={}; REC_FIELDS.forEach(f=>RK_OBJ[f[0]]=f[1]);
+const RK_API={title:'Title',sites:'Sites__c',users:'Active_Users__c',tooling:'Current_Tooling__c',renewal:'Renewal_Date__c',close:'CloseDate',amount:'Amount',budget:'Budget_Status__c',dm:'Decision_Maker__c',next:'NextStep',comp:'Competitors__c',risks:'Risks__c'};
+const RK_LABEL={}; REC_FIELDS.forEach(f=>RK_LABEL[f[0]]=f[2]);
+const OPP_META={
+  c1:{amount:48000,close:52,next:'Discovery call held',last:'Email · 9 days ago',ids:{Contact:'003-SL41',Account:'001-ATL2',Opportunity:'006-ATX7'}},
+  c2:{amount:22000,close:75,next:'Intro call held',last:'Call · 3 days ago',ids:{Contact:'003-MB18',Account:'001-BRS4',Opportunity:'006-BNB2'}},
+  c3:{amount:65000,close:30,next:'Proposal sent',last:'Meeting · 2 weeks ago',ids:{Contact:'003-EJ07',Account:'001-GDG9',Opportunity:'006-GRU5'}},
+  c4:{amount:36000,close:60,next:'Pilot scoping',last:'Email · 5 days ago',ids:{Contact:'003-JP33',Account:'001-PLG1',Opportunity:'006-PRL8'}},
+  c5:{amount:54000,close:90,next:'Intro call held',last:'Email · 12 days ago',ids:{Contact:'003-OC25',Account:'001-CMI6',Opportunity:'006-CEX3'}}
+};
+const CRM={};
+function crmFor(c){
+  if(!CRM[c.id]){ const m=OPP_META[c.id];
+    CRM[c.id]={title:'—',sites:'—',users:'—',tooling:'—',renewal:'—',stage:STAGES[c.stage],stageIdx:c.stage,close:fmtD(addD(new Date(),m.close)),amount:money(m.amount),amountN:m.amount,
+      budget:'Unknown',dm:'—',next:m.next,comp:'—',risks:'—',roles:c.name+' (Primary)',acts:m.last,tasks:'0 open',taskN:0}; }
+  return CRM[c.id];
+}
+function missingFor(c){ const r=crmFor(c); return MISSING.filter(m=>{ const rk=FIELD_RK[m.f]; return !rk||r[rk]==='—'; }); }
+
+const MEETINGS=[
+  {id:'m1',cid:'c1',title:'Platform expansion review',off:-75,dur:45,also:'Nadia Okafor (IT Lead)',where:'Video call'},
+  {id:'m2',cid:'c3',title:'Renewal and upsell check-in',off:-225,dur:30,also:'',where:'Gent office'},
+  {id:'m3',cid:'c4',title:'Rollout planning',off:120,dur:45,also:'Ravi Menon (Project Lead)',where:'Video call'}
+];
+const NOW0=(()=>{ const d=new Date(); d.setSeconds(0,0); d.setMinutes(Math.floor(d.getMinutes()/15)*15); return d; })();
+function hhmm(d){ return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function mtTimes(m){ const s=new Date(NOW0.getTime()+m.off*60000), e=new Date(s.getTime()+m.dur*60000); return {s,e,past:e<=new Date()}; }
+function ago(d){ const mins=Math.max(1,Math.round((Date.now()-d.getTime())/60000)); return mins<60?mins+' min ago':Math.round(mins/60)+' h ago'; }
+function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2); }
+function avaBg(c){ return AVA[CONTACTS.indexOf(c)%AVA.length]; }
+function nowTs(){ const d=new Date(); return hhmm(d)+':'+String(d.getSeconds()).padStart(2,'0'); }
+let DEB_N=0;
+
+/* sample recording: the scripted debrief and its curated extraction (stands in for the model output) */
+function sampleSentences(c){
+  return splitSentences(TRANSCRIPT.replace(/{NAME}/g,c.name).replace(/{ACC}/g,c.account).replace(/{ROLE}/g,c.role).replace(/{FIRST}/g,c.name.split(' ')[0]));
+}
+function sampleFindings(c,r){
+  const first=c.name.split(' ')[0], fu=dateInDays(7), to=Math.min(r.stageIdx+1,STAGES.length-1);
+  return {
+    items:[
+      {grp:'Activity & tasks',rk:'acts',label:'Log activity',to:'Meeting · Pricing & rollout discussion',conf:96,s:0,phrase:'just wrapped with '+c.name},
+      {grp:'Activity & tasks',rk:'tasks',label:'Create task',task:{title:'Send tailored proposal & ROI summary',due:fu,meeting:false},to:'Send tailored proposal & ROI summary · due '+fmtD(fu),conf:90,s:5,phrase:'send over a tailored proposal with an ROI summary'},
+      {grp:'Activity & tasks',rk:'tasks',label:'Book meeting',task:{title:'Follow-up meeting with the wider team',due:dateInDays(8),meeting:true},to:'Follow-up meeting · '+fmtD(dateInDays(8)),conf:66,s:6,phrase:'book a follow-up for next week',why:'Rough timing ("next week"). Day picked for you.'},
+      {grp:'Contact',rk:'title',label:'Job title',to:c.role,conf:95,s:0,phrase:c.role},
+      {grp:'Account',rk:'sites',label:'Number of sites',to:'3+',conf:62,s:2,phrase:'a few more sites',why:'Vague wording ("a few"). Check the exact number.'},
+      {grp:'Account',rk:'users',label:'Active users',to:'120',conf:82,s:3,phrase:'about 120 active users'},
+      {grp:'Account',rk:'tooling',label:'Current tooling',to:'Legacy in-house',conf:91,s:2,phrase:'legacy in-house tool'},
+      {grp:'Opportunity',rk:'budget',label:'Budget status',to:'Approved',conf:93,s:4,phrase:"budget's approved for this quarter"},
+      {grp:'Opportunity',rk:'dm',label:'Decision maker',to:c.name,conf:88,s:4,phrase:first+' is basically the decision-maker'},
+      {grp:'Opportunity',rk:'next',label:'Next step',to:'Send tailored proposal & ROI summary by '+fmtD(fu),conf:90,s:5,phrase:'the next step is for me to send over a tailored proposal'}
+    ],
+    stage:{from:r.stageIdx,to,conf:88,signals:[{t:'Budget confirmed',s:4,phrase:"budget's approved"},{t:'Decision-maker engaged',s:4,phrase:'the decision-maker'},{t:'Proposal is the agreed next step',s:5,phrase:'tailored proposal'}],hold:null}
+  };
+}
+
+/* turn parser output into proposals, offset into the debrief's sentence list */
+function itemsFromParse(R,c,r,off,typed){
+  const items=[], S=i=>i+off;
+  if(typed){
+    const conf=R.words>=40?92:R.words>=20?84:66;
+    items.push({grp:'Activity & tasks',rk:'acts',label:'Log activity',to:actType(R)+' · '+actSubject(R,c,state.meeting).split(' | ')[0],conf,s:S(0),phrase:'',why:conf<70?'Very short debrief.':''});
+  }
+  R.tasks.forEach(t=>items.push({grp:'Activity & tasks',rk:'tasks',label:t.meeting?'Book meeting':'Create task',task:{title:t.title,due:t.due,meeting:t.meeting},to:t.title+' · due '+fmtD(t.due)+(t.owner==='them'?' · their action':''),conf:t.conf,s:S(t.s),phrase:t.phrase,why:t.why}));
+  Object.keys(R.fields).forEach(k=>{ const f=R.fields[k], rk=FIELD_RK[k]; if(!rk) return;
+    items.push({grp:RK_OBJ[rk],rk,label:k,to:f.to,conf:f.conf,s:S(f.s),phrase:f.phrase,why:f.why}); });
+  if(R.budget) items.push({grp:'Opportunity',rk:'budget',label:'Budget status',to:R.budget.to,conf:R.budget.conf,s:S(R.budget.s),phrase:R.budget.phrase});
+  if(R.amount) items.push({grp:'Opportunity',rk:'amount',label:'Amount',to:money(R.amount.to),toN:R.amount.to,conf:R.amount.conf,s:S(R.amount.s),phrase:R.amount.phrase});
+  if(R.tasks.length){ const t=R.tasks.find(x=>x.owner==='you')||R.tasks[0]; items.push({grp:'Opportunity',rk:'next',label:'Next step',to:t.title+' by '+fmtD(t.due),conf:Math.max(48,t.conf-2),s:S(t.s),phrase:t.phrase,why:t.why}); }
+  R.comps.forEach(x=>items.push({grp:'Opportunity',rk:'comp',label:'Competitor',to:x.name,conf:x.conf,s:S(x.s),phrase:x.phrase,append:true}));
+  R.risks.forEach(x=>items.push({grp:'Opportunity',rk:'risks',label:'Risk',to:x.label,conf:x.conf,s:S(x.s),phrase:x.phrase,append:true}));
+  R.roles.forEach(x=>items.push({grp:'Contact roles',rk:'roles',label:'Contact role',to:x.name+(x.title?' ('+x.title+')':'')+' · '+x.role,conf:x.conf,s:S(x.s),phrase:x.phrase,append:true,why:x.conf<70?'Name only. No title or role in the text.':''}));
+  return items;
+}
+function actType(R){ const all=R.sents.join(' ').toLowerCase(); return /\b(?:call|phone|rang|zoom)\b/.test(all)&&!/\b(?:meeting|met)\b/.test(all)?'Call':'Meeting'; }
+function actSubject(R,c,meeting){
+  const all=R.sents.join(' ').toLowerCase(), tp=[];
+  [[/pric|quote|proposal|discount/,'Pricing'],[/rollout|roll-out|implementation|onboard|go-live|go live/,'Rollout'],[/renew/,'Renewal'],[/security|infosec|soc ?2|gdpr/,'Security'],[/demo/,'Demo'],[/contract|legal|redline/,'Contract'],[/budget/,'Budget']].forEach(([re,t])=>{ if(re.test(all)&&tp.length<2) tp.push(t); });
+  const head=meeting?meeting.title:(tp.length?tp.join(' & ')+' discussion':'Debrief');
+  return head+' | '+actType(R)+' | '+oppPurpose(c);
+}
+function oppPurpose(c){ const o=c.opp.toLowerCase(); return /renewal/.test(o)?'Renewal':/new business/.test(o)?'New business':/rollout/.test(o)?'Rollout':'Expansion'; }
+
+/* permission check: the same rules for the sample and for typed input */
+function checkPerms(items,r){
+  items.forEach(it=>{
+    it.lock='';
+    if(it.rk==='amount'&&it.toN){ const ch=Math.abs(it.toN-r.amountN)/r.amountN; if(ch>0.25) it.lock='Amount changes over 25% go to your manager. The current amount is '+money(r.amountN)+'.'; }
+  });
+}
+
+function buildDebrief(source){
+  const c=state.contact, r=crmFor(c);
+  const deb={id:'d'+(++DEB_N),c,meeting:state.meeting,source,created:new Date(),before:Object.assign({},r),written:false,stageState:null,sent:false,seen:false,tone:0,log:null,writes:[]};
+  let items=[], sents=[], stage, R=null, noteR=null;
+  if(source==='voice'){
+    sents=sampleSentences(c).map(t=>({t,src:'voice'}));
+    const f=sampleFindings(c,r); items=f.items; stage=f.stage;
+    if(state.notes.trim()){
+      const off=sents.length; noteR=parseDebrief(state.notes,c);
+      noteR.sents.forEach(t=>sents.push({t,src:'note'}));
+      itemsFromParse(noteR,c,r,off,false).forEach(x=>{ if(!x.append&&x.rk!=='tasks'){ const i=items.findIndex(y=>y.rk===x.rk&&!y.append); if(i>=0){ items[i]=x; return; } } items.push(x); });
+    }
+  } else {
+    R=parseDebrief(state.typed,c);
+    sents=R.sents.map(t=>({t,src:'typed'}));
+    items=itemsFromParse(R,c,r,0,true);
+    const up=R.stage.to-c.stage;
+    stage={from:r.stageIdx,to:Math.min(STAGES.length-1,r.stageIdx+Math.max(0,up)),conf:R.stage.conf,signals:R.signals,hold:R.hold};
+    if(R.signals.some(x=>x.k==='signed')) stage.to=4;
+  }
+  const order=['Activity & tasks','Contact','Account','Opportunity','Contact roles'];
+  items.sort((a,b)=>order.indexOf(a.grp)-order.indexOf(b.grp));
+  items.forEach((it,i)=>{ it.id=deb.id+'-'+i; it.from=r[it.rk]; });
+  checkPerms(items,r);
+  items.forEach(it=>{ it.on=!it.lock&&it.conf>=70; });
+  deb.items=items; deb.sents=sents; deb.stage=stage; deb.R=R; deb.noteR=noteR;
+  if(source==='voice'){ deb.scores={trans:92,quality:78,qtip:'Strong detail. Tip: add a quantified ROI target next time.'}; }
+  else {
+    const hits=COACH.filter(x=>R.cover[x.k]), miss=COACH.filter(x=>!R.cover[x.k]);
+    const q=Math.min(98,30+hits.length*8+Math.min(8,Math.floor(R.words/15)));
+    deb.scores={trans:null,quality:q,qtip:miss.length?(q>=70?'Good detail. ':'Thin on detail. ')+'Tip: next time, '+miss[0].t.toLowerCase()+'.':'Covers every coaching point.'};
+  }
+  deb.activity=buildActivity(deb);
+  deb.email=buildEmail(deb,0);
+  return deb;
+}
+
+function buildActivity(deb){
+  const c=deb.c, R=deb.R;
+  if(deb.source==='voice') return {subject:'Pricing &amp; rollout discussion | Meeting | Expansion',tags:['Meeting','Expansion','Future meeting set'],
+    summary:`• Met ${c.name} (${c.role}) at ${c.account} to review platform expansion across additional sites.
+• Currently on a legacy in-house tool; main pain is manual reporting and no single pipeline view.
+• Budget is approved for this quarter; ${c.name} is the economic buyer and is bought-in.
+• Next step: send a tailored proposal and ROI summary, then reconvene to align stakeholders.`+(deb.noteR&&deb.noteR.sents.length?`\n• Written note: ${esc(deb.noteR.sents.join(' ').slice(0,160))}`:'')};
+  const outcome=R.tasks.some(t=>t.meeting)?'Future meeting set':R.signals.some(x=>x.k==='proposal')?'Proposal requested':R.tasks.length?'Next step agreed':'No next step';
+  const b=[`• Met ${c.name} (${c.role}) at ${c.account}${deb.meeting?' for "'+esc(deb.meeting.title)+'"':''}.`];
+  if(R.pains.length) b.push('• Pain: '+esc(R.pains[0].t.replace(/[.!?]$/,''))+'.');
+  if(R.budget||R.amount) b.push('• Budget: '+[R.budget?R.budget.to.toLowerCase():'',R.amount?money(R.amount.to):''].filter(Boolean).join(', ')+'.');
+  if(R.roles.length) b.push('• People: '+R.roles.map(x=>esc(x.name)+(x.title?' ('+esc(x.title)+')':'')).join(', ')+'.');
+  if(R.comps.length) b.push('• Competition: '+R.comps.map(x=>esc(x.name)).join(', ')+'.');
+  if(R.risks.length) b.push('• Risks: '+R.risks.map(x=>x.label.toLowerCase()).join(', ')+'.');
+  b.push(R.tasks.length?'• Next step: '+R.tasks.map(t=>esc(t.title.charAt(0).toLowerCase()+t.title.slice(1))+' by '+fmtD(t.due)).join('; ')+'.':'• No next step was agreed.');
+  return {subject:esc(actSubject(R,c,deb.meeting)),tags:[actType(R),oppPurpose(c),outcome],summary:b.join('\n')};
+}
+
+function buildEmail(deb,tone){
+  const c=deb.c, first=c.name.split(' ')[0], R=deb.R;
+  const to=`${c.name.toLowerCase().replace(/[^a-z]/g,'.')}@${c.account.toLowerCase().replace(/[^a-z]/g,'')}.com`;
+  const subject=`Great connecting: next steps for ${c.account}`;
+  const open=tone?`Hi ${first},\n\nIt was a real pleasure talking with you today, and thank you for being so open about what is and isn't working. Here is what I heard:`:`Hi ${first},\n\nThank you for your time today. To recap what we discussed:`;
+  const close=tone?`If anything else comes to mind, I'm always happy to talk it through.\n\nWarm regards,\nCory`:`If anything else comes to mind in the meantime, just let me know.\n\nBest regards,\nCory`;
+  if(deb.source==='voice') return {to,subject,body:`${open}
+
+• You're looking to expand across additional sites and move off the legacy in-house tool, with manual reporting being the biggest pain point.
+• A single, unified pipeline view is the priority, and budget is approved for this quarter.
+
+As agreed, I'll put together a tailored proposal with an ROI summary and send it over this week. From there we can align the wider team and lock in a go-live plan.
+
+${close}`};
+  const pts=[];
+  R.pains.slice(0,2).forEach(p=>pts.push('• '+p.t.replace(/^(?:they(?:'re| are)?|we)\s+/i,'').replace(/^\w/,x=>x.toUpperCase())));
+  if(R.budget&&R.budget.to==='Approved') pts.push('• Budget is approved'+(R.amount?' at around '+money(R.amount.to):'')+'.');
+  else if(R.amount) pts.push('• You mentioned a budget of around '+money(R.amount.to)+'.');
+  if(R.risks.some(x=>x.label==='Security review')) pts.push("• You flagged the security review. I'll send our security pack so your team can start early.");
+  if(!pts.length) pts.push('• Where things stand today and what you want to change.');
+  const mine=R.tasks.filter(t=>t.owner==='you');
+  const nxt=mine.length?'Next steps from my side:\n'+mine.map(t=>'• '+t.title+' by '+fmtD(t.due)+'.').join('\n'):"I'll follow up shortly with a proposed next step.";
+  return {to,subject,body:`${open}\n\n${pts.join('\n')}\n\n${nxt}\n\n${close}`};
+}
+
+/* ---------- agent activity log ---------- */
+const AG=[['tr','Transcription'],['match','Record match'],['extract','Extraction'],['perms','Permission check'],['email','Draft email'],['approve','Human approval'],['writes','Writes']];
+function newLog(){ return AG.map(([k,t])=>({k,t,st:'todo',lines:[],ms:''})); }
+function call(fn,args,res,cls){ return `<div class="call"><span class="ts">${nowTs()}</span> <span class="fn">${fn}</span>(${esc(args)})${res!=null?' → <span class="'+(cls||'ok')+'">'+esc(res)+'</span>':''}</div>`; }
+function txt(t,cls){ return `<div class="call"${cls?' style="color:var(--'+cls+')"':''}>${esc(t)}</div>`; }
+function lg(deb,k,st,lines,ms,reset){ const s=deb.log.find(x=>x.k===k); if(reset) s.lines=[]; if(st) s.st=st; if(lines) s.lines.push(...lines); if(ms) s.ms=ms; if(deb===state.deb) refreshAgent(); }
+function agentSummary(deb){
+  if(!deb||!deb.log) return 'Nothing has run yet.';
+  const done=deb.log.filter(s=>s.st==='done'||s.st==='skip').length, w=deb.log.find(s=>s.st==='wait'), r=deb.log.find(s=>s.st==='run');
+  return `${done} of ${deb.log.length} steps done`+(r?' · running '+r.t.toLowerCase():w?' · waiting for you':'');
+}
+function agentSteps(deb){
+  return deb.log.map(s=>`<div class="astep ${s.st}" data-k="${s.k}"><span class="d">${s.st==='done'?tick3():''}</span><div class="astep__m"><div class="astep__t">${s.t}<span class="ms">${s.st==='wait'?'waiting':s.st==='skip'?'skipped':s.st==='todo'?'pending':s.ms}</span></div>${s.lines.join('')}</div></div>`).join('');
+}
+function agentCard(deb){
+  const open=state.agentOpen!=null?state.agentOpen:window.innerWidth>1080;
+  return `<div class="card agent ${open?'':'closed'}" id="agent">
+    <div class="card__h" onclick="toggleAgent()"><span class="ic">🤖</span><div style="min-width:0"><h3>Agent activity</h3><div class="agent__sum" id="agentSum">${agentSummary(deb)}</div></div>
+      <button class="agent__tog" aria-expanded="${open}" aria-controls="agentBody" aria-label="Show or hide agent activity" onclick="event.stopPropagation();toggleAgent()">▾</button></div>
+    <div class="card__b" id="agentBody">${agentSteps(deb)}</div>
+  </div>`;
+}
+function refreshAgent(){ const b=$('agentBody'), d=state.deb; if(!b||!d) return; b.innerHTML=agentSteps(d); const s=$('agentSum'); if(s) s.textContent=agentSummary(d); updHistCount(); }
+function toggleAgent(){ const a=$('agent'); if(!a) return; const open=a.classList.toggle('closed')===false; state.agentOpen=open; a.querySelector('.agent__tog').setAttribute('aria-expanded',open); }
+
+/* ---------- session history ---------- */
+function histStatus(d){ return d.written||d.stageState==='accepted'||d.sent?['Written','ok']:['Awaiting approval','wait']; }
+function histRows(){
+  return state.history.map(d=>{ const [st,cls]=histStatus(d), n=writeCount(d);
+    return `<button class="hitem" onclick="reopen('${d.id}')"><span class="ava" style="background:${avaBg(d.c)}">${initials(d.c.name)}</span>
+      <span class="hitem__m"><span class="hitem__t" style="display:block">${d.c.name} <span class="muted" style="font-weight:400">· ${d.c.account}</span></span>
+      <span class="hitem__s" style="display:block">${d.source==='voice'?'🎙️ Voice':'⌨️ Typed'} · ${hhmm(d.created)} · ${d.items.length} proposed · ${n} written</span></span>
+      <span class="st st--${cls}">${st}</span></button>`; }).join('')
+    || '<div class="empty">No debriefs yet this session. Record or type one and it lands here, ready to reopen.</div>';
+}
+function updHistCount(){ const c=$('histCnt'); if(c) c.textContent=state.history.length; const l=$('histList'); if(l) l.innerHTML=histRows(); const dl=$('drawerList'); if(dl&&$('drawer').classList.contains('show')) dl.innerHTML=histRows(); }
+let _lastFocus=null;
+function openHistory(){ _lastFocus=document.activeElement; $('drawerList').innerHTML=histRows(); $('drawer').classList.add('show'); $('drawerBg').classList.add('show'); $('drawer').setAttribute('aria-hidden','false'); setTimeout(()=>$('drawer').querySelector('.xbtn').focus(),30); }
+function closeHistory(){ $('drawer').classList.remove('show'); $('drawerBg').classList.remove('show'); $('drawer').setAttribute('aria-hidden','true'); if(_lastFocus&&_lastFocus.focus) try{_lastFocus.focus();}catch(e){} }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('drawer').classList.contains('show')) closeHistory(); });
+function reopen(id){
+  const d=state.history.find(x=>x.id===id); if(!d) return;
+  closeHistory(); stopTimer(); state.recording=false; clearInterval(_wv);
+  state.deb=d; state.contact=d.c; state.meeting=d.meeting; state.phase='results'; render();
+  toast('Reopened the debrief for '+d.c.name+'.');
+}
 
 /* ---------- progress rail ---------- */
 function renderRail(){
@@ -237,38 +860,66 @@ function renderRail(){
 }
 
 /* ---------- render dispatcher ---------- */
-function render(){ renderRail(); ({pick:renderPick,record:renderRecord,processing:renderProcessing,results:renderResults}[state.phase])(); }
+let _lastPhase=null;
+function render(){ renderRail(); ({pick:renderPick,record:renderRecord,processing:renderProcessing,results:renderResults}[state.phase])();
+  if(_lastPhase!==state.phase){ const v=$('vp'); if(v) v.scrollTop=0; _lastPhase=state.phase; } updHistCount(); }
 
 /* ---------- 1. pick ---------- */
 function pickRows(){
   const term=state.search.trim().toLowerCase();
   const list=CONTACTS.filter(c=>!term||c.name.toLowerCase().includes(term)||c.account.toLowerCase().includes(term));
-  const initials=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
   return list.map(c=>`
-    <div class="citem ${state.contact&&state.contact.id===c.id?'sel':''}" onclick="pick('${c.id}')">
-      <div class="ava" style="background:${AVA[CONTACTS.indexOf(c)%AVA.length]}">${initials(c.name)}</div>
+    <div class="citem ${state.contact&&state.contact.id===c.id?'sel':''}" role="button" tabindex="0" onclick="pick('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pick('${c.id}')}">
+      <div class="ava" style="background:${avaBg(c)}">${initials(c.name)}</div>
       <div class="citem__main">
         <div class="citem__name">${c.name}</div>
         <div class="citem__meta">${c.account} · ${c.opp}</div>
       </div>
       <div class="citem__role">${c.role}</div>
-    </div>`).join('') || '<div class="muted" style="padding:20px;text-align:center">No contacts match.</div>';
+    </div>`).join('') || `<div class="empty">No contacts match "${esc(state.search.trim())}". Try a first name or an account, such as Atlas.</div>`;
+}
+function meetingCards(){
+  return MEETINGS.map(m=>{
+    const c=CONTACTS.find(x=>x.id===m.cid), t=mtTimes(m), d=state.history.find(h=>h.meeting&&h.meeting.id===m.id);
+    const mins=Math.max(1,Math.round((t.s-Date.now())/60000)), until=mins<60?mins+' min':Math.round(mins/60)+' h';
+    const btn = d ? `<button class="btn btn--ghost" onclick="reopen('${d.id}')">Reopen debrief</button>`
+      : t.past ? `<button class="btn btn--lime" onclick="pick('${c.id}','${m.id}')">🎙️ Debrief this meeting</button>`
+      : `<button class="btn btn--lime" disabled aria-describedby="why-${m.id}">Debrief this meeting</button><div class="why" id="why-${m.id}">Opens when the meeting ends at ${hhmm(t.e)}.</div>`;
+    return `<div class="meet ${d?'done':''}" data-m="${m.id}">
+      <div class="meet__time"><span class="${t.past?'live':'soon'}"></span>${hhmm(t.s)}–${hhmm(t.e)} · ${t.past?'ended '+ago(t.e):'starts in '+until}${d?'<span class="st st--ok" style="margin-left:auto">Debriefed</span>':''}</div>
+      <div class="meet__title">${m.title}</div>
+      <div class="meet__who"><span class="ava" style="background:${avaBg(c)}">${initials(c.name)}</span><span>${c.name} · ${c.account}${m.also?' · with '+m.also:''}</span></div>
+      ${btn}
+    </div>`; }).join('');
 }
 function renderPick(){
+  const today=new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
   $('stage').innerHTML=`
-    <div class="card fade">
+    <div class="fade">
+    <div class="card">
+      <div class="card__h"><span class="ic">📅</span><h3>Today's meetings</h3><span class="sp muted" style="font-size:12px">${today} · from your calendar</span></div>
+      <div class="card__b"><div class="meets">${meetingCards()}</div></div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+    <div class="card">
       <div class="card__h"><span class="ic">👤</span><h3>Who did you meet with?</h3></div>
       <div class="card__b">
         <div class="search">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#aaa" stroke-width="1.6"/><path d="M11 11l3 3" stroke="#aaa" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <input id="vsearch" placeholder="Search contacts by name or account…" value="${state.search}" oninput="onSearch(this.value)" autocomplete="off">
+          <input id="vsearch" placeholder="Search contacts by name or account…" value="${esc(state.search)}" oninput="onSearch(this.value)" autocomplete="off" aria-label="Search contacts">
         </div>
         <div class="clist" id="vlist">${pickRows()}</div>
       </div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="ic">🕘</span><h3>Session history</h3><span class="sp muted" style="font-size:12px">this visit only</span></div>
+      <div class="card__b"><div class="hist" id="histList">${histRows()}</div></div>
+    </div>
+    </div>
     </div>`;
 }
 function onSearch(v){ state.search=v; const l=$('vlist'); if(l) l.innerHTML=pickRows(); else renderPick(); }
-function pick(id){ state.contact=CONTACTS.find(c=>c.id===id); state.phase='record'; state.secs=0; state.recording=false; state.notes=''; render(); }
+function pick(id,mid){ state.contact=CONTACTS.find(c=>c.id===id); state.meeting=mid?MEETINGS.find(m=>m.id===mid):null; state.phase='record'; state.secs=0; state.recording=false; state.notes=''; state.mode='voice'; state.typed=''; render(); }
 
 /* ---------- 2. record ---------- */
 const COACH=[
@@ -282,30 +933,50 @@ const COACH=[
 const MISSING=[
   {f:'Job title'},{f:'Number of sites'},{f:'Active users'},{f:'Renewal date'},{f:'Current tooling'}
 ];
-function renderRecord(){
-  const c=state.contact;
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+function voicePane(){
   const bars=Array.from({length:34}).map(()=>`<i></i>`).join('');
+  return `<button class="recbtn" id="recbtn" onclick="toggleRec()" aria-label="Start or pause recording"><span class="ic" id="recic">●</span></button>
+    <div class="rec__timer" id="timer">${fmt(state.secs)}</div>
+    <div class="wave" id="wave">${bars}</div>
+    <div class="rec__hint" id="rechint">${state.secs>0?'Paused. Tap to keep recording, or Stop &amp; analyze when you’re done.':'Tap to record. Speak naturally about the meeting: who you met, what was discussed, and what happens next.'}</div>
+    <div class="notes">
+      <label class="mono" for="notesTa">Optional written notes</label>
+      <textarea id="notesTa" placeholder="Add anything you'd rather type than say…" oninput="state.notes=this.value">${esc(state.notes)}</textarea>
+    </div>`;
+}
+function typedPane(){
+  return `<div class="typed">
+    <div class="demo-note"><span>🧪</span><div><b>Demo parser.</b> Fixed rules pick out dates, next steps, people and roles, competitors, risks, budget and a stage signal. The production build uses a language model.</div></div>
+    <label class="mono" for="typedTa" style="display:block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);margin:14px 0 6px">Your debrief</label>
+    <textarea id="typedTa" placeholder="Write it the way you'd say it. For example: Met ${esc(state.contact.name.split(' ')[0])} and their CFO Priya Shah. Budget is $60k. They're also looking at Pipewell. I'll send a proposal by Friday." oninput="onTyped(this.value)">${esc(state.typed)}</textarea>
+    <div class="typed__bar"><button class="btn btn--ghost btn--sm" onclick="useExample()">Use an example</button><button class="btn btn--ghost btn--sm" onclick="clearTyped()">Clear</button><span class="typed__count" id="tcount">0 words</span></div>
+    <div class="coach__lbl">Found so far <span class="tag">LIVE</span></div>
+    <div class="found" id="found"></div>
+  </div>`;
+}
+function renderRecord(){
+  const c=state.contact, m=state.meeting, typed=state.mode==='typed';
+  const miss=missingFor(c);
   $('stage').innerHTML=`
     <div class="grid2 fade">
       <div class="card">
-        <div class="card__h"><span class="ic">🎙️</span><h3>Record your debrief</h3></div>
+        <div class="card__h"><span class="ic">${typed?'⌨️':'🎙️'}</span><h3>${typed?'Type your debrief':'Record your debrief'}</h3></div>
         <div class="card__b">
           <div class="rec">
             <div class="rec__who">
-              <div class="ava" style="background:${AVA[CONTACTS.indexOf(c)%AVA.length]}">${c.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+              <div class="ava" style="background:${avaBg(c)}">${initials(c.name)}</div>
               <div style="flex:1;min-width:0;text-align:left">
                 <div style="font-weight:600">${c.name} <span class="muted" style="font-weight:400">· ${c.role}</span></div>
                 <div class="citem__meta">${c.account} · logging against ${c.opp}</div>
+                ${m?`<div class="citem__meta" style="color:var(--teal)">📅 ${m.title} · ${hhmm(mtTimes(m).s)}–${hhmm(mtTimes(m).e)} · from your calendar</div>`:''}
               </div>
             </div>
-            <button class="recbtn" id="recbtn" onclick="toggleRec()"><span class="ic" id="recic">●</span></button>
-            <div class="rec__timer" id="timer">00:00</div>
-            <div class="wave" id="wave">${bars}</div>
-            <div class="rec__hint" id="rechint">Tap to record. Speak naturally about the meeting — who you met, what was discussed, and what happens next.</div>
-            <div class="notes">
-              <label class="mono">Optional written notes</label>
-              <textarea placeholder="Add anything you'd rather type than say…" oninput="state.notes=this.value"></textarea>
+            <div class="tabs" role="tablist" aria-label="How to debrief">
+              <button class="tabbtn ${typed?'':'on'}" role="tab" aria-selected="${!typed}" onclick="setMode('voice')">🎙️ Record</button>
+              <button class="tabbtn ${typed?'on':''}" role="tab" aria-selected="${typed}" onclick="setMode('typed')">⌨️ Type it instead</button>
             </div>
+            ${typed?typedPane():voicePane()}
           </div>
         </div>
       </div>
@@ -318,25 +989,76 @@ function renderRecord(){
             ${COACH.map(x=>`<div class="chk" data-k="${x.k}"><span class="box"></span>${x.t}</div>`).join('')}
           </div>
           <div class="coach__sec">
-            <div class="coach__lbl">Missing on this record — try to capture</div>
+            <div class="coach__lbl">Missing on this record, try to capture</div>
             <div class="fieldchips">
-              ${MISSING.map(m=>`<span class="fchip" data-f="${m.f}"><span class="x">⊘</span>${m.f}</span>`).join('')}
+              ${miss.map(m=>`<span class="fchip" data-f="${m.f}"><span class="x">⊘</span>${m.f}</span>`).join('') || '<span class="muted" style="font-size:12.5px">Nothing missing. Earlier debriefs filled these fields.</span>'}
             </div>
           </div>
+          ${typed?'<div class="note">Ticks come from the demo parser as you type.</div>':'<div class="demo-note"><span>🧪</span><div><b>Demo:</b> no microphone is used. The recorder plays a scripted sample debrief, and the coaching ticks off as it goes. Prefer to write? Use <b>Type it instead</b>.</div></div>'}
         </div>
       </div>
     </div>
     <div class="btnrow" style="margin-top:16px">
       <button class="btn btn--ghost" onclick="backToPick()">← Change contact</button>
-      <button class="btn btn--lime" id="stopbtn" onclick="stopRec()" disabled>Stop &amp; analyze →</button>
+      ${typed?`<button class="btn btn--lime" id="anbtn" onclick="analyzeTyped()" disabled aria-describedby="anwhy">Analyze text →</button><span class="disabled-why" id="anwhy">Write at least 12 words to analyze.</span>`
+        :`<button class="btn btn--lime" id="stopbtn" onclick="stopRec()" ${state.secs>0?'':'disabled aria-describedby="stopwhy"'}>Stop &amp; analyze →</button>${state.secs>0?'':'<span class="disabled-why" id="stopwhy">Start recording to enable this.</span>'}`}
     </div>`;
+  if(typed) updateTyped(); else applyVoiceCoaching();
+}
+function applyVoiceCoaching(){ const keep=state.secs; for(let t=1;t<=keep;t++){ state.secs=t; revealCoaching(); } state.secs=keep; }
+function setMode(m){
+  if(state.mode===m) return;
+  if(state.recording) toggleRec();
+  state.mode=m; renderRecord();
+  if(m==='typed'){ const t=$('typedTa'); if(t) t.focus(); }
+}
+let _ty;
+function onTyped(v){ state.typed=v; const n=(v.match(/\S+/g)||[]).length, tc=$('tcount'); if(tc) tc.textContent=n+(n===1?' word':' words'); clearTimeout(_ty); _ty=setTimeout(updateTyped,160); }
+function updateTyped(){
+  const c=state.contact, v=state.typed, R=v.trim()?parseDebrief(v,c):null, words=R?R.words:0;
+  COACH.forEach(x=>{ const el=document.querySelector(`.chk[data-k="${x.k}"]`); if(!el) return; const hit=!!(R&&R.cover[x.k]); el.classList.toggle('hit',hit); el.querySelector('.box').innerHTML=hit?tick3():''; el.title=hit?'Found: "'+R.cover[x.k].phrase+'"':''; });
+  document.querySelectorAll('.fchip').forEach(el=>{ const hit=!!(R&&R.fields[el.dataset.f]); el.classList.toggle('filled',hit); el.querySelector('.x').textContent=hit?'✓':'⊘'; });
+  const f=$('found');
+  if(f){
+    const ch=[];
+    if(R){
+      R.dates.slice(0,3).forEach(d=>ch.push(`<span class="tg2 tg2--type">📅 ${esc(d.phrase)} · ${fmtD(d.date)}</span>`));
+      R.tasks.forEach(t=>ch.push(`<span class="tg2 tg2--out">Next step: ${esc(t.title.length>42?t.title.slice(0,40)+'…':t.title)}</span>`));
+      R.roles.forEach(x=>ch.push(`<span class="tg2 tg2--pur">👤 ${esc(x.name)}${x.title?' · '+esc(x.title):''}${x.role!=='Influencer'?' · '+x.role:''}</span>`));
+      if(R.budget) ch.push(`<span class="tg2 tg2--out">Budget: ${R.budget.to}</span>`);
+      if(R.amount) ch.push(`<span class="tg2 tg2--out">Amount: ${money(R.amount.to)}</span>`);
+      R.comps.forEach(x=>ch.push(`<span class="tg2 tg2--amber">Competitor: ${esc(x.name)}</span>`));
+      R.risks.forEach(x=>ch.push(`<span class="tg2 tg2--risk">Risk: ${x.label}</span>`));
+      const r=crmFor(c), up=R.stage.to-c.stage;
+      if(R.hold) ch.push(`<span class="tg2 tg2--risk">Stage signal: ${esc(R.hold.t.toLowerCase())}</span>`);
+      else if(up>0) ch.push(`<span class="tg2 tg2--out">Stage signal: ${STAGES[Math.min(4,r.stageIdx+up)]}</span>`);
+    }
+    f.innerHTML=ch.join('')||'<span class="faint" style="font-size:12px">Nothing yet. Findings show up here as you type.</span>';
+  }
+  const tc=$('tcount'); if(tc) tc.textContent=words+(words===1?' word':' words');
+  const b=$('anbtn'), w=$('anwhy');
+  if(b){ b.disabled=words<12; if(w) w.textContent=words<12?'Write at least 12 words to analyze ('+(12-words)+' to go).':''; }
+}
+function exampleText(c){
+  const first=c.name.split(' ')[0];
+  return `Met ${first} at ${c.account} with Priya Shah, their CFO, who signs off on the budget. They run 4 sites and about 85 active users, currently on spreadsheets, and month-end reporting takes days. They're also looking at Pipewell, which came in cheaper. Budget is $60k for this year, but Priya is worried about the security review. Next step: I'll send a pricing proposal by Friday, then book a demo with their IT lead Tom Reyes next week. Their contract renewal is in March. They want to sign by the end of the quarter.`;
+}
+function useExample(){ state.typed=exampleText(state.contact); const t=$('typedTa'); if(t){ t.value=state.typed; t.focus(); } updateTyped(); toast('Example added. Edit it or write your own.'); }
+function clearTyped(){
+  const old=state.typed; if(!old.trim()){ toast('Nothing to clear.'); return; }
+  state.typed=''; const t=$('typedTa'); if(t) t.value=''; updateTyped();
+  toast('Debrief text cleared.','Undo',()=>{ state.typed=old; const t2=$('typedTa'); if(t2) t2.value=old; updateTyped(); });
+}
+function analyzeTyped(){
+  const words=(state.typed.match(/\S+/g)||[]).length; if(words<12){ toast('Write at least 12 words first.'); return; }
+  state.deb=buildDebrief('typed'); state.phase='processing'; render();
 }
 function backToPick(){ stopTimer(); state.phase='pick'; render(); }
 function toggleRec(){
   state.recording=!state.recording;
   const btn=$('recbtn'), ic=$('recic'), wave=$('wave'), hint=$('rechint'), stop=$('stopbtn');
   if(state.recording){
-    btn.classList.add('recording'); ic.textContent='❚❚'; wave.classList.add('live'); stop.disabled=false;
+    btn.classList.add('recording'); ic.textContent='❚❚'; wave.classList.add('live'); stop.disabled=false; stop.removeAttribute('aria-describedby'); const sw=$('stopwhy'); if(sw) sw.remove();
     hint.textContent='Recording… tap again to pause. The coaching list ticks off as you cover each point.';
     state.timer=setInterval(tick,1000); animateWave();
   } else {
@@ -345,12 +1067,12 @@ function toggleRec(){
     stopTimer();
   }
 }
-function tick(){ state.secs++; $('timer').textContent=fmt(state.secs); revealCoaching(); }
+function tick(){ if(!$('timer')){ stopTimer(); return; } state.secs++; $('timer').textContent=fmt(state.secs); revealCoaching(); }
 function fmt(s){ return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
 function stopTimer(){ if(state.timer){clearInterval(state.timer); state.timer=null;} }
 let _wv;
 function animateWave(){ const w=$('wave'); if(!w)return; clearInterval(_wv);
-  _wv=setInterval(()=>{ if(!state.recording){clearInterval(_wv);return;} [...w.children].forEach(i=>{ i.style.height=(6+Math.random()*32)+'px'; }); },130);
+  _wv=setInterval(()=>{ if(!state.recording||!document.body.contains(w)){clearInterval(_wv);return;} [...w.children].forEach(i=>{ i.style.height=(6+Math.random()*32)+'px'; }); },RM?700:130);
 }
 /* progressively tick coaching items + fill fields as the "recording" proceeds */
 const COACH_AT={3:'dm',6:'pain',9:'next',12:'time',15:'comp'};   // roi intentionally missed
@@ -360,184 +1082,372 @@ function revealCoaching(){
   const f=FIELD_AT[state.secs]; if(f){ const el=document.querySelector(`.fchip[data-f="${f}"]`); if(el){el.classList.add('filled'); el.querySelector('.x').textContent='✓';} }
 }
 function tick3(){ return `<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6.2L4.6 9 10 2.6" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
-function stopRec(){ stopTimer(); state.recording=false; if(state.secs<3) state.secs=16; state.phase='processing'; render(); }
+function stopRec(){ stopTimer(); state.recording=false; if(state.secs<3) state.secs=16; state.deb=buildDebrief('voice'); state.phase='processing'; render(); }
 
 /* ---------- 3a. processing ---------- */
-const PROC=['Uploading audio (encrypted)','Transcribing speech','Matching contacts & account','Extracting activity & fields','Scoring note quality','Drafting follow-up email'];
+const PROC=['Uploading audio (encrypted)','Transcribing speech','Matching contacts & account','Extracting activity & fields','Checking write permissions','Scoring note quality','Drafting follow-up email'];
+const PROC_T=['Reading your text','Matching contacts & account','Extracting with the demo parser','Checking write permissions','Scoring note quality','Drafting follow-up email'];
+function wc(t){ return (String(t).match(/\S+/g)||[]).length; }
+function procPlan(deb){
+  const c=deb.c, ids=OPP_META[c.id].ids, n=deb.items.length, low=deb.items.filter(i=>i.conf<70).length, locks=deb.items.filter(i=>i.lock);
+  const words=wc(deb.sents.filter(x=>x.src!=='note').map(x=>x.t).join(' '));
+  const miss=MISSING.map(m=>m.f).filter(f=>deb.before[FIELD_RK[f]]==='—'&&!deb.items.some(i=>i.label===f));
+  const voice=deb.source==='voice', steps=[];
+  if(voice){
+    steps.push({k:'tr',det:'debrief-'+hhmm(deb.created).replace(':','')+'.webm · '+fmt(state.secs)+' · encrypted'});
+    steps.push({k:'tr',done:1,ms:'1.2s',lines:[call('stt.transcribe','"debrief-'+hhmm(deb.created).replace(':','')+'.webm", lang:"en"',words+' words · confidence 0.92')],det:words+' words'});
+  } else steps.push({k:'tr',skip:1,lines:[call('input.read','typed text',words+' words · no audio, skipped')],det:words+' words'});
+  const ml=[call('crm.search','name:"'+c.name+'"','Contact '+ids.Contact),call('crm.get','Opportunity '+ids.Opportunity,c.opp+' · '+STAGES[deb.stage.from])];
+  if(deb.meeting) ml.push(call('calendar.match','"'+deb.meeting.title+'"','event linked'));
+  const R=deb.R||deb.noteR; if(R&&R.mentions.length) ml.push(txt('Text also names '+R.mentions.map(o=>o.name).join(', ')+'. Logged against '+c.name+' as selected.','amber'));
+  steps.push({k:'match',done:1,ms:'0.3s',lines:ml,det:'Contact '+ids.Contact+' · Opportunity '+ids.Opportunity});
+  const el=[call(voice?'llm.extract':'demoParser.extract',voice?'transcript, schema:"activity_v3"':'text, rules:"demo-v1"',n+' changes · '+low+' below 70%')];
+  if(voice&&deb.noteR) el.push(call('demoParser.extract','written note',deb.items.filter(i=>deb.sents[i.s]&&deb.sents[i.s].src==='note').length+' changes'));
+  if(miss.length) el.push(txt('Not found: '+miss.join(', ')+'.','amber'));
+  steps.push({k:'extract',done:1,ms:voice?'2.1s':'0.1s',lines:el,det:n+' changes found'});
+  const pl=[call('crm.checkAccess','user:"you", objects:[Contact, Account, Opportunity, Task]',(n-locks.length)+' allowed · '+locks.length+' need a manager',locks.length?'warn':'ok')];
+  locks.forEach(i=>pl.push(txt(i.label+': '+i.lock,'amber')));
+  steps.push({k:'perms',done:1,ms:'0.2s',lines:pl,det:(n-locks.length)+' of '+n+' writable'});
+  steps.push({k:'extract',add:1,lines:[call('score.quality','coaching rubric',deb.scores.quality+'/100')],det:deb.scores.quality+'/100'});
+  steps.push({k:'email',done:1,ms:'1.4s',lines:[call('email.draft','to:"'+deb.email.to+'", template:"recap"',wc(deb.email.body)+' words · saved as draft, not sent')],det:'Draft saved, not sent'});
+  return steps;
+}
 function renderProcessing(){
+  const deb=state.deb, labels=deb.source==='voice'?PROC:PROC_T, plan=procPlan(deb);
+  deb.log=newLog();
   $('stage').innerHTML=`
-    <div class="card fade"><div class="card__b">
-      <div class="proc">
-        <div class="proc__ring"></div>
-        <div class="proc__steps" id="procSteps">
-          ${PROC.map((p,i)=>`<div class="proc__step ${i===0?'on':''}" id="ps${i}"><span class="d">${i+1}</span>${p}</div>`).join('')}
-        </div>
+    <div class="layout fade">
+      <div class="main">
+        <div class="card"><div class="card__b">
+          <div class="proc">
+            <div class="proc__ring"></div>
+            <div class="proc__steps" id="procSteps">
+              ${labels.map((p,i)=>`<div class="proc__step ${i===0?'on':''}" id="ps${i}"><span class="d">${i+1}</span><span>${p}<span class="det" id="pd${i}"></span></span></div>`).join('')}
+            </div>
+          </div>
+        </div></div>
       </div>
-    </div></div>`;
+      <div class="aside">${agentCard(deb)}</div>
+    </div>`;
   let i=0;
+  const start=k=>{ const st=plan[k]; if(st.skip||st.add) return; lg(deb,st.k,'run'); };
+  const finish=k=>{ const st=plan[k]; lg(deb,st.k,st.skip?'skip':st.done?'done':null,st.lines,st.ms); const d=$('pd'+k); if(d&&st.det) d.textContent=st.det; };
   const run=()=>{
-    if(i>0){ const prev=$('ps'+(i-1)); prev.classList.remove('on'); prev.classList.add('done'); prev.querySelector('.d').innerHTML=tick3(); }
-    if(i>=PROC.length){ setTimeout(()=>{state.phase='results'; render();},420); return; }
-    $('ps'+i).classList.add('on'); i++; setTimeout(run, 560);
+    if(state.phase!=='processing'||state.deb!==deb||!$('ps0')) return;
+    if(i>0){ const prev=$('ps'+(i-1)); prev.classList.remove('on'); prev.classList.add('done'); prev.querySelector('.d').innerHTML=tick3(); finish(i-1); }
+    if(i>=labels.length){ setTimeout(()=>{ if(state.phase==='processing'&&state.deb===deb) finishProcessing(deb); },420); return; }
+    $('ps'+i).classList.add('on'); start(i); i++; setTimeout(run, 560);
   };
   setTimeout(run,400);
+}
+function finishProcessing(deb){
+  const n=deb.items.length, on=deb.items.filter(i=>i.on).length;
+  lg(deb,'approve','wait',[txt('Waiting for you. '+n+' changes proposed, '+on+' preselected. Changes under 70% confidence or locked by a permission start unticked.')]);
+  lg(deb,'writes',null,[txt('Nothing is written until you approve.')]);
+  state.history.unshift(deb);
+  state.phase='results'; render();
 }
 
 /* ---------- 3b. results ---------- */
 function dateInDays(n){ const d=new Date(); d.setDate(d.getDate()+n); return d; }
+function confCls(c){ return c>=85?'hi':c>=70?'mid':'lo'; }
+function markPhrase(t,ph){ if(!ph) return esc(t); const i=t.toLowerCase().indexOf(ph.toLowerCase()); if(i<0) return esc(t); return esc(t.slice(0,i))+'<mark>'+esc(t.slice(i,i+ph.length))+'</mark>'+esc(t.slice(i+ph.length)); }
+function transcriptHtml(deb){
+  const src=new Set(deb.items.map(i=>i.s)); (deb.stage.signals||[]).forEach(x=>src.add(x.s));
+  let out='', hd=false;
+  deb.sents.forEach((x,i)=>{ if(x.src==='note'&&!hd){ out+='<span class="notehd mono">Written note</span>'; hd=true; } out+=`<span class="s ${src.has(i)?'src':''}" data-s="${i}">${esc(x.t)}</span> `; });
+  return out;
+}
+function hl(i){ document.querySelectorAll('.transcript .s.on').forEach(e=>e.classList.remove('on')); if(i>=0){ const e=document.querySelector(`.transcript .s[data-s="${i}"]`); if(e) e.classList.add('on'); } }
+function writeCount(d){ return (d.written?d.items.filter(i=>i.on).length:0)+(d.stageState==='accepted'?1:0)+(d.sent?1:0); }
+function objName(it){ return it.rk==='tasks'?(it.task.meeting?'Event':'Task'):it.rk==='acts'?'Activity':it.rk==='roles'?'Opportunity':RK_OBJ[it.rk]; }
+function missingLine(deb){
+  const miss=MISSING.map(m=>m.f).filter(f=>deb.before[FIELD_RK[f]]==='—'&&!deb.items.some(i=>i.label===f));
+  return miss.length?`<div style="margin-top:10px;font-size:12.5px;color:var(--muted)">⊘ Still missing: <b style="color:var(--amber)">${miss.join(', ')}</b>. Not mentioned in the ${deb.source==='voice'?'call':'debrief'}.</div>`:'';
+}
+function propRow(it,deb){
+  const sent=deb.sents[it.s]?deb.sents[it.s].t:'', add=it.append||it.rk==='tasks'||it.rk==='acts';
+  const why=it.lock?`<span class="prop__why lockwhy" style="display:block">🔒 ${esc(it.lock)}</span>`
+    :it.conf<70?`<span class="prop__why" style="display:block">Low confidence${it.why?'. '+esc(it.why):'.'} Left unticked for you to check.</span>`
+    :it.why?`<span class="prop__why" style="display:block;color:var(--muted)">${esc(it.why)}</span>`:'';
+  return `<label class="prop ${it.on?'on':''} ${it.lock?'lock':''}" data-id="${it.id}" data-s="${it.s}" onmouseenter="hl(${it.s})" onmouseleave="hl(-1)">
+    <input type="checkbox" ${it.on?'checked':''} ${it.lock?'disabled':''} onchange="tickProp('${it.id}',this.checked)" onfocus="hl(${it.s})" onblur="hl(-1)" aria-label="${esc(it.label)}: ${esc(it.to)}, ${it.conf}% confidence">
+    <span class="cbx">${it.on?tick3():it.lock?'🔒':''}</span>
+    <span class="prop__m">
+      <span class="prop__top"><span class="prop__name">${esc(it.label)}</span><span class="obj">${objName(it)}</span><span class="conf conf--${confCls(it.conf)}" title="Confidence">${it.conf}%</span></span>
+      <span class="prop__chg" style="display:block">${add?'<b style="color:var(--green)">+</b> ':'<b>'+esc(it.from)+'</b><span class="arrow">→</span>'}<b style="color:var(--green)">${esc(it.to)}</b></span>
+      ${sent?`<span class="prop__q" style="display:block">“${markPhrase(sent,it.phrase)}”</span>`:''}
+      ${why}
+    </span>
+  </label>`;
+}
+function applyItem(r,i){
+  if(i.rk==='tasks'){ r.taskN=(r.taskN||0)+1; r.tasks=r.taskN+' open'; return; }
+  if(i.rk==='acts'){ r.acts=i.to.split(' · ')[0]+' · today'; return; }
+  if(i.rk==='amount'){ r.amount=i.to; r.amountN=i.toN; return; }
+  if(i.append){ const v=i.rk==='risks'?i.to:i.to; r[i.rk]=(!r[i.rk]||r[i.rk]==='—')?v:(String(r[i.rk]).split('; ').includes(v)?r[i.rk]:r[i.rk]+'; '+v); return; }
+  r[i.rk]=i.to;
+}
+function afterRecord(deb){
+  const r=Object.assign({},deb.before);
+  if(deb.written) deb.items.filter(i=>i.on).forEach(i=>applyItem(r,i));
+  if(deb.stageState==='accepted'){ r.stage=STAGES[deb.stage.to]; r.stageIdx=deb.stage.to; }
+  return r;
+}
+function recordView(deb){
+  const b=deb.before, a=afterRecord(deb), ids=OPP_META[deb.c.id].ids;
+  const chg=k=>String(b[k])!==String(a[k]);
+  const rows=r=>REC_FIELDS.map(([k,o,l])=>`<div class="rrow ${chg(k)?'chg':''}"><span class="k">${l}</span><span class="v">${esc(r[k])}</span></div>`).join('');
+  const n=REC_FIELDS.filter(([k])=>chg(k)).length;
+  return `<div class="coach__lbl" style="margin-top:18px">CRM record · ${n} field${n===1?'':'s'} changed</div>
+    <div class="rec2" id="recview"><div class="rcol rcol--before"><div class="rcol__h">Before</div>${rows(b)}</div><div class="rcol rcol--after"><div class="rcol__h">After ✓</div>${rows(a)}</div></div>
+    <div class="rec2__ids">Contact ${ids.Contact} · Account ${ids.Account} · Opportunity ${ids.Opportunity}</div>`;
+}
+function crmCard(deb){
+  const items=deb.items, on=items.filter(i=>i.on);
+  if(!deb.written){
+    const groups=[...new Set(items.map(i=>i.grp))].map(g=>`<div class="grp">${g}</div>`+items.filter(i=>i.grp===g).map(i=>propRow(i,deb)).join('')).join('');
+    return `<div class="card" id="crmCard">
+      <div class="card__h"><span class="ic">🗂️</span><h3>Proposed CRM changes <span class="muted" style="font-weight:400;font-size:12px">· ${items.length} found</span></h3><span class="sp muted" id="selCount" style="font-size:12px">${on.length} selected</span></div>
+      <div class="card__b">
+        <div class="note" style="margin-bottom:12px">Each change shows the sentence it came from and a confidence score. Changes under 70% start unticked. Nothing is written until you approve.</div>
+        ${groups||'<div class="empty">No CRM changes found in this debrief.</div>'}
+        ${missingLine(deb)}
+        ${deb.stageState==='accepted'?recordView(deb):''}
+        <div class="approvebar">
+          <button class="btn btn--lime" id="apprBtn" onclick="approveWrites()" ${on.length?'':'disabled aria-describedby="apprWhy"'}>Approve &amp; write ${on.length} change${on.length===1?'':'s'}</button>
+          <button class="btn btn--ghost" onclick="tickAll(true)">Select all</button>
+          <button class="btn btn--ghost" onclick="tickAll(false)">Clear</button>
+          <span class="disabled-why" id="apprWhy">${on.length?'':'Tick at least one change to write.'}</span>
+        </div>
+      </div></div>`;
+  }
+  const a=afterRecord(deb), skipped=items.filter(i=>!i.on), seen=new Set(), flds=[];
+  on.filter(i=>!['tasks','acts'].includes(i.rk)).forEach(i=>{ if(i.append){ if(seen.has(i.rk)) return; seen.add(i.rk); flds.push({label:RK_LABEL[i.rk],from:deb.before[i.rk],to:a[i.rk],append:false}); } else flds.push(i); });
+  return `<div class="card" id="crmCard">
+    <div class="card__h"><span class="ic">🗂️</span><h3>CRM fields updated <span class="muted" style="font-weight:400;font-size:12px">· ${flds.length} field${flds.length===1?'':'s'}</span></h3><span class="sp st st--ok">Written ${hhmm(deb.writtenAt)}</span></div>
+    <div class="card__b">
+      ${flds.map(i=>fieldUpd(esc(i.label),esc(i.from),esc(i.to))).join('')||'<div class="muted">No field changes. Only the activity and tasks were written.</div>'}
+      ${skipped.length?`<div class="note" style="margin-top:10px">Not written: ${skipped.map(i=>esc(i.label)+(i.lock?' (locked)':'')).join(', ')}.</div>`:''}
+      ${missingLine(deb)}
+      ${recordView(deb)}
+      <div class="approvebar"><button class="btn btn--ghost" onclick="undoWrites()">↶ Undo write</button><span class="muted" style="font-size:12.5px">Puts the record back the way it was before this debrief.</span></div>
+    </div></div>`;
+}
+function activityCard(deb){
+  const act=deb.items.find(i=>i.rk==='acts'), logged=deb.written&&act&&act.on, a=deb.activity, c=deb.c;
+  return `<div class="card">
+    <div class="card__h"><span class="ic">✅</span><h3>${logged?'Activity logged':'Activity draft'}</h3><span class="sp st ${logged?'st--ok':'st--wait'}">${logged?'Logged':deb.written?'Not logged':'Logs when you approve'}</span></div>
+    <div class="card__b">
+      <div class="kv"><span class="k">Subject</span><span class="v">${a.subject}</span></div>
+      <div class="kv"><span class="k">Classification</span><span class="v"><div class="tagrow"><span class="tg2 tg2--type">${a.tags[0]}</span><span class="tg2 tg2--pur">${a.tags[1]}</span><span class="tg2 tg2--out">${a.tags[2]}</span></div></span></div>
+      <div class="kv" style="flex-direction:column;gap:8px;align-items:stretch">
+        <span class="k">Summary</span>
+        <span class="desc">${a.summary}</span>
+      </div>
+      <div class="kv"><span class="k">Logged against</span><span class="v">${c.opp} · ${c.account}</span></div>
+    </div>
+  </div>`;
+}
+function followCard(deb){
+  const c=deb.c, tasks=deb.items.filter(i=>i.rk==='tasks'), made=deb.written&&tasks.some(t=>t.on);
+  return `<div class="card">
+    <div class="card__h"><span class="ic">⏰</span><h3>${made?'Follow-up created':'Follow-up proposed'}</h3></div>
+    <div class="card__b">
+      ${tasks.length?tasks.map((t,ix)=>{ const d=t.task.due, st=deb.written?(t.on?['Created','ok']:['Skipped','']):(t.on?['Ticked','wait']:['Unticked','']);
+        return `<div class="task" style="${ix?'margin-top:10px;':''}${deb.written&&!t.on?'opacity:.55':''}">
+          <div class="cal"><div class="m">${d.toLocaleDateString('en-US',{month:'short'})}</div><div class="d">${d.getDate()}</div></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600">${esc(t.task.title)}</div>
+            <div class="citem__meta">${fmtD(d)} · ${t.task.meeting?'10:00 · invite to '+c.name.split(' ')[0]:'09:00 · assigned to you'} · linked to ${c.name}</div>
+          </div>
+          <span style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="tg2 tg2--out">${t.task.meeting?'Meeting':'Task'}</span><span class="st ${st[1]?'st--'+st[1]:''}">${st[0]}</span></span>
+        </div>`; }).join('')
+      :'<div class="empty">No next step found in the debrief. Agree one so the deal keeps moving.</div>'}
+      ${tasks.length&&!deb.written?'<div class="note" style="margin-top:10px">Created when you approve the changes above. Unticked items are skipped.</div>':''}
+    </div>
+  </div>`;
+}
+function stageCard(deb){
+  const c=deb.c, from=deb.stage.from, to=deb.stage.to, moved=deb.stageState==='accepted', cur=moved?to:from, rec=to!==from, voice=deb.source==='voice', lock=to===4;
+  const pipe=STAGES.map((s,i)=>{ let cls=i<cur?'passed':i===cur?'cur':''; if(rec&&i===to) cls='to'; const arr=i<STAGES.length-1?'<span class="parr">→</span>':''; return `<span class="pstage ${cls}">${s}</span>${arr}`; }).join('');
+  const sigs=(deb.stage.signals||[]);
+  let reco;
+  if(moved) reco=`<div class="reco"><span>✅</span><div style="flex:1"><b>Moved to ${STAGES[to]}.</b> The stage change and close-date shift are saved on ${c.opp}.
+      <div class="btnrow" style="margin-top:10px"><button class="btn btn--ghost btn--sm" onclick="undoStage()">↶ Undo move</button></div></div></div>`;
+  else if(deb.stageState==='kept') reco=`<div class="reco"><span>↩️</span><div>Recommendation dismissed. Stage unchanged.</div></div>`;
+  else if(deb.stage.hold){ const h=deb.stage.hold, st=deb.sents[h.s]?deb.sents[h.s].t:'';
+    reco=`<div class="reco" style="border-color:rgba(242,119,140,.45);background:rgba(242,119,140,.06)"><span>⚠️</span><div><b>No stage move. ${esc(h.t)}.</b><div class="muted" style="font-size:12.5px;margin-top:3px">From: “${markPhrase(st,h.phrase)}” The stage stays at ${STAGES[from]}.</div></div></div>`; }
+  else if(!rec) reco=`<div class="reco"><span>🤖</span><div><b>No stage move suggested.</b> The stage stays at ${STAGES[from]}.
+      <div class="muted" style="font-size:12.5px;margin-top:3px">${from<4?`To suggest ${STAGES[from+1]}, the demo parser looks for two signals: budget confirmed, decision-maker engaged, or a proposal requested. Found: ${sigs.length?sigs.map(x=>x.t.toLowerCase()).join(', '):'none'}.`:'This deal is already at the last stage.'}</div></div></div>`;
+  else reco=`<div class="reco">
+      <span>🤖</span>
+      <div style="flex:1">
+        <div><b>${voice?'AI':'The demo parser'} recommends moving ${STAGES[from]} → ${STAGES[to]}.</b> <span class="conf conf--${confCls(deb.stage.conf)}" style="margin-left:4px">${deb.stage.conf}%</span></div>
+        <div class="muted" style="font-size:12.5px;margin-top:3px">${voice?`Budget confirmed, decision-maker engaged, and the agreed next step is a proposal. That meets the criteria for ${STAGES[to]}.`:'Signals: '+sigs.map(x=>`${x.t.toLowerCase()} (“${esc(x.phrase)}”)`).join(', ')+'.'}</div>
+        ${lock?'<div class="prop__why lockwhy">🔒 Closed Won needs a signed order form attached in the CRM. Move it there once the paperwork is in.</div>':''}
+        <div class="btnrow" style="margin-top:11px">
+          <button class="btn btn--lime" onclick="acceptMove()" ${lock?'disabled':''}>Accept &amp; move stage</button>
+          <button class="btn btn--ghost" onclick="keepStage()">Keep current</button>
+        </div>
+      </div>
+    </div>`;
+  return `<div class="card">
+    <div class="card__h"><span class="ic">📈</span><h3>Opportunity stage</h3></div>
+    <div class="card__b"><div class="pipe">${pipe}</div>${reco}</div>
+  </div>`;
+}
+function emailCard(deb){
+  const e=deb.email;
+  return `<div class="card">
+    <div class="card__h"><span class="ic">✉️</span><h3>AI follow-up email</h3><span class="muted" id="emState" style="font-weight:400;font-size:12px;margin-left:auto">${deb.sent?'sent':'draft · editable'}</span></div>
+    <div class="card__b">
+      <div class="email">
+        <div class="email__row"><span class="lab">To</span><input id="emTo" aria-label="To" value="${esc(e.to)}" oninput="state.deb.email.to=this.value" ${deb.sent?'readonly':''}></div>
+        <div class="email__row"><span class="lab">Subject</span><input id="emSub" aria-label="Subject" value="${esc(e.subject)}" oninput="state.deb.email.subject=this.value" ${deb.sent?'readonly':''}></div>
+        <textarea class="email__body" id="emBody" aria-label="Email body" oninput="state.deb.email.body=this.value" ${deb.sent?'readonly':''}>${esc(e.body)}</textarea>
+      </div>
+      <div class="btnrow" style="margin-top:14px">
+        <button class="btn btn--lime" id="sendBtn" ${deb.sent?'disabled':''} onclick="sendEmail()">${deb.sent?'✓ Sent to client':'Send to client'}</button>
+        <button class="btn btn--ghost" id="regenBtn" ${deb.sent?'disabled title="Already sent"':''} onclick="regenEmail()">Regenerate</button>
+        <span class="muted" id="emHelp" style="font-size:12.5px">${deb.sent?'Sent and logged on the activity.':'Nothing is sent until you press Send. A copy is logged on the activity.'}</span>
+      </div>
+    </div>
+  </div>`;
+}
 function renderResults(){
-  const c=state.contact;
-  const fu=dateInDays(7);
-  const fuStr=fu.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-  const fromStage=c.stage, toStage=Math.min(c.stage+1,STAGES.length-1);
-  const moved = state.accepted;
-  const curStage = moved?toStage:fromStage;
-
+  const deb=state.deb;
+  const sc=deb.scores;
   $('stage').innerHTML=`
-    <!-- scores -->
-    <div class="card fade">
-      <div class="card__h"><span class="ic">📝</span><h3>Transcription &amp; quality</h3></div>
+  <div class="layout fade">
+   <div class="main">
+    ${deb.source==='typed'?`<div class="demo-note" style="margin-bottom:16px"><span>🧪</span><div><b>Read by the demo parser.</b> These proposals come from fixed rules. The production build uses a language model. The approval rules are the same: you review every change before anything is written.</div></div>`:''}
+    <div class="card">
+      <div class="card__h"><span class="ic">📝</span><h3>Transcription &amp; quality</h3><span class="sp muted" style="font-size:12px">${deb.source==='voice'?'Voice · sample recording':'Typed · demo parser'}</span></div>
       <div class="card__b">
         <div class="scorebar" style="margin-bottom:16px">
           <div class="score">
-            <div class="score__top"><span class="score__lbl">Transcription confidence</span><span class="score__val" style="color:var(--teal)">92</span></div>
-            <div class="score__bar"><div class="score__fill" style="width:92%;background:var(--teal)"></div></div>
-            <div class="score__tip">💡 Clear audio — names matched to CRM spelling.</div>
+            <div class="score__top"><span class="score__lbl">Transcription confidence</span><span class="score__val" style="color:var(--teal)">${sc.trans!=null?sc.trans:'n/a'}</span></div>
+            <div class="score__bar"><div class="score__fill" style="width:${sc.trans||0}%;background:var(--teal)"></div></div>
+            <div class="score__tip">💡 ${sc.trans!=null?'Clear audio. Names matched to CRM spelling.':'Typed debrief. No audio to transcribe.'}</div>
           </div>
           <div class="score">
-            <div class="score__top"><span class="score__lbl">Note quality</span><span class="score__val" style="color:var(--lime)">78</span></div>
-            <div class="score__bar"><div class="score__fill" style="width:78%;background:var(--lime)"></div></div>
-            <div class="score__tip">💡 Strong detail. Tip: add a quantified ROI target next time.</div>
+            <div class="score__top"><span class="score__lbl">Note quality</span><span class="score__val" style="color:var(--lime)">${sc.quality}</span></div>
+            <div class="score__bar"><div class="score__fill" style="width:${sc.quality}%;background:var(--lime)"></div></div>
+            <div class="score__tip">💡 ${sc.qtip}</div>
           </div>
         </div>
         <div class="transcript" id="transcript"></div>
+        <div class="note" style="margin-top:8px">Underlined sentences fed a proposed change. Point at or tick a change below to light up its sentence.</div>
       </div>
     </div>
-
-    <!-- activity -->
-    <div class="card">
-      <div class="card__h"><span class="ic">✅</span><h3>Activity logged</h3></div>
-      <div class="card__b">
-        <div class="kv"><span class="k">Subject</span><span class="v">Pricing &amp; rollout discussion | Meeting | Expansion</span></div>
-        <div class="kv"><span class="k">Classification</span><span class="v"><div class="tagrow"><span class="tg2 tg2--type">Meeting</span><span class="tg2 tg2--pur">Expansion</span><span class="tg2 tg2--out">Future meeting set</span></div></span></div>
-        <div class="kv" style="flex-direction:column;gap:8px;align-items:stretch">
-          <span class="k">Summary</span>
-          <span class="desc">• Met ${c.name} (${c.role}) at ${c.account} to review platform expansion across additional sites.
-• Currently on a legacy in-house tool; main pain is manual reporting and no single pipeline view.
-• Budget is approved for this quarter; ${c.name} is the economic buyer and is bought-in.
-• Next step: send a tailored proposal and ROI summary, then reconvene to align stakeholders.</span>
-        </div>
-        <div class="kv"><span class="k">Logged against</span><span class="v">${c.opp} · ${c.account}</span></div>
-      </div>
-    </div>
-
-    <!-- field updates -->
-    <div class="card">
-      <div class="card__h"><span class="ic">🗂️</span><h3>CRM fields updated <span class="muted" style="font-weight:400;font-size:12px">· 4 fields</span></h3></div>
-      <div class="card__b">
-        ${fieldUpd('Job title', '—', c.role)}
-        ${fieldUpd('Number of sites', '—', '3+')}
-        ${fieldUpd('Active users', '—', '120')}
-        ${fieldUpd('Current tooling', '—', 'Legacy in-house')}
-        <div style="margin-top:10px;font-size:12.5px;color:var(--muted)">⊘ Still missing: <b style="color:var(--amber)">Renewal date</b> — not mentioned in the call.</div>
-      </div>
-    </div>
-
-    <!-- follow-up task -->
-    <div class="card">
-      <div class="card__h"><span class="ic">⏰</span><h3>Follow-up created</h3></div>
-      <div class="card__b">
-        <div class="task">
-          <div class="cal"><div class="m">${fu.toLocaleDateString('en-US',{month:'short'})}</div><div class="d">${fu.getDate()}</div></div>
-          <div style="flex:1">
-            <div style="font-weight:600">Send tailored proposal &amp; ROI summary</div>
-            <div class="citem__meta">${fuStr} · 09:00 · assigned to you · linked to ${c.name}</div>
-          </div>
-          <span class="tg2 tg2--out">Task</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- opportunity move -->
-    <div class="card">
-      <div class="card__h"><span class="ic">📈</span><h3>Opportunity stage</h3></div>
-      <div class="card__b">
-        <div class="pipe">
-          ${STAGES.map((s,i)=>{
-            let cls = i<curStage?'passed':i===curStage?'cur':'';
-            if(!moved && i===toStage) cls='to';
-            if(moved && i===toStage) cls='to';
-            const arr = i<STAGES.length-1?'<span class="parr">→</span>':'';
-            return `<span class="pstage ${cls}">${s}</span>${arr}`;
-          }).join('')}
-        </div>
-        ${ moved
-          ? `<div class="reco"><span>✅</span><div><b>Moved to ${STAGES[toStage]}.</b> The stage change and close-date shift are saved on ${c.opp}.</div></div>`
-          : `<div class="reco">
-              <span>🤖</span>
-              <div style="flex:1">
-                <div><b>AI recommends moving ${STAGES[fromStage]} → ${STAGES[toStage]}.</b></div>
-                <div class="muted" style="font-size:12.5px;margin-top:3px">Budget confirmed, decision-maker engaged, and the agreed next step is a proposal — criteria for ${STAGES[toStage]} are met.</div>
-                <div class="btnrow" style="margin-top:11px">
-                  <button class="btn btn--lime" onclick="acceptMove()">Accept &amp; move stage</button>
-                  <button class="btn btn--ghost" onclick="keepStage()">Keep current</button>
-                </div>
-              </div>
-            </div>`}
-      </div>
-    </div>
-
-    <!-- email -->
-    <div class="card">
-      <div class="card__h"><span class="ic">✉️</span><h3>AI follow-up email</h3><span class="muted" style="font-weight:400;font-size:12px;margin-left:auto">draft · editable</span></div>
-      <div class="card__b">
-        <div class="email">
-          <div class="email__row"><span class="lab">To</span><input value="${c.name.toLowerCase().replace(/[^a-z]/g,'.')}@${c.account.toLowerCase().replace(/[^a-z]/g,'')}.com"></div>
-          <div class="email__row"><span class="lab">Subject</span><input value="Great connecting — next steps for ${c.account}"></div>
-          <textarea class="email__body">Hi ${c.name.split(' ')[0]},
-
-Thank you for your time today. To recap what we discussed:
-
-• You're looking to expand across additional sites and move off the legacy in-house tool, with manual reporting being the biggest pain point.
-• A single, unified pipeline view is the priority, and budget is approved for this quarter.
-
-As agreed, I'll put together a tailored proposal with an ROI summary and send it over this week. From there we can align the wider team and lock in a go-live plan.
-
-If anything else comes to mind in the meantime, just let me know.
-
-Best regards,
-Cory</textarea>
-        </div>
-        <div class="btnrow" style="margin-top:14px">
-          <button class="btn btn--lime" id="sendBtn" ${state.sent?'disabled':''} onclick="sendEmail()">${state.sent?'✓ Sent to client':'Send to client'}</button>
-          <button class="btn btn--ghost" onclick="toast('Regenerated with a warmer tone (demo).')">Regenerate</button>
-          <span class="muted" style="font-size:12.5px">A copy is logged on the activity automatically.</span>
-        </div>
-      </div>
-    </div>
-
+    ${activityCard(deb)}
+    ${crmCard(deb)}
+    ${followCard(deb)}
+    ${stageCard(deb)}
+    ${emailCard(deb)}
     <div class="btnrow" style="margin-top:18px">
       <button class="btn btn--ghost" onclick="restart()">↺ Record another</button>
-    </div>`;
-  typeTranscript();
+      <button class="btn btn--ghost" onclick="openHistory()">🕘 Session history</button>
+    </div>
+   </div>
+   <div class="aside">${agentCard(deb)}</div>
+  </div>`;
+  if(deb.seen||RM) $('transcript').innerHTML=transcriptHtml(deb); else { deb.seen=true; typeTranscript(); }
 }
 function fieldUpd(name,from,to){
   return `<div class="upd"><span class="ck">${tick3()}</span><div class="upd__f"><div class="upd__name">${name}</div>
     <div class="upd__chg"><b>${from}</b><span class="arrow">→</span><b style="color:var(--green)">${to}</b></div></div></div>`;
 }
-function acceptMove(){ state.accepted=true; renderResults(); toast('Opportunity moved to '+STAGES[Math.min(state.contact.stage+1,STAGES.length-1)]+'.'); }
-function keepStage(){ toast('Kept current stage — recommendation dismissed.'); const r=document.querySelector('.reco'); if(r)r.innerHTML='<span>↩️</span><div>Recommendation dismissed — stage unchanged.</div>'; }
-function sendEmail(){ state.sent=true; const b=$('sendBtn'); if(b){b.disabled=true; b.textContent='✓ Sent to client';} toast('Follow-up email sent and logged on the activity.'); }
-function restart(){ state=Object.assign(state,{phase:'pick',contact:null,secs:0,recording:false,notes:'',accepted:false,sent:false,search:''}); render(); }
+function tickProp(id,on){
+  const d=state.deb, it=d.items.find(x=>x.id===id); if(!it||it.lock) return; it.on=on;
+  const row=document.querySelector(`.prop[data-id="${id}"]`); if(row){ row.classList.toggle('on',on); row.querySelector('.cbx').innerHTML=on?tick3():''; }
+  hl(it.s); updApprove();
+}
+function updApprove(){
+  const d=state.deb, n=d.items.filter(i=>i.on).length, b=$('apprBtn');
+  if(b){ b.disabled=!n; b.textContent='Approve & write '+n+' change'+(n===1?'':'s'); if(n) b.removeAttribute('aria-describedby'); else b.setAttribute('aria-describedby','apprWhy'); }
+  const w=$('apprWhy'); if(w) w.textContent=n?'':'Tick at least one change to write.';
+  const sc=$('selCount'); if(sc) sc.textContent=n+' selected';
+}
+function tickAll(v){ state.deb.items.forEach(i=>{ if(!i.lock){ i.on=v; const row=document.querySelector(`.prop[data-id="${i.id}"]`); if(row){ row.classList.toggle('on',v); row.querySelector('.cbx').innerHTML=v?tick3():''; row.querySelector('input').checked=v; } } }); updApprove(); }
+function writesFirst(deb){ return deb.log.find(s=>s.k==='writes').st==='todo'; }
+function approveWrites(){
+  const deb=state.deb, c=deb.c, on=deb.items.filter(i=>i.on); if(!on.length){ toast('Tick at least one change to write.'); return; }
+  const r=crmFor(c); on.forEach(i=>applyItem(r,i));
+  deb.written=true; deb.writtenAt=new Date();
+  const ids=OPP_META[c.id].ids, lines=[], byObj={};
+  on.filter(i=>!['tasks','acts','roles'].includes(i.rk)).forEach(i=>{ const o=RK_OBJ[i.rk]; if(!(byObj[o]=byObj[o]||[]).includes(RK_API[i.rk])) byObj[o].push(RK_API[i.rk]); });
+  Object.keys(byObj).forEach(o=>lines.push(call('crm.update',o+' '+ids[o]+', {'+byObj[o].join(', ')+'}','200 OK')));
+  on.filter(i=>i.rk==='acts').forEach(i=>lines.push(call('crm.create','Activity "'+i.to+'"','201 Created')));
+  on.filter(i=>i.rk==='tasks').forEach(i=>lines.push(call('crm.create',(i.task.meeting?'Event':'Task')+' "'+i.task.title+'"','201 Created')));
+  on.filter(i=>i.rk==='roles').forEach(i=>lines.push(call('crm.create','OpportunityContactRole "'+i.to.split(' · ')[0]+'"','201 Created')));
+  lg(deb,'writes','done',lines,'0.6s',writesFirst(deb));
+  lg(deb,'approve','done',[txt('You approved '+on.length+' of '+deb.items.length+' changes.','green')],hhmm(new Date()));
+  renderResults(); updHistCount();
+  const cc=$('crmCard'); if(cc) cc.scrollIntoView({block:'start',behavior:RM?'auto':'smooth'});
+  toast(on.length+' change'+(on.length===1?'':'s')+' written to the CRM.','Undo',()=>undoWrites(deb));
+}
+function undoWrites(deb){
+  deb=deb||state.deb; if(!deb||!deb.written) return;
+  const r=crmFor(deb.c), on=deb.items.filter(i=>i.on);
+  on.forEach(i=>{ r[i.rk]=deb.before[i.rk]; if(i.rk==='amount') r.amountN=deb.before.amountN; if(i.rk==='tasks') r.taskN=deb.before.taskN; });
+  deb.written=false;
+  lg(deb,'writes',null,[call('crm.revert',on.length+' changes from this debrief','200 OK · restored','warn')]);
+  lg(deb,'approve','wait',[txt('Write undone. Waiting for you again.','amber')]);
+  if(state.phase==='results'&&state.deb===deb) renderResults();
+  updHistCount(); toast('Write undone. The record is back to how it was.');
+}
+function acceptMove(){
+  const deb=state.deb, to=deb.stage.to; if(to===4){ toast('Closed Won needs a signed order form in the CRM.'); return; }
+  deb.stageState='accepted'; state.accepted=true;
+  const r=crmFor(deb.c); r.stage=STAGES[to]; r.stageIdx=to;
+  lg(deb,'writes','done',[call('crm.update','Opportunity '+OPP_META[deb.c.id].ids.Opportunity+', {StageName:"'+STAGES[to]+'"}','200 OK')],null,writesFirst(deb));
+  lg(deb,'approve',null,[txt('You accepted the stage move to '+STAGES[to]+'.','green')]);
+  renderResults(); updHistCount(); toast('Opportunity moved to '+STAGES[to]+'.','Undo',()=>undoStage(deb));
+}
+function undoStage(deb){
+  deb=deb||state.deb; if(!deb||deb.stageState!=='accepted') return;
+  const r=crmFor(deb.c); r.stage=deb.before.stage; r.stageIdx=deb.before.stageIdx;
+  deb.stageState=null; state.accepted=false;
+  lg(deb,'writes',null,[call('crm.update','Opportunity '+OPP_META[deb.c.id].ids.Opportunity+', {StageName:"'+deb.before.stage+'"}','200 OK · reverted','warn')]);
+  if(state.phase==='results'&&state.deb===deb) renderResults();
+  updHistCount(); toast('Stage move undone. Back at '+deb.before.stage+'.');
+}
+function keepStage(){
+  const deb=state.deb; deb.stageState='kept';
+  lg(deb,'approve',null,[txt('You kept the stage at '+STAGES[deb.stage.from]+'.')]);
+  toast('Kept current stage. Recommendation dismissed.');
+  const r=document.querySelector('.reco'); if(r) r.innerHTML='<span>↩️</span><div>Recommendation dismissed. Stage unchanged.</div>';
+}
+function sendEmail(){
+  const deb=state.deb; if(deb.sent) return;
+  deb.sent=true; state.sent=true;
+  lg(deb,'writes','done',[call('email.send','to:"'+deb.email.to+'"','202 Accepted'),call('crm.create','EmailMessage on the activity','201 Created')],null,writesFirst(deb));
+  lg(deb,'approve',null,[txt('You sent the follow-up email.','green')]);
+  const b=$('sendBtn'); if(b){ b.disabled=true; b.textContent='✓ Sent to client'; }
+  const g=$('regenBtn'); if(g){ g.disabled=true; g.title='Already sent'; }
+  ['emTo','emSub','emBody'].forEach(id=>{ const e=$(id); if(e) e.readOnly=true; });
+  const es=$('emState'); if(es) es.textContent='sent'; const eh=$('emHelp'); if(eh) eh.textContent='Sent and logged on the activity.';
+  updHistCount(); toast('Follow-up email sent and logged on the activity.');
+}
+function regenEmail(){
+  const deb=state.deb; if(deb.sent) return;
+  deb.tone=deb.tone?0:1; const e=buildEmail(deb,deb.tone); deb.email.body=e.body;
+  const t=$('emBody'); if(t) t.value=e.body;
+  lg(deb,'email',null,[call('email.draft','tone:"'+(deb.tone?'warmer':'standard')+'"',wc(e.body)+' words · draft, not sent')]);
+  toast(deb.tone?'Regenerated with a warmer tone (demo).':'Regenerated with the standard tone (demo).');
+}
+function restart(){ stopTimer(); state=Object.assign(state,{phase:'pick',contact:null,secs:0,recording:false,notes:'',accepted:false,sent:false,search:'',mode:'voice',typed:'',meeting:null,deb:null}); render(); }
 
 /* typewriter transcript */
-const TRANSCRIPT="So I just wrapped with {NAME} over at {ACC} — {ROLE}. Really positive meeting. They're keen to expand the platform across a few more sites; right now they're on a legacy in-house tool and the big frustration is manual reporting, no single view of the pipeline. Good news is budget's approved for this quarter and {FIRST} is basically the decision-maker, so we're not waiting on anyone. We agreed the next step is for me to send over a tailored proposal with an ROI summary, then get the wider team aligned. I'll book a follow-up for next week.";
+const TRANSCRIPT="So I just wrapped with {NAME} over at {ACC} — {ROLE}. Really positive meeting. They're keen to expand the platform across a few more sites; right now they're on a legacy in-house tool and the big frustration is manual reporting, no single view of the pipeline. They have about 120 active users on it today. Good news is budget's approved for this quarter and {FIRST} is basically the decision-maker, so we're not waiting on anyone. We agreed the next step is for me to send over a tailored proposal with an ROI summary, then get the wider team aligned. I'll book a follow-up for next week.";
 function typeTranscript(){
-  const c=state.contact, el=$('transcript'); if(!el)return;
-  const text=TRANSCRIPT.replace(/{NAME}/g,c.name).replace(/{ACC}/g,c.account).replace(/{ROLE}/g,c.role).replace(/{FIRST}/g,c.name.split(' ')[0]);
+  const deb=state.deb, el=$('transcript'); if(!el)return;
+  const text=deb.sents.map(x=>x.t).join(' ');
   let i=0; el.innerHTML='<span class="cur"></span>';
   clearInterval(el._t);
-  el._t=setInterval(()=>{ i+=2; if(i>=text.length){i=text.length; clearInterval(el._t); el.textContent=text; return;} el.innerHTML=text.slice(0,i)+'<span class="cur"></span>'; },14);
+  el._t=setInterval(()=>{ i+=2; if(i>=text.length||!document.body.contains(el)){ clearInterval(el._t); el.innerHTML=transcriptHtml(deb); return;} el.textContent=text.slice(0,i); el.insertAdjacentHTML('beforeend','<span class="cur"></span>'); },14);
 }
 
 render();
