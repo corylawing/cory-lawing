@@ -1,6 +1,6 @@
 # cory-lawing
 
-Personal site for **Cory Lawing**: I architect and build custom software, operational systems and AI.
+Personal site for **Cory Lawing**: I architect and build custom software, operational systems and AI products.
 
 A static site for GitHub Pages: no build step, no framework, no dependencies. The live URL is `https://corylawing.github.io/cory-lawing/`.
 
