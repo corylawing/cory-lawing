@@ -185,7 +185,7 @@
     if (isDemo) {
       var meta = K.catalog[id], i = K.order.indexOf(id);
       K.$("#stage-title").textContent = meta.title;
-      K.$("#stage-kicker").textContent = meta.kicker + " · sample data";
+      K.$("#stage-kicker").textContent = "Demo version · " + meta.kicker + " · sample data";
       K.$("#stage-count").textContent = (i + 1) + " / " + K.order.length;
       K.$("#stage-prev").setAttribute("data-go", K.order[(i - 1 + K.order.length) % K.order.length]);
       K.$("#stage-next").setAttribute("data-go", K.order[(i + 1) % K.order.length]);

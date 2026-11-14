@@ -695,3 +695,8 @@ body.in-demo { overflow: hidden; }
   .h-phases button span { display: none; }
   .h-offer { padding: 22px; }
 }
+
+/* demo disclaimer under the cards */
+.h-demos__note { display: flex; align-items: flex-start; gap: 12px; margin-top: 22px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-2); font-size: 15px; line-height: 1.5; color: var(--text-3); }
+.h-demos__note svg.i { flex: none; width: 20px; height: 20px; margin-top: 1px; color: var(--accent); }
+#view-home .h-demos__note b { color: var(--text); font-weight: 600; }

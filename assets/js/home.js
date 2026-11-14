@@ -30,7 +30,7 @@
       var meta = K.catalog[c.id] || c;
       var tag = c.ext ? 'a href="' + c.ext + '" target="_blank" rel="noopener"' : 'a href="#' + c.id + '" data-go="' + c.id + '"';
       var shot = THUMB[c.id]
-        ? '<span class="h-card__shot"><img src="' + THUMB[c.id] + '" alt="" loading="lazy" /></span>'
+        ? '<span class="h-card__shot"><img src="' + THUMB[c.id] + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'h-card__shot--ph\');this.outerHTML=\'' + K.icon("grid").replace(/"/g, "&quot;") + '\'" /></span>'
         : '<span class="h-card__shot h-card__shot--ph">' + K.icon("grid") + "<span>Preview image loads on the live site</span></span>";
       return "<" + tag + ' class="h-card">' + shot +
         '<span class="h-card__body"><h3 class="h-card__title">' + K.esc(meta.title) + K.icon(c.ext ? "external" : "arrow-right") + '</h3><p class="h-card__copy">' + K.esc(c.copy) + "</p></span></a>";
