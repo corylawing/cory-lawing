@@ -511,14 +511,36 @@ body.in-demo { overflow: hidden; }
 
 
 /* what I fix: problem, fix, and which kind of work it is */
-.h-fix { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.h-fix li { position: relative; display: grid; gap: 10px; align-content: start; padding: 24px 24px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; min-width: 0; transition: border-color .25s, transform .25s var(--ease); }
-.h-fix li:hover { border-color: var(--accent-line); transform: translateY(-3px); }
-#view-home .h-fix b { font: 700 19px/1.25 var(--display); letter-spacing: -.02em; color: var(--text); }
-.h-fix span { position: relative; padding-left: 26px; font-size: 16px; line-height: 1.45; color: var(--text-2); }
-.h-fix span::before { content: ""; position: absolute; left: 0; top: .65em; width: 14px; height: 2px; background: var(--accent); }
-.h-fix span::after { content: ""; position: absolute; left: 8px; top: calc(.65em - 3px); width: 6px; height: 6px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); transform: rotate(45deg); }
-.h-fix em { justify-self: start; margin-top: 4px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line-2); font: 500 12px var(--sans); font-style: normal; color: var(--text-3); }
+/* What I fix: an open list; each row is problem, fix, area */
+.h-fixlist { border-top: 1px solid var(--line-2); }
+.h-fixlist li { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) 150px; gap: 8px 40px; align-items: baseline; padding-block: 22px; border-bottom: 1px solid var(--line); }
+#view-home .h-fixlist__p { font: 700 clamp(18px, 1.55vw, 21px)/1.3 var(--display); letter-spacing: -.02em; color: var(--text); text-wrap: balance; }
+.h-fixlist__f { position: relative; padding-left: 26px; font-size: 16px; line-height: 1.5; color: var(--text-2); }
+.h-fixlist__f::before { content: ""; position: absolute; left: 0; top: .72em; width: 14px; height: 2px; background: var(--accent); }
+.h-fixlist__f::after { content: ""; position: absolute; left: 8px; top: calc(.72em - 3px); width: 6px; height: 6px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); transform: rotate(45deg); }
+.h-fixlist__t { justify-self: end; font: 500 11.5px/1.4 var(--mono); font-style: normal; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); text-align: right; }
+@media (max-width: 900px) {
+  .h-fixlist li { grid-template-columns: minmax(0, 1fr); gap: 8px; padding-block: 20px; }
+  .h-fixlist__t { justify-self: start; text-align: left; margin-top: 2px; }
+}
+
+/* Results: the numbers in big type, between Why me and Demos */
+.h-proof { padding-block: clamp(52px, 6.5vw, 84px); }
+.h-proof .h-kicker { margin-bottom: clamp(22px, 2.6vw, 34px); }
+.h-proof__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.h-proof__grid > div { min-width: 0; padding-inline: clamp(20px, 3vw, 44px); border-left: 1px solid var(--line-2); }
+.h-proof__grid > div:first-child { padding-left: 0; border-left: 0; }
+.h-proof dt { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+#view-home .h-proof dt b { font: 700 clamp(52px, 6.6vw, 92px)/.92 var(--display); letter-spacing: -.055em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.h-proof dt span { font: 600 clamp(18px, 1.7vw, 24px)/1 var(--display); letter-spacing: -.02em; color: var(--text); }
+.h-proof dd { margin-top: 16px; max-width: 30ch; font-size: 16px; line-height: 1.5; color: var(--text-2); }
+@media (max-width: 700px) {
+  .h-proof__grid { grid-template-columns: minmax(0, 1fr); }
+  .h-proof__grid > div { padding: 22px 0; border-left: 0; border-top: 1px solid var(--line); }
+  .h-proof__grid > div:first-child { padding-top: 0; border-top: 0; }
+  #view-home .h-proof dt b { font-size: 60px; }
+  .h-proof dd { margin-top: 10px; }
+}
 .h-next { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 32px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--line); }
 .h-next li { display: flex; gap: 14px; min-width: 0; }
 .h-next li > span { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-dim); border: 1px solid var(--accent-line); color: var(--accent); font: 700 15px var(--display); }
@@ -610,9 +632,6 @@ body.in-demo { overflow: hidden; }
 .h-path li { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14.5px; color: var(--text); white-space: nowrap; }
 .h-path li + li::before { content: ""; width: 16px; height: 1.5px; background: var(--line-2); }
 .h-path li.is-now { color: var(--accent); }
-.h-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 24px; padding-top: 22px; border-top: 1px solid var(--line); }
-.h-stats dt { font: 700 clamp(24px, 2.3vw, 32px)/1.05 var(--display); letter-spacing: -.035em; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.h-stats dd { font-size: 13.5px; line-height: 1.4; color: var(--text-3); margin-top: 6px; }
 
 /* work with me */
 .h-offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
@@ -665,7 +684,6 @@ body.in-demo { overflow: hidden; }
   .h-strip__in { grid-template-columns: minmax(0, 1fr); }
   .h-demos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .h-three, .h-offers, .h-wins, .h-next { grid-template-columns: minmax(0, 1fr); }
-  .h-fix { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .h-blend__grid { grid-template-columns: minmax(0, 1fr); }
   .h-blend__op { justify-self: center; width: 40px; height: 40px; font-size: 20px; margin-block: -4px; }
   .h-three { gap: 18px; }
@@ -674,7 +692,6 @@ body.in-demo { overflow: hidden; }
 }
 @media (max-width: 640px) {
   .h-strip__list { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .h-fix { grid-template-columns: minmax(0, 1fr); }
   .h-demos { gap: 12px; }
   .h-card { border-radius: 14px; }
   .h-card__body { padding: 12px 12px 14px; }
@@ -689,7 +706,6 @@ body.in-demo { overflow: hidden; }
   .h-barrow__track i { padding-inline: 14px; }
   .h-barrow__track em { font-size: 13.5px; }
   .h-form__row { grid-template-columns: minmax(0, 1fr); }
-  .h-stats { grid-template-columns: minmax(0, 1fr); }
   .h-phases { gap: 5px; flex-wrap: nowrap; }
   .h-phases button { height: 32px; padding: 0 10px; font-size: 13px; }
   .h-phases button span { display: none; }

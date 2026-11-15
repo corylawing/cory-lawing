@@ -27,7 +27,7 @@ A static site for GitHub Pages: no build step, no framework, no dependencies. Th
 
 ## How the page works
 
-- **Homepage sections:** hero, What I fix, Why me, Demos, the 80% / 100% section, About, Work with me, Contact.
+- **Homepage sections:** hero, What I fix, Why me, Results, Demos, the 80% / 100% section, About, Work with me, Contact.
 - **Demos open inside the site.** Each card links to `#cpq`, `#voice` and so on. `site.js` loads the matching file from `assets/demos/` into a full-screen frame under a slim site bar, with Portfolio, Restart, previous and next, and Book a call. Every app is also usable on its own at its own URL.
 
 | Hash | File | App |
