@@ -27,7 +27,13 @@
   function ease(u) { u = clamp(u, 0, 1); return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
 
   /* ---------- colours ---------- */
+  /* On a first visit some browsers (Safari) start this before site.css is applied: var(--accent) is then empty and the
+     dots came out black until a refresh. So the site's own colours stand in until the stylesheet is there, and the
+     colours are read again as soon as it is (see the end of this file). */
+  var FALLBACK = { "--accent": [108, 158, 255], "--accent-hi": [155, 189, 255], "--text": [241, 245, 255], "--bg": [8, 13, 26] };
+  function cssReady() { return !!getComputedStyle(document.documentElement).getPropertyValue("--accent").trim(); }
   function rgb(name) {
+    if (!getComputedStyle(document.documentElement).getPropertyValue(name).trim() && FALLBACK[name]) return FALLBACK[name].slice();
     var p = document.createElement("i"); p.style.color = "var(" + name + ")"; p.style.display = "none"; document.body.appendChild(p);
     var m = getComputedStyle(p).color.match(/[\d.]+/g) || [255, 255, 255]; p.remove();
     return [Math.round(+m[0]), Math.round(+m[1]), Math.round(+m[2])];
@@ -418,6 +424,11 @@
   announce();
   resize();
   window.CLHero = { jump: jump };
+  if (!cssReady()) {     // the stylesheet isn't applied yet: read the real colours the moment it is
+    var recolour = function () { if (!cssReady()) return false; readColours(); if (!running) still(); return true; };
+    window.addEventListener("load", recolour);
+    var tries = 0, poll = setInterval(function () { if (recolour() || ++tries > 100) clearInterval(poll); }, 100);
+  }
 
   if (window.ResizeObserver) new ResizeObserver(resize).observe(host); else window.addEventListener("resize", resize);
   if (window.IntersectionObserver) new IntersectionObserver(function (es) { onScreen = es[0].isIntersecting; setRunning(); }, { threshold: 0.02 }).observe(host);
