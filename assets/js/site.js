@@ -133,7 +133,7 @@
   K.icons = function (root) { K.$$("i[data-i]", root).forEach(function (e) { e.outerHTML = K.icon(e.getAttribute("data-i")); }); };
 
   /* ---------- the demos ---------- */
-  K.order = ["voice", "cockpit", "cpq", "expense", "org-health", "territory", "social"];
+  K.order = ["voice", "cockpit", "cpq", "expense", "org-health", "territory", "social", "home-brace"];
   K.catalog = {
     voice: { title: "Activity Voice Recorder", kicker: "Sales · voice to CRM", file: "voice-activity.html" },
     cockpit: { title: "Sales Command Center", kicker: "Revenue · next-best action", file: "revenue-cockpit.html" },
@@ -141,7 +141,8 @@
     expense: { title: "Expense Guard", kicker: "Finance · AI compliance", file: "expense-guard.html" },
     "org-health": { title: "Org Health Auditor", kicker: "Salesforce · governance", file: "org-health-auditor.html" },
     territory: { title: "Territory Intelligence", kicker: "Field sales · coverage and routing", file: "territory-intelligence.html" },
-    social: { title: "Social Command Center", kicker: "Marketing · content operations", file: "social-command-center.html" }
+    social: { title: "Social Command Center", kicker: "Marketing · content operations", file: "social-command-center.html" },
+    "home-brace": { title: "Home-Brace", kicker: "Practice operations · multi-location hub", url: "https://corylawing.github.io/practice-hub-mockup/" }
   };
   function appSource(id) {
     var b64 = window.CL_APPS && window.CL_APPS[id];
@@ -159,7 +160,7 @@
     frame.setAttribute("title", K.catalog[id].title + ", interactive demo");
     var html = appSource(id);
     if (html !== null) { frame.removeAttribute("src"); frame.srcdoc = html; }
-    else { frame.removeAttribute("srcdoc"); frame.src = "assets/demos/" + K.catalog[id].file; }
+    else { frame.removeAttribute("srcdoc"); frame.src = K.catalog[id].url || ("assets/demos/" + K.catalog[id].file); }
   }
 
   /* the frame is as tall as the screen minus the site chrome above it */
